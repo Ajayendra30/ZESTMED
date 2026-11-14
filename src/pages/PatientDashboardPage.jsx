@@ -30,7 +30,6 @@ import {
   ArrowRight,
   X,
   Eye,
-  ShieldCheck,
   ExternalLink,
   Plus
 } from 'lucide-react';
@@ -536,22 +535,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <Users className="w-4 h-4 text-slate-400" />
                     <span>Manage Family Members</span>
                   </button>
-                  <a
-                    href={getSubdomainUrl('admin')}
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-rose-500" />
-                    <span>Switch to Admin Panel</span>
-                  </a>
-                  <a
-                    href={getSubdomainUrl('lab')}
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
-                  >
-                    <FlaskConical className="w-4 h-4 text-teal-600" />
-                    <span>Switch to Lab Portal</span>
-                  </a>
                   <div className="border-t border-slate-100 my-1" />
                   <Link
                     to="/"
