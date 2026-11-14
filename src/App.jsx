@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
-import { ToastProvider } from './context/ToastContext';
+import { ToastProvider, useToast } from './context/ToastContext';
 import { LocationProvider } from './context/LocationContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -23,9 +23,22 @@ import { getActiveSubdomain } from './utils/subdomain';
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, openAuth } = useAuth();
+  const { addToast } = useToast();
   const activeSubdomain = getActiveSubdomain();
-  const [isPrescriptionModalOpen, setPrescriptionModalOpen] = useState(false);
   const searchInputRef = useRef(null);
+
+  // Upload Prescription is NOT accessible directly from the homepage.
+  // It is only available after login/registration, redirecting to the Patient Dashboard.
+  const handleOpenPrescriptionRequest = () => {
+    if (!user) {
+      addToast('Please login or register to upload your doctor\'s prescription', 'info');
+      openAuth('login');
+    } else {
+      navigate('/patient-dashboard?open=prescription');
+    }
+  };
 
   const handleSearchFocus = () => {
     if (searchInputRef.current) {
@@ -98,7 +111,7 @@ function AppContent() {
     <div className="flex flex-col min-h-screen bg-surface">
       {/* Global Navbar */}
       <Navbar
-        onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
+        onOpenPrescriptionModal={handleOpenPrescriptionRequest}
         onSearchFocus={handleSearchFocus}
       />
 
@@ -107,19 +120,13 @@ function AppContent() {
         <Routes>
           <Route
             path="/"
-            element={
-              <Home
-                isPrescriptionModalOpen={isPrescriptionModalOpen}
-                setPrescriptionModalOpen={setPrescriptionModalOpen}
-                searchInputRef={searchInputRef}
-              />
-            }
+            element={<Home searchInputRef={searchInputRef} />}
           />
           <Route
             path="/medicines"
             element={
               <MedicineStorePage
-                onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
+                onOpenPrescriptionModal={handleOpenPrescriptionRequest}
               />
             }
           />
@@ -130,23 +137,17 @@ function AppContent() {
           <Route path="/contact" element={<ContactPage />} />
           <Route
             path="*"
-            element={
-              <Home
-                isPrescriptionModalOpen={isPrescriptionModalOpen}
-                setPrescriptionModalOpen={setPrescriptionModalOpen}
-                searchInputRef={searchInputRef}
-              />
-            }
+            element={<Home searchInputRef={searchInputRef} />}
           />
         </Routes>
       </div>
 
       {/* Global Footer */}
-      <Footer onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)} />
+      <Footer onOpenPrescriptionModal={handleOpenPrescriptionRequest} />
 
       {/* Global Modals & Drawers */}
       <CartDrawer
-        onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
+        onOpenPrescriptionModal={handleOpenPrescriptionRequest}
       />
       <LocationModal />
       <AuthModal />

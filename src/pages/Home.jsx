@@ -11,16 +11,11 @@ import FAQ from '../components/FAQ';
 import ProductDetailModal from '../components/ProductDetailModal';
 import TestDetailModal from '../components/TestDetailModal';
 import PackageDetailModal from '../components/PackageDetailModal';
-import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 
-export default function Home({ isPrescriptionModalOpen, setPrescriptionModalOpen, searchInputRef }) {
+export default function Home({ searchInputRef }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
-
-  const handleOpenPrescription = () => {
-    setPrescriptionModalOpen(true);
-  };
 
   return (
     <main className="min-h-screen bg-white">
@@ -76,11 +71,6 @@ export default function Home({ isPrescriptionModalOpen, setPrescriptionModalOpen
       <PackageDetailModal
         pkg={selectedPackage}
         onClose={() => setSelectedPackage(null)}
-      />
-
-      <PrescriptionUploadModal
-        isOpen={isPrescriptionModalOpen}
-        onClose={() => setPrescriptionModalOpen(false)}
       />
     </main>
   );

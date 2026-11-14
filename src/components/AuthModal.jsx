@@ -1,9 +1,11 @@
 // src/components/AuthModal.jsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { X, ArrowLeft, ChevronDown, Smartphone, ShieldCheck, RefreshCw, User } from 'lucide-react';
 
 export default function AuthModal() {
+  const navigate = useNavigate();
   const { isAuthModalOpen, closeAuth, authMode, setAuthMode, loginWithPhoneOtp, loginWithGoogle } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
@@ -58,11 +60,13 @@ export default function AuthModal() {
     }
     loginWithPhoneOtp(phoneNumber, fullName.trim() || 'Verified Patient');
     resetModal();
+    navigate('/patient-dashboard');
   };
 
   const handleGoogleSignIn = () => {
     loginWithGoogle();
     resetModal();
+    navigate('/patient-dashboard');
   };
 
   const handleResendOtp = () => {

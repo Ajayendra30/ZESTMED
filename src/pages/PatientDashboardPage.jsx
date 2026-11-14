@@ -58,6 +58,7 @@ import OrderInvoiceModal from '../components/OrderInvoiceModal';
 import AddFamilyMemberModal from '../components/AddFamilyMemberModal';
 import AddAddressModal from '../components/AddAddressModal';
 import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
+import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import AuthModal from '../components/AuthModal';
 
 export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
@@ -80,6 +81,16 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [isAddFamilyModalOpen, setIsAddFamilyModalOpen] = useState(false);
   const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
+  const [isPrescriptionUploadModalOpen, setIsPrescriptionUploadModalOpen] = useState(false);
+
+  // Check URL query to open prescription vault if requested
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('open') === 'prescription' || params.get('tab') === 'prescription') {
+      setActiveMenu('prescription');
+      setIsPrescriptionUploadModalOpen(true);
+    }
+  }, []);
 
   // Persistent User Data
   const [orders, setOrders] = useState(() => {
@@ -516,16 +527,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('prescription');
                 setIsSidebarOpen(false);
-                if (onOpenPrescriptionModal) {
-                  onOpenPrescriptionModal();
-                } else {
-                  addToast('Opening Prescription Upload Vault', 'info');
-                }
+                setIsPrescriptionUploadModalOpen(true);
+                addToast('Opening Prescription Upload Vault', 'info');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'prescription'
+                  ? 'bg-[#102A45] text-white shadow-sm ring-1 ring-teal-500/40'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
-              <UploadCloud className="w-4 h-4" />
+              <UploadCloud className={`w-4 h-4 ${activeMenu === 'prescription' ? 'text-[#14B8A6]' : ''}`} />
               <span>Upload Prescription</span>
             </button>
 
@@ -1015,10 +1028,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => {
-                    if (onOpenPrescriptionModal) onOpenPrescriptionModal();
-                    else addToast('Opening Prescription Upload Vault', 'info');
+                    setActiveMenu('prescription');
+                    setIsPrescriptionUploadModalOpen(true);
+                    addToast('Opening Doctor\'s Prescription Upload Vault', 'info');
                   }}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
                 >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Upload className="w-5 h-5 stroke-[2]" />
@@ -1594,6 +1608,113 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
           {/* ======================================================== */}
+          {/* UPLOAD DOCTOR'S PRESCRIPTION VAULT VIEW                  */}
+          {/* ======================================================== */}
+          {activeMenu === 'prescription' && (
+            <div className="space-y-4 sm:space-y-6">
+              {/* Header Card with Primary Upload Action */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <UploadCloud className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Doctor's Prescription Vault</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Upload handwritten or digital doctor prescriptions for registered pharmacist verification and quick re-orders.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsPrescriptionUploadModalOpen(true)}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                >
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Upload New Prescription</span>
+                </button>
+              </div>
+
+              {/* Upload Dropzone Hero Card */}
+              <div 
+                onClick={() => setIsPrescriptionUploadModalOpen(true)}
+                className="bg-gradient-to-br from-teal-50/60 via-emerald-50/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#14B8A6]/40 hover:border-[#14B8A6] transition cursor-pointer text-center group shadow-xs"
+              >
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#14B8A6] border border-teal-100 flex items-center justify-center mx-auto mb-3 shadow-xs group-hover:scale-105 transition-transform">
+                  <UploadCloud className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                  Click here to Upload Doctor's Prescription
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
+                  Drag & drop your prescription image (JPG, PNG) or PDF document. Our Guwahati chief pharmacist verifies and pre-fills your medicine cart within 15 minutes.
+                </p>
+                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-teal-200 text-[#008F83] text-xs font-bold shadow-2xs">
+                  <span>🔒 100% Confidential • Verified by Licensed Pharmacists</span>
+                </div>
+              </div>
+
+              {/* Active & Past Prescriptions List */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-slate-800">
+                  Uploaded & Verified Prescriptions ({initialPatientPrescriptions.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {initialPatientPrescriptions.map((rx) => (
+                    <div
+                      key={rx.id}
+                      className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                          <div>
+                            <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
+                            <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName}</h4>
+                            <p className="text-[11px] text-slate-500">{rx.specialty} • {rx.hospital}</p>
+                          </div>
+                          <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
+                            rx.status.toLowerCase().includes('verified')
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}>
+                            {rx.status}
+                          </span>
+                        </div>
+
+                        <div className="py-3 text-xs text-slate-600 space-y-1">
+                          <p><strong className="text-slate-700">Issued On:</strong> {rx.dateOfIssue}</p>
+                          <p><strong className="text-slate-700">Valid Until:</strong> {rx.expiryDate}</p>
+                          <p><strong className="text-slate-700">Medications:</strong> {rx.medicines?.map(m => m.name).join(', ') || 'Metformin, Atorvastatin'}</p>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPrescription(rx)}
+                          className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>View Details</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
+                            openCart();
+                          }}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5" />
+                          <span>Order Medicines</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
           {/* 3. MY DIAGNOSTIC REPORTS VIEW                            */}
           {/* ======================================================== */}
           {activeMenu === 'reports' && (
@@ -1988,6 +2109,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           onClose={() => setSelectedPrescription(null)}
         />
       )}
+
+      {/* Upload Doctor's Prescription Modal */}
+      <PrescriptionUploadModal
+        isOpen={isPrescriptionUploadModalOpen}
+        onClose={() => setIsPrescriptionUploadModalOpen(false)}
+      />
     </div>
   );
 }
