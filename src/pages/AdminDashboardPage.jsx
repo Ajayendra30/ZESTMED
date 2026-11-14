@@ -29,9 +29,28 @@ import {
   LogOut,
   ShieldCheck,
   CheckCircle2,
-  Activity
+  Activity,
+  Plus,
+  Trash2,
+  Edit,
+  Download,
+  RefreshCw,
+  Clock,
+  Truck,
+  AlertTriangle,
+  Check,
+  MapPin,
+  Phone,
+  Mail,
+  FileCheck,
+  Eye,
+  Sliders
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adminData';
+import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
+import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
+import { initialPatientOrders } from '../mock-data/patientData';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -57,7 +76,8 @@ export default function AdminDashboardPage() {
       trend: '↑ +12.4%',
       icon: Users,
       bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-500'
+      iconColor: 'text-blue-500',
+      targetMenu: 'users-patients'
     },
     {
       title: 'Lab Bookings',
@@ -65,7 +85,8 @@ export default function AdminDashboardPage() {
       trend: '↑ +18.7%',
       icon: Calendar,
       bgColor: 'bg-purple-50',
-      iconColor: 'text-purple-600'
+      iconColor: 'text-purple-600',
+      targetMenu: 'lab-bookings'
     },
     {
       title: 'Medicine Orders',
@@ -73,7 +94,8 @@ export default function AdminDashboardPage() {
       trend: '↑ +14.2%',
       icon: ShoppingCart,
       bgColor: 'bg-emerald-50',
-      iconColor: 'text-emerald-500'
+      iconColor: 'text-emerald-500',
+      targetMenu: 'orders'
     },
     {
       title: 'Diagnostic Tests',
@@ -81,7 +103,8 @@ export default function AdminDashboardPage() {
       trend: '↑ +9.8%',
       icon: FlaskConical,
       bgColor: 'bg-rose-50',
-      iconColor: 'text-rose-500'
+      iconColor: 'text-rose-500',
+      targetMenu: 'diagnostic-tests'
     },
     {
       title: 'Total Revenue',
@@ -89,9 +112,57 @@ export default function AdminDashboardPage() {
       trend: '↑ +20.6%',
       icon: Coins,
       bgColor: 'bg-amber-50',
-      iconColor: 'text-amber-500'
+      iconColor: 'text-amber-500',
+      targetMenu: 'analytics'
     }
   ];
+
+  // Interactive Management States
+  const [adminMedicines, setAdminMedicines] = useState(initialInventoryMedicines);
+  const [adminBookings, setAdminBookings] = useState([
+    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 349, slot: '09:00 AM' },
+    { id: '#LB10233', patient: 'Priya Sharma', phone: '+91 94350 12345', test: 'Thyroid Profile', type: 'Lab Visit', executive: 'Rohit Sharma', status: 'Sample Collected', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 599, slot: '10:30 AM' },
+    { id: '#LB10232', patient: 'Amit Verma', phone: '+91 97060 98765', test: 'Diabetes Package', type: 'Home Collection', executive: 'Manab Barua', status: 'In Process', statusBg: 'bg-amber-50 text-amber-600 border border-amber-200/60', amount: 899, slot: '11:00 AM' },
+    { id: '#LB10231', patient: 'Sneha Singh', phone: '+91 91270 54321', test: 'Full Body Checkup', type: 'Lab Visit', executive: 'Dr. N. Bora', status: 'Report Ready', statusBg: 'bg-purple-50 text-purple-600 border border-purple-200/60', amount: 1499, slot: '12:15 PM' },
+    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 499, slot: '02:00 PM' }
+  ]);
+  const [adminOrders, setAdminOrders] = useState([
+    { id: '#ORD5487', customer: 'Rajesh Kumar', items: 'Paracetamol 500 mg x 2, Vitamin C x 1', total: 340, payment: 'UPI Paid', status: 'Delivered', address: 'Dispur, Guwahati' },
+    { id: '#ORD5462', customer: 'Priya Sharma', items: 'Vitamin D3 600 IU x 1, Calcium x 1', total: 620, payment: 'Prepaid UPI', status: 'Out for Delivery', address: 'Ulubari, Guwahati' },
+    { id: '#ORD5420', customer: 'Amit Verma', items: 'Omeprazole 20 mg x 3, Antacid Gel x 1', total: 415, payment: 'COD', status: 'Processing', address: 'Jalukbari, Guwahati' },
+    { id: '#ORD5415', customer: 'Bipul Shekhar', items: 'Metformin 500mg SR x 4', total: 180, payment: 'UPI Paid', status: 'Dispatched', address: 'Khanapara, Guwahati' }
+  ]);
+  const [patientsList, setPatientsList] = useState([
+    { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', bookingsCount: 8, ordersCount: 5, status: 'Active' },
+    { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', bookingsCount: 4, ordersCount: 2, status: 'Active' },
+    { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Jorhat Central', bookingsCount: 3, ordersCount: 1, status: 'Active' },
+    { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Dibrugarh City', bookingsCount: 6, ordersCount: 4, status: 'Active' },
+    { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Silchar Town', bookingsCount: 2, ordersCount: 0, status: 'Active' }
+  ]);
+  const [executivesList, setExecutivesList] = useState([
+    { id: 'ZM-EXEC-01', name: 'Bikash Das', phone: '+91 92791 25091', zone: 'Dispur & GS Road Hub', tasksToday: 5, temp: '3.8°C', rating: '4.9 ★', status: 'On Route' },
+    { id: 'ZM-EXEC-02', name: 'Manab Jyoti Barua', phone: '+91 98765 00001', zone: 'Ulubari & Paltan Bazar', tasksToday: 4, temp: '4.0°C', rating: '4.8 ★', status: 'Active' },
+    { id: 'ZM-EXEC-03', name: 'Rohit Sharma', phone: '+91 94350 00002', zone: 'Jalukbari & Maligaon', tasksToday: 6, temp: '3.9°C', rating: '4.9 ★', status: 'Sample Collected' },
+    { id: 'ZM-EXEC-04', name: 'Tridip Kalita', phone: '+91 97060 00003', zone: 'Khanapara & Beltola', tasksToday: 3, temp: '4.1°C', rating: '4.7 ★', status: 'Available' }
+  ]);
+  const [adminsList, setAdminsList] = useState([
+    { id: 'ADM-01', name: 'Dr. Arindam Sharma', email: 'arindam@zestmed.com', role: 'Super Admin & Medical Director', access: 'All Privileges', status: 'Active' },
+    { id: 'ADM-02', name: 'Pankaj Barman', email: 'pankaj.pharma@zestmed.com', role: 'Chief Pharmacist Lead', access: 'Inventory & Prescriptions', status: 'Active' },
+    { id: 'ADM-03', name: 'Dr. N. Bora', email: 'n.bora@zestmed.com', role: 'Chief of Pathology & Diagnostics', access: 'Lab & Diagnostic Approvals', status: 'Active' }
+  ]);
+  const [prescriptionsList, setPrescriptionsList] = useState([
+    { id: 'RX-9821', patient: 'Ajayendra Shekhar', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
+    { id: 'RX-9822', patient: 'Minati Shekhar', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
+    { id: 'RX-9823', patient: 'Priya Sharma', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
+  ]);
+  const [paymentsList, setPaymentsList] = useState([
+    { id: 'TXN-9081', ref: '#LB10234', customer: 'Rajesh Kumar', method: 'Razorpay UPI', amount: 349, date: '13 Nov 2026, 09:12 AM', status: 'Success' },
+    { id: 'TXN-9080', ref: '#ORD5487', customer: 'Ajayendra Shekhar', method: 'UPI Instant', amount: 980, date: '12 Nov 2026, 10:45 AM', status: 'Success' },
+    { id: 'TXN-9079', ref: '#LB10233', customer: 'Priya Sharma', method: 'NetBanking', amount: 599, date: '12 Nov 2026, 02:18 PM', status: 'Success' },
+    { id: 'TXN-9078', ref: '#ORD5462', customer: 'Sneha Singh', method: 'Debit Card', amount: 620, date: '11 Nov 2026, 11:30 AM', status: 'Success' },
+    { id: 'TXN-9077', ref: '#LB10232', customer: 'Amit Verma', method: 'Cash on Collection', amount: 899, date: '10 Nov 2026, 04:00 PM', status: 'Success' }
+  ]);
+  const [newMedForm, setNewMedForm] = useState({ name: '', genericName: '', categoryName: 'General', stock: 100, price: 50, expiry: 'Dec 2027' });
 
   // Recent Bookings Table Data
   const recentBookings = [
@@ -302,8 +373,15 @@ export default function AdminDashboardPage() {
           <div>
             <button
               type="button"
-              onClick={() => setIsMedicinesExpanded(!isMedicinesExpanded)}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              onClick={() => {
+                setIsMedicinesExpanded(!isMedicinesExpanded);
+                setActiveMenu('medicines');
+              }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'medicines' || activeMenu === 'medicines-all' || activeMenu === 'medicines-categories' || activeMenu === 'medicines-add'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <Pill className="w-4 h-4" />
@@ -320,10 +398,13 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    setActiveMenu('medicines-all');
                     setIsSidebarOpen(false);
-                    addToast('Opening Central Pharmacy Inventory', 'info');
+                    addToast('Opening Central Pharmacy Catalog', 'info');
                   }}
-                  className="w-full text-left py-1 text-xs text-[#88A0B8] hover:text-white flex items-center gap-2"
+                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                    activeMenu === 'medicines-all' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
                   <span>All Products</span>
@@ -331,13 +412,30 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    setActiveMenu('medicines-categories');
                     setIsSidebarOpen(false);
-                    addToast('Opening Low Stock Warning List', 'info');
+                    addToast('Opening Category Breakdown', 'info');
                   }}
-                  className="w-full text-left py-1 text-xs text-[#88A0B8] hover:text-white flex items-center gap-2"
+                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                    activeMenu === 'medicines-categories' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                  <span>Stock Alerts</span>
+                  <span>Categories</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('medicines-add');
+                    setIsSidebarOpen(false);
+                    addToast('Add New Medicine Form', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                    activeMenu === 'medicines-add' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                  <span>Add Medicine</span>
                 </button>
               </div>
             )}
@@ -653,6 +751,8 @@ export default function AdminDashboardPage() {
 
         {/* Dashboard Canvas */}
         <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden">
+          {activeMenu === 'dashboard' && (
+            <>
           {/* ======================================================== */}
           {/* 3. TITLE & DATE FILTER ROW                               */}
           {/* ======================================================== */}
@@ -713,10 +813,11 @@ export default function AdminDashboardPage() {
               return (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition-shadow"
+                  onClick={() => kpi.targetMenu && setActiveMenu(kpi.targetMenu)}
+                  className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer group"
                 >
                   {/* Square rounded icon wrapper */}
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${kpi.bgColor} ${kpi.iconColor} flex items-center justify-center shrink-0`}>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${kpi.bgColor} ${kpi.iconColor} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                     <Icon className="w-5 h-5 stroke-[2.2]" />
                   </div>
                   <div>
@@ -726,8 +827,9 @@ export default function AdminDashboardPage() {
                     <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-0.5">
                       {kpi.value}
                     </div>
-                    <div className="text-[11px] sm:text-xs font-semibold text-emerald-600 mt-0.5">
-                      {kpi.trend}
+                    <div className="text-[11px] sm:text-xs font-semibold text-emerald-600 mt-0.5 flex items-center gap-0.5">
+                      <span>{kpi.trend}</span>
+                      <span className="text-[10px] text-slate-400 font-normal">→</span>
                     </div>
                   </div>
                 </div>
@@ -958,7 +1060,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('Displaying full laboratory appointments list (Assam Hub)', 'info')}
+                  onClick={() => setActiveMenu('lab-bookings')}
                   className="text-xs font-semibold text-primary hover:underline"
                 >
                   View All
@@ -978,7 +1080,7 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {recentBookings.map((b) => (
+                    {adminBookings.slice(0, 4).map((b) => (
                       <tr key={b.id} className="hover:bg-slate-50/50 transition">
                         <td className="py-3 px-2 sm:px-0 font-semibold text-slate-800">
                           {b.id}
@@ -1018,7 +1120,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('Opening Central Warehouse Low Stock Reorder List', 'info')}
+                  onClick={() => setActiveMenu('inventory')}
                   className="text-xs font-semibold text-primary hover:underline"
                 >
                   View All
@@ -1054,6 +1156,1046 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </div>
+            </>
+          )}
+
+          {/* ======================================================== */}
+          {/* USERS: PATIENTS DIRECTORY                                */}
+          {/* ======================================================== */}
+          {activeMenu === 'users-patients' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Registered Patients Directory (Assam)</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    4,892 verified patient accounts registered across Guwahati, Jorhat, Dibrugarh & Silchar.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newPat = {
+                      id: `ZM-PAT-${Math.floor(100 + Math.random() * 900)}`,
+                      name: 'New Registered Patient',
+                      phone: '+91 98765 00099',
+                      city: 'Guwahati (Panbazar)',
+                      bookingsCount: 0,
+                      ordersCount: 0,
+                      status: 'Active'
+                    };
+                    setPatientsList((prev) => [newPat, ...prev]);
+                    addToast(`New patient registered: ${newPat.id}`, 'success');
+                  }}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Register Patient</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">UHID</th>
+                        <th className="py-3 px-4 font-bold">Patient Name</th>
+                        <th className="py-3 px-4 font-bold">Contact Phone</th>
+                        <th className="py-3 px-4 font-bold">Regional City</th>
+                        <th className="py-3 px-4 font-bold text-center">Lab Bookings</th>
+                        <th className="py-3 px-4 font-bold text-center">Medicine Orders</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {patientsList.map((p) => (
+                        <tr key={p.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">{p.id}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900">{p.name}</td>
+                          <td className="py-3.5 px-4 text-slate-600 font-mono">{p.phone}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{p.city}</td>
+                          <td className="py-3.5 px-4 text-center font-bold text-teal-600">{p.bookingsCount}</td>
+                          <td className="py-3.5 px-4 text-center font-bold text-sky-600">{p.ordersCount}</td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                              {p.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => addToast(`Patient record ${p.id} verified and synced with Assam Health DB.`, 'info')}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition"
+                            >
+                              View Profile
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* USERS: LAB EXECUTIVES                                    */}
+          {/* ======================================================== */}
+          {activeMenu === 'users-executives' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Activity className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Lab Executives & Phlebotomists Roster</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Live shift tracking, cold-chain temperature telemetry & home sample collection dispatch.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('Opening New Phlebotomist Onboarding Wizard', 'info')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Executive</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {executivesList.map((ex) => (
+                  <div key={ex.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 font-black flex items-center justify-center">
+                          {ex.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900">{ex.name}</h3>
+                          <span className="text-[11px] text-slate-400 font-mono">{ex.id}</span>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        {ex.status}
+                      </span>
+                    </div>
+
+                    <div className="text-xs space-y-1.5 bg-slate-50 p-3 rounded-xl text-slate-600">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Operating Zone:</span>
+                        <strong className="text-slate-800">{ex.zone}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Cold Box Temp:</span>
+                        <strong className="text-teal-600 font-mono">{ex.temp} (Optimal)</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Tasks Today:</span>
+                        <strong className="text-slate-800 font-bold">{ex.tasksToday} appointments</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Patient Rating:</span>
+                        <strong className="text-amber-500 font-bold">{ex.rating}</strong>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => addToast(`Dispatching push notification & route ping to ${ex.name}...`, 'info')}
+                      className="w-full py-2 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition text-center"
+                    >
+                      Assign Route / Ping
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* USERS: ADMINS                                            */}
+          {/* ======================================================== */}
+          {activeMenu === 'users-admins' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <ShieldCheck className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Administrative Staff & Access Roles</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  System administrators, chief pharmacists, and laboratory directors with cryptographic access keys.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {adminsList.map((adm) => (
+                  <div key={adm.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 font-black flex items-center justify-center">
+                        {adm.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-slate-900">{adm.name}</h3>
+                        <p className="text-xs text-teal-600 font-semibold">{adm.role}</p>
+                      </div>
+                    </div>
+                    <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
+                      <div>Email: <strong className="text-slate-800">{adm.email}</strong></div>
+                      <div>Privileges: <strong className="text-slate-800">{adm.access}</strong></div>
+                      <div className="text-emerald-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* MEDICINES: ALL PRODUCTS                                  */}
+          {/* ======================================================== */}
+          {(activeMenu === 'medicines' || activeMenu === 'medicines-all') && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Pill className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Pharmacy Inventory Catalog</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Central pharmaceutical warehouse stocks, batch numbers, and reorder levels (Dispur Hub).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveMenu('medicines-add')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Medicine</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Medicine</th>
+                        <th className="py-3 px-4 font-bold">Generic Name</th>
+                        <th className="py-3 px-4 font-bold">Category</th>
+                        <th className="py-3 px-4 font-bold text-center">Current Stock</th>
+                        <th className="py-3 px-4 font-bold">Price (₹)</th>
+                        <th className="py-3 px-4 font-bold">Batch / Expiry</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {adminMedicines.map((m) => (
+                        <tr key={m.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
+                          <td className="py-3 px-4 text-slate-600">{m.genericName}</td>
+                          <td className="py-3 px-4 text-slate-700">
+                            <span className="bg-slate-100 px-2 py-0.5 rounded-md font-medium">{m.categoryName}</span>
+                          </td>
+                          <td className="py-3 px-4 text-center font-mono">
+                            <span className={`px-2 py-0.5 rounded-full font-bold ${
+                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
+                            }`}>
+                              {m.stock} units
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-black text-slate-900">₹{m.price}</td>
+                          <td className="py-3 px-4 text-slate-500 font-mono">{m.batchNo || 'B-902'} • {m.expiry}</td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminMedicines((prev) =>
+                                  prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
+                                );
+                                addToast(`Restocked +100 units for ${m.name}`, 'success');
+                              }}
+                              className="px-2.5 py-1 bg-teal-50 text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-bold transition mr-2"
+                            >
+                              +100 Stock
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminMedicines((prev) => prev.filter((it) => it.id !== m.id));
+                                addToast(`Removed ${m.name} from active inventory`, 'info');
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-600 transition"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* MEDICINES: CATEGORIES                                    */}
+          {/* ======================================================== */}
+          {activeMenu === 'medicines-categories' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Layers className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Pharmaceutical Categories</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage inventory classifications, prescription enforcement & storage temperatures.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { name: 'General Medicines', count: 420, valuation: '₹4,85,000', icon: Pill },
+                  { name: 'Diabetes Care', count: 185, valuation: '₹3,20,000', icon: Activity },
+                  { name: 'Cardiac & BP', count: 210, valuation: '₹5,40,000', icon: ShieldCheck },
+                  { name: 'Vitamins & Supplements', count: 340, valuation: '₹2,90,000', icon: Package },
+                  { name: 'Antibiotics & Anti-Infectives', count: 120, valuation: '₹3,80,000', icon: FileCheck },
+                  { name: 'Diagnostic Devices', count: 45, valuation: '₹1,50,000', icon: FlaskConical }
+                ].map((c, i) => {
+                  const Icon = c.icon;
+                  return (
+                    <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900">{c.name}</h3>
+                          <span className="text-xs text-slate-400 font-mono">{c.count} items in stock</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs bg-slate-50 p-2.5 rounded-xl">
+                        <span className="text-slate-500">Inventory Valuation:</span>
+                        <strong className="text-slate-900 font-bold">{c.valuation}</strong>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenu('medicines-all');
+                          addToast(`Filtered inventory by ${c.name}`, 'info');
+                        }}
+                        className="w-full py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 rounded-xl text-xs font-bold transition text-center"
+                      >
+                        View Category Items
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* MEDICINES: ADD MEDICINE                                  */}
+          {/* ======================================================== */}
+          {activeMenu === 'medicines-add' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Plus className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Add New Medicine to Pharmacy</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Register a new pharmaceutical product with NABL drug approval codes.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-2xl space-y-4">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!newMedForm.name) {
+                      addToast('Please provide a medicine brand name', 'error');
+                      return;
+                    }
+                    const newMed = {
+                      id: `med-custom-${Date.now()}`,
+                      name: newMedForm.name,
+                      genericName: newMedForm.genericName || 'Active Salt IP',
+                      categoryName: newMedForm.categoryName,
+                      stock: Number(newMedForm.stock) || 100,
+                      threshold: 40,
+                      price: Number(newMedForm.price) || 50,
+                      expiry: newMedForm.expiry || 'Dec 2027',
+                      batchNo: `B-${Math.floor(100 + Math.random() * 900)}`
+                    };
+                    setAdminMedicines((prev) => [newMed, ...prev]);
+                    addToast(`Medicine ${newMed.name} registered into central inventory!`, 'success');
+                    setActiveMenu('medicines-all');
+                  }}
+                  className="space-y-4 text-xs"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Brand Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Dolo 650 Tablets"
+                        value={newMedForm.name}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, name: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Generic Name / Composition</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Paracetamol IP 650mg"
+                        value={newMedForm.genericName}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, genericName: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Category</label>
+                      <select
+                        value={newMedForm.categoryName}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, categoryName: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6] bg-white"
+                      >
+                        <option>General Medicines</option>
+                        <option>Diabetes Care</option>
+                        <option>Cardiac & BP</option>
+                        <option>Vitamins & Supplements</option>
+                        <option>Antibiotics</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Stock Quantity (Units)</label>
+                      <input
+                        type="number"
+                        value={newMedForm.stock}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, stock: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Selling Price (₹)</label>
+                      <input
+                        type="number"
+                        value={newMedForm.price}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, price: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold mb-1">Expiry Date</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Dec 2027"
+                        value={newMedForm.expiry}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, expiry: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center gap-3">
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                    >
+                      Save to Inventory
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveMenu('medicines-all')}
+                      className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* DIAGNOSTIC TESTS CATALOG                                 */}
+          {/* ======================================================== */}
+          {activeMenu === 'diagnostic-tests' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Diagnostic Pathology Tests Catalog</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage 56+ diagnostic tests, home collection parameters, and NABL pricing across Assam.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('Opening Test Definition Creator', 'info')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Test</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Test Name</th>
+                        <th className="py-3 px-4 font-bold">Sample</th>
+                        <th className="py-3 px-4 font-bold">Category</th>
+                        <th className="py-3 px-4 font-bold">Turnaround</th>
+                        <th className="py-3 px-4 font-bold">Fasting</th>
+                        <th className="py-3 px-4 font-bold">Price</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {MOCK_DIAGNOSTIC_TESTS.slice(0, 10).map((t) => (
+                        <tr key={t.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3 px-4 font-bold text-slate-900">{t.name}</td>
+                          <td className="py-3 px-4 text-slate-600 font-mono">{t.sampleType}</td>
+                          <td className="py-3 px-4 text-slate-700">
+                            <span className="bg-slate-100 px-2 py-0.5 rounded-md">{t.categoryName || t.category}</span>
+                          </td>
+                          <td className="py-3 px-4 text-slate-600">{t.turnaroundTime || '24 Hours'}</td>
+                          <td className="py-3 px-4">
+                            {t.fastingRequired ? (
+                              <span className="text-amber-600 font-bold">Yes (8-10 hrs)</span>
+                            ) : (
+                              <span className="text-slate-400">Not required</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 font-black text-slate-900">₹{t.price}</td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => addToast(`Price configuration for ${t.name} updated.`, 'success')}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-semibold transition"
+                            >
+                              Edit Price
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* LAB BOOKINGS CENTRAL MANAGER                             */}
+          {/* ======================================================== */}
+          {activeMenu === 'lab-bookings' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Central Diagnostic & Home Collection Bookings</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage appointments, assign field phlebotomists, and monitor sample statuses.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Booking ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Test</th>
+                        <th className="py-3 px-4 font-bold">Type</th>
+                        <th className="py-3 px-4 font-bold">Executive</th>
+                        <th className="py-3 px-4 font-bold">Slot</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {adminBookings.map((b) => (
+                        <tr key={b.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{b.id}</td>
+                          <td className="py-3.5 px-4 font-semibold text-slate-800">{b.patient}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{b.test}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{b.type}</td>
+                          <td className="py-3.5 px-4 font-medium text-teal-700">{b.executive || 'Unassigned'}</td>
+                          <td className="py-3.5 px-4 text-slate-500 font-mono">{b.slot}</td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${b.statusBg}`}>
+                              {b.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const nextStatus =
+                                  b.status === 'Confirmed'
+                                    ? 'Sample Collected'
+                                    : b.status === 'Sample Collected'
+                                    ? 'In Process'
+                                    : b.status === 'In Process'
+                                    ? 'Report Ready'
+                                    : 'Confirmed';
+                                setAdminBookings((prev) =>
+                                  prev.map((it) => (it.id === b.id ? { ...it, status: nextStatus } : it))
+                                );
+                                addToast(`Booking ${b.id} advanced to ${nextStatus}`, 'success');
+                              }}
+                              className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
+                            >
+                              Advance Status
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* ORDERS MANAGER                                           */}
+          {/* ======================================================== */}
+          {activeMenu === 'orders' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Package className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Customer Pharmacy Orders & Deliveries</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Express doorstep deliveries across Assam hubs with cold-chain verification.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Order ID</th>
+                        <th className="py-3 px-4 font-bold">Customer</th>
+                        <th className="py-3 px-4 font-bold">Items</th>
+                        <th className="py-3 px-4 font-bold">Total</th>
+                        <th className="py-3 px-4 font-bold">Payment</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {adminOrders.map((o) => (
+                        <tr key={o.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{o.id}</td>
+                          <td className="py-3.5 px-4 font-semibold text-slate-800">
+                            <div>{o.customer}</div>
+                            <span className="text-[10px] text-slate-400">{o.address}</span>
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-700 max-w-xs truncate">{o.items}</td>
+                          <td className="py-3.5 px-4 font-black text-slate-900">₹{o.total}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{o.payment}</td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const nextStatus =
+                                  o.status === 'Processing'
+                                    ? 'Dispatched'
+                                    : o.status === 'Dispatched'
+                                    ? 'Out for Delivery'
+                                    : o.status === 'Out for Delivery'
+                                    ? 'Delivered'
+                                    : 'Processing';
+                                setAdminOrders((prev) =>
+                                  prev.map((it) => (it.id === o.id ? { ...it, status: nextStatus } : it))
+                                );
+                                addToast(`Order ${o.id} updated to ${nextStatus}`, 'success');
+                              }}
+                              className="px-2.5 py-1 bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white rounded-lg text-xs font-bold transition mr-2"
+                            >
+                              Update Status
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* PRESCRIPTIONS QUEUE                                      */}
+          {/* ======================================================== */}
+          {activeMenu === 'prescriptions' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <FileText className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Chief Pharmacist Prescription Verification</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Mandatory regulatory review of digital doctor prescriptions before pharmacy fulfillment.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {prescriptionsList.map((rx) => (
+                  <div key={rx.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-xs font-mono font-bold text-teal-600">{rx.id}</span>
+                        <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient}</h3>
+                      </div>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                        rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                      }`}>
+                        {rx.status}
+                      </span>
+                    </div>
+
+                    <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
+                      <div>Doctor: <strong className="text-slate-800">{rx.doctor}</strong></div>
+                      <div>Uploaded: <span className="text-slate-500 font-mono">{rx.date}</span></div>
+                      <div className="pt-1">Rx Medicines: <strong className="text-slate-800">{rx.items}</strong></div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPrescriptionsList((prev) =>
+                            prev.map((it) => (it.id === rx.id ? { ...it, status: 'Approved' } : it))
+                          );
+                          addToast(`Prescription ${rx.id} approved! Order created for ${rx.patient}.`, 'success');
+                        }}
+                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
+                      >
+                        Approve & Dispense
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPrescriptionsList((prev) => prev.filter((it) => it.id !== rx.id));
+                          addToast(`Prescription ${rx.id} rejected with notice to patient.`, 'info');
+                        }}
+                        className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl text-xs font-semibold transition"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* INVENTORY WAREHOUSE MANAGER                              */}
+          {/* ======================================================== */}
+          {activeMenu === 'inventory' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Layers className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Central Warehouse Stock & Reorder Levels</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Automated low-stock threshold monitoring for Assam regional hubs.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
+                    addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
+                  }}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
+                >
+                  Bulk Restock All
+                </button>
+              </div>
+
+              {/* Alert box */}
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-amber-800">
+                <div className="flex items-center gap-2.5">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+                  <span><strong>Stock Warning:</strong> 3 medicines have dropped below safe threshold (Cetirizine 10mg, Metformin 500mg, Amoxicillin 250mg).</span>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Item Name</th>
+                        <th className="py-3 px-4 font-bold">Rack Location</th>
+                        <th className="py-3 px-4 font-bold text-center">Current Stock</th>
+                        <th className="py-3 px-4 font-bold text-center">Safety Threshold</th>
+                        <th className="py-3 px-4 font-bold text-right">Quick Restock</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {adminMedicines.map((m) => (
+                        <tr key={m.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
+                          <td className="py-3 px-4 font-mono text-slate-500">{m.rackLocation || 'WH-GUW-01'}</td>
+                          <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">{m.stock}</td>
+                          <td className="py-3 px-4 text-center font-mono text-slate-500">{m.threshold || 50}</td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminMedicines((prev) =>
+                                  prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
+                                );
+                                addToast(`+100 units added to ${m.name}`, 'success');
+                              }}
+                              className="px-3 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
+                            >
+                              Restock +100
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* PAYMENTS & REVENUE LEDGER                                */}
+          {/* ======================================================== */}
+          {activeMenu === 'payments' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <CreditCard className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Financial Transactions & Revenue Ledger</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Razorpay UPI, Debit Card, and Cash Collection accounts reconciliation (Assam GSTIN: 18AAACZ9901M1ZT).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('Downloading GST audited financial statement CSV...', 'info')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Statement</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Transaction ID</th>
+                        <th className="py-3 px-4 font-bold">Reference</th>
+                        <th className="py-3 px-4 font-bold">Customer</th>
+                        <th className="py-3 px-4 font-bold">Payment Mode</th>
+                        <th className="py-3 px-4 font-bold">Date & Time</th>
+                        <th className="py-3 px-4 font-bold">Amount</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {paymentsList.map((tx) => (
+                        <tr key={tx.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{tx.id}</td>
+                          <td className="py-3.5 px-4 font-mono text-teal-600">{tx.ref}</td>
+                          <td className="py-3.5 px-4 font-medium text-slate-800">{tx.customer}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{tx.method}</td>
+                          <td className="py-3.5 px-4 text-slate-500 font-mono">{tx.date}</td>
+                          <td className="py-3.5 px-4 font-black text-slate-900">₹{tx.amount}</td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                              {tx.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* REPORTS & ANALYTICS                                      */}
+          {/* ======================================================== */}
+          {activeMenu === 'analytics' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <BarChart2 className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Executive Clinical & Revenue Analytics</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Quarterly performance review for Guwahati, Jorhat, Dibrugarh, Silchar & Nagaon operations.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
+                  <span className="text-xs text-slate-400 font-bold uppercase">Average Order Value</span>
+                  <div className="text-2xl font-black text-slate-900">₹742.50</div>
+                  <span className="text-xs text-emerald-600 font-bold">↑ +14.8% vs last month</span>
+                </div>
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
+                  <span className="text-xs text-slate-400 font-bold uppercase">Diagnostic Fulfillment Rate</span>
+                  <div className="text-2xl font-black text-slate-900">99.2%</div>
+                  <span className="text-xs text-emerald-600 font-bold">Cold chain compliance 100%</span>
+                </div>
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
+                  <span className="text-xs text-slate-400 font-bold uppercase">Active Assam Pin Codes</span>
+                  <div className="text-2xl font-black text-slate-900">142</div>
+                  <span className="text-xs text-teal-600 font-bold">8 Dedicated Hubs Online</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* NOTIFICATIONS FEED                                       */}
+          {/* ======================================================== */}
+          {activeMenu === 'notifications' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
+                    <span>System Alerts & Operations Feed</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Live notifications across cold-chain, delivery riders, and laboratory testing.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('All system notifications marked as resolved.', 'success')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 self-start sm:self-auto"
+                >
+                  Mark All Resolved
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                {notificationsList.map((n) => (
+                  <div key={n.id} className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition flex items-start justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-900">{n.text}</p>
+                      <span className="text-slate-400 font-mono text-[10px] mt-1 block">{n.time}</span>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* SETTINGS                                                 */}
+          {/* ======================================================== */}
+          {activeMenu === 'settings' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Platform & Regional Settings</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Configure delivery radius, phlebotomist emergency dispatch, and tax calculations.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-2xl space-y-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Company Legal Entity</label>
+                    <input
+                      type="text"
+                      defaultValue="ZESTMED Health Private Limited"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Assam GSTIN</label>
+                    <input
+                      type="text"
+                      defaultValue="18AAACZ9901M1ZT"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl font-mono text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Drug License Numbers</label>
+                    <input
+                      type="text"
+                      defaultValue="AS-KAM-DL-88421 / 88422"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl font-mono text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Central Laboratory Hub</label>
+                    <input
+                      type="text"
+                      defaultValue="GS Road, Dispur, Guwahati - 781005"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => addToast('Platform and regional operational settings saved!', 'success')}
+                    className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                  >
+                    Save Platform Settings
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

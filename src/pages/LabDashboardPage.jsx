@@ -28,7 +28,13 @@ import {
   ShieldCheck,
   Check,
   Plus,
-  X
+  X,
+  Phone,
+  MapPin,
+  RotateCcw,
+  FileText,
+  Download,
+  AlertTriangle
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import {
@@ -126,6 +132,21 @@ export default function LabDashboardPage() {
     { id: 2, title: 'Cold Chain Check', desc: 'Box CCB-01 temp stabilized at 3.8°C.', time: '45m ago' },
     { id: 3, title: 'Pathology Alert', desc: 'Sample collected from Amit Verma arrived at central lab.', time: '1h ago' }
   ];
+
+  const [assignedFilter, setAssignedFilter] = useState('all');
+  const [barcodeInput, setBarcodeInput] = useState('AS-BC-781005-092');
+  const [processingList, setProcessingList] = useState([
+    { id: 'SPEC-9041', patient: 'Amit Verma', test: 'Complete Blood Count (CBC)', analyzer: 'Mindray BC-5150 Hematology', status: 'Running Assay', progress: 78, eta: '12m' },
+    { id: 'SPEC-9042', patient: 'Priya Sharma', test: 'Thyroid Profile (T3, T4, TSH)', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Centrifugation', progress: 45, eta: '25m' },
+    { id: 'SPEC-9043', patient: 'Rajesh Kumar', test: 'Diabetes HbA1c Glycation', analyzer: 'Bio-Rad D-10 Analyzer', status: 'Verification', progress: 95, eta: '3m' },
+    { id: 'SPEC-9044', patient: 'Sneha Singh', test: 'Lipid Profile Screen', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Incubation', progress: 60, eta: '18m' }
+  ]);
+  const [completedList, setCompletedList] = useState([
+    { id: 'REP-9021', patient: 'Rahul Verma', test: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
+    { id: 'REP-9020', patient: 'Ananya Baruah', test: 'Vitamin D3 & B12 Vital Screen', time: 'Yesterday', pathologist: 'Dr. Arindam Sharma, MD', status: 'Signed & Published' },
+    { id: 'REP-9019', patient: 'Minati Shekhar', test: 'Thyroid Profile Screen', time: 'Yesterday', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
+    { id: 'REP-9018', patient: 'Vikram Das', test: 'Liver Function Test (LFT)', time: '11 Nov 2026', pathologist: 'Dr. S. Das, MD', status: 'Signed & Published' }
+  ]);
 
   // Action Handlers
   const handleActionClick = (item) => {
@@ -276,21 +297,15 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('collection');
                 setIsSidebarOpen(false);
-                setSelectedJobForCollection({
-                  id: '#LB10241',
-                  bookingId: '#LB10241',
-                  patientName: 'Amit Verma',
-                  patientPhone: '+91 92791 25091',
-                  testName: 'Full Blood Count',
-                  slot: '09:00 AM',
-                  type: 'Home Collection',
-                  address: 'House 14, Basistha Chariali, Dispur, Guwahati',
-                  district: 'Kamrup Metro',
-                  status: 'Pending Collection'
-                });
+                addToast('Opening Phlebotomy Sample Collection Workbench', 'info');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'collection'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <Syringe className="w-4 h-4" />
               <span>Sample Collection</span>
@@ -318,16 +333,15 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('upload-reports');
                 setIsSidebarOpen(false);
-                setSelectedJobForPublish({
-                  id: '#LB10238',
-                  bookingId: '#LB10238',
-                  patientName: 'Sneha Singh',
-                  testName: 'Complete Blood Count (CBC)',
-                  collectedAt: '10:15 AM'
-                });
+                addToast('Opening Pathology Report Upload Desk', 'info');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'upload-reports'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <Upload className="w-4 h-4" />
               <span>Upload Reports</span>
@@ -556,6 +570,8 @@ export default function LabDashboardPage() {
 
         {/* Dashboard Canvas */}
         <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden">
+          {activeMenu === 'dashboard' && (
+            <>
           {/* ======================================================== */}
           {/* 3. GREETING & DATE FILTER ROW                            */}
           {/* ======================================================== */}
@@ -613,7 +629,10 @@ export default function LabDashboardPage() {
           {/* ======================================================== */}
           <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
             {/* 1. Assigned Bookings */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('assigned')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 stroke-[2]" />
               </div>
@@ -628,7 +647,10 @@ export default function LabDashboardPage() {
             </div>
 
             {/* 2. Today's Appointments */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('schedule')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 stroke-[2]" />
               </div>
@@ -643,7 +665,10 @@ export default function LabDashboardPage() {
             </div>
 
             {/* 3. Samples Collected */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('collection')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                 <Syringe className="w-5 h-5 stroke-[2]" />
               </div>
@@ -658,7 +683,10 @@ export default function LabDashboardPage() {
             </div>
 
             {/* 4. Tests Processing */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('processing')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
                 <FlaskConical className="w-5 h-5 stroke-[2]" />
               </div>
@@ -673,7 +701,10 @@ export default function LabDashboardPage() {
             </div>
 
             {/* 5. Reports Pending */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('upload-reports')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
                 <Upload className="w-5 h-5 stroke-[2]" />
               </div>
@@ -688,7 +719,10 @@ export default function LabDashboardPage() {
             </div>
 
             {/* 6. Completed Tests */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('completed')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-5 h-5 stroke-[2]" />
               </div>
@@ -1141,6 +1175,596 @@ export default function LabDashboardPage() {
               </div>
             </div>
           </div>
+            </>
+          )}
+
+          {/* ======================================================== */}
+          {/* 1. ASSIGNED BOOKINGS VIEW                                */}
+          {/* ======================================================== */}
+          {activeMenu === 'assigned' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Assigned Phlebotomy & Lab Bookings</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    28 assigned home collections & center walk-ins across Kamrup Metro & Dispur.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsNewJobModalOpen(true)}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New Job Dispatch</span>
+                </button>
+              </div>
+
+              {/* Status Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {[
+                  { id: 'all', label: 'All Assigned (28)' },
+                  { id: 'home', label: 'Home Collection' },
+                  { id: 'lab', label: 'Lab Visit' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setAssignedFilter(f.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                      assignedFilter === f.id
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Jobs List */}
+              <div className="space-y-3.5">
+                {todaySchedule
+                  .filter((j) => {
+                    if (assignedFilter === 'all') return true;
+                    if (assignedFilter === 'home') return j.type === 'Home Collection';
+                    if (assignedFilter === 'lab') return j.type === 'Lab Visit';
+                    return true;
+                  })
+                  .map((j) => (
+                    <div
+                      key={j.id}
+                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                            <Syringe className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold text-slate-900">{j.patient}</h3>
+                              <span className="text-xs font-mono text-slate-400">({j.id})</span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5">{j.test}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            j.type === 'Home Collection'
+                              ? 'bg-sky-50 text-sky-600 border border-sky-100'
+                              : 'bg-purple-50 text-purple-600 border border-purple-100'
+                          }`}>
+                            {j.type}
+                          </span>
+                          <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full">
+                            {j.time}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1 text-slate-500">
+                            <MapPin className="w-4 h-4 text-slate-400" />
+                            <span>Basistha Chariali, Dispur (Guwahati)</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-slate-500">
+                            <Phone className="w-4 h-4 text-slate-400" />
+                            <span>+91 92791 25091</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleActionClick(j)}
+                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+                          >
+                            <Syringe className="w-3.5 h-3.5" />
+                            <span>{j.action}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => addToast(`Dialing patient ${j.patient} (+91 92791 25091)...`, 'info')}
+                            className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition"
+                            title="Call Patient"
+                          >
+                            <Phone className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => addToast(`Navigation route loaded for ${j.patient} (Dispur Hub).`, 'info')}
+                            className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition"
+                            title="Directions"
+                          >
+                            <MapPin className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 2. TODAY'S SCHEDULE VIEW                                 */}
+          {/* ======================================================== */}
+          {activeMenu === 'schedule' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Today's Shift Roster & Route Schedule</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Morning Shift: 08:00 AM - 04:30 PM • Phlebotomist: Rohit Sharma (Dispur Hub)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-xl">
+                    12 Appointments Scheduled
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+                <div className="space-y-3">
+                  {todaySchedule.map((row, idx) => (
+                    <div
+                      key={row.id}
+                      className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-teal-100/60 text-[#14B8A6] font-black text-sm flex items-center justify-center shrink-0">
+                          #{idx + 1}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-slate-900">{row.time}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              row.type === 'Home Collection' ? 'bg-sky-50 text-sky-600' : 'bg-purple-50 text-purple-600'
+                            }`}>
+                              {row.type}
+                            </span>
+                          </div>
+                          <div className="font-semibold text-slate-800 mt-1">
+                            {row.patient} • <span className="text-slate-500 font-normal">{row.test}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleActionClick(row)}
+                          className="px-4 py-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                        >
+                          {row.action}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 3. SAMPLE COLLECTION WORKBENCH VIEW                      */}
+          {/* ======================================================== */}
+          {activeMenu === 'collection' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Syringe className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Phlebotomy Sample Collection Workbench</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Tag vacutainer tubes with barcode telemetry and log cold-chain transit temperatures.
+                </p>
+              </div>
+
+              {/* Cold Chain Box Monitor Banner */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-teal-800 font-bold block">Cold-Chain Box Temp</span>
+                    <span className="text-xl font-black text-teal-900 font-mono">3.8°C (Optimal 2-8°C)</span>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-blue-800 font-bold block">Bio-Hazard Seal Status</span>
+                    <span className="text-sm font-black text-blue-900">Tamper-Evident Active</span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0">
+                    <Package className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-purple-800 font-bold block">Samples In Cooler</span>
+                    <span className="text-xl font-black text-purple-900 font-mono">8 Specimens</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Barcode scanner simulator */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold text-slate-900">Scan & Tag Specimen Barcode</h3>
+                <div className="flex flex-col sm:flex-row items-center gap-3 max-w-xl text-xs">
+                  <input
+                    type="text"
+                    value={barcodeInput}
+                    onChange={(e) => setBarcodeInput(e.target.value)}
+                    placeholder="Scan or enter barcode (e.g. AS-BC-781005-092)"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-[#14B8A6]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToast(`Barcode ${barcodeInput} verified and associated with cold-box CCB-01!`, 'success');
+                    }}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl transition shrink-0"
+                  >
+                    Scan & Link
+                  </button>
+                </div>
+              </div>
+
+              {/* Ready for collection list */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                <h3 className="text-sm font-bold text-slate-900">Pending Field Collections</h3>
+                <div className="space-y-2.5">
+                  {todaySchedule.filter((r) => r.action === 'Collect Sample').map((row) => (
+                    <div key={row.id} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70 flex items-center justify-between text-xs">
+                      <div>
+                        <strong className="text-slate-900">{row.patient}</strong>
+                        <p className="text-slate-500 mt-0.5">{row.test} • Slot: {row.time}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleActionClick(row)}
+                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                      >
+                        Collect Sample
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 4. TEST PROCESSING WORKBENCH VIEW                        */}
+          {/* ======================================================== */}
+          {activeMenu === 'processing' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Package className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Laboratory Testing & Analyzer Centrifugation</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Central diagnostic equipment status (Mindray BC-5150 Hematology, Roche Cobas c311 Biochemistry).
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {processingList.map((proc) => (
+                  <div key={proc.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-xs font-mono text-teal-600 font-bold">{proc.id}</span>
+                        <h3 className="text-sm font-bold text-slate-900 mt-0.5">{proc.patient}</h3>
+                        <p className="text-xs text-slate-500">{proc.test}</p>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">
+                        ETA: {proc.eta}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex justify-between text-slate-600">
+                        <span>Machine: <strong>{proc.analyzer}</strong></span>
+                        <span className="font-bold text-[#14B8A6]">{proc.progress}%</span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-[#14B8A6] rounded-full transition-all duration-500" style={{ width: `${proc.progress}%` }} />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
+                      <span className="text-slate-500">Status: <strong className="text-slate-800">{proc.status}</strong></span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProcessingList((prev) =>
+                            prev.map((it) => (it.id === proc.id ? { ...it, progress: 100, status: 'Ready for Report' } : it))
+                          );
+                          addToast(`Specimen ${proc.id} testing finished! Ready for report release.`, 'success');
+                        }}
+                        className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl font-bold transition shadow-xs"
+                      >
+                        Authorize Results
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 5. UPLOAD REPORTS DESK VIEW                              */}
+          {/* ======================================================== */}
+          {activeMenu === 'upload-reports' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Upload className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Pathology Diagnostic Report Upload Desk</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Upload signed laboratory PDF reports and release verified findings to patient portal.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Booking ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Test Name</th>
+                        <th className="py-3 px-4 font-bold">Collection Time</th>
+                        <th className="py-3 px-4 font-bold">Cold Box</th>
+                        <th className="py-3 px-4 font-bold text-right">Publish Report</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {[
+                        { id: '#LB10238', patient: 'Sneha Singh', test: 'Complete Blood Count (CBC)', time: '10:15 AM', box: 'CCB-01' },
+                        { id: '#LB10237', patient: 'Amit Verma', test: 'Lipid Profile Screen', time: '11:45 AM', box: 'CCB-02' },
+                        { id: '#LB10236', patient: 'Priya Sharma', test: 'Thyroid Profile', time: '12:30 PM', box: 'CCB-01' }
+                      ].map((j) => (
+                        <tr key={j.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{j.id}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-800">{j.patient}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{j.test}</td>
+                          <td className="py-3.5 px-4 text-slate-500 font-mono">{j.time}</td>
+                          <td className="py-3.5 px-4 text-teal-600 font-mono">{j.box}</td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedJobForPublish({
+                                  id: j.id,
+                                  bookingId: j.id,
+                                  patientName: j.patient,
+                                  testName: j.test,
+                                  collectedAt: j.time
+                                });
+                              }}
+                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                            >
+                              Fill & Publish
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 6. COMPLETED TESTS ARCHIVE VIEW                          */}
+          {/* ======================================================== */}
+          {activeMenu === 'completed' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <CheckCircle2 className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Authorized & Published Test Reports (34)</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Digital archive of authorized diagnostic results available for patient download.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Report ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Test Name</th>
+                        <th className="py-3 px-4 font-bold">Released Time</th>
+                        <th className="py-3 px-4 font-bold">Pathologist</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Digital Report</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {completedList.map((c) => (
+                        <tr key={c.id} className="hover:bg-slate-50/50 transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{c.id}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-800">{c.patient}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{c.test}</td>
+                          <td className="py-3.5 px-4 text-slate-500 font-mono">{c.time}</td>
+                          <td className="py-3.5 px-4 text-slate-600">{c.pathologist}</td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                              {c.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedJobForReportView({
+                                  bookingId: c.id,
+                                  patientName: c.patient,
+                                  testName: c.test,
+                                  date: 'Nov 13, 2026',
+                                  barcode: 'ZM-ASSAM-9021',
+                                  status: 'Report Ready'
+                                });
+                              }}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition"
+                            >
+                              View PDF
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 7. NOTIFICATIONS VIEW                                    */}
+          {/* ======================================================== */}
+          {activeMenu === 'notifications' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Phlebotomy Dispatch & Field Alerts</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Urgent notifications from Dispur Central Laboratory and hospital partners.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('All field dispatch notifications marked as resolved.', 'success')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 self-start sm:self-auto"
+                >
+                  Mark All Resolved
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                {notificationsList.map((n) => (
+                  <div key={n.id} className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition flex items-start justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-900">{n.title}</p>
+                      <p className="text-slate-600 mt-0.5">{n.desc}</p>
+                      <span className="text-slate-400 font-mono text-[10px] mt-1 block">{n.time}</span>
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 8. MY PROFILE VIEW                                       */}
+          {/* ======================================================== */}
+          {activeMenu === 'profile' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <User className="w-6 h-6 text-[#14B8A6]" />
+                  <span>Phlebotomist & Lab Executive Profile</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Operational credentials and active field shift information.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-xl space-y-4">
+                <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 font-black text-2xl flex items-center justify-center">
+                    R
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">Rohit Sharma</h3>
+                    <p className="text-xs text-teal-600 font-bold mt-0.5">Senior Lab Technician & Phlebotomist Lead</p>
+                    <p className="text-[11px] text-slate-400 font-mono mt-0.5">Employee ID: ZM-LAB-042</p>
+                  </div>
+                </div>
+
+                <div className="text-xs space-y-2 bg-slate-50 p-4 rounded-xl text-slate-600">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Assigned Diagnostic Hub:</span>
+                    <strong className="text-slate-800">Guwahati Central Hub (Dispur)</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Duty Shift:</span>
+                    <strong className="text-slate-800">08:00 AM - 04:30 PM (Active)</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Contact Number:</span>
+                    <strong className="text-slate-800 font-mono">+91 92791 25091</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Field Transit Vehicle:</span>
+                    <strong className="text-slate-800">Motorbike (AS-01-EE-4921)</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Cold Chain Box ID:</span>
+                    <strong className="text-teal-600 font-mono font-bold">CCB-01 (3.8°C Monitored)</strong>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => addToast('Executive credentials verified and active with central dispatch.', 'success')}
+                  className="w-full py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl text-xs transition shadow-xs"
+                >
+                  Verify Active Shift Status
+                </button>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 

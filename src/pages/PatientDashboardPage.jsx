@@ -31,7 +31,16 @@ import {
   X,
   Eye,
   ExternalLink,
-  Plus
+  Plus,
+  MapPin,
+  Phone,
+  Mail,
+  Trash2,
+  Edit2,
+  ShieldCheck,
+  Share2,
+  FileCheck,
+  RotateCcw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -145,6 +154,42 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       text: 'Regular lipid profile and HbA1c screening helps manage metabolic health early.'
     }
   ];
+
+  const [bookingFilter, setBookingFilter] = useState('all');
+  const [orderFilter, setOrderFilter] = useState('all');
+  const [profileForm, setProfileForm] = useState({
+    name: 'Ajayendra Shekhar',
+    uhid: 'ZM-PAT-781001',
+    email: 'ajayendra@example.com',
+    phone: '+91 92791 25091',
+    age: '34',
+    gender: 'Male',
+    bloodGroup: 'B+',
+    emergencyContact: 'Minati Shekhar (+91 92791 25091)',
+    city: 'Guwahati, Assam'
+  });
+
+  const handleCancelBooking = (bookingId) => {
+    setLabBookings((prev) =>
+      prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b))
+    );
+    addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
+  };
+
+  const handleDeleteFamilyMember = (memberId) => {
+    setFamilyMembers((prev) => prev.filter((m) => m.id !== memberId));
+    addToast('Family member removed from records.', 'info');
+  };
+
+  const handleDeleteAddress = (addressId) => {
+    setAddresses((prev) => prev.filter((a) => a.id !== addressId));
+    addToast('Address removed.', 'info');
+  };
+
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    addToast('Patient profile updated successfully!', 'success');
+  };
 
   // Handlers for interactive actions
   const handleNextHealthTip = () => {
@@ -377,10 +422,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('family');
                 setIsSidebarOpen(false);
-                setIsAddFamilyModalOpen(true);
+                addToast('Viewing Family Health Beneficiaries', 'info');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'family'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <Users className="w-4 h-4" />
               <span>Family Members</span>
@@ -608,6 +658,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
         {/* Dashboard Canvas */}
         <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden">
+          {activeMenu === 'dashboard' && (
+            <>
           {/* ======================================================== */}
           {/* 3. HERO GREETING BANNER WITH STETHOSCOPE GRAPHIC         */}
           {/* ======================================================== */}
@@ -631,7 +683,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Card 1: Total Bookings */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('bookings')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
@@ -640,16 +695,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Total Bookings
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  8
+                  {labBookings.length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
-                  <span>↑ +33%</span>
+                  <span>View All →</span>
                 </div>
               </div>
             </div>
 
             {/* Card 2: Upcoming Appointments */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('bookings')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                 <TestTubeIcon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
@@ -660,11 +718,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   2
                 </div>
+                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
+                  <span>Scheduled →</span>
+                </div>
               </div>
             </div>
 
             {/* Card 3: Medicine Orders */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('orders')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
                 <Package className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
@@ -673,13 +737,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Orders
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  5
+                  {orders.length}
+                </div>
+                <div className="text-[10px] sm:text-xs font-bold text-sky-600 mt-0.5 flex items-center gap-0.5">
+                  <span>Track →</span>
                 </div>
               </div>
             </div>
 
             {/* Card 4: Reports Available */}
-            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md transition">
+            <div
+              onClick={() => setActiveMenu('reports')}
+              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
                 <FileText className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
@@ -689,6 +759,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   4
+                </div>
+                <div className="text-[10px] sm:text-xs font-bold text-purple-600 mt-0.5 flex items-center gap-0.5">
+                  <span>Download →</span>
                 </div>
               </div>
             </div>
@@ -1094,6 +1167,645 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               </div>
             </div>
           </div>
+            </>
+          )}
+
+          {/* ======================================================== */}
+          {/* 1. MY LAB BOOKINGS VIEW                                  */}
+          {/* ======================================================== */}
+          {activeMenu === 'bookings' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
+                    <span>My Diagnostic & Lab Bookings</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage all your home sample collections and lab visits across Assam.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/diagnostics')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Book New Lab Test</span>
+                </button>
+              </div>
+
+              {/* Status Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {[
+                  { id: 'all', label: 'All Bookings' },
+                  { id: 'confirmed', label: 'Confirmed' },
+                  { id: 'report-ready', label: 'Report Ready' },
+                  { id: 'completed', label: 'Completed' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setBookingFilter(f.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                      bookingFilter === f.id
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Bookings List */}
+              <div className="space-y-3.5">
+                {labBookings
+                  .filter((b) => {
+                    if (bookingFilter === 'all') return true;
+                    if (bookingFilter === 'confirmed')
+                      return (b.status || '').toLowerCase().includes('confirm') || (b.status || '').toLowerCase().includes('schedule');
+                    if (bookingFilter === 'report-ready')
+                      return (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('ready');
+                    if (bookingFilter === 'completed')
+                      return (b.status || '').toLowerCase().includes('complete');
+                    return true;
+                  })
+                  .map((b) => (
+                    <div
+                      key={b.id || b.bookingId}
+                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                            <FlaskConical className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900">{b.testName}</h3>
+                            <div className="text-xs text-slate-400 font-mono mt-0.5">
+                              ID: {b.bookingId || b.id} • Patient: {b.patientName || 'Self'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                              (b.status || '').toLowerCase().includes('report')
+                                ? 'bg-purple-50 text-purple-600 border border-purple-200'
+                                : (b.status || '').toLowerCase().includes('confirm')
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                : (b.status || '').toLowerCase().includes('cancel')
+                                ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                                : 'bg-blue-50 text-blue-600 border border-blue-200'
+                            }`}
+                          >
+                            {b.status || 'Confirmed'}
+                          </span>
+                          <span className="text-sm font-black text-slate-900 ml-1">
+                            ₹{b.price || 499}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                        <div className="flex flex-wrap items-center gap-4">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-4 h-4 text-slate-400" />
+                            <span>{b.date} • {b.time || '10:00 AM'}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Home className="w-4 h-4 text-teal-500" />
+                            <span className="font-medium">{b.type || 'Home Collection'}</span>
+                          </div>
+                          {b.labExecutive && (
+                            <div className="flex items-center gap-1.5 text-slate-500">
+                              <User className="w-4 h-4 text-slate-400" />
+                              <span>Phlebotomist: <strong className="text-slate-700">{b.labExecutive}</strong></span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {(b.status || '').toLowerCase().includes('report') && (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReportModal(b.testName, b.date)}
+                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                            >
+                              <FileCheck className="w-3.5 h-3.5" />
+                              <span>View Report</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => addToast(`Phlebotomist ${b.labExecutive || 'Bikash Das'} is active (Cold-Chain Box CCB-04).`, 'info')}
+                            className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition"
+                          >
+                            Track Phlebotomist
+                          </button>
+                          {!(b.status || '').toLowerCase().includes('cancel') && (
+                            <button
+                              type="button"
+                              onClick={() => handleCancelBooking(b.id || b.bookingId)}
+                              className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 2. MY MEDICINE ORDERS VIEW                               */}
+          {/* ======================================================== */}
+          {activeMenu === 'orders' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <ShoppingCart className="w-6 h-6 text-[#14B8A6]" />
+                    <span>My Medicine Orders</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Track genuine prescription pharmacy orders delivered across Assam.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/medicines')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Buy Medicines</span>
+                </button>
+              </div>
+
+              {/* Order Status Filters */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {[
+                  { id: 'all', label: 'All Orders' },
+                  { id: 'out', label: 'Out for Delivery' },
+                  { id: 'delivered', label: 'Delivered' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setOrderFilter(f.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                      orderFilter === f.id
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Orders List */}
+              <div className="space-y-3.5">
+                {orders
+                  .filter((o) => {
+                    if (orderFilter === 'all') return true;
+                    if (orderFilter === 'out') return (o.status || '').toLowerCase().includes('out');
+                    if (orderFilter === 'delivered') return (o.status || '').toLowerCase().includes('deliver');
+                    return true;
+                  })
+                  .map((order) => (
+                    <div
+                      key={order.id}
+                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                            <Package className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold text-slate-900">{order.id}</h3>
+                              <span className="text-xs text-slate-400 font-medium">• {order.date}</span>
+                            </div>
+                            <div className="text-xs text-slate-500 mt-0.5 truncate max-w-md">
+                              {order.deliveryAddress || 'Guwahati Central Hub Delivery'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                              order.status === 'Delivered'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                : 'bg-sky-50 text-sky-600 border border-sky-200'
+                            }`}
+                          >
+                            {order.status}
+                          </span>
+                          <span className="text-sm font-black text-slate-900 ml-1">
+                            ₹{order.totalAmount || order.total || 340}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Items Preview */}
+                      <div className="bg-slate-50/60 rounded-xl p-3 space-y-2">
+                        {(order.items || [
+                          { name: 'Paracetamol 500 mg', dosage: '500 mg', quantity: 2, price: 170 }
+                        ]).map((it, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-xs text-slate-700">
+                            <div className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6]" />
+                              <span className="font-semibold text-slate-800">{it.name}</span>
+                              <span className="text-slate-400 font-normal">({it.dosage || 'Standard'})</span>
+                            </div>
+                            <span className="font-mono text-slate-600">Qty: {it.quantity} • ₹{it.price}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <div className="text-xs text-slate-500">
+                          Payment: <strong className="text-slate-700 font-semibold">{order.paymentMethod || 'Prepaid UPI'}</strong>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenOrderModal(order.items?.[0]?.name || 'Medicines', order.id)}
+                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>View Invoice & Tracking</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              addToast(`Medicines from order ${order.id} re-added to cart!`, 'success');
+                              openCart();
+                            }}
+                            className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Reorder</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 3. MY DIAGNOSTIC REPORTS VIEW                            */}
+          {/* ======================================================== */}
+          {activeMenu === 'reports' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <FileText className="w-6 h-6 text-[#14B8A6]" />
+                    <span>My Diagnostic Test Reports</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Digital reports authorized by certified MD Pathologists (Dispur Central Laboratory).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/diagnostics')}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Book Another Test</span>
+                </button>
+              </div>
+
+              {/* Reports Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    test: 'Complete Blood Count (CBC)',
+                    date: 'Nov 07, 2026',
+                    id: 'ZM-REP-9041',
+                    status: 'Normal',
+                    pathologist: 'Dr. N. Bora, MD (Pathology)'
+                  },
+                  {
+                    test: 'Lipid Profile Screen',
+                    date: 'Oct 28, 2026',
+                    id: 'ZM-REP-8812',
+                    status: 'Desirable',
+                    pathologist: 'Dr. Arindam Sharma, MD'
+                  },
+                  {
+                    test: 'Liver Function Test (LFT)',
+                    date: 'Oct 20, 2026',
+                    id: 'ZM-REP-8450',
+                    status: 'Normal',
+                    pathologist: 'Dr. N. Bora, MD (Pathology)'
+                  },
+                  {
+                    test: 'Thyroid Profile (T3, T4, TSH)',
+                    date: 'Sep 15, 2026',
+                    id: 'ZM-REP-7901',
+                    status: 'Optimal',
+                    pathologist: 'Dr. S. Das, MD (Biochemistry)'
+                  }
+                ].map((rep, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                          <FileCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900">{rep.test}</h3>
+                          <p className="text-xs text-slate-400 font-mono mt-0.5">
+                            {rep.id} • {rep.date}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                        {rep.status}
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl flex items-center justify-between">
+                      <span>Pathologist: <strong className="text-slate-700">{rep.pathologist}</strong></span>
+                      <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenReportModal(rep.test, rep.date)}
+                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>View Report</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success')}
+                        className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
+                        title="Download PDF"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => addToast('Secure doctor viewing link copied to clipboard!', 'info')}
+                        className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
+                        title="Share with Doctor"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 4. FAMILY MEMBERS VIEW                                   */}
+          {/* ======================================================== */}
+          {activeMenu === 'family' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Family Members & Beneficiaries</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage profiles, book lab tests, and track health vitals for your loved ones.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddFamilyModalOpen(true)}
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Family Member</span>
+                </button>
+              </div>
+
+              {/* Members Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {familyMembers.map((member) => (
+                  <div
+                    key={member.id}
+                    className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 font-black text-base flex items-center justify-center shrink-0">
+                            {member.name.charAt(0)}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900">{member.name}</h3>
+                            <span className="inline-block bg-teal-50 text-[#14B8A6] text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">
+                              {member.relationship || 'Family'}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg">
+                          {member.bloodGroup || 'O+'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-50 p-3 rounded-xl text-slate-600">
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Age / Gender</span>
+                          <span className="font-bold text-slate-800">{member.age || '34'} yrs • {member.gender || 'Male'}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px]">Contact</span>
+                          <span className="font-bold text-slate-800 truncate block">{member.phone || '+91 92791 25091'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addToast(`Booking lab test for ${member.name}...`, 'info');
+                          navigate('/diagnostics');
+                        }}
+                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
+                      >
+                        Book Test
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFamilyMember(member.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
+                        title="Remove member"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 5. MY PROFILE VIEW                                       */}
+          {/* ======================================================== */}
+          {activeMenu === 'profile' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <User className="w-6 h-6 text-[#14B8A6]" />
+                  <span>My Profile & Saved Addresses</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage your personal health identity, contact info, and Assam delivery locations.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Left: Profile Form */}
+                <div className="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
+                    <span>Personal Health Identity</span>
+                  </h3>
+
+                  <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Full Name</label>
+                        <input
+                          type="text"
+                          value={profileForm.name}
+                          onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Unique Health ID (UHID)</label>
+                        <input
+                          type="text"
+                          value={profileForm.uhid}
+                          disabled
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Email Address</label>
+                        <input
+                          type="email"
+                          value={profileForm.email}
+                          onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Phone Number</label>
+                        <input
+                          type="text"
+                          value={profileForm.phone}
+                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Blood Group</label>
+                        <input
+                          type="text"
+                          value={profileForm.bloodGroup}
+                          onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold mb-1">Emergency Contact</label>
+                        <input
+                          type="text"
+                          value={profileForm.emergencyContact}
+                          onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                      >
+                        Save Profile Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Right: Saved Addresses */}
+                <div className="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#14B8A6]" />
+                        <span>Saved Assam Addresses</span>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setIsAddAddressModalOpen(true)}
+                        className="text-xs text-[#14B8A6] hover:underline font-bold flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add New</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {addresses.map((addr) => (
+                        <div
+                          key={addr.id}
+                          className="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs"
+                        >
+                          <div>
+                            <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-[11px] inline-block mb-1">
+                              {addr.tag || 'Home'}
+                            </span>
+                            <p className="text-slate-700 font-medium leading-relaxed">{addr.addressLine || addr.street}</p>
+                            <p className="text-slate-400 text-[11px] mt-0.5">{addr.locality}, {addr.city} - {addr.pincode}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAddress(addr.id)}
+                            className="p-1 text-slate-400 hover:text-rose-600 transition"
+                            title="Delete Address"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
