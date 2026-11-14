@@ -27,7 +27,8 @@ import {
   ExternalLink,
   ShieldCheck,
   Check,
-  Plus
+  Plus,
+  X
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import {
@@ -47,6 +48,7 @@ export default function LabDashboardPage() {
 
   // Navigation & Interactive State
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState('Thu, Nov 13, 2026');
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
@@ -164,29 +166,53 @@ export default function LabDashboardPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden select-none">
+    <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden select-none relative">
+      {/* Mobile Drawer Backdrop */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+        />
+      )}
+
       {/* ======================================================== */}
       {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
-      <aside className="w-64 bg-[#0B2238] flex flex-col shrink-0 border-r border-[#081827] justify-between relative overflow-hidden">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0B2238] flex flex-col shrink-0 border-r border-[#081827] justify-between relative overflow-hidden transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         {/* Top: Logo & Menu Items */}
         <div className="flex flex-col flex-1 min-h-0">
           {/* Brand Header */}
-          <div className="h-16 flex items-center gap-3 px-5 border-b border-white/5 shrink-0">
-            {/* Logo Cross */}
-            <img
-              src="/logo.png"
-              alt="ZESTMED Logo"
-              className="w-8 h-8 object-contain shrink-0 select-none"
-            />
-            <div>
-              <div className="text-white font-extrabold text-base tracking-wide leading-none">
-                ZESTMED
-              </div>
-              <div className="text-[#88A0B8] text-[10.5px] font-medium mt-1 leading-none">
-                Healthcare & Diagnostics
+          <div className="h-16 flex items-center justify-between px-5 border-b border-white/5 shrink-0">
+            <div className="flex items-center gap-3">
+              {/* Logo Cross */}
+              <img
+                src="/logo.png"
+                alt="ZESTMED Logo"
+                className="w-8 h-8 object-contain shrink-0 select-none"
+              />
+              <div>
+                <div className="text-white font-extrabold text-base tracking-wide leading-none">
+                  ZESTMED
+                </div>
+                <div className="text-[#88A0B8] text-[10.5px] font-medium mt-1 leading-none">
+                  Healthcare & Diagnostics
+                </div>
               </div>
             </div>
+
+            {/* Close button on mobile */}
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg transition"
+              title="Close Menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation Items */}
@@ -194,7 +220,10 @@ export default function LabDashboardPage() {
             {/* Dashboard (Active Pill) */}
             <button
               type="button"
-              onClick={() => setActiveMenu('dashboard')}
+              onClick={() => {
+                setActiveMenu('dashboard');
+                setIsSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'dashboard'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
@@ -210,6 +239,7 @@ export default function LabDashboardPage() {
               type="button"
               onClick={() => {
                 setActiveMenu('assigned');
+                setIsSidebarOpen(false);
                 addToast('Viewing all 28 assigned bookings for Assam region', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -227,6 +257,7 @@ export default function LabDashboardPage() {
               type="button"
               onClick={() => {
                 setActiveMenu('schedule');
+                setIsSidebarOpen(false);
                 addToast("Displaying Today's Phlebotomy Dispatch Schedule (12 Appointments)", 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -243,6 +274,7 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setIsSidebarOpen(false);
                 setSelectedJobForCollection({
                   id: '#LB10241',
                   bookingId: '#LB10241',
@@ -267,6 +299,7 @@ export default function LabDashboardPage() {
               type="button"
               onClick={() => {
                 setActiveMenu('processing');
+                setIsSidebarOpen(false);
                 addToast('Viewing 6 active specimens currently in analyzer centrifuge', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -283,6 +316,7 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setIsSidebarOpen(false);
                 setSelectedJobForPublish({
                   id: '#LB10238',
                   bookingId: '#LB10238',
@@ -302,6 +336,7 @@ export default function LabDashboardPage() {
               type="button"
               onClick={() => {
                 setActiveMenu('completed');
+                setIsSidebarOpen(false);
                 addToast('Viewing 34 verified and published test results', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -317,7 +352,10 @@ export default function LabDashboardPage() {
             {/* Notifications with red indicator dot */}
             <button
               type="button"
-              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              onClick={() => {
+                setIsSidebarOpen(false);
+                setIsNotificationsOpen(!isNotificationsOpen);
+              }}
               className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
             >
               <div className="flex items-center gap-3">
@@ -332,6 +370,7 @@ export default function LabDashboardPage() {
               type="button"
               onClick={() => {
                 setActiveMenu('profile');
+                setIsSidebarOpen(false);
                 addToast('Phlebotomy ID: PH-ASM-204 | Assigned: Guwahati Hub', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -348,6 +387,7 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setIsSidebarOpen(false);
                 addToast('Signed out of Lab Executive session. Returned to Public Store.', 'info');
                 navigate('/');
               }}
@@ -381,49 +421,49 @@ export default function LabDashboardPage() {
       {/* ======================================================== */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
+        <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
-          <div className="flex items-center gap-4 flex-1 max-w-xl">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 max-w-xl min-w-0 mr-2 sm:mr-4">
             <button
               type="button"
-              onClick={() => addToast('Sidebar menu toggled', 'info')}
-              className="p-1.5 text-slate-700 hover:text-slate-900 transition"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-1.5 -ml-1 text-slate-700 hover:text-slate-900 transition rounded-lg hover:bg-slate-100 shrink-0"
               title="Toggle Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
             {/* Prominent Search Bar */}
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <div className="relative w-full min-w-0">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search booking ID, patient, test..."
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
+                placeholder="Search booking ID, patient..."
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
               />
             </div>
           </div>
 
           {/* Right: Notifications Bell & User Profile */}
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* Notification Bell with Red Badge */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="relative p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+                className="relative p-1.5 sm:p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
               </button>
 
               {/* Notifications Popover */}
               {isNotificationsOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-3.5 z-30"
+                  className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 p-3.5 z-30"
                   onMouseLeave={() => setIsNotificationsOpen(false)}
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -432,7 +472,7 @@ export default function LabDashboardPage() {
                       3 New
                     </span>
                   </div>
-                  <div className="space-y-2 pt-2.5">
+                  <div className="space-y-2 pt-2.5 max-h-60 overflow-y-auto">
                     {notificationsList.map((n) => (
                       <div key={n.id} className="text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
                         <p className="font-bold text-slate-900 leading-tight">{n.title}</p>
@@ -450,10 +490,10 @@ export default function LabDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2.5 hover:opacity-90 transition text-left"
+                className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Circular Photo Avatar */}
-                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-[#14B8A6]/20 bg-slate-100 shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#14B8A6]/20 bg-slate-100 shrink-0">
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                     alt="Rohit Das"
@@ -464,7 +504,7 @@ export default function LabDashboardPage() {
                     }}
                   />
                 </div>
-                <div>
+                <div className="hidden sm:block">
                   <div className="text-xs font-bold text-slate-900 leading-none">
                     Rohit Das
                   </div>
@@ -472,13 +512,13 @@ export default function LabDashboardPage() {
                     Lab Executive
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
               {/* Profile Dropdown Menu */}
               {isProfileOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-30"
+                  className="absolute right-0 mt-2 w-56 sm:w-60 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-30"
                   onMouseLeave={() => setIsProfileOpen(false)}
                 >
                   <div className="px-4 py-2 border-b border-slate-100">
@@ -513,15 +553,15 @@ export default function LabDashboardPage() {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className="p-6 sm:p-8 space-y-6">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
           {/* ======================================================== */}
           {/* 3. GREETING & DATE FILTER ROW                            */}
           {/* ======================================================== */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Good Morning, Rohit</span>
-                <span className="text-2xl inline-block transform hover:rotate-12 transition-transform select-none">👋</span>
+                <span className="text-xl sm:text-2xl inline-block transform hover:rotate-12 transition-transform select-none">👋</span>
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
                 Here is your daily work overview and assigned tasks.
@@ -533,7 +573,7 @@ export default function LabDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition"
+                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition"
               >
                 <Calendar className="w-4 h-4 text-slate-500" />
                 <span>{dateRange}</span>
@@ -569,92 +609,92 @@ export default function LabDashboardPage() {
           {/* ======================================================== */}
           {/* 4. TOP 6 METRIC KPI CARDS ROW                            */}
           {/* ======================================================== */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
             {/* 1. Assigned Bookings */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Assigned Bookings
+                  Assigned
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   28
                 </div>
               </div>
             </div>
 
             {/* 2. Today's Appointments */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Today's Appointments
+                  Today's
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   12
                 </div>
               </div>
             </div>
 
             {/* 3. Samples Collected */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                 <Syringe className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Samples Collected
+                  Collected
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   8
                 </div>
               </div>
             </div>
 
             {/* 4. Tests Processing */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
                 <FlaskConical className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Tests Processing
+                  Processing
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   6
                 </div>
               </div>
             </div>
 
             {/* 5. Reports Pending */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
                 <Upload className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Reports Pending
+                  Pending
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   4
                 </div>
               </div>
             </div>
 
             {/* 6. Completed Tests */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+            <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] text-slate-500 font-medium leading-none">
-                  Completed Tests
+                  Completed
                 </div>
-                <div className="text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
+                <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
                   34
                 </div>
               </div>
@@ -666,7 +706,7 @@ export default function LabDashboardPage() {
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Today's Schedule (12) (~65% width -> lg:col-span-8) */}
-            <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-[#14B8A6]" />
@@ -692,19 +732,19 @@ export default function LabDashboardPage() {
                 {todaySchedule.map((row) => (
                   <div
                     key={row.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-3"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2.5 sm:gap-3"
                   >
                     {/* Time Badge */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold shrink-0">
                         {row.time}
                       </div>
 
                       {/* Patient Info */}
-                      <div className="min-w-[130px]">
-                        <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900">
-                          <User className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{row.patient}</span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900 truncate">
+                          <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="truncate">{row.patient}</span>
                         </div>
                         <div className="text-[11px] text-slate-400 font-mono mt-0.5">
                           {row.id}
@@ -713,32 +753,29 @@ export default function LabDashboardPage() {
                     </div>
 
                     {/* Test Name */}
-                    <div className="text-xs font-medium text-slate-800 min-w-[140px]">
+                    <div className="text-xs font-medium text-slate-800 min-w-0 truncate">
                       {row.test}
                     </div>
 
-                    {/* Type Badge (Home Collection or Lab Visit) */}
-                    <div>
+                    {/* Type Badge & Action Button Row on Mobile */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/60 shrink-0">
                       {row.type === 'Home Collection' ? (
-                        <span className="inline-flex items-center gap-1.5 bg-sky-50 text-sky-600 border border-sky-100 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1.5 bg-sky-50 text-sky-600 border border-sky-100 text-[10px] sm:text-[11px] font-semibold px-2.5 py-1 rounded-full">
                           <Home className="w-3 h-3 text-sky-500" />
                           <span>Home Collection</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 bg-purple-50 text-purple-600 border border-purple-100 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1.5 bg-purple-50 text-purple-600 border border-purple-100 text-[10px] sm:text-[11px] font-semibold px-2.5 py-1 rounded-full">
                           <Building2 className="w-3 h-3 text-purple-500" />
                           <span>Lab Visit</span>
                         </span>
                       )}
-                    </div>
 
-                    {/* Action Button */}
-                    <div>
                       {row.action === 'Collect Sample' ? (
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs transition"
+                          className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-semibold shadow-xs transition"
                         >
                           Collect Sample
                         </button>
@@ -746,12 +783,12 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-white hover:bg-teal-50 text-[#14B8A6] border border-[#14B8A6] px-4 py-1.5 rounded-xl text-xs font-semibold transition"
+                          className="bg-white hover:bg-teal-50 text-[#14B8A6] border border-[#14B8A6] px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-xl text-xs font-semibold transition"
                         >
                           Check In
                         </button>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-emerald-200">
                           <Check className="w-3.5 h-3.5" />
                           <span>{row.action}</span>
                         </span>
@@ -765,7 +802,7 @@ export default function LabDashboardPage() {
             {/* Right Column: Task Progress & Quick Actions (~35% width -> lg:col-span-4) */}
             <div className="lg:col-span-4 flex flex-col gap-6">
               {/* Upper Card: Task Progress Today */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div className="flex items-center gap-2 mb-3">
                   <FlaskConical className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
@@ -774,7 +811,7 @@ export default function LabDashboardPage() {
                 </div>
 
                 {/* Donut Chart + Legend Side-by-Side */}
-                <div className="flex items-center justify-between gap-4 py-1">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-1">
                   {/* SVG Donut Chart with center text 18 */}
                   <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
                     <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
@@ -863,7 +900,7 @@ export default function LabDashboardPage() {
               </div>
 
               {/* Lower Card: Quick Actions */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
@@ -871,7 +908,7 @@ export default function LabDashboardPage() {
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                   {/* 1. Mark Collection */}
                   <button
                     type="button"
@@ -963,7 +1000,7 @@ export default function LabDashboardPage() {
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Recent Activities (~45% width -> lg:col-span-5) */}
-            <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-[#14B8A6]" />
@@ -984,61 +1021,61 @@ export default function LabDashboardPage() {
               {/* 4 Activity Items matching image */}
               <div className="space-y-3 pt-1">
                 {/* Activity 1 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800 truncate">
                       Report uploaded for LB10238
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
                     10:24 AM
                   </span>
                 </div>
 
                 {/* Activity 2 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800 truncate">
                       Sample collected from Amit Verma (LB10237)
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
                     09:50 AM
                   </span>
                 </div>
 
                 {/* Activity 3 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                       <FlaskConical className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800 truncate">
                       Test processing started for LB10236
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
                     09:20 AM
                   </span>
                 </div>
 
                 {/* Activity 4 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                       <Calendar className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800 truncate">
                       New booking assigned – LB10245
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
                     08:45 AM
                   </span>
                 </div>
@@ -1046,7 +1083,7 @@ export default function LabDashboardPage() {
             </div>
 
             {/* Right Column: Assigned Tests Overview (~55% width -> lg:col-span-7) */}
-            <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-[#14B8A6]" />
                 <h3 className="text-sm font-bold text-slate-900">

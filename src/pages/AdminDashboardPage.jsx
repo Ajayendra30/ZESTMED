@@ -39,6 +39,7 @@ export default function AdminDashboardPage() {
 
   // Navigation & Interactive State
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUsersExpanded, setIsUsersExpanded] = useState(true);
   const [isMedicinesExpanded, setIsMedicinesExpanded] = useState(false);
   const [dateRange, setDateRange] = useState('Last 30 Days');
@@ -163,27 +164,51 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden">
+    <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden select-none relative">
+      {/* Mobile Drawer Backdrop */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden transition-opacity"
+        />
+      )}
+
       {/* ======================================================== */}
       {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
-      <aside className="w-64 bg-[#0B2238] flex flex-col shrink-0 select-none border-r border-[#081827]">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0B2238] flex flex-col shrink-0 select-none border-r border-[#081827] transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         {/* Brand Header */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-white/5">
-          {/* Logo Cross */}
-          <img
-            src="/logo.png"
-            alt="ZESTMED Logo"
-            className="w-8 h-8 object-contain shrink-0 select-none"
-          />
-          <div>
-            <div className="text-white font-extrabold text-base tracking-wide leading-none">
-              ZESTMED
-            </div>
-            <div className="text-[#88A0B8] text-[10.5px] font-medium mt-1 leading-none">
-              Healthcare & Diagnostics
+        <div className="h-16 flex items-center justify-between px-5 border-b border-white/5 shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Logo Cross */}
+            <img
+              src="/logo.png"
+              alt="ZESTMED Logo"
+              className="w-8 h-8 object-contain shrink-0 select-none"
+            />
+            <div>
+              <div className="text-white font-extrabold text-base tracking-wide leading-none">
+                ZESTMED
+              </div>
+              <div className="text-[#88A0B8] text-[10.5px] font-medium mt-1 leading-none">
+                Healthcare & Diagnostics
+              </div>
             </div>
           </div>
+
+          {/* Close button on mobile */}
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg transition"
+            title="Close Menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Navigation Items */}
@@ -191,7 +216,10 @@ export default function AdminDashboardPage() {
           {/* Dashboard Item (Active Pill) */}
           <button
             type="button"
-            onClick={() => setActiveMenu('dashboard')}
+            onClick={() => {
+              setActiveMenu('dashboard');
+              setIsSidebarOpen(false);
+            }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'dashboard'
                 ? 'bg-[#14B8A6] text-white shadow-sm'
@@ -226,6 +254,7 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => {
                     setActiveMenu('users-patients');
+                    setIsSidebarOpen(false);
                     addToast('Filtered view: Registered Assam Patients', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
@@ -239,6 +268,7 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => {
                     setActiveMenu('users-executives');
+                    setIsSidebarOpen(false);
                     addToast('Filtered view: On-Duty Lab Executives & Phlebotomists', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
@@ -252,6 +282,7 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => {
                     setActiveMenu('users-admins');
+                    setIsSidebarOpen(false);
                     addToast('Super Admin Role Overview', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
@@ -286,7 +317,10 @@ export default function AdminDashboardPage() {
               <div className="pl-9 pr-2 py-1 space-y-1">
                 <button
                   type="button"
-                  onClick={() => addToast('Opening Central Pharmacy Inventory', 'info')}
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    addToast('Opening Central Pharmacy Inventory', 'info');
+                  }}
                   className="w-full text-left py-1 text-xs text-[#88A0B8] hover:text-white flex items-center gap-2"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -294,7 +328,10 @@ export default function AdminDashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => addToast('Opening Low Stock Warning List', 'info')}
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    addToast('Opening Low Stock Warning List', 'info');
+                  }}
                   className="w-full text-left py-1 text-xs text-[#88A0B8] hover:text-white flex items-center gap-2"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -309,6 +346,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('diagnostic-tests');
+              setIsSidebarOpen(false);
               addToast('Diagnostic Tests Catalog', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -326,6 +364,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('lab-bookings');
+              setIsSidebarOpen(false);
               addToast('Opening Lab Bookings Central Schedule', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -343,6 +382,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('orders');
+              setIsSidebarOpen(false);
               addToast('All Customer Medicine Orders', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -360,6 +400,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('prescriptions');
+              setIsSidebarOpen(false);
               addToast('Chief Pharmacist Prescription Queue', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -377,6 +418,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('inventory');
+              setIsSidebarOpen(false);
               addToast('Warehouse Racks & Stock Levels', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -394,6 +436,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('payments');
+              setIsSidebarOpen(false);
               addToast('Payment Gateways & Ledger', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -411,6 +454,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('analytics');
+              setIsSidebarOpen(false);
               addToast('Clinical & Revenue Analytics', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -426,7 +470,10 @@ export default function AdminDashboardPage() {
           {/* Notifications with red dot */}
           <button
             type="button"
-            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            onClick={() => {
+              setIsSidebarOpen(false);
+              setIsNotificationsOpen(!isNotificationsOpen);
+            }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'notifications'
                 ? 'bg-[#14B8A6] text-white shadow-sm'
@@ -446,6 +493,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => {
               setActiveMenu('settings');
+              setIsSidebarOpen(false);
               addToast('Platform Settings & Demo Controls', 'info');
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
@@ -476,49 +524,49 @@ export default function AdminDashboardPage() {
       {/* ======================================================== */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
+        <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
-          <div className="flex items-center gap-4 flex-1 max-w-xl">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 max-w-xl min-w-0 mr-2 sm:mr-4">
             <button
               type="button"
-              onClick={() => addToast('Sidebar menu toggled', 'info')}
-              className="p-1.5 text-slate-700 hover:text-slate-900 transition"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-1.5 -ml-1 text-slate-700 hover:text-slate-900 transition rounded-lg hover:bg-slate-100 shrink-0"
               title="Toggle Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
             {/* Prominent Search Bar */}
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <div className="relative w-full min-w-0">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search patients, orders, bookings, medicines..."
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
+                placeholder="Search patients, orders, bookings..."
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
               />
             </div>
           </div>
 
           {/* Right: Notifications + User Profile */}
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* Notification Bell with Red Badge */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="relative p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+                className="relative p-1.5 sm:p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
               </button>
 
               {/* Notifications Popover */}
               {isNotificationsOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-30"
+                  className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-30"
                   onMouseLeave={() => setIsNotificationsOpen(false)}
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -527,7 +575,7 @@ export default function AdminDashboardPage() {
                       3 New
                     </span>
                   </div>
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-2 pt-2 max-h-60 overflow-y-auto">
                     {notificationsList.map((n) => (
                       <div key={n.id} className="text-xs p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
                         <p className="text-slate-700 leading-snug">{n.text}</p>
@@ -544,13 +592,13 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2.5 hover:opacity-90 transition text-left"
+                className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Avatar with initial 'A' in teal */}
-                <div className="w-9 h-9 rounded-full bg-[#14B8A6] text-white font-bold text-sm flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#14B8A6] text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
                   A
                 </div>
-                <div>
+                <div className="hidden sm:block">
                   <div className="text-xs font-bold text-slate-900 leading-none">
                     Admin
                   </div>
@@ -563,7 +611,7 @@ export default function AdminDashboardPage() {
               {/* Profile Dropdown Menu */}
               {isProfileMenuOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-30"
+                  className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-30"
                   onMouseLeave={() => setIsProfileMenuOpen(false)}
                 >
                   <div className="px-4 py-2 border-b border-slate-100">
@@ -602,13 +650,13 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className="p-6 sm:p-8 space-y-6">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
           {/* ======================================================== */}
           {/* 3. TITLE & DATE FILTER ROW                               */}
           {/* ======================================================== */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Admin Dashboard
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -621,7 +669,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition"
+                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition"
               >
                 <Calendar className="w-4 h-4 text-slate-500" />
                 <span>{dateRange}</span>
@@ -657,26 +705,26 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {/* 4. TOP 5 METRIC CARDS ROW                                */}
           {/* ======================================================== */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
             {kpiMetrics.map((kpi, idx) => {
               const Icon = kpi.icon;
               return (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3.5 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md transition-shadow"
                 >
                   {/* Square rounded icon wrapper */}
-                  <div className={`w-12 h-12 rounded-2xl ${kpi.bgColor} ${kpi.iconColor} flex items-center justify-center shrink-0`}>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${kpi.bgColor} ${kpi.iconColor} flex items-center justify-center shrink-0`}>
                     <Icon className="w-5 h-5 stroke-[2.2]" />
                   </div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">
+                    <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
                       {kpi.title}
                     </div>
-                    <div className="text-xl font-black text-slate-900 tracking-tight mt-0.5">
+                    <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-0.5">
                       {kpi.value}
                     </div>
-                    <div className="text-xs font-semibold text-emerald-600 mt-0.5">
+                    <div className="text-[11px] sm:text-xs font-semibold text-emerald-600 mt-0.5">
                       {kpi.trend}
                     </div>
                   </div>
@@ -690,7 +738,7 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Card: Revenue Overview (Width ~65%) */}
-            <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <BarChart2 className="w-5 h-5 text-[#14B8A6]" />
@@ -704,7 +752,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Exact SVG Chart Canvas */}
-              <div className="relative w-full h-64 pt-2">
+              <div className="relative w-full h-52 sm:h-64 pt-2">
                 <svg viewBox="0 0 680 230" className="w-full h-full overflow-visible">
                   <defs>
                     {/* Linear Gradient for Area under curve */}
@@ -783,7 +831,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Right Card: Orders by Category (Width ~35%) */}
-            <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-2">
                 <PieChartIcon className="w-5 h-5 text-[#14B8A6]" />
                 <h3 className="text-sm font-bold text-slate-900">
@@ -792,9 +840,9 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Donut Chart + Legend Side-by-Side */}
-              <div className="flex items-center justify-between gap-4 py-2">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
                 {/* SVG Donut Chart with center text */}
-                <div className="relative w-40 h-40 shrink-0 flex items-center justify-center">
+                <div className="relative w-36 h-36 sm:w-40 sm:h-40 shrink-0 flex items-center justify-center">
                   <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
                     {/* Circle 1: Medicines (58%) -> Stroke Dash: 58% of 377 = 218.66 */}
                     <circle
@@ -898,7 +946,7 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Card: Recent Bookings (Width ~65%) */}
-            <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-[#14B8A6]" />
@@ -916,36 +964,36 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Recent Bookings Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+              <div className="overflow-x-auto -mx-2 sm:mx-0">
+                <table className="w-full min-w-[540px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="text-slate-500 font-bold border-b border-slate-100 pb-2.5">
-                      <th className="py-2.5 font-bold">Booking ID</th>
-                      <th className="py-2.5 font-bold">Patient</th>
-                      <th className="py-2.5 font-bold">Test / Package</th>
-                      <th className="py-2.5 font-bold">Type</th>
-                      <th className="py-2.5 font-bold text-center">Status</th>
+                      <th className="py-2.5 px-2 sm:px-0 font-bold">Booking ID</th>
+                      <th className="py-2.5 px-2 sm:px-0 font-bold">Patient</th>
+                      <th className="py-2.5 px-2 sm:px-0 font-bold">Test / Package</th>
+                      <th className="py-2.5 px-2 sm:px-0 font-bold">Type</th>
+                      <th className="py-2.5 px-2 sm:px-0 font-bold text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {recentBookings.map((b) => (
                       <tr key={b.id} className="hover:bg-slate-50/50 transition">
-                        <td className="py-3 font-semibold text-slate-800">
+                        <td className="py-3 px-2 sm:px-0 font-semibold text-slate-800">
                           {b.id}
                         </td>
-                        <td className="py-3">
+                        <td className="py-3 px-2 sm:px-0">
                           <div className="flex items-center gap-1.5 font-medium text-slate-800">
-                            <User className="w-3.5 h-3.5 text-slate-400" />
-                            <span>{b.patient}</span>
+                            <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate">{b.patient}</span>
                           </div>
                         </td>
-                        <td className="py-3 text-slate-700">
+                        <td className="py-3 px-2 sm:px-0 text-slate-700">
                           {b.test}
                         </td>
-                        <td className="py-3 text-slate-600">
+                        <td className="py-3 px-2 sm:px-0 text-slate-600">
                           {b.type}
                         </td>
-                        <td className="py-3 text-center">
+                        <td className="py-3 px-2 sm:px-0 text-center">
                           <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${b.statusBg}`}>
                             {b.status}
                           </span>
@@ -958,7 +1006,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Right Card: Low Stock Medicines (Width ~35%) */}
-            <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Pill className="w-5 h-5 text-[#14B8A6]" />
@@ -976,8 +1024,8 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Low Stock Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+              <div className="overflow-x-auto -mx-2 sm:mx-0">
+                <table className="w-full min-w-[260px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="text-slate-500 font-bold border-b border-slate-100 pb-2.5">
                       <th className="py-2.5 font-bold">Medicine</th>
