@@ -219,8 +219,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0B2238] flex flex-col shrink-0 border-r border-[#081827] justify-between transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0B2238] flex flex-col border-r border-[#081827] justify-between overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
+          isSidebarOpen
+            ? 'translate-x-0 visible pointer-events-auto'
+            : '-translate-x-full invisible pointer-events-none'
         }`}
       >
         {/* Top: Logo & Menu Items */}
@@ -447,7 +449,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA (Header + Dashboard Body)           */}
       {/* ======================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto w-full">
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
@@ -605,7 +607,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden">
           {/* ======================================================== */}
           {/* 3. HERO GREETING BANNER WITH STETHOSCOPE GRAPHIC         */}
           {/* ======================================================== */}

@@ -42,7 +42,7 @@ function AppContent() {
   // =========================================================================
   if (location.pathname.startsWith('/admin') || activeSubdomain === 'admin') {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-[#F4F7FB]">
+      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
         <Routes>
           <Route path="/admin" element={<AdminDashboardPage />} />
           <Route path="/admin/*" element={<AdminDashboardPage />} />
@@ -60,7 +60,7 @@ function AppContent() {
   // =========================================================================
   if (location.pathname.startsWith('/lab') || activeSubdomain === 'lab') {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-[#F4F7FB]">
+      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
         <Routes>
           <Route path="/lab" element={<LabDashboardPage />} />
           <Route path="/lab/*" element={<LabDashboardPage />} />
@@ -77,7 +77,7 @@ function AppContent() {
   // =========================================================================
   if (location.pathname === '/patient-dashboard') {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-[#F4F7FB]">
+      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
         <PatientDashboardPage
           onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
         />
