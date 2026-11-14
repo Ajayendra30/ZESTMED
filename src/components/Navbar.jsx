@@ -124,8 +124,8 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-3 lg:gap-3 xl:gap-6">
             
-            {/* Left: Brand Logo & Tagline */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Left: Brand Logo & Navigation (Hamburger alongside it) */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
               <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group">
                 <img
                   src="/logo.png"
@@ -141,6 +141,17 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
                   </span>
                 </div>
               </Link>
+
+              {/* Mobile Hamburger Toggle alongside Logo */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition shrink-0 ml-1 border border-slate-200/70"
+                aria-label="Navigation Menu"
+                title="Navigation Menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5 text-slate-800" /> : <Menu className="w-5 h-5 text-slate-800" />}
+              </button>
             </div>
 
             {/* Center Navigation Links with Mega Menu */}
@@ -565,16 +576,6 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
                 </button>
               )}
 
-              {/* Mobile Hamburger Toggle */}
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition shrink-0"
-                aria-label="Open Mobile Menu"
-              >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-
             </div>
           </div>
         </div>
@@ -643,35 +644,33 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
               ))}
             </nav>
 
-            {/* Mobile Extra Quick Actions */}
-            <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  if (!isLoggedIn) {
-                    openAuth('login');
-                  } else {
+            {/* Mobile Extra Quick Actions - Shown ONLY after user logs in or registers */}
+            {isLoggedIn && (
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
                     navigate('/patient-dashboard');
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition text-center"
-              >
-                <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
-                <span>Patient Dashboard</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenPrescriptionModal();
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#008F83] text-[#008F83] hover:bg-teal-50 text-xs font-bold transition"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Upload Prescription</span>
-              </button>
-            </div>
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition text-center"
+                >
+                  <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
+                  <span>Patient Dashboard</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenPrescriptionModal();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#008F83] text-[#008F83] hover:bg-teal-50 text-xs font-bold transition"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Upload Prescription</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </header>
