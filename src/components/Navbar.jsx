@@ -645,14 +645,21 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
 
             {/* Mobile Extra Quick Actions */}
             <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-              <Link
-                to="/patient-dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (!isLoggedIn) {
+                    openAuth('login');
+                  } else {
+                    navigate('/patient-dashboard');
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition text-center"
               >
                 <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
                 <span>Patient Dashboard</span>
-              </Link>
+              </button>
               <button
                 type="button"
                 onClick={() => {
