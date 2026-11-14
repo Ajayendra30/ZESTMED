@@ -1,0 +1,365 @@
+export const DIAGNOSTIC_CATEGORIES = [
+  { id: 'all', name: 'All Tests' },
+  { id: 'full-body', name: 'Full Body Checkup' },
+  { id: 'blood', name: 'Blood Tests' },
+  { id: 'diabetes', name: 'Diabetes' },
+  { id: 'thyroid', name: 'Thyroid' },
+  { id: 'liver', name: 'Liver Function' },
+  { id: 'kidney', name: 'Kidney Function' },
+  { id: 'lipid', name: 'Lipid Profile' },
+  { id: 'vitamin', name: 'Vitamin & Minerals' },
+  { id: 'heart', name: 'Heart & Cardiac' },
+  { id: 'fever', name: 'Fever & Infection' },
+  { id: 'urine', name: 'Urine Analysis' },
+];
+
+export const MOCK_DIAGNOSTIC_TESTS = [
+  {
+    id: 'test-1',
+    name: 'Complete Blood Count (CBC) with ESR',
+    category: 'blood',
+    categoryName: 'Blood Tests',
+    sampleType: 'Blood',
+    price: 349.00,
+    mrp: 500.00,
+    discountPercent: 30,
+    turnaroundTime: '12-24 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Measures 24 vital blood parameters including Hemoglobin, RBC, WBC count, and Platelets to evaluate overall cellular health.',
+    preparationInstructions: 'No special fasting is strictly required. Drink adequate water before sample collection.',
+    parametersCount: 24,
+    parameters: [
+      'Hemoglobin (Hb)',
+      'Total Leucocyte Count (TLC / WBC)',
+      'Differential Leucocyte Count (DLC)',
+      'Platelet Count',
+      'Packed Cell Volume (PCV)',
+      'Mean Corpuscular Volume (MCV)',
+      'Erythrocyte Sedimentation Rate (ESR)'
+    ]
+  },
+  {
+    id: 'test-2',
+    name: 'HbA1c (Glycosylated Hemoglobin) Test',
+    category: 'diabetes',
+    categoryName: 'Diabetes',
+    sampleType: 'Blood',
+    price: 499.00,
+    mrp: 750.00,
+    discountPercent: 33,
+    turnaroundTime: '12 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Assesses average blood glucose levels over the preceding 2 to 3 months for diabetes monitoring.',
+    preparationInstructions: 'Fasting is not required. You can have your regular diet and medications.',
+    parametersCount: 2,
+    parameters: [
+      'Estimated Average Glucose (eAG)',
+      'Glycosylated Hemoglobin (HbA1c)'
+    ]
+  },
+  {
+    id: 'test-3',
+    name: 'Thyroid Profile Total (T3, T4, TSH)',
+    category: 'thyroid',
+    categoryName: 'Thyroid',
+    sampleType: 'Blood',
+    price: 449.00,
+    mrp: 650.00,
+    discountPercent: 31,
+    turnaroundTime: '24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Comprehensive assessment of thyroid gland functioning to detect hypothyroidism or hyperthyroidism.',
+    preparationInstructions: 'Fasting for 8-10 hours is advised. Morning sample collection is recommended before taking thyroid medication.',
+    parametersCount: 3,
+    parameters: [
+      'Total Triiodothyronine (T3)',
+      'Total Thyroxine (T4)',
+      'Thyroid Stimulating Hormone (TSH Ultrasensitive)'
+    ]
+  },
+  {
+    id: 'test-4',
+    name: 'Liver Function Test (LFT) Comprehensive',
+    category: 'liver',
+    categoryName: 'Liver Function',
+    sampleType: 'Blood',
+    price: 649.00,
+    mrp: 950.00,
+    discountPercent: 32,
+    turnaroundTime: '24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Screens for liver injury, enzyme levels, jaundice, and protein synthesis performance.',
+    preparationInstructions: 'Fasting of 10 to 12 hours is recommended. Avoid alcohol 24 hours prior to testing.',
+    parametersCount: 11,
+    parameters: [
+      'Bilirubin Total, Direct & Indirect',
+      'SGOT / AST (Aspartate Aminotransferase)',
+      'SGPT / ALT (Alanine Aminotransferase)',
+      'Alkaline Phosphatase (ALP)',
+      'Total Protein & Albumin / Globulin Ratio'
+    ]
+  },
+  {
+    id: 'test-5',
+    name: 'Kidney Function Test (KFT / RFT) with Electrolytes',
+    category: 'kidney',
+    categoryName: 'Kidney Function',
+    sampleType: 'Blood',
+    price: 599.00,
+    mrp: 850.00,
+    discountPercent: 30,
+    turnaroundTime: '24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Evaluates renal filtration efficiency, electrolyte balance, blood urea nitrogen, and creatinine levels.',
+    preparationInstructions: 'Fasting for 8-10 hours recommended. Avoid intense heavy exercise 24 hours prior.',
+    parametersCount: 9,
+    parameters: [
+      'Serum Creatinine',
+      'Blood Urea Nitrogen (BUN)',
+      'Uric Acid',
+      'Calcium Total',
+      'Electrolytes (Sodium, Potassium, Chloride)'
+    ]
+  },
+  {
+    id: 'test-6',
+    name: 'Lipid Profile Advanced (Heart Risk Screen)',
+    category: 'lipid',
+    categoryName: 'Lipid Profile',
+    sampleType: 'Blood',
+    price: 549.00,
+    mrp: 800.00,
+    discountPercent: 31,
+    turnaroundTime: '12-24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Full breakdown of blood fats including good HDL, bad LDL, triglycerides and cardiovascular risk ratios.',
+    preparationInstructions: 'Strict fasting of 12-14 hours is necessary. Water intake is permitted.',
+    parametersCount: 8,
+    parameters: [
+      'Total Cholesterol',
+      'HDL Cholesterol (Good)',
+      'LDL Cholesterol (Bad)',
+      'Triglycerides',
+      'VLDL Cholesterol',
+      'Cholesterol / HDL Ratio'
+    ]
+  },
+  {
+    id: 'test-7',
+    name: 'Vitamin D (25-OH) & Vitamin B12 Duo',
+    category: 'vitamin',
+    categoryName: 'Vitamin & Minerals',
+    sampleType: 'Blood',
+    price: 999.00,
+    mrp: 1800.00,
+    discountPercent: 44,
+    turnaroundTime: '24-36 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Detects critical nutritional deficiencies affecting bone density, nerve health, and energy metabolism.',
+    preparationInstructions: 'Fasting of 8-10 hours is required. Avoid taking multivitamin supplements 24 hours prior.',
+    parametersCount: 2,
+    parameters: [
+      '25-Hydroxy Vitamin D Total',
+      'Cyanocobalamin (Vitamin B12)'
+    ]
+  },
+  {
+    id: 'test-8',
+    name: 'Cardiac Risk Markers Profile',
+    category: 'heart',
+    categoryName: 'Heart & Cardiac',
+    sampleType: 'Blood',
+    price: 1299.00,
+    mrp: 2100.00,
+    discountPercent: 38,
+    turnaroundTime: '24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'High-sensitivity C-reactive protein (hs-CRP) and Apolipoproteins to evaluate systemic arterial inflammation.',
+    preparationInstructions: 'Overnight fasting of 10-12 hours required. Rest 15 minutes before blood draw.',
+    parametersCount: 5,
+    parameters: [
+      'hs-CRP (High Sensitivity C-Reactive Protein)',
+      'Apolipoprotein A1 (Apo-A1)',
+      'Apolipoprotein B (Apo-B)',
+      'Apo B / Apo A1 Ratio',
+      'Homocysteine'
+    ]
+  },
+  {
+    id: 'test-9',
+    name: 'Urine Routine & Microscopic Examination (Urine R/M)',
+    category: 'urine',
+    categoryName: 'Urine Analysis',
+    sampleType: 'Urine',
+    price: 199.00,
+    mrp: 300.00,
+    discountPercent: 34,
+    turnaroundTime: '12 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Physical, chemical, and microscopic analysis of urine to screen for urinary tract infections, renal stones, and proteinuria.',
+    preparationInstructions: 'Early morning mid-stream clean catch sample is preferred in sterile container provided.',
+    parametersCount: 18,
+    parameters: [
+      'Color & Appearance',
+      'Specific Gravity & pH',
+      'Urinary Protein (Albumin)',
+      'Glucose (Sugar)',
+      'Pus Cells (WBCs)',
+      'Red Blood Cells (RBCs)',
+      'Epithelial Cells & Crystals'
+    ]
+  },
+  {
+    id: 'test-10',
+    name: 'Fasting Blood Sugar (FBS) & PPBS Duo',
+    category: 'diabetes',
+    categoryName: 'Diabetes',
+    sampleType: 'Blood',
+    price: 249.00,
+    mrp: 380.00,
+    discountPercent: 34,
+    turnaroundTime: '8-12 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Accurate plasma glucose checks comparing baseline morning fasting with post-meal glucose absorption.',
+    preparationInstructions: 'Fasting sample after 8-10 hrs overnight. Post-prandial drawn exactly 2 hours after breakfast meal.',
+    parametersCount: 2,
+    parameters: [
+      'Fasting Plasma Glucose',
+      'Post-Prandial Plasma Glucose (2 Hours)'
+    ]
+  },
+  {
+    id: 'test-11',
+    name: 'Iron Deficiency Profile with Serum Ferritin',
+    category: 'vitamin',
+    categoryName: 'Vitamin & Minerals',
+    sampleType: 'Blood',
+    price: 799.00,
+    mrp: 1200.00,
+    discountPercent: 33,
+    turnaroundTime: '24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Measures total iron, ferritin reserves, and total iron-binding capacity (TIBC) to diagnose iron-deficiency anemia.',
+    preparationInstructions: 'Fasting of 10-12 hours required. Avoid oral iron supplements 24 hours prior.',
+    parametersCount: 4,
+    parameters: [
+      'Total Iron',
+      'Serum Ferritin (Storage Iron)',
+      'Total Iron Binding Capacity (TIBC)',
+      'Transferrin Saturation Percentage'
+    ]
+  },
+  {
+    id: 'test-12',
+    name: 'Dengue Duo (NS1 Antigen + IgG/IgM Antibodies)',
+    category: 'fever',
+    categoryName: 'Fever & Infection',
+    sampleType: 'Blood',
+    price: 899.00,
+    mrp: 1400.00,
+    discountPercent: 36,
+    turnaroundTime: '6-12 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Rapid detection of Dengue virus NS1 antigen in early fever phase and antibody immune response.',
+    preparationInstructions: 'No fasting required. Can be conducted immediately whenever acute fever strikes.',
+    parametersCount: 3,
+    parameters: [
+      'Dengue NS1 Antigen (Early Infection)',
+      'Dengue IgM Antibodies (Acute Infection)',
+      'Dengue IgG Antibodies (Past Immunity)'
+    ]
+  },
+  {
+    id: 'test-13',
+    name: 'Serum Uric Acid (Gout & Joint Health)',
+    category: 'kidney',
+    categoryName: 'Kidney Function',
+    sampleType: 'Blood',
+    price: 220.00,
+    mrp: 320.00,
+    discountPercent: 31,
+    turnaroundTime: '12 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Monitors uric acid concentration to evaluate hyperuricemia, gouty joint pain, and kidney stone risk.',
+    preparationInstructions: 'Fasting of 8-10 hours advised. Avoid high purine food (red meat) the night before.',
+    parametersCount: 1,
+    parameters: [
+      'Uric Acid (Serum)'
+    ]
+  },
+  {
+    id: 'test-14',
+    name: 'Calcium & Phosphorus Bone Mineral Screen',
+    category: 'vitamin',
+    categoryName: 'Vitamin & Minerals',
+    sampleType: 'Blood',
+    price: 349.00,
+    mrp: 500.00,
+    discountPercent: 30,
+    turnaroundTime: '12-24 Hours',
+    homeCollection: true,
+    fastingRequired: true,
+    shortDescription: 'Assesses blood calcium and inorganic phosphate essential for neuromuscular function, bone density, and parathyroid health.',
+    preparationInstructions: 'Fasting for 8-10 hours. Morning blood collection recommended.',
+    parametersCount: 2,
+    parameters: [
+      'Serum Calcium Total',
+      'Inorganic Phosphorus'
+    ]
+  },
+  {
+    id: 'test-15',
+    name: 'C-Reactive Protein (CRP Quantitative)',
+    category: 'fever',
+    categoryName: 'Fever & Infection',
+    sampleType: 'Blood',
+    price: 399.00,
+    mrp: 550.00,
+    discountPercent: 27,
+    turnaroundTime: '12 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Sensitive marker of acute systemic inflammation, bacterial infection, or autoimmune flare-up.',
+    preparationInstructions: 'No fasting required.',
+    parametersCount: 1,
+    parameters: [
+      'C-Reactive Protein (CRP Quantitative)'
+    ]
+  },
+  {
+    id: 'test-16',
+    name: 'Electrolytes Serum Panel (Na+, K+, Cl-)',
+    category: 'kidney',
+    categoryName: 'Kidney Function',
+    sampleType: 'Blood',
+    price: 399.00,
+    mrp: 580.00,
+    discountPercent: 31,
+    turnaroundTime: '12 Hours',
+    homeCollection: true,
+    fastingRequired: false,
+    shortDescription: 'Measures body hydration, fluid balance, and cellular membrane potentials for cardiac stability.',
+    preparationInstructions: 'No special fasting required.',
+    parametersCount: 3,
+    parameters: [
+      'Sodium (Na+)',
+      'Potassium (K+)',
+      'Chloride (Cl-)'
+    ]
+  }
+];
+
+export const diagnosticTests = MOCK_DIAGNOSTIC_TESTS;
