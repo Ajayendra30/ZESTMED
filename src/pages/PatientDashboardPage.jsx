@@ -600,10 +600,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('notifications');
                 setIsSidebarOpen(false);
-                setIsNotificationsOpen(!isNotificationsOpen);
+                addToast('Viewing real-time medical & appointment alerts', 'info');
               }}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'notifications'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <Bell className="w-4 h-4" />
@@ -612,11 +617,31 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             </button>
 
+            {/* Quick Switch Portals */}
+            <div className="pt-2 pb-1 border-t border-white/5 space-y-1">
+              <Link
+                to="/admin"
+                onClick={() => setIsSidebarOpen(false)}
+                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              >
+                <ShieldCheck className="w-4 h-4 text-rose-400" />
+                <span>Switch to Admin Panel</span>
+              </Link>
+              <Link
+                to="/lab"
+                onClick={() => setIsSidebarOpen(false)}
+                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              >
+                <FlaskConical className="w-4 h-4 text-teal-400" />
+                <span>Switch to Lab Portal</span>
+              </Link>
+            </div>
+
             {/* Logout */}
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-rose-400 hover:bg-rose-500/10 transition"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
@@ -772,6 +797,26 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <Users className="w-4 h-4 text-slate-400" />
                     <span>Manage Family Members</span>
                   </button>
+                  <div className="border-t border-slate-100 my-1" />
+                  
+                  {/* Switch to Admin & Lab Portals */}
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-rose-500" />
+                    <span>Switch to Admin Panel</span>
+                  </Link>
+                  <Link
+                    to="/lab"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                  >
+                    <FlaskConical className="w-4 h-4 text-teal-600" />
+                    <span>Switch to Lab Portal</span>
+                  </Link>
+
                   <div className="border-t border-slate-100 my-1" />
                   <Link
                     to="/"
@@ -2053,6 +2098,105 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 6. NOTIFICATIONS CENTER VIEW                             */}
+          {/* ======================================================== */}
+          {activeMenu === 'notifications' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Notification Center</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Real-time operational alerts for diagnostic reports, home sample collections, and pharmacy orders.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addToast('All notifications marked as read', 'success')}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Mark All as Read</span>
+                </button>
+              </div>
+
+              {/* Notification Cards List */}
+              <div className="space-y-3">
+                {notificationsList.map((n) => (
+                  <div
+                    key={n.id}
+                    className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <Bell className="w-5 h-5 text-[#14B8A6]" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-slate-900">{n.title}</h4>
+                          <span className="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                            {n.time}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 mt-1">{n.desc}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      {n.title.toLowerCase().includes('report') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenu('reports');
+                            addToast('Navigating to verified reports', 'info');
+                          }}
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                        >
+                          View Report
+                        </button>
+                      )}
+                      {n.title.toLowerCase().includes('phlebotomist') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenu('bookings');
+                            addToast('Navigating to active lab bookings', 'info');
+                          }}
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                        >
+                          Track Visit
+                        </button>
+                      )}
+                      {n.title.toLowerCase().includes('medicine') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveMenu('orders');
+                            addToast('Navigating to medicine orders', 'info');
+                          }}
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                        >
+                          Track Delivery
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => addToast(`Notification #${n.id} dismissed`, 'info')}
+                        className="px-2.5 py-1.5 text-slate-400 hover:text-slate-600 rounded-xl text-xs transition cursor-pointer"
+                        title="Dismiss"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

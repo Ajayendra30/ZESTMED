@@ -369,10 +369,15 @@ export default function LabDashboardPage() {
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('notifications');
                 setIsSidebarOpen(false);
-                setIsNotificationsOpen(!isNotificationsOpen);
+                addToast('Viewing real-time lab dispatch alerts', 'info');
               }}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'notifications'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <Bell className="w-4 h-4" />
@@ -389,7 +394,7 @@ export default function LabDashboardPage() {
                 setIsSidebarOpen(false);
                 addToast('Phlebotomy ID: PH-ASM-204 | Assigned: Guwahati Hub', 'info');
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'profile'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
@@ -399,6 +404,26 @@ export default function LabDashboardPage() {
               <span>My Profile</span>
             </button>
 
+            {/* Quick Switch Portals */}
+            <div className="pt-2 pb-1 border-t border-white/5 space-y-1">
+              <Link
+                to="/patient-dashboard"
+                onClick={() => setIsSidebarOpen(false)}
+                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              >
+                <User className="w-4 h-4 text-teal-400" />
+                <span>Switch to Patient Dashboard</span>
+              </Link>
+              <Link
+                to="/admin"
+                onClick={() => setIsSidebarOpen(false)}
+                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              >
+                <ShieldCheck className="w-4 h-4 text-rose-400" />
+                <span>Switch to Admin Panel</span>
+              </Link>
+            </div>
+
             {/* Logout */}
             <button
               type="button"
@@ -407,7 +432,7 @@ export default function LabDashboardPage() {
                 addToast('Signed out of Lab Executive session. Returned to Public Store.', 'info');
                 navigate('/');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-rose-400 hover:bg-rose-500/10 transition"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
@@ -542,6 +567,26 @@ export default function LabDashboardPage() {
                     <p className="text-[11px] text-slate-400 font-mono">ID: PH-ASM-204</p>
                     <p className="text-[11px] text-teal-600 font-medium mt-0.5">Dispur Central Lab (Assam)</p>
                   </div>
+
+                  {/* Switch Portals */}
+                  <Link
+                    to="/patient-dashboard"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                  >
+                    <User className="w-4 h-4 text-teal-600" />
+                    <span>Switch to Patient Dashboard</span>
+                  </Link>
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-rose-500" />
+                    <span>Switch to Admin Panel</span>
+                  </Link>
+
+                  <div className="border-t border-slate-100 my-1" />
                   <Link
                     to="/"
                     onClick={() => setIsProfileOpen(false)}

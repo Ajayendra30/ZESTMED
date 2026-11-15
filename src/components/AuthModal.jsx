@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { X, ArrowLeft, ChevronDown, Smartphone, ShieldCheck, RefreshCw, User } from 'lucide-react';
 
 export default function AuthModal() {
   const navigate = useNavigate();
   const { isAuthModalOpen, closeAuth, authMode, setAuthMode, loginWithPhoneOtp, loginWithGoogle } = useAuth();
+  const { addToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
   const [step, setStep] = useState(1); // 1: Details / Phone, 2: OTP
@@ -19,16 +21,17 @@ export default function AuthModal() {
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
     if (authMode === 'register' && !fullName.trim()) {
-      alert('Please enter your full name');
+      addToast('Please enter your full name', 'error');
       return;
     }
     const clean = phoneNumber.replace(/\D/g, '');
     if (clean.length !== 10) {
-      alert('Please enter a valid 10-digit mobile number');
+      addToast('Please enter a valid 10-digit mobile number', 'error');
       return;
     }
     setStep(2);
     setOtp(['', '', '', '']);
+    addToast('OTP sent to your registered mobile number: 1234', 'info');
   };
 
   const handleOtpChange = (index, value) => {
@@ -55,7 +58,7 @@ export default function AuthModal() {
     e.preventDefault();
     const fullOtp = otp.join('');
     if (fullOtp.length < 4) {
-      alert('Please enter the complete 4-digit OTP');
+      addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
     loginWithPhoneOtp(phoneNumber, fullName.trim() || 'Verified Patient');

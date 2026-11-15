@@ -142,6 +142,7 @@ export default function HealthPackagesPage() {
   const [wishlist, setWishlist] = useState({});
   const [sortBy, setSortBy] = useState('Popularity');
   const [selectedTypes, setSelectedTypes] = useState(new Set());
+  const [showAllTypes, setShowAllTypes] = useState(false);
 
   const toggleWishlist = (id) => {
     setWishlist((prev) => ({
@@ -384,6 +385,14 @@ export default function HealthPackagesPage() {
                     { id: 'senior', name: 'Senior Citizen', count: 4 },
                     { id: 'diabetes', name: 'Diabetes Care', count: 5 },
                     { id: 'heart', name: 'Heart Care', count: 4 },
+                    ...(showAllTypes
+                      ? [
+                          { id: 'thyroid', name: 'Thyroid Care', count: 3 },
+                          { id: 'kidney', name: 'Kidney Function', count: 4 },
+                          { id: 'liver', name: 'Liver Health', count: 3 },
+                          { id: 'fitness', name: 'Fitness & Sports', count: 5 },
+                        ]
+                      : []),
                   ].map((type) => {
                     const isChecked = selectedTypes.has(type.id);
                     return (
@@ -410,10 +419,11 @@ export default function HealthPackagesPage() {
 
                 <button
                   type="button"
+                  onClick={() => setShowAllTypes(!showAllTypes)}
                   className="flex items-center gap-1 text-xs text-[#008F83] font-bold hover:underline pt-1 cursor-pointer"
                 >
-                  <span>View More</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <span>{showAllTypes ? 'Show Less' : 'View More'}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAllTypes ? 'rotate-180' : ''}`} />
                 </button>
               </div>
 
@@ -484,6 +494,13 @@ export default function HealthPackagesPage() {
               />
               <button
                 type="button"
+                onClick={() => {
+                  if (searchQuery.trim()) {
+                    addToast(`Filtering health packages matching "${searchQuery}"`, 'info');
+                  } else {
+                    addToast('Showing all available health packages', 'info');
+                  }
+                }}
                 className="px-6 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs"
               >
                 Search

@@ -571,10 +571,11 @@ export default function AdminDashboardPage() {
           <button
             type="button"
             onClick={() => {
+              setActiveMenu('notifications');
               setIsSidebarOpen(false);
-              setIsNotificationsOpen(!isNotificationsOpen);
+              addToast('Opening Admin Real-Time Operations Alerts', 'info');
             }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
               activeMenu === 'notifications'
                 ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
@@ -607,10 +608,27 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        {/* Sidebar Footer Link back to Website */}
-        <div className="p-3 border-t border-white/5">
+        {/* Sidebar Footer Portal Switcher & Link back to Website */}
+        <div className="p-3 border-t border-white/5 space-y-1.5">
+          <Link
+            to="/patient-dashboard"
+            onClick={() => setIsSidebarOpen(false)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11.5px] font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition"
+          >
+            <User className="w-4 h-4 text-teal-400" />
+            <span>Patient Dashboard</span>
+          </Link>
+          <Link
+            to="/lab"
+            onClick={() => setIsSidebarOpen(false)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11.5px] font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition"
+          >
+            <FlaskConical className="w-4 h-4 text-emerald-400" />
+            <span>Lab Executive Portal</span>
+          </Link>
           <Link
             to="/"
+            onClick={() => setIsSidebarOpen(false)}
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11.5px] font-semibold text-teal-400 bg-teal-950/40 hover:bg-teal-900/60 border border-teal-500/20 transition"
           >
             <span>Exit to Public Store</span>
