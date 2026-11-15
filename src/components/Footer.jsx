@@ -21,13 +21,11 @@ export default function Footer({ onOpenPrescriptionModal }) {
           <div className="lg:col-span-3 space-y-4">
             {/* Logo */}
             <div className="flex items-center">
-              <div className="bg-white rounded-2xl p-2.5 px-3.5 inline-flex items-center shadow-md">
-                <img
-                  src="/logo.png"
-                  alt="Zestmed Diagnostics & Polyclinic"
-                  className="h-10 sm:h-12 w-auto object-contain select-none"
-                />
-              </div>
+              <img
+                src="/logo.png"
+                alt="Zestmed Diagnostics & Polyclinic"
+                className="h-10 sm:h-12 w-auto object-contain select-none"
+              />
             </div>
 
             {/* Mission Statement */}

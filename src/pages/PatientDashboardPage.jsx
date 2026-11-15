@@ -414,11 +414,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         <div className="flex flex-col flex-1 min-h-0">
           {/* Brand Header */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-white/5 shrink-0">
-            <Link to="/" className="bg-white rounded-xl px-2.5 py-1.5 shadow-sm inline-flex items-center">
+            <Link to="/" className="inline-flex items-center">
               <img
                 src="/logo.png"
                 alt="Zestmed Diagnostics & Polyclinic"
-                className="h-7 sm:h-8 w-auto object-contain shrink-0 select-none"
+                className="h-8 sm:h-9 w-auto object-contain shrink-0 select-none"
               />
             </Link>
 
