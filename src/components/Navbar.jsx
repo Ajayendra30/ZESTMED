@@ -126,20 +126,12 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
             
             {/* Left: Brand Logo & Navigation (Hamburger alongside it) */}
             <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-              <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group">
+              <Link to="/" className="flex items-center group shrink-0">
                 <img
                   src="/logo.png"
-                  alt="ZESTMED Logo"
-                  className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 object-contain drop-shadow-sm group-hover:scale-105 transition-transform select-none shrink-0"
+                  alt="Zestmed Diagnostics & Polyclinic"
+                  className="h-10 sm:h-12 md:h-13 w-auto max-h-14 object-contain drop-shadow-xs group-hover:scale-105 transition-transform select-none shrink-0"
                 />
-                <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-slate-900 leading-none">
-                    ZESTMED
-                  </span>
-                  <span className="text-[9.5px] sm:text-[11px] md:text-xs font-semibold text-[#008F83] tracking-wide mt-0.5 sm:mt-1 whitespace-nowrap leading-none">
-                    Healthcare & Diagnostics
-                  </span>
-                </div>
               </Link>
 
               {/* Mobile Hamburger Toggle alongside Logo */}

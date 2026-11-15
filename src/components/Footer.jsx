@@ -19,20 +19,14 @@ export default function Footer({ onOpenPrescriptionModal }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 pb-10">
           {/* Brand Column (~25%) */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Logo + Title */}
-            <div className="flex items-center gap-3">
-              <img
-                src="/logo.png"
-                alt="ZESTMED Logo"
-                className="w-10 h-10 object-contain shrink-0 select-none"
-              />
-              <div>
-                <div className="text-white font-extrabold text-2xl tracking-wide leading-none">
-                  ZESTMED
-                </div>
-                <div className="text-[#14B8A6] text-xs font-semibold mt-1 leading-none">
-                  Healthcare & Diagnostics
-                </div>
+            {/* Logo */}
+            <div className="flex items-center">
+              <div className="bg-white rounded-2xl p-2.5 px-3.5 inline-flex items-center shadow-md">
+                <img
+                  src="/logo.png"
+                  alt="Zestmed Diagnostics & Polyclinic"
+                  className="h-10 sm:h-12 w-auto object-contain select-none"
+                />
               </div>
             </div>
 

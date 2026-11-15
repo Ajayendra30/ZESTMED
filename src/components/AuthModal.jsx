@@ -126,16 +126,13 @@ export default function AuthModal() {
           </button>
         </div>
 
-        {/* Center Brand: Logo + Zestmed */}
-        <div className="flex items-center justify-center gap-2.5 pt-1 pb-3 shrink-0">
+        {/* Center Brand: Logo */}
+        <div className="flex items-center justify-center pt-1 pb-3 shrink-0">
           <img
             src="/logo.png"
-            alt="Zestmed Logo"
-            className="w-10 h-10 object-contain drop-shadow-sm select-none"
+            alt="Zestmed Diagnostics & Polyclinic"
+            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs select-none"
           />
-          <span className="text-[26px] sm:text-[28px] font-black text-[#0A2540] tracking-tight">
-            Zestmed
-          </span>
         </div>
 
         {/* Form Body with identical height & layout across Login and Register */}

@@ -255,23 +255,14 @@ export default function AdminDashboardPage() {
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-white/5 shrink-0">
-          <div className="flex items-center gap-3">
-            {/* Logo Cross */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-white/5 shrink-0">
+          <Link to="/" className="bg-white rounded-xl px-2.5 py-1.5 shadow-sm inline-flex items-center">
             <img
               src="/logo.png"
-              alt="ZESTMED Logo"
-              className="w-8 h-8 object-contain shrink-0 select-none"
+              alt="Zestmed Diagnostics & Polyclinic"
+              className="h-7 sm:h-8 w-auto object-contain shrink-0 select-none"
             />
-            <div>
-              <div className="text-white font-extrabold text-base tracking-wide leading-none">
-                ZESTMED
-              </div>
-              <div className="text-[#88A0B8] text-[10.5px] font-medium mt-1 leading-none">
-                Healthcare & Diagnostics
-              </div>
-            </div>
-          </div>
+          </Link>
 
           {/* Close button on mobile */}
           <button

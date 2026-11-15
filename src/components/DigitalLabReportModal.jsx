@@ -88,11 +88,8 @@ export default function DigitalLabReportModal({ isOpen, onClose, booking }) {
           {/* Diagnostic Laboratory Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b-2 border-primary/20 pb-5 gap-4">
             <div>
-              <div className="flex items-center gap-2.5">
-                <img src="/logo.png" alt="ZESTMED Logo" className="w-7 h-7 object-contain" />
-                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  ZEST<span className="text-primary">MED</span>
-                </span>
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="Zestmed Diagnostics & Polyclinic" className="h-8 sm:h-9 w-auto object-contain" />
                 <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
                   CENTRAL DIAGNOSTICS
                 </span>

@@ -76,11 +76,8 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
           {/* Company & Billing Headers */}
           <div className="flex flex-col sm:flex-row justify-between border-b border-slate-200 pb-5 gap-4">
             <div>
-              <div className="flex items-center gap-2.5">
-                <img src="/logo.png" alt="ZESTMED Logo" className="w-6 h-6 object-contain" />
-                <span className="text-xl font-black text-slate-900 tracking-tight">
-                  ZEST<span className="text-primary">MED</span>
-                </span>
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="Zestmed Diagnostics & Polyclinic" className="h-8 sm:h-9 w-auto object-contain" />
                 <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                   RETAIL PHARMACY
                 </span>
