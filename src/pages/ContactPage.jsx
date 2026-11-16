@@ -96,13 +96,13 @@ export default function ContactPage() {
           >
             <defs>
               <linearGradient id="contactOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.4" />
-                <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#BFDBFE" stopOpacity="0.4" />
+                <stop offset="45%" stopColor="#93C5FD" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.9" />
               </linearGradient>
               <linearGradient id="contactOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#DBEAFE" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.85" />
               </linearGradient>
             </defs>
             <path
@@ -115,7 +115,7 @@ export default function ContactPage() {
               opacity="0.65"
             />
           </svg>
-          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#60A5FA]/45 via-[#93C5FD]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
         {/* Main Content & Imagery Container */}
@@ -124,8 +124,8 @@ export default function ContactPage() {
           <div className="relative z-20 max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[500px] py-6 sm:py-7 lg:py-8 space-y-1.5">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold mb-1.5">
-              <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
-                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83]" />
+              <Link to="/" className="flex items-center gap-1.5 hover:text-[#005CB9] transition">
+                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#005CB9]" />
                 <span>Home</span>
               </Link>
               <span className="text-slate-400">&gt;</span>
@@ -134,7 +134,7 @@ export default function ContactPage() {
 
             {/* Page Title */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-black text-[#0B1728] tracking-tight leading-tight mb-1.5">
-              Contact <span className="text-[#008F83]">Us</span>
+              Contact <span className="text-[#005CB9]">Us</span>
             </h1>
 
             {/* Subheading */}
@@ -178,7 +178,7 @@ export default function ContactPage() {
               <div className="space-y-4 pt-1">
                 {/* 1. Call Us */}
                 <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm hover:shadow-md transition flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#005CB9] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
                     <PhoneCall className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div>
@@ -190,7 +190,7 @@ export default function ContactPage() {
                     </p>
                     <a
                       href="tel:+919279125091"
-                      className="text-base sm:text-lg font-black text-[#008F83] hover:underline font-mono mt-1 block"
+                      className="text-base sm:text-lg font-black text-[#005CB9] hover:underline font-mono mt-1 block"
                     >
                       +91 92791 25091
                     </a>
@@ -199,7 +199,7 @@ export default function ContactPage() {
 
                 {/* 2. Email Us */}
                 <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm hover:shadow-md transition flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#005CB9] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
                     <Mail className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div>
@@ -211,7 +211,7 @@ export default function ContactPage() {
                     </p>
                     <a
                       href="mailto:support@zestmed.com"
-                      className="text-sm sm:text-base font-bold text-[#008F83] hover:underline mt-1 block"
+                      className="text-sm sm:text-base font-bold text-[#005CB9] hover:underline mt-1 block"
                     >
                       support@zestmed.com
                     </a>
@@ -220,7 +220,7 @@ export default function ContactPage() {
 
                 {/* 3. Visit Our Office */}
                 <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm hover:shadow-md transition flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#005CB9] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
                     <MapPin className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div>
@@ -236,7 +236,7 @@ export default function ContactPage() {
 
                 {/* 4. Customer Support */}
                 <div className="p-6 rounded-3xl bg-white border-2 border-slate-100 shadow-sm hover:shadow-md transition flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#005CB9] border border-teal-200 flex items-center justify-center shrink-0 shadow-xs">
                     <Headphones className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div>
@@ -248,7 +248,7 @@ export default function ContactPage() {
                     </p>
                     <a
                       href="tel:+919279125091"
-                      className="text-base sm:text-lg font-black text-[#008F83] hover:underline font-mono mt-1 block"
+                      className="text-base sm:text-lg font-black text-[#005CB9] hover:underline font-mono mt-1 block"
                     >
                       +91 92791 25091
                     </a>
@@ -287,7 +287,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your name"
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] focus:bg-white transition"
+                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:bg-white transition"
                       />
                     </div>
                   </div>
@@ -306,7 +306,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="Enter your email"
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] focus:bg-white transition"
+                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:bg-white transition"
                       />
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export default function ContactPage() {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="Enter your phone number"
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] focus:bg-white transition"
+                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:bg-white transition"
                       />
                     </div>
                   </div>
@@ -343,7 +343,7 @@ export default function ContactPage() {
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 focus:outline-none focus:border-[#008F83] focus:bg-white appearance-none transition cursor-pointer"
+                        className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 focus:outline-none focus:border-[#005CB9] focus:bg-white appearance-none transition cursor-pointer"
                       >
                         <option value="">Select a subject</option>
                         <option value="General Inquiry">General Inquiry</option>
@@ -371,7 +371,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="Type your message here..."
-                      className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] focus:bg-white transition resize-none"
+                      className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:bg-white transition resize-none"
                     />
                   </div>
                 </div>
@@ -380,7 +380,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2.5 shadow-md transition"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2.5 shadow-md transition"
                 >
                   <Send className="w-5 h-5" />
                   <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
@@ -435,7 +435,7 @@ export default function ContactPage() {
               <div className="bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-100 shadow-sm flex flex-col justify-between flex-1 space-y-6">
                 {/* Clinic Address Box */}
                 <div className="flex items-start gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
                     <Building2 className="w-7 h-7 stroke-[2.2]" />
                   </div>
                   <div>
@@ -452,7 +452,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-3 border-t border-slate-100">
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-[#008F83]" />
+                      <Clock className="w-5 h-5 text-[#005CB9]" />
                       <h4 className="text-sm font-bold text-slate-900">
                         Working Hours
                       </h4>
@@ -463,7 +463,7 @@ export default function ContactPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-[#008F83]" />
+                      <Calendar className="w-5 h-5 text-[#005CB9]" />
                       <h4 className="text-sm font-bold text-slate-900">
                         Sunday
                       </h4>
@@ -474,7 +474,7 @@ export default function ContactPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-[#008F83]" />
+                      <ShieldCheck className="w-5 h-5 text-[#005CB9]" />
                       <h4 className="text-sm font-bold text-slate-900">
                         Lab Timings
                       </h4>
@@ -495,7 +495,7 @@ export default function ContactPage() {
           <div className="rounded-3xl p-8 sm:p-10 border-2 border-teal-100 bg-gradient-to-r from-[#E6F8F5] via-[#E0F5F2] to-[#D5EFEA] flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
             {/* Left: Headset Icon + Text */}
             <div className="flex items-center gap-5 text-left">
-              <div className="w-16 h-16 rounded-3xl bg-white text-[#008F83] flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-16 h-16 rounded-3xl bg-white text-[#005CB9] flex items-center justify-center shrink-0 shadow-sm">
                 <Headphones className="w-8 h-8 stroke-[2.2]" />
               </div>
               <div>

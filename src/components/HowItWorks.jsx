@@ -28,7 +28,7 @@ export default function HowItWorks() {
         {/* Title */}
         <div className="text-left mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            How <span className="text-[#008F83]">It Works?</span>
+            How <span className="text-[#005CB9]">It Works?</span>
           </h2>
           <p className="text-sm sm:text-base text-slate-500 mt-2 font-medium">
             Get healthcare services in just a few simple steps.
@@ -43,7 +43,7 @@ export default function HowItWorks() {
               <React.Fragment key={idx}>
                 {/* Step Card */}
                 <div className="w-full md:flex-1 bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-100 shadow-sm hover:shadow-lg transition text-center flex flex-col items-center justify-center min-h-[180px]">
-                  <div className="w-16 h-16 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center mb-4 shadow-xs">
+                  <div className="w-16 h-16 rounded-2xl bg-teal-50 text-[#005CB9] flex items-center justify-center mb-4 shadow-xs">
                     <Icon className="w-8 h-8 stroke-[2]" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-snug">
@@ -53,7 +53,7 @@ export default function HowItWorks() {
 
                 {/* Arrow */}
                 {idx < steps.length - 1 && (
-                  <div className="hidden md:flex items-center justify-center text-[#008F83] shrink-0">
+                  <div className="hidden md:flex items-center justify-center text-[#005CB9] shrink-0">
                     <ArrowRight className="w-7 h-7 stroke-[3]" />
                   </div>
                 )}

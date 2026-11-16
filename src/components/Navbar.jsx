@@ -116,23 +116,23 @@ export default function Navbar({
   return (
     <>
       {/* Top Announcement Bar - Full Width with Responsive Gutters */}
-      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
+      <div className="bg-[#0A1E34] text-white text-xs sm:text-sm py-2 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
         <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 overflow-hidden text-slate-200">
-            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-[11px] sm:text-xs md:text-sm text-teal-300">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-[11px] sm:text-xs md:text-sm text-orange-400">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5722] shrink-0" />
               <span>⚡ Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
             <button
               type="button"
               onClick={onOpenSeniorPickup}
-              className="hidden sm:inline-flex items-center gap-1 font-medium whitespace-nowrap text-xs md:text-sm text-emerald-300 hover:text-emerald-200 hover:underline cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1 font-medium whitespace-nowrap text-xs md:text-sm text-blue-200 hover:text-white hover:underline cursor-pointer"
             >
               🚗 Free Senior Citizen Pick-up & Drop within 10km (Guwahati)
             </button>
             <span className="hidden lg:inline text-slate-500">|</span>
-            <span className="hidden lg:inline font-bold text-white whitespace-nowrap text-xs md:text-sm bg-teal-800/60 px-2 py-0.5 rounded-full border border-teal-600/40">
+            <span className="hidden lg:inline font-bold text-white whitespace-nowrap text-xs md:text-sm bg-blue-900/60 px-2 py-0.5 rounded-full border border-blue-500/40">
               📍 Serving Exclusively Guwahati, Assam
             </span>
           </div>
@@ -141,10 +141,10 @@ export default function Navbar({
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link
               to="/login"
-              className="flex items-center gap-1.5 text-teal-300 hover:text-white font-bold transition text-xs sm:text-sm select-none"
+              className="flex items-center gap-1.5 text-blue-200 hover:text-white font-bold transition text-xs sm:text-sm select-none"
               title={isLoggedIn ? 'Go to Account' : 'Login or Register'}
             >
-              <User className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+              <User className="w-3.5 h-3.5 text-[#FF5722] shrink-0" />
               <span className="hidden sm:inline">{isLoggedIn ? displayName : 'Login / Register'}</span>
               <span className="sm:hidden">{isLoggedIn ? 'Account' : 'Login'}</span>
             </Link>
@@ -155,7 +155,7 @@ export default function Navbar({
               className="flex items-center gap-1.5 sm:gap-2 text-slate-200 hover:text-white font-semibold transition shrink-0 text-xs sm:text-sm"
               title="Select Delivery City"
             >
-              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#14B8A6] shrink-0" />
+              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5722] shrink-0" />
               <span className="truncate max-w-[110px] sm:max-w-none">{currentLocation?.city || 'Guwahati'}</span>
               <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
             </button>
@@ -188,7 +188,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition shrink-0 ml-1 border border-slate-200/70"
+                className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-[#005CB9] hover:bg-slate-100 transition shrink-0 ml-1 border border-slate-200/70"
                 aria-label="Navigation Menu"
                 title="Navigation Menu"
               >
@@ -213,14 +213,14 @@ export default function Navbar({
                         to={link.href}
                         className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
                           isActive
-                            ? 'text-[#008F83] font-bold'
-                            : 'text-slate-700 hover:text-[#008F83]'
+                            ? 'text-[#005CB9] font-bold'
+                            : 'text-slate-700 hover:text-[#005CB9]'
                         }`}
                       >
                         <span>{link.name}</span>
-                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${medicinesMegaOpen ? 'rotate-180 text-[#008F83]' : 'text-slate-400'}`} />
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${medicinesMegaOpen ? 'rotate-180 text-[#005CB9]' : 'text-slate-400'}`} />
                         {isActive && (
-                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#005CB9] rounded-full" />
                         )}
                       </Link>
 
@@ -234,7 +234,7 @@ export default function Navbar({
                           <div className="w-[940px] xl:w-[980px] max-w-[calc(100vw-32px)] bg-white rounded-3xl shadow-2xl border border-slate-100 p-7">
                             <div className="grid grid-cols-12 gap-6 items-stretch">
                             {/* Left Promo Card */}
-                            <div className="col-span-4 bg-gradient-to-br from-[#E6F9F5] via-[#EDFCF9] to-[#D5F5EE] rounded-3xl p-6 border border-[#CCF2E9] flex flex-col justify-between text-left relative overflow-hidden group">
+                            <div className="col-span-4 bg-gradient-to-br from-[#EFF6FF] via-[#F0F6FE] to-[#E1EFFF] rounded-3xl p-6 border border-[#DBEAFE] flex flex-col justify-between text-left relative overflow-hidden group">
                               {/* Soft ambient mint glow in background */}
                               <div className="absolute top-8 left-1/2 -translate-x-1/2 w-36 h-36 bg-teal-300/25 rounded-full blur-2xl pointer-events-none" />
 
@@ -259,7 +259,7 @@ export default function Navbar({
                               <Link
                                 to="/medicines"
                                 onClick={() => setMedicinesMegaOpen(false)}
-                                className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#008F83] hover:bg-[#007A70] text-white text-sm font-bold rounded-2xl shadow-sm transition group/btn"
+                                className="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#005CB9] hover:bg-[#004C99] text-white text-sm font-bold rounded-2xl shadow-sm transition group/btn"
                               >
                                 <span>Shop All Medicines</span>
                                 <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -280,7 +280,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
                                     <Pill className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">General Medicines</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">General Medicines</span>
                                 </Link>
 
                                 <Link
@@ -291,7 +291,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                                     <Heart className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Heart Care</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Heart Care</span>
                                 </Link>
 
                                 <Link
@@ -302,7 +302,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                                     <Apple className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Vitamins</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Vitamins</span>
                                 </Link>
 
                                 <Link
@@ -313,7 +313,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
                                     <Activity className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Respiratory</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Respiratory</span>
                                 </Link>
 
                                 <Link
@@ -324,7 +324,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
                                     <Droplet className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Diabetes Care</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Diabetes Care</span>
                                 </Link>
 
                                 <Link
@@ -335,7 +335,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0">
                                     <ShieldPlus className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Digestive Care</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Digestive Care</span>
                                 </Link>
 
                                 <Link
@@ -346,7 +346,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                                     <ShieldCheck className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Personal Care</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Personal Care</span>
                                 </Link>
 
                                 <Link
@@ -357,7 +357,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0">
                                     <Baby className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Baby Care</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Baby Care</span>
                                 </Link>
                               </div>
                             </div>
@@ -376,7 +376,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                                     <Gift className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Offers & Deals</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Offers & Deals</span>
                                 </Link>
 
                                 <Link
@@ -384,10 +384,10 @@ export default function Navbar({
                                   onClick={() => setMedicinesMegaOpen(false)}
                                   className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition group"
                                 >
-                                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
                                     <FileCheck2 className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Prescription Required</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Prescription Required</span>
                                 </Link>
 
                                 <Link
@@ -398,7 +398,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                                     <Sparkles className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Bestsellers</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Bestsellers</span>
                                 </Link>
 
                                 <Link
@@ -409,7 +409,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
                                     <Clock className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">New Arrivals</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">New Arrivals</span>
                                 </Link>
 
                                 <Link
@@ -420,7 +420,7 @@ export default function Navbar({
                                   <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                                     <Tag className="w-4 h-4" />
                                   </div>
-                                  <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Generic Medicines</span>
+                                  <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Generic Medicines</span>
                                 </Link>
                               </div>
                             </div>
@@ -444,14 +444,14 @@ export default function Navbar({
                         to={link.href}
                         className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
                           routerLocation.pathname === link.href || labTestsMenuOpen
-                            ? 'text-[#008F83] font-bold'
-                            : 'text-slate-700 hover:text-[#008F83]'
+                            ? 'text-[#005CB9] font-bold'
+                            : 'text-slate-700 hover:text-[#005CB9]'
                         }`}
                       >
                         <span>{link.name}</span>
-                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${labTestsMenuOpen ? 'rotate-180 text-[#008F83]' : 'text-slate-400'}`} />
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${labTestsMenuOpen ? 'rotate-180 text-[#005CB9]' : 'text-slate-400'}`} />
                         {routerLocation.pathname === link.href && (
-                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#005CB9] rounded-full" />
                         )}
                       </Link>
 
@@ -467,9 +467,9 @@ export default function Navbar({
                           <Link
                             to="/diagnostics"
                             onClick={() => setLabTestsMenuOpen(false)}
-                            className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-teal-50 hover:text-[#008F83] transition"
+                            className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-teal-50 hover:text-[#005CB9] transition"
                           >
-                            <FlaskConical className="w-5 h-5 text-[#008F83]" />
+                            <FlaskConical className="w-5 h-5 text-[#005CB9]" />
                             <span>All Diagnostic Tests</span>
                           </Link>
                           <Link
@@ -519,7 +519,7 @@ export default function Navbar({
                       className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap ${
                         link.highlight
                           ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100 font-bold'
-                          : 'text-slate-700 hover:text-[#008F83] hover:bg-slate-50'
+                          : 'text-slate-700 hover:text-[#005CB9] hover:bg-slate-50'
                       }`}
                     >
                       <span>{link.name}</span>
@@ -533,18 +533,18 @@ export default function Navbar({
                     to={link.href}
                     className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
                       routerLocation.pathname === link.href
-                        ? 'text-[#008F83] font-bold'
-                        : 'text-slate-700 hover:text-[#008F83]'
+                        ? 'text-[#005CB9] font-bold'
+                        : 'text-slate-700 hover:text-[#005CB9]'
                     }`}
                   >
                     <span>{link.name}</span>
                     {link.badge && (
-                      <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full">
+                      <span className="text-[10px] font-bold bg-orange-50 text-[#FF5722] border border-orange-200/80 px-1.5 py-0.2 rounded-full">
                         {link.badge}
                       </span>
                     )}
                     {routerLocation.pathname === link.href && (
-                      <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                      <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#005CB9] rounded-full" />
                     )}
                   </Link>
                 );
@@ -561,12 +561,12 @@ export default function Navbar({
                   onClick={() => setMoreMenuOpen(!moreMenuOpen)}
                   className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap ${
                     moreMenuOpen
-                      ? 'text-[#008F83] bg-teal-50/70 font-bold'
-                      : 'text-slate-700 hover:text-[#008F83] hover:bg-slate-50'
+                      ? 'text-[#005CB9] bg-teal-50/70 font-bold'
+                      : 'text-slate-700 hover:text-[#005CB9] hover:bg-slate-50'
                   }`}
                 >
                   <span>More Services</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180 text-[#008F83]' : 'text-slate-400'}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180 text-[#005CB9]' : 'text-slate-400'}`} />
                 </button>
 
                 {moreMenuOpen && (
@@ -601,11 +601,11 @@ export default function Navbar({
                         onClick={() => setMoreMenuOpen(false)}
                         className="w-full flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/80 transition text-left group"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-teal-100 text-[#008F83] flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                        <div className="w-8 h-8 rounded-lg bg-teal-100 text-[#005CB9] flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                           <Layers className="w-4 h-4" />
                         </div>
                         <div>
-                          <span className="text-sm font-bold text-slate-800 group-hover:text-[#008F83]">Wellness Packages</span>
+                          <span className="text-sm font-bold text-slate-800 group-hover:text-[#005CB9]">Wellness Packages</span>
                           <p className="text-xs text-slate-500 mt-0.5">Preventive health checkups for family</p>
                         </div>
                       </Link>
@@ -615,7 +615,7 @@ export default function Navbar({
                       <Link
                         to="/about"
                         onClick={() => setMoreMenuOpen(false)}
-                        className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition text-slate-700 hover:text-[#008F83]"
+                        className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition text-slate-700 hover:text-[#005CB9]"
                       >
                         <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                           <ShieldCheck className="w-4 h-4" />
@@ -626,7 +626,7 @@ export default function Navbar({
                       <Link
                         to="/contact"
                         onClick={() => setMoreMenuOpen(false)}
-                        className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition text-slate-700 hover:text-[#008F83]"
+                        className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition text-slate-700 hover:text-[#005CB9]"
                       >
                         <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                           <PhoneCall className="w-4 h-4" />
@@ -654,14 +654,14 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={openCart}
-                className="relative p-2 sm:p-2.5 rounded-full text-[#008F83] hover:bg-teal-50 transition shrink-0"
+                className="relative p-2 sm:p-2.5 rounded-full text-[#005CB9] hover:bg-blue-50 transition shrink-0"
                 aria-label="Shopping Cart"
                 title="View Healthcare Cart"
               >
                 <div className="relative">
-                  <ShoppingCart className="w-5 h-5 text-[#008F83]" />
+                  <ShoppingCart className="w-5 h-5 text-[#005CB9]" />
                   {totalItemsCount > 0 && (
-                    <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white text-[10px] font-extrabold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-xs ring-2 ring-white leading-none pointer-events-none select-none">
+                    <span className="absolute -top-1.5 -right-2 bg-[#FF5722] text-white text-[10px] font-extrabold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-xs ring-2 ring-white leading-none pointer-events-none select-none">
                       {totalItemsCount}
                     </span>
                   )}
@@ -674,10 +674,10 @@ export default function Navbar({
                   <button
                     type="button"
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-slate-300 hover:border-[#008F83] bg-white transition text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap shrink-0 shadow-xs"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-slate-300 hover:border-[#005CB9] bg-white transition text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap shrink-0 shadow-xs"
                     title={displayName}
                   >
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#008F83] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#005CB9] text-white flex items-center justify-center font-bold text-xs shrink-0">
                       {displayInitial}
                     </div>
                     <span className="hidden sm:inline-block max-w-[80px] xl:max-w-[110px] truncate">{displayName}</span>
@@ -698,7 +698,7 @@ export default function Navbar({
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-800 hover:bg-slate-50 font-semibold"
                       >
-                        <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
+                        <LayoutDashboard className="w-4 h-4 text-[#005CB9]" />
                         <span>Patient Dashboard</span>
                       </Link>
                       <Link
@@ -706,7 +706,7 @@ export default function Navbar({
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-3 px-5 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium"
                       >
-                        <User className="w-4 h-4 text-[#008F83]" />
+                        <User className="w-4 h-4 text-[#005CB9]" />
                         <span>Switch Account / Login Page</span>
                       </Link>
                       <div className="border-t border-slate-100 my-1" />
@@ -727,7 +727,7 @@ export default function Navbar({
               ) : (
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4.5 py-2 sm:py-2.5 rounded-xl bg-[#008F83] hover:bg-[#007a70] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition whitespace-nowrap shrink-0"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4.5 py-2 sm:py-2.5 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition whitespace-nowrap shrink-0"
                   title="Login or Register"
                 >
                   <User className="w-4 h-4 shrink-0" />
@@ -746,7 +746,7 @@ export default function Navbar({
             {isLoggedIn ? (
               <div className="p-3.5 rounded-2xl bg-teal-50/70 border border-teal-100 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#008F83] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+                  <div className="w-10 h-10 rounded-full bg-[#005CB9] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                     {displayInitial}
                   </div>
                   <div className="min-w-0">
@@ -774,7 +774,7 @@ export default function Navbar({
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0"
+                  className="px-4 py-2 bg-[#005CB9] hover:bg-[#004C99] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0"
                 >
                   Login / Register
                 </Link>
@@ -796,7 +796,7 @@ export default function Navbar({
                       className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between text-left ${
                         link.highlight
                           ? 'bg-emerald-50 text-emerald-800 font-bold'
-                          : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
+                          : 'text-slate-800 hover:bg-slate-50 hover:text-[#005CB9]'
                       }`}
                     >
                       <span>{link.name}</span>
@@ -812,8 +812,8 @@ export default function Navbar({
                     onClick={() => setMobileMenuOpen(false)}
                     className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between ${
                       routerLocation.pathname === link.href
-                        ? 'bg-teal-50 text-[#008F83] font-bold'
-                        : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
+                        ? 'bg-teal-50 text-[#005CB9] font-bold'
+                        : 'text-slate-800 hover:bg-slate-50 hover:text-[#005CB9]'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -841,7 +841,7 @@ export default function Navbar({
                   }}
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition text-center"
                 >
-                  <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
+                  <LayoutDashboard className="w-4 h-4 text-[#005CB9]" />
                   <span>Patient Dashboard</span>
                 </button>
                 <button
@@ -850,7 +850,7 @@ export default function Navbar({
                     setMobileMenuOpen(false);
                     onOpenPrescriptionModal();
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#008F83] text-[#008F83] hover:bg-teal-50 text-xs font-bold transition"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#005CB9] text-[#005CB9] hover:bg-teal-50 text-xs font-bold transition"
                 >
                   <FileText className="w-4 h-4" />
                   <span>Upload Prescription</span>

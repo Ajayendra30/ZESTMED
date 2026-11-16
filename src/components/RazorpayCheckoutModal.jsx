@@ -130,7 +130,7 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
               <button
                 type="button"
                 onClick={handleFinish}
-                className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
               >
                 Close & Return
               </button>

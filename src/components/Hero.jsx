@@ -9,7 +9,7 @@ import heroTeamImg from '../assets/hero-team.png';
 
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#EFFBF9] via-[#E8F8F6] to-[#DEF7F5] pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20 border-b border-teal-100/60">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#EFF6FF] via-[#F0F6FE] to-[#E1EFFF] pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20 border-b border-teal-100/60">
       {/* 1. Subtle Floating Mint Medical Plus (+) Symbols */}
       <div className="absolute top-8 sm:top-10 left-[48%] lg:left-[52%] opacity-35 text-teal-300 font-bold text-5xl sm:text-6xl lg:text-7xl pointer-events-none select-none">
         +
@@ -27,13 +27,13 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
         >
           <defs>
             <linearGradient id="heroOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.45" />
-              <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
-              <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="#BFDBFE" stopOpacity="0.45" />
+              <stop offset="45%" stopColor="#93C5FD" stopOpacity="0.75" />
+              <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.9" />
             </linearGradient>
             <linearGradient id="heroOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
+              <stop offset="0%" stopColor="#DBEAFE" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.85" />
             </linearGradient>
           </defs>
           <path
@@ -46,7 +46,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             opacity="0.65"
           />
         </svg>
-        <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
+        <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#60A5FA]/45 via-[#93C5FD]/25 to-transparent rounded-full blur-2xl" />
       </div>
 
       {/* Main Container */}
@@ -57,21 +57,22 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             
             {/* Tag Badges Row */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-emerald-300 shadow-xs text-xs font-bold text-emerald-800 backdrop-blur-xs">
-                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span>Single-Day Reports Guaranteed</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-orange-200 shadow-xs text-xs font-bold text-[#FF5722] backdrop-blur-xs">
+                <Clock className="w-3.5 h-3.5 text-[#FF5722] shrink-0" />
+                <span>Single-Day Reports Guaranteed ⚡</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#008F83]/10 border border-[#008F83]/30 text-xs font-bold text-[#008F83]">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#005CB9]/10 border border-[#005CB9]/30 text-xs font-bold text-[#005CB9]">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span>Exclusively Guwahati</span>
               </div>
             </div>
 
             {/* Main Headline - Lab Tests FIRST */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[38px] xl:text-[44px] 2xl:text-[48px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[38px] xl:text-[44px] 2xl:text-[48px] font-black text-[#0A1E34] tracking-tight leading-[1.15]">
               Book Lab Tests, Consult <br />
               Doctors & Order Medicines <br />
-              <span className="text-[#008F83]">Test Reports in a Single Day</span>
+              <span className="text-[#005CB9]">Test Reports in a </span>
+              <span className="text-[#FF5722]">Single Day ⚡</span>
             </h1>
 
             {/* Subheading */}
@@ -83,7 +84,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
               <Link
                 to="/diagnostics"
-                className="bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition hover:shadow-md group whitespace-nowrap"
+                className="bg-[#005CB9] hover:bg-[#004C99] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition hover:shadow-md group whitespace-nowrap"
               >
                 <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 <span>Book a Lab Test (1st)</span>
@@ -98,7 +99,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                 onClick={onOpenDoctorModal}
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
               >
-                <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
+                <Stethoscope className="w-4 h-4 text-[#005CB9] shrink-0" />
                 <span>Book Doctor</span>
               </button>
 
@@ -114,16 +115,16 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             {/* Senior Citizen Free Pick-up & Drop Feature Callout Banner */}
             <div 
               onClick={onOpenSeniorPickup}
-              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-2xl p-3 flex items-center justify-between gap-3 hover:border-[#008F83] transition group"
+              className="cursor-pointer bg-gradient-to-r from-blue-500/10 via-orange-500/10 to-blue-500/10 border border-blue-200 rounded-2xl p-3 flex items-center justify-between gap-3 hover:border-[#FF5722] hover:shadow-sm transition group"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#FF5722] text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Car className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
                   <div className="font-bold text-slate-900 flex items-center gap-1.5">
                     <span>Within 10km Radius Free Pick-up & Drop</span>
-                    <span className="text-[10px] font-black bg-[#008F83] text-white px-1.5 py-0.2 rounded-full">
+                    <span className="text-[10px] font-black bg-[#FF5722] text-white px-1.5 py-0.2 rounded-full">
                       Free for 60+
                     </span>
                   </div>
@@ -132,7 +133,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1">
+              <span className="text-xs font-bold text-[#FF5722] group-hover:underline whitespace-nowrap flex items-center gap-1">
                 Book Cab <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>

@@ -46,12 +46,12 @@ export default function FAQ() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Frequently Asked <span className="text-[#008F83]">Questions (FAQs)</span>
+            Frequently Asked <span className="text-[#005CB9]">Questions (FAQs)</span>
           </h2>
           <a
             href="#faq"
             onClick={(e) => e.preventDefault()}
-            className="text-sm sm:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition"
+            className="text-sm sm:text-base font-bold text-[#005CB9] hover:underline flex items-center gap-1.5 transition"
           >
             <span>View All FAQs</span>
             <ArrowRight className="w-5 h-5" />
@@ -79,7 +79,7 @@ export default function FAQ() {
                     </span>
                     <ChevronDown
                       className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#008F83]' : ''
+                        isOpen ? 'rotate-180 text-[#005CB9]' : ''
                       }`}
                     />
                   </button>
@@ -112,7 +112,7 @@ export default function FAQ() {
                     </span>
                     <ChevronDown
                       className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#008F83]' : ''
+                        isOpen ? 'rotate-180 text-[#005CB9]' : ''
                       }`}
                     />
                   </button>

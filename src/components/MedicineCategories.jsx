@@ -65,7 +65,7 @@ export default function MedicineCategories() {
           </h2>
           <Link
             to="/medicines"
-            className="text-sm sm:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition"
+            className="text-sm sm:text-base font-bold text-[#005CB9] hover:underline flex items-center gap-1.5 transition"
           >
             <span>View All Categories</span>
             <ArrowRight className="w-5 h-5" />

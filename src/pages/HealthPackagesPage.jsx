@@ -122,7 +122,7 @@ const PACKAGES_DATA = [
 ];
 
 const CATEGORY_PILLS = [
-  { id: 'all', label: 'All Packages', icon: LayoutGrid, iconColor: 'text-[#008F83]' },
+  { id: 'all', label: 'All Packages', icon: LayoutGrid, iconColor: 'text-[#005CB9]' },
   { id: 'fullbody', label: 'Full Body Checkup', icon: HeartPulse, iconColor: 'text-blue-500' },
   { id: 'men', label: "Men's Health", icon: UserCheck, iconColor: 'text-sky-500' },
   { id: 'women', label: "Women's Health", icon: Heart, iconColor: 'text-pink-500' },
@@ -266,13 +266,13 @@ export default function HealthPackagesPage() {
           >
             <defs>
               <linearGradient id="pkgOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.4" />
-                <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#BFDBFE" stopOpacity="0.4" />
+                <stop offset="45%" stopColor="#93C5FD" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.9" />
               </linearGradient>
               <linearGradient id="pkgOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#DBEAFE" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.85" />
               </linearGradient>
             </defs>
             <path
@@ -285,14 +285,14 @@ export default function HealthPackagesPage() {
               opacity="0.65"
             />
           </svg>
-          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#60A5FA]/45 via-[#93C5FD]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10 min-h-[280px] sm:min-h-[300px] lg:min-h-[330px] xl:min-h-[350px] flex items-center">
           {/* Left Column: Heading, Subtitle & 4 Key Feature Badges */}
           <div className="relative z-20 max-w-lg lg:max-w-xl xl:max-w-2xl py-8 sm:py-10 lg:py-12 space-y-3 sm:space-y-3.5">
             <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-[#0B1728] tracking-tight leading-tight">
-              Health Checkup <span className="text-[#008F83]">Packages</span>
+              Health Checkup <span className="text-[#005CB9]">Packages</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-xl">
               Comprehensive health checkup packages for you and your family at affordable prices.
@@ -301,29 +301,29 @@ export default function HealthPackagesPage() {
             {/* 4 Trust Badges in a Horizontal Row */}
             <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                  <HeartPulse className="w-4 h-4 text-[#008F83]" />
+                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
+                  <HeartPulse className="w-4 h-4 text-[#005CB9]" />
                 </div>
                 <span>Full Body Screening</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                  <Home className="w-4 h-4 text-[#008F83]" />
+                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
+                  <Home className="w-4 h-4 text-[#005CB9]" />
                 </div>
                 <span>Free Sample Collection</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                  <UserCheck className="w-4 h-4 text-[#008F83]" />
+                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
+                  <UserCheck className="w-4 h-4 text-[#005CB9]" />
                 </div>
                 <span>Doctor Consultation</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                  <Clock className="w-4 h-4 text-[#008F83]" />
+                <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
+                  <Clock className="w-4 h-4 text-[#005CB9]" />
                 </div>
                 <span>Same Day Reports</span>
               </div>
@@ -353,8 +353,8 @@ export default function HealthPackagesPage() {
       {/* 2. BREADCRUMB */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 pb-3">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold">
-          <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
-            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83]" />
+          <Link to="/" className="flex items-center gap-1.5 hover:text-[#005CB9] transition">
+            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#005CB9]" />
             <span>Home</span>
           </Link>
           <span className="text-slate-400">&gt;</span>
@@ -371,7 +371,7 @@ export default function HealthPackagesPage() {
             <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-6">
               {/* Sidebar Header */}
               <div className="flex items-center gap-2 text-[#0B1728] font-black text-base pb-3 border-b border-slate-100">
-                <SlidersHorizontal className="w-4 h-4 text-[#008F83]" />
+                <SlidersHorizontal className="w-4 h-4 text-[#005CB9]" />
                 <span>Filter Packages</span>
               </div>
 
@@ -406,9 +406,9 @@ export default function HealthPackagesPage() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleSidebarTypeToggle(type.id)}
-                            className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-300 text-[#005CB9] focus:ring-[#005CB9] cursor-pointer"
                           />
-                          <span className={`font-medium ${isChecked ? 'text-[#008F83] font-bold' : ''}`}>
+                          <span className={`font-medium ${isChecked ? 'text-[#005CB9] font-bold' : ''}`}>
                             {type.name}
                           </span>
                         </div>
@@ -421,7 +421,7 @@ export default function HealthPackagesPage() {
                 <button
                   type="button"
                   onClick={() => setShowAllTypes(!showAllTypes)}
-                  className="flex items-center gap-1 text-xs text-[#008F83] font-bold hover:underline pt-1 cursor-pointer"
+                  className="flex items-center gap-1 text-xs text-[#005CB9] font-bold hover:underline pt-1 cursor-pointer"
                 >
                   <span>{showAllTypes ? 'Show Less' : 'View More'}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAllTypes ? 'rotate-180' : ''}`} />
@@ -438,12 +438,12 @@ export default function HealthPackagesPage() {
                   step="250"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-[#008F83] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                  className="w-full accent-[#005CB9] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
                 />
                 <div className="flex items-center justify-between text-xs sm:text-sm text-slate-700 font-bold">
                   <span>₹0</span>
                   <span className="text-slate-400">—</span>
-                  <span className="text-[#008F83]">₹{priceMax.toLocaleString()}</span>
+                  <span className="text-[#005CB9]">₹{priceMax.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -465,9 +465,9 @@ export default function HealthPackagesPage() {
                           type="checkbox"
                           checked={minDiscount === d.val}
                           onChange={() => setMinDiscount(minDiscount === d.val ? 0 : d.val)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
+                          className="w-4 h-4 rounded border-slate-300 text-[#005CB9] focus:ring-[#005CB9] cursor-pointer"
                         />
-                        <span className={`font-medium ${minDiscount === d.val ? 'text-[#008F83] font-bold' : ''}`}>
+                        <span className={`font-medium ${minDiscount === d.val ? 'text-[#005CB9] font-bold' : ''}`}>
                           {d.label}
                         </span>
                       </div>
@@ -484,7 +484,7 @@ export default function HealthPackagesPage() {
           <main className="lg:col-span-9 space-y-6">
             
             {/* 1. Search Bar */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-1.5 sm:p-2 flex items-center shadow-xs focus-within:border-[#008F83] transition">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-1.5 sm:p-2 flex items-center shadow-xs focus-within:border-[#005CB9] transition">
               <Search className="w-5 h-5 text-slate-400 ml-3 mr-2.5 shrink-0" />
               <input
                 type="text"
@@ -502,7 +502,7 @@ export default function HealthPackagesPage() {
                     addToast('Showing all available health packages', 'info');
                   }
                 }}
-                className="px-6 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs"
+                className="px-6 py-2 bg-[#005CB9] hover:bg-[#004C99] text-white text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs"
               >
                 Search
               </button>
@@ -521,11 +521,11 @@ export default function HealthPackagesPage() {
                     onClick={() => handleCategorySelect(pill.id)}
                     className={`flex flex-col items-center justify-center p-2 sm:p-2.5 rounded-xl border text-center transition cursor-pointer shrink-0 ${
                       isActive
-                        ? 'bg-[#E2F7F8] border-[#008F83] text-[#008F83] shadow-xs'
+                        ? 'bg-[#E2F7F8] border-[#005CB9] text-[#005CB9] shadow-xs'
                         : 'bg-white border-slate-200/80 text-slate-700 hover:border-teal-200 hover:bg-teal-50/40'
                     }`}
                   >
-                    <IconComponent className={`w-5 h-5 sm:w-5.5 sm:h-5.5 mb-1.5 ${isActive ? 'text-[#008F83]' : pill.iconColor}`} />
+                    <IconComponent className={`w-5 h-5 sm:w-5.5 sm:h-5.5 mb-1.5 ${isActive ? 'text-[#005CB9]' : pill.iconColor}`} />
                     <span className={`text-[10px] sm:text-[11px] leading-tight line-clamp-2 ${isActive ? 'font-black' : 'font-bold'}`}>
                       {pill.label}
                     </span>
@@ -545,7 +545,7 @@ export default function HealthPackagesPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 bg-white border border-slate-200/90 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-[#008F83] cursor-pointer shadow-xs"
+                  className="px-3 py-1.5 bg-white border border-slate-200/90 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:border-[#005CB9] cursor-pointer shadow-xs"
                 >
                   <option value="Popularity">Popularity</option>
                   <option value="Price: Low to High">Price: Low to High</option>
@@ -593,7 +593,7 @@ export default function HealthPackagesPage() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xs sm:text-sm font-bold text-[#0B1728] leading-snug line-clamp-1 group-hover:text-[#008F83] transition">
+                        <h3 className="text-xs sm:text-sm font-bold text-[#0B1728] leading-snug line-clamp-1 group-hover:text-[#005CB9] transition">
                           {pkg.name}
                         </h3>
 
@@ -625,7 +625,7 @@ export default function HealthPackagesPage() {
                       <button
                         type="button"
                         onClick={() => handleBookPackage(pkg)}
-                        className="px-3 py-1.5 bg-[#008F83] hover:bg-[#007A70] text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                        className="px-3 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                       >
                         <Calendar className="w-3.5 h-3.5" />
                         <span>Book Now</span>
@@ -640,7 +640,7 @@ export default function HealthPackagesPage() {
             <div className="bg-[#F8FCFB] border border-[#C6ECE5] rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-3 shadow-xs mt-6">
               {/* Left Column: Home Icon + Title & Subtitle */}
               <div className="flex items-center gap-3 shrink-0 w-full lg:w-auto">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E6F7F4] flex items-center justify-center text-[#008F83] shrink-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E6F7F4] flex items-center justify-center text-[#005CB9] shrink-0">
                   <Home className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
                 </div>
                 <div>
@@ -658,7 +658,7 @@ export default function HealthPackagesPage() {
               <div className="flex items-center justify-between w-full lg:w-auto gap-2.5 sm:gap-4 md:gap-5 overflow-x-auto py-1">
                 {/* 1. Easy Booking */}
                 <div className="flex flex-col items-center justify-center text-center px-1 sm:px-2 shrink-0">
-                  <Calendar className="w-5 h-5 text-[#008F83] stroke-[2] mb-1" />
+                  <Calendar className="w-5 h-5 text-[#005CB9] stroke-[2] mb-1" />
                   <span className="text-[10px] sm:text-[11px] font-bold text-[#0B1728] leading-tight">
                     Easy Booking
                   </span>
@@ -668,7 +668,7 @@ export default function HealthPackagesPage() {
 
                 {/* 2. Trained Phlebotomist */}
                 <div className="flex flex-col items-center justify-center text-center px-1 sm:px-2 shrink-0">
-                  <Truck className="w-5 h-5 text-[#008F83] stroke-[2] mb-1" />
+                  <Truck className="w-5 h-5 text-[#005CB9] stroke-[2] mb-1" />
                   <div className="text-[10px] sm:text-[11px] font-bold text-[#0B1728] leading-tight">
                     <div>Trained</div>
                     <div>Phlebotomist</div>
@@ -679,7 +679,7 @@ export default function HealthPackagesPage() {
 
                 {/* 3. Safe & Hygienic */}
                 <div className="flex flex-col items-center justify-center text-center px-1 sm:px-2 shrink-0">
-                  <ShieldCheck className="w-5 h-5 text-[#008F83] stroke-[2] mb-1" />
+                  <ShieldCheck className="w-5 h-5 text-[#005CB9] stroke-[2] mb-1" />
                   <div className="text-[10px] sm:text-[11px] font-bold text-[#0B1728] leading-tight">
                     <div>Safe &</div>
                     <div>Hygienic</div>
@@ -690,7 +690,7 @@ export default function HealthPackagesPage() {
 
                 {/* 4. Reports in 24–48 Hours */}
                 <div className="flex flex-col items-center justify-center text-center px-1 sm:px-2 shrink-0">
-                  <Clock className="w-5 h-5 text-[#008F83] stroke-[2] mb-1" />
+                  <Clock className="w-5 h-5 text-[#005CB9] stroke-[2] mb-1" />
                   <div className="text-[10px] sm:text-[11px] font-bold text-[#0B1728] leading-tight">
                     <div>Reports in</div>
                     <div>24–48 Hours</div>
@@ -705,7 +705,7 @@ export default function HealthPackagesPage() {
                   onClick={() => {
                     if (filteredPackages.length > 0) handleBookPackage(filteredPackages[0]);
                   }}
-                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#008F83] hover:bg-[#007A70] text-white font-bold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer shrink-0"
+                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer shrink-0"
                 >
                   <span>Book a Health Package Now</span>
                   <ArrowRight className="w-4 h-4" />

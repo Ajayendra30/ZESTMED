@@ -95,14 +95,14 @@ export default function AuthPage({ defaultMode = 'login' }) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#EFFBF9] via-[#F4FBF9] to-white flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans">
+    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#EFF6FF] via-[#F0F6FE] to-white flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans">
       <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
         
         {/* Left Promotional Banner (Guwahati healthcare benefits) */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#0B2238] via-[#093539] to-[#008F83] p-8 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="lg:col-span-5 bg-gradient-to-br from-[#0A1E34] via-[#004C99] to-[#005CB9] p-8 text-white flex flex-col justify-between relative overflow-hidden">
           {/* Ambient circles */}
-          <div className="absolute -top-16 -left-16 w-48 h-48 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-16 -left-16 w-48 h-48 bg-blue-400/20 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-orange-400/20 rounded-full blur-2xl pointer-events-none" />
 
           <div className="relative z-10 space-y-6">
             <Link to="/" className="inline-block">
@@ -116,7 +116,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
             </Link>
 
             <div>
-              <span className="text-[11px] font-black uppercase tracking-widest text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded-md border border-teal-500/30">
+              <span className="text-[11px] font-black uppercase tracking-widest text-[#FF5722] bg-orange-950/60 px-2 py-0.5 rounded-md border border-orange-500/30">
                 Guwahati Exclusive
               </span>
               <h2 className="text-2xl font-black mt-2 leading-tight">
@@ -130,7 +130,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
             {/* Benefit Bullets */}
             <div className="space-y-3 pt-2 text-xs">
               <div className="flex items-start gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-lg bg-orange-500/30 flex items-center justify-center text-[#FF5722] shrink-0 mt-0.5">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
                 <span><strong>Single-Day Reports:</strong> All lab test reports delivered within 12-24 hours guaranteed.</span>
@@ -165,7 +165,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
             <div className="flex items-center justify-between mb-6">
               <Link
                 to="/"
-                className="text-xs font-bold text-slate-500 hover:text-[#008F83] flex items-center gap-1 transition"
+                className="text-xs font-bold text-slate-500 hover:text-[#005CB9] flex items-center gap-1 transition"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Home</span>
@@ -231,8 +231,8 @@ export default function AuthPage({ defaultMode = 'login' }) {
                 {authMode === 'register' && (
                   <div>
                     <label className="text-xs font-bold text-slate-700 mb-1 block">Full Name *</label>
-                    <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
-                      <User className="w-4 h-4 text-[#008F83] shrink-0 mr-2.5" />
+                    <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#005CB9] focus-within:ring-2 focus-within:ring-[#005CB9]/15 transition bg-white px-3 py-2.5">
+                      <User className="w-4 h-4 text-[#005CB9] shrink-0 mr-2.5" />
                       <input
                         type="text"
                         required
@@ -247,9 +247,9 @@ export default function AuthPage({ defaultMode = 'login' }) {
 
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1 block">Mobile Number *</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
+                  <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#005CB9] focus-within:ring-2 focus-within:ring-[#005CB9]/15 transition bg-white px-3 py-2.5">
                     <div className="flex items-center gap-1 pr-3 border-r border-slate-200 shrink-0 text-slate-800 font-bold text-xs sm:text-sm">
-                      <Smartphone className="w-4 h-4 text-[#008F83]" />
+                      <Smartphone className="w-4 h-4 text-[#005CB9]" />
                       <span>+91</span>
                     </div>
                     <input
@@ -270,7 +270,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
                 <button
                   type="submit"
                   disabled={phoneNumber.length !== 10 || (authMode === 'register' && !fullName.trim())}
-                  className="w-full py-3 bg-[#008F83] hover:bg-[#007A70] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <span>{authMode === 'login' ? 'Send OTP & Sign In' : 'Send OTP & Register'}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -302,7 +302,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
               /* Form Step 2: OTP Entry */
               <form onSubmit={handleVerifyOtp} className="space-y-5 max-w-sm mx-auto">
                 <div className="bg-teal-50 border border-teal-200/80 rounded-2xl p-3.5 text-center text-xs text-teal-900">
-                  <span>Enter demo verification code: <strong className="font-mono text-sm font-bold text-[#008F83]">1234</strong></span>
+                  <span>Enter demo verification code: <strong className="font-mono text-sm font-bold text-[#005CB9]">1234</strong></span>
                 </div>
 
                 <div className="flex justify-center gap-3">
@@ -315,7 +315,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="w-12 h-14 text-center text-xl font-black rounded-xl border border-slate-300 focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/20 outline-none"
+                      className="w-12 h-14 text-center text-xl font-black rounded-xl border border-slate-300 focus:border-[#005CB9] focus:ring-2 focus:ring-[#005CB9]/20 outline-none"
                     />
                   ))}
                 </div>
@@ -323,7 +323,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
                 <button
                   type="submit"
                   disabled={otp.join('').length < 4}
-                  className="w-full py-3 bg-[#008F83] hover:bg-[#007A70] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50"
+                  className="w-full py-3 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50"
                 >
                   Verify & Enter Dashboard
                 </button>
@@ -340,7 +340,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
                   <button
                     type="button"
                     onClick={handleResendOtp}
-                    className="text-[#008F83] hover:underline font-bold"
+                    className="text-[#005CB9] hover:underline font-bold"
                   >
                     Resend Code
                   </button>

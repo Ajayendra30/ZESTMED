@@ -68,7 +68,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
       {/* Modal Dialog */}
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#14B8A6] text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <UserPlus className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g. Deepjyoti Kalita"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-medium"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-medium"
             />
           </div>
 
@@ -110,7 +110,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="e.g. 98765 00005"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono"
               />
             </div>
             <div>
@@ -118,7 +118,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
               <select
                 value={formData.zone}
                 onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white"
               >
                 <option value="Dispur & GS Road Hub">Dispur & GS Road Hub</option>
                 <option value="Ulubari & Paltan Bazar">Ulubari & Paltan Bazar</option>
@@ -139,7 +139,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
               <select
                 value={formData.shift}
                 onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white"
               >
                 <option value="Morning (06:00 AM - 02:00 PM)">Morning (06:00 AM - 02:00 PM)</option>
                 <option value="General (09:00 AM - 05:00 PM)">General (09:00 AM - 05:00 PM)</option>
@@ -151,7 +151,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white font-bold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white font-bold"
               >
                 <option value="Available">Available</option>
                 <option value="On Route">On Route</option>
@@ -168,7 +168,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
                 value={formData.temp}
                 onChange={(e) => setFormData({ ...formData, temp: e.target.value })}
                 placeholder="3.8°C"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono text-teal-700 font-bold"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono text-teal-700 font-bold"
               />
             </div>
             <div>
@@ -177,13 +177,13 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
                 type="text"
                 value={formData.certification}
                 onChange={(e) => setFormData({ ...formData, certification: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-teal-50 rounded-xl border border-teal-100 text-[11px] text-teal-800">
-            <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-[#005CB9] shrink-0" />
             <span>Phlebotomist will receive automated SMS with credentials & GPS tracker app sync key.</span>
           </div>
 
@@ -197,7 +197,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
             >
               <UserPlus className="w-4 h-4" />
               <span>Onboard Executive</span>

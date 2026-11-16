@@ -33,17 +33,21 @@
   background: #94A3B8;
 }
 
-/* Smooth badges & buttons */
+/* Smooth badges & buttons matching ZESTMED Royal Blue & Heartbeat Orange Brand */
 .btn-primary {
-  @apply bg-[#01333A] hover:bg-[#002227] text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
+  @apply bg-[#005CB9] hover:bg-[#004C99] text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
 }
 
 .btn-secondary {
-  @apply bg-white hover:bg-slate-50 text-[#01333A] border border-[#01333A]/20 font-medium px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
+  @apply bg-white hover:bg-blue-50/50 text-[#005CB9] border border-[#005CB9]/30 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
+}
+
+.btn-accent, .btn-orange {
+  @apply bg-[#FF5722] hover:bg-[#E64A19] text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
 }
 
 .btn-teal {
-  @apply bg-[#14B8A6] hover:bg-[#0D9488] text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
+  @apply bg-[#005CB9] hover:bg-[#004C99] text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
 }
 
 .glass-pill {

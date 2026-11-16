@@ -76,13 +76,13 @@ export default function SearchSection({
             onClick={() => setActiveTab('tests')}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'tests'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <FlaskConical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>1. Book Lab Test</span>
-            <span className={`text-[10px] px-1 rounded font-bold ${activeTab === 'tests' ? 'bg-amber-400 text-slate-900' : 'bg-teal-50 text-[#008F83]'}`}>
+            <span className={`text-[10px] px-1 rounded font-bold ${activeTab === 'tests' ? 'bg-[#FF5722] text-white' : 'bg-orange-50 text-[#FF5722]'}`}>
               Single Day ⚡
             </span>
           </button>
@@ -96,11 +96,11 @@ export default function SearchSection({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'doctor'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83]" />
+            <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#005CB9]" />
             <span>2. Book Doctor</span>
           </button>
 
@@ -113,7 +113,7 @@ export default function SearchSection({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'physio'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -130,7 +130,7 @@ export default function SearchSection({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'surgery'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -144,7 +144,7 @@ export default function SearchSection({
             onClick={() => setActiveTab('packages')}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'packages'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -158,7 +158,7 @@ export default function SearchSection({
             onClick={() => setActiveTab('medicines')}
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap shrink-0 ${
               activeTab === 'medicines'
-                ? 'bg-[#008F83] text-white shadow-xs'
+                ? 'bg-[#005CB9] text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -176,11 +176,11 @@ export default function SearchSection({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={getPlaceholder()}
-            className="w-full pl-9 sm:pl-12 pr-24 sm:pr-28 py-2.5 sm:py-3 text-xs sm:text-sm lg:text-base text-slate-800 placeholder:text-slate-400 placeholder:truncate rounded-xl sm:rounded-2xl border border-slate-200 focus:outline-none focus:border-[#008F83] transition bg-white"
+            className="w-full pl-9 sm:pl-12 pr-24 sm:pr-28 py-2.5 sm:py-3 text-xs sm:text-sm lg:text-base text-slate-800 placeholder:text-slate-400 placeholder:truncate rounded-xl sm:rounded-2xl border border-slate-200 focus:outline-none focus:border-[#005CB9] transition bg-white"
           />
           <button
             type="submit"
-            className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-xs transition"
+            className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-[#005CB9] hover:bg-[#004C99] text-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-xs transition"
           >
             Search
           </button>

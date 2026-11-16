@@ -65,7 +65,7 @@ export default function HomeCollection() {
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-gradient-to-br from-[#0C4778] via-[#1677C8] to-[#0D9488] text-white relative overflow-hidden">
+    <section className="py-14 sm:py-20 bg-gradient-to-br from-[#0C4778] via-[#1677C8] to-[#004C99] text-white relative overflow-hidden">
       {/* Decorative patterns */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 

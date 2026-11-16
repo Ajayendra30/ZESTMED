@@ -18,10 +18,10 @@ export default function HealthcareCategories({
       title: 'Lab & Diagnostic Tests',
       sub: 'Single-Day Reports ⚡',
       badge: '#1 First Order',
-      badgeColor: 'bg-amber-100 text-amber-800',
-      iconBg: 'bg-teal-50 text-[#008F83]',
+      badgeColor: 'bg-orange-100 text-[#FF5722] border border-orange-200/80',
+      iconBg: 'bg-blue-50 text-[#005CB9]',
       link: '/diagnostics',
-      icon: <FlaskConical className="w-7 h-7 text-[#008F83]" />
+      icon: <FlaskConical className="w-7 h-7 text-[#005CB9]" />
     },
     {
       id: 'book-doctor',
@@ -68,20 +68,20 @@ export default function HealthcareCategories({
       title: 'Online Medicines',
       sub: 'Genuine Pharmacy & Fast Delivery',
       badge: 'Guwahati Fast',
-      badgeColor: 'bg-teal-50 text-teal-800',
-      iconBg: 'bg-teal-50 text-[#008F83]',
+      badgeColor: 'bg-blue-50 text-blue-800',
+      iconBg: 'bg-blue-50 text-[#005CB9]',
       link: '/medicines',
-      icon: <Pill className="w-7 h-7 text-[#008F83]" />
+      icon: <Pill className="w-7 h-7 text-[#005CB9]" />
     },
     {
       id: 'senior-care',
       title: 'Senior Citizen Transport',
       sub: 'Free Pick-up & Drop (10km Radius)',
       badge: '100% Free',
-      badgeColor: 'bg-emerald-100 text-emerald-800',
-      iconBg: 'bg-emerald-100 text-emerald-700',
+      badgeColor: 'bg-orange-100 text-[#FF5722] border border-orange-200/80',
+      iconBg: 'bg-orange-50 text-[#FF5722]',
       onClick: onOpenSeniorPickup,
-      icon: <Car className="w-7 h-7 text-emerald-700" />
+      icon: <Car className="w-7 h-7 text-[#FF5722]" />
     }
   ];
 
@@ -92,7 +92,7 @@ export default function HealthcareCategories({
           <div>
             <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <span>Comprehensive Healthcare Services</span>
-              <span className="text-xs font-bold text-[#008F83] bg-teal-50 border border-teal-200/80 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-bold text-[#005CB9] bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-full">
                 Guwahati Exclusive
               </span>
             </h2>
@@ -106,7 +106,7 @@ export default function HealthcareCategories({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-3.5">
           {serviceCategories.map((cat) => {
             const Content = (
-              <div className="h-full flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-[#008F83] hover:shadow-md transition text-left group cursor-pointer relative overflow-hidden">
+              <div className="h-full flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-[#005CB9] hover:shadow-md transition text-left group cursor-pointer relative overflow-hidden">
                 <div className="flex items-start justify-between mb-3">
                   <div className={`w-12 h-12 rounded-2xl ${cat.iconBg} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs`}>
                     {cat.icon}
@@ -117,7 +117,7 @@ export default function HealthcareCategories({
                 </div>
 
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug">
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#005CB9] transition leading-snug">
                     {cat.title}
                   </h3>
                   <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -125,7 +125,7 @@ export default function HealthcareCategories({
                   </p>
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#008F83]">
+                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#005CB9]">
                   <span>Explore</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>

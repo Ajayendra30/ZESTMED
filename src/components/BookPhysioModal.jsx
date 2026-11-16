@@ -83,7 +83,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-teal-50 to-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#005CB9] text-white flex items-center justify-center shadow-sm shrink-0">
               <Activity className="w-5 h-5" />
             </div>
             <div>
@@ -91,7 +91,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                 <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Book Licensed Physiotherapist
                 </h3>
-                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-[#005CB9] text-white px-2 py-0.5 rounded-full">
                   Home Visit in Guwahati
                 </span>
               </div>
@@ -129,7 +129,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
               <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 text-left text-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                   <span className="text-slate-500 font-medium">Booking ID</span>
-                  <span className="font-mono font-bold text-[#008F83] text-sm">{bookingConfirmed.bookingRef}</span>
+                  <span className="font-mono font-bold text-[#005CB9] text-sm">{bookingConfirmed.bookingRef}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -140,7 +140,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Service Mode & Slot</span>
                     <strong className="text-slate-800">{bookingConfirmed.date} • {bookingConfirmed.slot}</strong>
-                    <span className="text-[#008F83] block text-[11px] font-semibold">{bookingConfirmed.serviceType}</span>
+                    <span className="text-[#005CB9] block text-[11px] font-semibold">{bookingConfirmed.serviceType}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Patient Name & Phone</span>
@@ -172,7 +172,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
                 >
                   Done
                 </button>
@@ -184,7 +184,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
               <button
                 type="button"
                 onClick={() => setSelectedPhysio(null)}
-                className="text-xs text-[#008F83] font-bold hover:underline flex items-center gap-1 mb-2"
+                className="text-xs text-[#005CB9] font-bold hover:underline flex items-center gap-1 mb-2"
               >
                 ← Back to Physiotherapists List
               </button>
@@ -223,7 +223,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     onClick={() => setServiceType('Home Visit')}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                       serviceType === 'Home Visit'
-                        ? 'border-[#008F83] bg-teal-50 text-[#008F83]'
+                        ? 'border-[#005CB9] bg-teal-50 text-[#005CB9]'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -235,7 +235,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     onClick={() => setServiceType('Clinic Rehab')}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                       serviceType === 'Clinic Rehab'
-                        ? 'border-[#008F83] bg-teal-50 text-[#008F83]'
+                        ? 'border-[#005CB9] bg-teal-50 text-[#005CB9]'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -254,7 +254,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     required
                     value={sessionDate}
                     onChange={(e) => setSessionDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
                 <div>
@@ -262,7 +262,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                   <select
                     value={sessionSlot}
                     onChange={(e) => setSessionSlot(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none bg-white font-medium"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none bg-white font-medium"
                   >
                     <option value="08:00 AM - 09:00 AM">08:00 AM - 09:00 AM (Early Morning)</option>
                     <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM (Morning)</option>
@@ -283,7 +283,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.name}
                     onChange={(e) => setPatientDetails({ ...patientDetails, name: e.target.value })}
                     placeholder="e.g. Minati Goswami"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
                 <div>
@@ -293,7 +293,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.age}
                     onChange={(e) => setPatientDetails({ ...patientDetails, age: e.target.value })}
                     placeholder="e.g. 64"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
               </div>
@@ -307,7 +307,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.phone}
                     onChange={(e) => setPatientDetails({ ...patientDetails, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
                 <div>
@@ -318,7 +318,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.address}
                     onChange={(e) => setPatientDetails({ ...patientDetails, address: e.target.value })}
                     placeholder="e.g. Flat 3A, Dispur, Guwahati"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
               </div>
@@ -330,7 +330,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                   value={patientDetails.conditionNotes}
                   onChange={(e) => setPatientDetails({ ...patientDetails, conditionNotes: e.target.value })}
                   placeholder="e.g. Total knee replacement recovery, stroke balance training, sciatica"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                 />
               </div>
 
@@ -338,7 +338,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
                 >
                   <Activity className="w-4 h-4" />
                   <span>{isSubmitting ? 'Assigning Physiotherapist...' : `Confirm Session Booking • ₹${selectedPhysio.sessionFee}`}</span>
@@ -357,7 +357,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     onClick={() => setSelectedCondition(cond)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                       selectedCondition === cond
-                        ? 'bg-[#008F83] text-white'
+                        ? 'bg-[#005CB9] text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
@@ -371,7 +371,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                 {filteredPhysios.map((p) => (
                   <div
                     key={p.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 p-4 hover:shadow-md hover:border-[#008F83]/50 transition flex flex-col justify-between group"
+                    className="bg-white rounded-2xl border border-slate-200/90 p-4 hover:shadow-md hover:border-[#005CB9]/50 transition flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-start gap-3">
@@ -381,10 +381,10 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                           className="w-13 h-13 rounded-2xl object-cover shrink-0 border border-slate-200"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#008F83] transition truncate">
+                          <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#005CB9] transition truncate">
                             {p.name}
                           </h4>
-                          <span className="text-[11px] font-semibold text-[#008F83] block truncate">
+                          <span className="text-[11px] font-semibold text-[#005CB9] block truncate">
                             {p.specialty}
                           </span>
                           <span className="text-[10px] text-slate-500 block truncate">
@@ -398,7 +398,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                       </p>
 
                       <div className="mt-2 text-[11px] text-slate-500 flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#008F83] shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-[#005CB9] shrink-0" />
                         <span className="truncate">Service Hubs: {p.locations}</span>
                       </div>
                     </div>
@@ -411,7 +411,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                       <button
                         type="button"
                         onClick={() => handleSelectPhysio(p)}
-                        className="py-1.5 px-4 bg-teal-50 hover:bg-[#008F83] text-[#008F83] hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs"
+                        className="py-1.5 px-4 bg-teal-50 hover:bg-[#005CB9] text-[#005CB9] hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs"
                       >
                         <span>Book Session</span>
                         <ArrowRight className="w-3.5 h-3.5" />

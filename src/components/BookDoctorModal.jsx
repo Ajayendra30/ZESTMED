@@ -82,7 +82,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-teal-50 to-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#005CB9] text-white flex items-center justify-center shadow-sm shrink-0">
               <Stethoscope className="w-5 h-5" />
             </div>
             <div>
@@ -128,7 +128,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
               <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 text-left text-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                   <span className="text-slate-500 font-medium">Appointment ID</span>
-                  <span className="font-mono font-bold text-[#008F83] text-sm">{bookingConfirmed.apptId}</span>
+                  <span className="font-mono font-bold text-[#005CB9] text-sm">{bookingConfirmed.apptId}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -139,7 +139,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Slot & Mode</span>
                     <strong className="text-slate-800">{bookingConfirmed.slot}</strong>
-                    <span className="text-[#008F83] block text-[11px] font-semibold">{bookingConfirmed.mode}</span>
+                    <span className="text-[#005CB9] block text-[11px] font-semibold">{bookingConfirmed.mode}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Patient</span>
@@ -174,7 +174,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                       onClose();
                       onOpenSeniorPickup && onOpenSeniorPickup();
                     }}
-                    className="px-3 py-1.5 bg-[#008F83] text-white rounded-lg text-xs font-bold hover:bg-[#007a70] whitespace-nowrap shadow-xs"
+                    className="px-3 py-1.5 bg-[#005CB9] text-white rounded-lg text-xs font-bold hover:bg-[#004C99] whitespace-nowrap shadow-xs"
                   >
                     Book Free Cab
                   </button>
@@ -185,7 +185,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
                 >
                   Done
                 </button>
@@ -197,7 +197,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
               <button
                 type="button"
                 onClick={() => setSelectedDoctor(null)}
-                className="text-xs text-[#008F83] font-bold hover:underline flex items-center gap-1 mb-2"
+                className="text-xs text-[#005CB9] font-bold hover:underline flex items-center gap-1 mb-2"
               >
                 ← Back to All Doctors
               </button>
@@ -217,7 +217,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                   </div>
                   <p className="text-xs text-slate-500 font-medium">{selectedDoctor.degree} • {selectedDoctor.experience}</p>
                   <p className="text-xs text-slate-700 mt-1 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#008F83]" />
+                    <MapPin className="w-3.5 h-3.5 text-[#005CB9]" />
                     <span>{selectedDoctor.hospital}</span>
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-xs">
@@ -237,7 +237,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     onClick={() => setConsultMode('Clinic Visit')}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                       consultMode === 'Clinic Visit'
-                        ? 'border-[#008F83] bg-teal-50 text-[#008F83]'
+                        ? 'border-[#005CB9] bg-teal-50 text-[#005CB9]'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -249,7 +249,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     onClick={() => setConsultMode('Video Consult')}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                       consultMode === 'Video Consult'
-                        ? 'border-[#008F83] bg-teal-50 text-[#008F83]'
+                        ? 'border-[#005CB9] bg-teal-50 text-[#005CB9]'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -270,7 +270,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                       onClick={() => setSelectedSlot(slot)}
                       className={`py-2 px-3 rounded-xl border text-center transition font-semibold ${
                         selectedSlot === slot
-                          ? 'border-[#008F83] bg-[#008F83] text-white'
+                          ? 'border-[#005CB9] bg-[#005CB9] text-white'
                           : 'border-slate-200 hover:border-slate-300 text-slate-700'
                       }`}
                     >
@@ -290,7 +290,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.name}
                     onChange={(e) => setPatientDetails({ ...patientDetails, name: e.target.value })}
                     placeholder="e.g. Bipul Sharma"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
                 <div>
@@ -300,7 +300,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.age}
                     onChange={(e) => setPatientDetails({ ...patientDetails, age: e.target.value })}
                     placeholder="e.g. 45"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.phone}
                     onChange={(e) => setPatientDetails({ ...patientDetails, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
                 <div>
@@ -324,7 +324,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={patientDetails.symptoms}
                     onChange={(e) => setPatientDetails({ ...patientDetails, symptoms: e.target.value })}
                     placeholder="e.g. Fever, chest heaviness, joint pain"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
               </div>
@@ -333,7 +333,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
                 >
                   <Stethoscope className="w-4 h-4" />
                   <span>{isSubmitting ? 'Confirming Appointment...' : `Confirm Booking • ₹${selectedDoctor.fee}`}</span>
@@ -352,7 +352,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     value={searchDoctor}
                     onChange={(e) => setSearchDoctor(e.target.value)}
                     placeholder="Search doctor by name, specialty, or hospital in Guwahati..."
-                    className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
                 </div>
 
@@ -365,7 +365,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                       onClick={() => setSelectedSpecialty(spec)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                         selectedSpecialty === spec
-                          ? 'bg-[#008F83] text-white'
+                          ? 'bg-[#005CB9] text-white'
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
@@ -380,7 +380,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                 {filteredDoctors.map((doc) => (
                   <div
                     key={doc.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 p-4 hover:shadow-md hover:border-[#008F83]/50 transition flex flex-col justify-between group"
+                    className="bg-white rounded-2xl border border-slate-200/90 p-4 hover:shadow-md hover:border-[#005CB9]/50 transition flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-start gap-3">
@@ -390,10 +390,10 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                           className="w-13 h-13 rounded-2xl object-cover shrink-0 border border-slate-200"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#008F83] transition truncate">
+                          <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#005CB9] transition truncate">
                             {doc.name}
                           </h4>
-                          <span className="text-[11px] font-semibold text-[#008F83] block truncate">
+                          <span className="text-[11px] font-semibold text-[#005CB9] block truncate">
                             {doc.specialty}
                           </span>
                           <span className="text-[10px] text-slate-500 block truncate">
@@ -421,7 +421,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     <button
                       type="button"
                       onClick={() => handleSelectDoctor(doc)}
-                      className="mt-3 w-full py-2 bg-teal-50 hover:bg-[#008F83] text-[#008F83] hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs"
+                      className="mt-3 w-full py-2 bg-teal-50 hover:bg-[#005CB9] text-[#005CB9] hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs"
                     >
                       <span>Book Consultation</span>
                       <ArrowRight className="w-3.5 h-3.5" />

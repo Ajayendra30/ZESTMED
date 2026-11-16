@@ -29,7 +29,7 @@ export default function WhyChooseUs() {
               <div className="space-y-4 mt-6">
                 {points.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-3.5">
-                    <CheckCircle2 className="w-6 h-6 text-[#008F83] shrink-0 stroke-[2.2]" />
+                    <CheckCircle2 className="w-6 h-6 text-[#005CB9] shrink-0 stroke-[2.2]" />
                     <span className="text-base sm:text-lg font-semibold text-slate-700 leading-snug">
                       {pt}
                     </span>

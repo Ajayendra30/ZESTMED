@@ -184,10 +184,10 @@ export default function AuthModal() {
                   <div className="min-h-[105px] flex flex-col justify-center space-y-3">
                     {/* Full Name Input (Only on Register) */}
                     {authMode === 'register' && (
-                      <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
+                      <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#005CB9] focus-within:ring-2 focus-within:ring-[#005CB9]/15 transition bg-white px-3 py-2.5">
                         <div className="flex items-center gap-1.5 pr-3 border-r border-slate-200 shrink-0">
-                          <div className="w-6 h-6 rounded-md bg-[#E6F7F5] flex items-center justify-center text-[#008F83] shrink-0">
-                            <User className="w-3.5 h-3.5 text-[#008F83]" />
+                          <div className="w-6 h-6 rounded-md bg-[#E6F7F5] flex items-center justify-center text-[#005CB9] shrink-0">
+                            <User className="w-3.5 h-3.5 text-[#005CB9]" />
                           </div>
                         </div>
                         <input
@@ -202,10 +202,10 @@ export default function AuthModal() {
                     )}
 
                     {/* Mobile Number Input */}
-                    <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
+                    <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#005CB9] focus-within:ring-2 focus-within:ring-[#005CB9]/15 transition bg-white px-3 py-2.5">
                       <div className="flex items-center gap-1.5 pr-3 border-r border-slate-200 shrink-0">
-                        <div className="w-6 h-6 rounded-md bg-[#E6F7F5] flex items-center justify-center text-[#008F83] shrink-0">
-                          <Smartphone className="w-3.5 h-3.5 text-[#008F83]" />
+                        <div className="w-6 h-6 rounded-md bg-[#E6F7F5] flex items-center justify-center text-[#005CB9] shrink-0">
+                          <Smartphone className="w-3.5 h-3.5 text-[#005CB9]" />
                         </div>
                         <span className="text-sm font-semibold text-slate-800 tracking-tight ml-0.5">
                           +91
@@ -231,8 +231,8 @@ export default function AuthModal() {
                     disabled={phoneNumber.length !== 10 || (authMode === 'register' && !fullName.trim())}
                     className={`w-full py-3 rounded-xl font-bold text-sm tracking-wide transition shadow-sm select-none mt-1 ${
                       phoneNumber.length === 10 && (authMode === 'login' || fullName.trim())
-                        ? 'bg-[#008F83] hover:bg-[#007A70] text-white active:scale-[0.99] cursor-pointer'
-                        : 'bg-[#008F83]/70 text-white/80 cursor-not-allowed'
+                        ? 'bg-[#005CB9] hover:bg-[#004C99] text-white active:scale-[0.99] cursor-pointer'
+                        : 'bg-[#005CB9]/70 text-white/80 cursor-not-allowed'
                     }`}
                   >
                     {authMode === 'login' ? 'Send OTP' : 'Send OTP & Register'}
@@ -284,7 +284,7 @@ export default function AuthModal() {
                     <button
                       type="button"
                       onClick={() => setAuthMode('register')}
-                      className="text-[#008F83] font-bold hover:underline cursor-pointer"
+                      className="text-[#005CB9] font-bold hover:underline cursor-pointer"
                     >
                       Register
                     </button>
@@ -295,7 +295,7 @@ export default function AuthModal() {
                     <button
                       type="button"
                       onClick={() => setAuthMode('login')}
-                      className="text-[#008F83] font-bold hover:underline cursor-pointer"
+                      className="text-[#005CB9] font-bold hover:underline cursor-pointer"
                     >
                       Login
                     </button>
@@ -329,7 +329,7 @@ export default function AuthModal() {
                       value={otp[index]}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-12 h-12 sm:w-13 sm:h-13 text-center text-xl sm:text-2xl font-bold text-slate-900 border-2 border-slate-200 focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/20 rounded-xl outline-none transition font-mono bg-slate-50/50"
+                      className="w-12 h-12 sm:w-13 sm:h-13 text-center text-xl sm:text-2xl font-bold text-slate-900 border-2 border-slate-200 focus:border-[#005CB9] focus:ring-2 focus:ring-[#005CB9]/20 rounded-xl outline-none transition font-mono bg-slate-50/50"
                     />
                   ))}
                 </div>
@@ -340,8 +340,8 @@ export default function AuthModal() {
                   disabled={otp.join('').length !== 4}
                   className={`w-full py-3 rounded-xl font-bold text-sm tracking-wide transition shadow-sm select-none ${
                     otp.join('').length === 4
-                      ? 'bg-[#008F83] hover:bg-[#007A70] text-white active:scale-[0.99] cursor-pointer'
-                      : 'bg-[#008F83]/70 text-white/80 cursor-not-allowed'
+                      ? 'bg-[#005CB9] hover:bg-[#004C99] text-white active:scale-[0.99] cursor-pointer'
+                      : 'bg-[#005CB9]/70 text-white/80 cursor-not-allowed'
                   }`}
                 >
                   Verify & Proceed
@@ -353,7 +353,7 @@ export default function AuthModal() {
                     type="button"
                     onClick={handleResendOtp}
                     disabled={isResending}
-                    className="text-xs font-semibold text-[#008F83] hover:underline inline-flex items-center gap-1.5 disabled:opacity-50"
+                    className="text-xs font-semibold text-[#005CB9] hover:underline inline-flex items-center gap-1.5 disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isResending ? 'animate-spin' : ''}`} />
                     <span>Resend OTP</span>
@@ -376,7 +376,7 @@ export default function AuthModal() {
             {/* Back Hill */}
             <path
               d="M0 55 C80 30 180 50 360 38 L360 85 L0 85 Z"
-              fill="#E8F8F6"
+              fill="#F0F6FE"
             />
             {/* Mid Hill */}
             <path
@@ -414,7 +414,7 @@ export default function AuthModal() {
 
           {/* Trust Badge at the very bottom */}
           <div className="bg-[#C0EDE8]/30 py-2.5 flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-slate-600 font-medium">
-            <ShieldCheck className="w-4 h-4 text-[#008F83] shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-[#005CB9] shrink-0" />
             <span>Your data is safe with us</span>
           </div>
         </div>

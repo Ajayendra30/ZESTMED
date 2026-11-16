@@ -55,8 +55,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
           {/* Header */}
           <div className="px-6 py-5 border-b border-border bg-surface flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#01333A]/10 text-[#01333A] flex items-center justify-center">
-                <ShoppingBag className="w-5 h-5 text-[#01333A]" />
+              <div className="w-10 h-10 rounded-xl bg-[#0A1E34]/10 text-[#0A1E34] flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5 text-[#0A1E34]" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-dark">Your Healthcare Cart</h2>
@@ -101,7 +101,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
               </div>
               <button
                 onClick={resetCheckout}
-                className="mt-6 bg-[#008F83] hover:bg-[#007a70] text-white font-bold w-full py-3 text-sm rounded-xl transition shadow-sm active:scale-[0.98]"
+                className="mt-6 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold w-full py-3 text-sm rounded-xl transition shadow-sm active:scale-[0.98]"
               >
                 Continue Browsing
               </button>
@@ -109,8 +109,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
           ) : cartItems.length === 0 ? (
             /* Empty Cart */
             <div className="flex-1 p-6 flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 rounded-full bg-[#01333A]/10 text-[#01333A] flex items-center justify-center mb-4">
-                <ShoppingBag className="w-10 h-10 stroke-[1.5] text-[#01333A]" />
+              <div className="w-20 h-20 rounded-full bg-[#0A1E34]/10 text-[#0A1E34] flex items-center justify-center mb-4">
+                <ShoppingBag className="w-10 h-10 stroke-[1.5] text-[#0A1E34]" />
               </div>
               <h3 className="text-lg font-bold text-dark">Your Cart is Empty</h3>
               <p className="text-xs text-muted mt-1.5 max-w-xs">
@@ -118,7 +118,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
               </p>
               <button
                 onClick={closeCart}
-                className="mt-6 bg-[#01333A] hover:bg-[#002227] text-white font-bold py-3 px-7 rounded-xl text-sm transition shadow-sm active:scale-[0.98]"
+                className="mt-6 bg-[#0A1E34] hover:bg-[#071524] text-white font-bold py-3 px-7 rounded-xl text-sm transition shadow-sm active:scale-[0.98]"
               >
                 Browse Healthcare Catalog
               </button>
@@ -138,7 +138,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                         closeCart();
                         if (onOpenPrescriptionModal) onOpenPrescriptionModal();
                       }}
-                      className="ml-2 font-bold text-[#01333A] hover:underline inline-flex items-center gap-1"
+                      className="ml-2 font-bold text-[#0A1E34] hover:underline inline-flex items-center gap-1"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       <span>Upload Rx Now</span>
@@ -159,8 +159,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                         className="w-16 h-16 rounded-xl object-cover border border-border shrink-0 bg-slate-50"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-xl bg-[#01333A]/10 text-[#01333A] border border-[#01333A]/20 flex flex-col items-center justify-center shrink-0">
-                        <FileText className="w-6 h-6 text-[#01333A]" />
+                      <div className="w-16 h-16 rounded-xl bg-[#0A1E34]/10 text-[#0A1E34] border border-[#0A1E34]/20 flex flex-col items-center justify-center shrink-0">
+                        <FileText className="w-6 h-6 text-[#0A1E34]" />
                         <span className="text-[9px] font-bold uppercase mt-0.5">Lab Test</span>
                       </div>
                     )}
@@ -252,7 +252,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                     </span>
                   </div>
                   {deliveryCharge > 0 && (
-                    <p className="text-[10px] text-[#01333A] font-medium">
+                    <p className="text-[10px] text-[#0A1E34] font-medium">
                       Add ₹{(500 - subtotal).toFixed(2)} more for FREE delivery
                     </p>
                   )}
@@ -272,7 +272,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
 
                 {/* Single-Day Reports & Guwahati Service Guarantee */}
                 <div className="bg-teal-50 border border-teal-200/80 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-teal-900">
-                  <Clock className="w-4 h-4 text-[#008F83] shrink-0" />
+                  <Clock className="w-4 h-4 text-[#005CB9] shrink-0" />
                   <span>⚡ <strong>Guwahati Fast:</strong> All lab reports delivered in a single day (12-24 Hrs)</span>
                 </div>
 

@@ -79,7 +79,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-teal-50 via-white to-teal-50/50 sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#005CB9] text-white flex items-center justify-center shadow-sm shrink-0">
               <Scissors className="w-5 h-5" />
             </div>
             <div>
@@ -87,7 +87,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                 <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Curated Daycare & Elective Surgery Packages
                 </h3>
-                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-[#005CB9] text-white px-2 py-0.5 rounded-full">
                   Guwahati Partner Hospitals
                 </span>
               </div>
@@ -125,13 +125,13 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
               <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 text-left text-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                   <span className="text-slate-500 font-medium">Surgery Case ID</span>
-                  <span className="font-mono font-bold text-[#008F83] text-sm">{bookingConfirmed.bookingRef}</span>
+                  <span className="font-mono font-bold text-[#005CB9] text-sm">{bookingConfirmed.bookingRef}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Surgery Package</span>
                     <strong className="text-slate-800 text-sm">{bookingConfirmed.pkg.title}</strong>
-                    <span className="text-[#008F83] block text-[11px] font-semibold">{bookingConfirmed.pkg.category}</span>
+                    <span className="text-[#005CB9] block text-[11px] font-semibold">{bookingConfirmed.pkg.category}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Hospital Stay & Recovery</span>
@@ -165,7 +165,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                 <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 flex items-center justify-between gap-3">
                   <div className="text-[11px] text-teal-900">
                     <strong className="flex items-center gap-1.5">
-                      <Car className="w-4 h-4 text-[#008F83]" />
+                      <Car className="w-4 h-4 text-[#005CB9]" />
                       <span>Complimentary Senior Citizen Pick-up & Drop (Guwahati 10km Radius)</span>
                     </strong>
                     <p className="text-teal-700 mt-0.5">Sanitized AC transport included for surgery admission and discharge.</p>
@@ -176,7 +176,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       onClose();
                       onOpenSeniorPickup && onOpenSeniorPickup();
                     }}
-                    className="px-3 py-1.5 bg-[#008F83] text-white rounded-lg text-xs font-bold hover:bg-[#007a70] whitespace-nowrap shadow-xs"
+                    className="px-3 py-1.5 bg-[#005CB9] text-white rounded-lg text-xs font-bold hover:bg-[#004C99] whitespace-nowrap shadow-xs"
                   >
                     View Cab Details
                   </button>
@@ -187,7 +187,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
                 >
                   Done
                 </button>
@@ -199,7 +199,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
               <button
                 type="button"
                 onClick={() => setSelectedPackage(null)}
-                className="text-xs text-[#008F83] font-bold hover:underline flex items-center gap-1 mb-2"
+                className="text-xs text-[#005CB9] font-bold hover:underline flex items-center gap-1 mb-2"
               >
                 ← Back to All Surgery Packages
               </button>
@@ -207,10 +207,10 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
               <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
                   <div>
-                    <span className="text-xs font-bold text-[#008F83] uppercase tracking-wider">{selectedPackage.category}</span>
+                    <span className="text-xs font-bold text-[#005CB9] uppercase tracking-wider">{selectedPackage.category}</span>
                     <h4 className="text-lg font-black text-slate-900">{selectedPackage.title}</h4>
                     <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                      <Building2 className="w-3.5 h-3.5 text-[#008F83]" />
+                      <Building2 className="w-3.5 h-3.5 text-[#005CB9]" />
                       <span>{selectedPackage.hospitalLocation}</span>
                     </p>
                   </div>
@@ -233,7 +233,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedPackage.includes.map((inc, i) => (
                       <div key={i} className="flex items-start gap-2 text-slate-700 bg-white p-2 rounded-xl border border-slate-200/70">
-                        <Check className="w-3.5 h-3.5 text-[#008F83] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-[#005CB9] shrink-0 mt-0.5" />
                         <span>{inc}</span>
                       </div>
                     ))}
@@ -253,7 +253,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       value={patientForm.name}
                       onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
                       placeholder="e.g. Dhirendra Nath Deka"
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                     />
                   </div>
                   <div>
@@ -263,7 +263,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       value={patientForm.age}
                       onChange={(e) => setPatientForm({ ...patientForm, age: e.target.value })}
                       placeholder="e.g. 62"
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                     />
                   </div>
                 </div>
@@ -277,7 +277,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       value={patientForm.phone}
                       onChange={(e) => setPatientForm({ ...patientForm, phone: e.target.value })}
                       placeholder="+91 98765 43210"
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                     />
                   </div>
                   <div>
@@ -285,7 +285,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                     <select
                       value={patientForm.insuranceType}
                       onChange={(e) => setPatientForm({ ...patientForm, insuranceType: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none bg-white font-medium"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none bg-white font-medium"
                     >
                       <option value="TPA Cashless Mediclaim">TPA Cashless Mediclaim (Star, HDFC, Care, etc.)</option>
                       <option value="Ayushman Bharat (AB-PMJAY)">Ayushman Bharat (AB-PMJAY / Atal Amrit)</option>
@@ -300,7 +300,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                     type="checkbox"
                     checked={patientForm.hasSeniorCitizen}
                     onChange={(e) => setPatientForm({ ...patientForm, hasSeniorCitizen: e.target.checked })}
-                    className="w-4 h-4 text-[#008F83] rounded focus:ring-[#008F83]"
+                    className="w-4 h-4 text-[#005CB9] rounded focus:ring-[#005CB9]"
                   />
                   <span>Patient is a Senior Citizen (Include Free 10km Pick-up & Drop in Guwahati)</span>
                 </label>
@@ -310,7 +310,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
                 >
                   <Scissors className="w-4 h-4" />
                   <span>{isSubmitting ? 'Reserving Care Coordinator...' : 'Request Free Consultation & Cashless Pre-Approval'}</span>
@@ -329,7 +329,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                       selectedCategory === cat
-                        ? 'bg-[#008F83] text-white'
+                        ? 'bg-[#005CB9] text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
@@ -343,11 +343,11 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                 {filteredSurgeries.map((s) => (
                   <div
                     key={s.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 p-4.5 hover:shadow-md hover:border-[#008F83]/50 transition flex flex-col justify-between group"
+                    className="bg-white rounded-2xl border border-slate-200/90 p-4.5 hover:shadow-md hover:border-[#005CB9]/50 transition flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-[11px] font-bold text-[#008F83] bg-teal-50 px-2 py-0.5 rounded-md">
+                        <span className="text-[11px] font-bold text-[#005CB9] bg-teal-50 px-2 py-0.5 rounded-md">
                           {s.category}
                         </span>
                         <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -355,7 +355,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                         </span>
                       </div>
 
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-[#008F83] transition mt-2 leading-snug">
+                      <h4 className="text-base font-bold text-slate-900 group-hover:text-[#005CB9] transition mt-2 leading-snug">
                         {s.title}
                       </h4>
 
@@ -365,7 +365,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
 
                       <div className="mt-2.5 text-xs text-slate-500 space-y-1">
                         <div className="flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-[#008F83] shrink-0" />
+                          <Building2 className="w-3.5 h-3.5 text-[#005CB9] shrink-0" />
                           <span className="truncate">{s.hospitalLocation}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
@@ -387,7 +387,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       <button
                         type="button"
                         onClick={() => handleSelectPackage(s)}
-                        className="py-2 px-4 bg-teal-50 hover:bg-[#008F83] text-[#008F83] hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs"
+                        className="py-2 px-4 bg-teal-50 hover:bg-[#005CB9] text-[#005CB9] hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs"
                       >
                         <span>View Details</span>
                         <ArrowRight className="w-3.5 h-3.5" />

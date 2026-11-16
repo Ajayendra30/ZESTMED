@@ -63,7 +63,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
       />
 
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
-        <div className="flex items-center justify-between px-6 py-4 bg-[#14B8A6] text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <Edit3 className="w-4 h-4" />
@@ -90,7 +90,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-medium"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-medium"
             />
           </div>
 
@@ -102,7 +102,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono"
               />
             </div>
             <div>
@@ -110,7 +110,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
               <select
                 value={formData.zone}
                 onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white"
               >
                 <option value="Dispur & GS Road Hub">Dispur & GS Road Hub</option>
                 <option value="Ulubari & Paltan Bazar">Ulubari & Paltan Bazar</option>
@@ -131,7 +131,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white font-bold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white font-bold"
               >
                 <option value="Available">Available</option>
                 <option value="On Route">On Route</option>
@@ -145,7 +145,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
                 type="text"
                 value={formData.temp}
                 onChange={(e) => setFormData({ ...formData, temp: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono text-teal-700 font-bold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono text-teal-700 font-bold"
               />
             </div>
             <div>
@@ -155,7 +155,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
                 min="0"
                 value={formData.tasksToday}
                 onChange={(e) => setFormData({ ...formData, tasksToday: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-bold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-bold"
               />
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function EditExecutiveModal({ isOpen = true, onClose, executive, 
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
             >
               <UserCheck className="w-4 h-4" />
               <span>Save Changes</span>
