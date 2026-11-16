@@ -273,8 +273,8 @@ export default function DoctorAppointmentPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
-      {/* Main Container */}
-      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8">
+      {/* Main Full-Width Container matching Zestmed Site Standard */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4 sm:py-6 space-y-6 sm:space-y-8">
         
         {/* ========================================================================= */}
         {/* 1. HERO BANNER (Matches Reference Image media_1794860428279_9eb1e405.jpg) */}
