@@ -291,7 +291,7 @@ export default function DoctorAppointmentPage() {
       />
 
       {/* Main Container matching Zestmed Standard for remaining sections */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pt-4 sm:pt-5 pb-12 space-y-5 sm:space-y-6">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
