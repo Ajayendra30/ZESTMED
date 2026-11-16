@@ -343,7 +343,7 @@ export default function Navbar({
                                   onClick={() => setMedicinesMegaOpen(false)}
                                   className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition group"
                                 >
-                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#005CB9] flex items-center justify-center shrink-0">
                                     <ShieldCheck className="w-4 h-4" />
                                   </div>
                                   <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Personal Care</span>
@@ -373,7 +373,7 @@ export default function Navbar({
                                   onClick={() => setMedicinesMegaOpen(false)}
                                   className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition group"
                                 >
-                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#FF5722] flex items-center justify-center shrink-0">
                                     <Gift className="w-4 h-4" />
                                   </div>
                                   <span className="font-semibold text-slate-700 group-hover:text-[#005CB9]">Offers & Deals</span>
@@ -501,7 +501,7 @@ export default function Navbar({
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
-                            <ShieldPlus className="w-5 h-5 text-emerald-600" />
+                            <ShieldPlus className="w-5 h-5 text-[#005CB9]" />
                             <span>Full Body Checkup</span>
                           </Link>
                         </div>
@@ -518,7 +518,7 @@ export default function Navbar({
                       onClick={link.onClick}
                       className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap ${
                         link.highlight
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100 font-bold'
+                          ? 'bg-orange-50 text-[#FF5722] border border-orange-200/80 hover:bg-orange-100 font-bold'
                           : 'text-slate-700 hover:text-[#005CB9] hover:bg-slate-50'
                       }`}
                     >
@@ -582,15 +582,15 @@ export default function Navbar({
                           setMoreMenuOpen(false);
                           if (onOpenSeniorPickup) onOpenSeniorPickup();
                         }}
-                        className="w-full flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/80 transition text-left group"
+                        className="w-full flex items-start gap-3 p-2.5 rounded-xl hover:bg-orange-50/80 transition text-left group"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                        <div className="w-8 h-8 rounded-lg bg-orange-100 text-[#FF5722] flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                           <Truck className="w-4 h-4" />
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-800 group-hover:text-emerald-800">Senior Care (10km Free)</span>
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.2 rounded-full">Guwahati</span>
+                            <span className="text-sm font-bold text-slate-800 group-hover:text-[#FF5722]">Senior Care (10km Free)</span>
+                            <span className="text-[10px] bg-orange-100 text-[#FF5722] font-extrabold px-1.5 py-0.2 rounded-full">Guwahati</span>
                           </div>
                           <p className="text-xs text-slate-500 mt-0.5">Complimentary pick-up & drop for elderly</p>
                         </div>
@@ -766,7 +766,7 @@ export default function Navbar({
                 </button>
               </div>
             ) : (
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-teal-50 via-teal-50/50 to-emerald-50/60 border border-teal-100 flex items-center justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 via-blue-50/50 to-orange-50/60 border border-blue-100 flex items-center justify-between gap-3">
                 <div>
                   <p className="font-bold text-slate-900 text-sm">Welcome to ZESTMED</p>
                   <p className="text-xs text-slate-500 mt-0.5">Sign in for orders & reports</p>
@@ -795,7 +795,7 @@ export default function Navbar({
                       }}
                       className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between text-left ${
                         link.highlight
-                          ? 'bg-emerald-50 text-emerald-800 font-bold'
+                          ? 'bg-orange-50 text-[#FF5722] font-bold'
                           : 'text-slate-800 hover:bg-slate-50 hover:text-[#005CB9]'
                       }`}
                     >

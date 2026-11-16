@@ -84,14 +84,14 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
         {/* Content */}
         {isSubmitted ? (
           <div className="p-5 sm:p-7 text-center">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue- text-blue- flex items-center justify-center mx-auto mb-3">
               <CheckCircle2 className="w-7 h-7 sm:w-9 sm:h-9" />
             </div>
             <h4 className="text-base sm:text-lg font-bold text-dark">Prescription Uploaded Successfully!</h4>
             <p className="text-xs text-muted mt-1.5 max-w-sm mx-auto leading-relaxed">
               Our registered pharmacist is reviewing your prescription ({selectedFile?.name}). You will receive an SMS and WhatsApp notification with medicine pricing and confirmation within 15 minutes.
             </p>
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800 text-left mt-4 space-y-1">
+            <div className="bg-blue- border border-blue- rounded-xl p-3 text-xs text-blue- text-left mt-4 space-y-1">
               <div className="font-semibold">Simulated Workflow Status:</div>
               <div>• Ticket ID: #RX-ZEST-{Math.floor(10000 + Math.random() * 90000)}</div>
               <div>• Verification Desk: In Review (Demo)</div>
@@ -158,15 +158,15 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
             <div className="bg-slate-50 rounded-xl p-2.5 sm:p-3 border border-border text-xs space-y-1">
               <span className="font-bold text-slate-800 text-[11px] block">Prescription Requirements:</span>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue- shrink-0" />
                 <span className="truncate">Doctor's name, clinic & medical registration number</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue- shrink-0" />
                 <span className="truncate">Patient name, age and consultation date</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue- shrink-0" />
                 <span className="truncate">Medication dosage, frequency & signature</span>
               </div>
             </div>

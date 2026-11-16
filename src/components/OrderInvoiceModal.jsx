@@ -90,7 +90,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
             </div>
 
             <div className="text-left sm:text-right space-y-1">
-              <div className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full text-xs">
+              <div className="inline-flex items-center gap-1 font-bold text-blue- bg-blue- px-2.5 py-1 rounded-full text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {order.status}
               </div>
@@ -149,7 +149,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
               <span>Total MRP Value</span>
               <span className="font-mono line-through">₹{order.mrpTotal}</span>
             </div>
-            <div className="flex justify-between text-emerald-700 font-semibold">
+            <div className="flex justify-between text-blue- font-semibold">
               <span>Zestmed Direct Health Discount</span>
               <span className="font-mono">-₹{order.savings}</span>
             </div>

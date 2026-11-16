@@ -71,7 +71,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-emerald-50 via-teal-50 to-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-blue-50 via-slate-50 to-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#005CB9] text-white flex items-center justify-center shadow-sm shrink-0">
               <Car className="w-5 h-5" />
@@ -81,7 +81,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Senior Citizen Pick-up & Drop Service
                 </h3>
-                <span className="text-[10px] font-bold bg-[#005CB9] text-white px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-[#FF5722] text-white px-2 py-0.5 rounded-full">
                   100% Free
                 </span>
               </div>
@@ -103,7 +103,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
           {bookingConfirmed ? (
             /* Confirmed Confirmation Screen */
             <div className="space-y-5 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-[#005CB9] flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -142,7 +142,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
 
                 <div className="border-t border-slate-200 pt-2.5 space-y-1">
                   <div className="flex items-start gap-2 text-slate-700">
-                    <MapPin className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <MapPin className="w-4 h-4 text-[#FF5722] shrink-0 mt-0.5" />
                     <span><strong>From:</strong> {bookingConfirmed.pickupAddress}</span>
                   </div>
                   <div className="flex items-start gap-2 text-slate-700">
@@ -151,8 +151,8 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                   </div>
                 </div>
 
-                <div className="bg-emerald-50 text-emerald-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="bg-blue-50 text-blue-900 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#005CB9] shrink-0" />
                   <span>Free service sponsored by Zestmed Senior Care Initiative. Zero charges applicable.</span>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
             /* Booking Form */
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Highlight Banner */}
-              <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 border border-teal-200 rounded-2xl p-3.5 flex items-center gap-3">
+              <div className="bg-gradient-to-r from-blue-500/10 via-orange-500/10 to-blue-500/10 border border-blue-200 rounded-2xl p-3.5 flex items-center gap-3">
                 <Heart className="w-6 h-6 text-[#005CB9] fill-[#005CB9] shrink-0" />
                 <div className="text-xs">
                   <strong className="text-slate-900 block font-bold">100% Free Door-to-Door Sanitized AC Cab</strong>
@@ -255,7 +255,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     placeholder="e.g. House 14, Rajgarh Road, Guwahati"
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
                   />
-                  <span className="text-[10px] text-emerald-600 font-semibold block mt-0.5">
+                  <span className="text-[10px] text-[#005CB9] font-bold block mt-0.5">
                     ✓ Verified within 10 km service radius in Guwahati
                   </span>
                 </div>

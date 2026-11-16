@@ -138,7 +138,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                 }`}
               >
                 {pkg.hasFreeCab && (
-                  <span className="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full mb-1">
+                  <span className="text-[9px] font-bold bg-orange-100 text-[#FF5722] px-1.5 py-0.2 rounded-full mb-1">
                     Free 10km Cab 🚗
                   </span>
                 )}

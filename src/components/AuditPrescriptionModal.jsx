@@ -116,7 +116,7 @@ export default function AuditPrescriptionModal({ isOpen, onClose, rx, onApprove,
                         <div className="font-bold text-slate-900">{med.name}</div>
                         <div className="text-[10.5px] text-slate-500">{med.dosage} • Duration: {med.duration}</div>
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <span className="text-[10px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded border border-blue-">
                         In Guwahati Warehouse
                       </span>
                     </div>

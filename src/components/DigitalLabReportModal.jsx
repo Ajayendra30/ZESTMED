@@ -111,7 +111,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
               <div className="text-[11px] text-slate-500 font-mono">
                 Sample Barcode: AS-LAB-{booking.id.replace(/\D/g, '') || '781001'}
               </div>
-              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded">
                 <ShieldCheck className="w-3 h-3" />
                 NABL Guidelines Referenced
               </div>
@@ -199,7 +199,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
                                 {row.flag || 'Low'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded-full">
                                 <CheckCircle2 className="w-3 h-3" />
                                 Normal
                               </span>

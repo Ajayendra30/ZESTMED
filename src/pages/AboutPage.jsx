@@ -192,8 +192,8 @@ export default function AboutPage() {
             </div>
 
             {/* 4. Home Sample Collection */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-emerald-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-blue- transition">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue- text-blue- flex items-center justify-center shrink-0">
                 <Home className="w-6 h-6 stroke-[2]" />
               </div>
               <div>
@@ -332,8 +332,8 @@ export default function AboutPage() {
             </div>
 
             {/* 4. Accessibility */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-emerald-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-blue- transition">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue- text-blue- flex items-center justify-center shrink-0">
                 <Leaf className="w-6 h-6 stroke-[2]" />
               </div>
               <div>

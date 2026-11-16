@@ -75,7 +75,7 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
 
             <div className="bg-slate-50 p-3 rounded-xl border border-border">
               <span className="text-[11px] text-muted flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-" />
                 Report Delivery
               </span>
               <p className="text-xs font-bold text-dark mt-1">24-36 Hours</p>
@@ -90,7 +90,7 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
             <div className="space-y-2">
               {pkg.includes.map((item, idx) => (
                 <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-surface border border-border text-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-blue- shrink-0 mt-0.5" />
                   <span className="text-slate-800 font-medium">{item}</span>
                 </div>
               ))}
@@ -112,7 +112,7 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
                 {pkg.mrp && (
                   <span className="text-xs text-muted line-through">₹{pkg.mrp.toFixed(2)}</span>
                 )}
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
+                <span className="text-xs font-bold text-blue- bg-blue- px-2 py-0.5 rounded-md">
                   {pkg.discountPercent}% OFF
                 </span>
               </div>

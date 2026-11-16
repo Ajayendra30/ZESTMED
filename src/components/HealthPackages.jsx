@@ -83,7 +83,7 @@ export default function HealthPackages({ onSelectPackage }) {
                     </span>
                     {pkg.includes.slice(0, 4).map((testName, i) => (
                       <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#005CB9] shrink-0" />
                         <span className="truncate">{testName}</span>
                       </div>
                     ))}
@@ -108,7 +108,7 @@ export default function HealthPackages({ onSelectPackage }) {
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-emerald-600 font-bold block">
+                    <span className="text-[10px] text-[#FF5722] font-bold block">
                       {pkg.discountPercent}% Demo Discount
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function HealthPackages({ onSelectPackage }) {
                       type="button"
                       onClick={() => addItem(pkg, 'package')}
                       className={`btn-primary text-xs py-2 px-3.5 rounded-xl font-semibold transition ${
-                        inCart ? 'bg-emerald-600 hover:bg-emerald-700' : ''
+                        inCart ? 'bg-[#004C99] hover:bg-[#003E7D]' : ''
                       }`}
                     >
                       {inCart ? 'In Cart' : 'Book'}

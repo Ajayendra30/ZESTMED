@@ -63,7 +63,7 @@ function HeartPulseSvg({ className = "w-6 h-6 text-rose-500" }) {
   );
 }
 
-function CapsuleSvg({ className = "w-6 h-6 text-emerald-600" }) {
+function CapsuleSvg({ className = "w-6 h-6 text-blue-" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
@@ -498,7 +498,7 @@ export default function DiagnosticPortalPage() {
                           : pill.id === 'kidney'
                           ? 'text-purple-600'
                           : pill.id === 'vitamins'
-                          ? 'text-emerald-600'
+                          ? 'text-blue-'
                           : pill.id === 'cancer'
                           ? 'text-pink-600'
                           : 'text-sky-600'
@@ -769,7 +769,7 @@ export default function DiagnosticPortalPage() {
             <div className="pt-3">
               <div className="bg-[#EAF7F5] border border-teal-100/90 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col xl:flex-row items-center justify-between gap-4 sm:gap-5">
                 
-                {/* Left Title with Green Home Icon */}
+                {/* Left Title with Royal Blue Home Icon */}
                 <div className="flex items-center gap-3.5 w-full xl:w-auto">
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-teal-50 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shrink-0 shadow-2xs">
                     <Home className="w-5 h-5 sm:w-6 sm:h-6 text-[#005CB9]" />
@@ -803,7 +803,7 @@ export default function DiagnosticPortalPage() {
 
                   <div className="flex flex-col items-center justify-center gap-1">
                     <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                    <span className="text-[11px] sm:text-xs font-bold text-emerald-800 whitespace-nowrap">Reports in a Single Day (12-24 Hrs)</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-blue- whitespace-nowrap">Reports in a Single Day (12-24 Hrs)</span>
                   </div>
                 </div>
 

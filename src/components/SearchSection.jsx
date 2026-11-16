@@ -117,7 +117,7 @@ export default function SearchSection({
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
+            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#005CB9]" />
             <span>3. Physiotherapist</span>
           </button>
 

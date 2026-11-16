@@ -90,7 +90,7 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
           {paymentSuccessData ? (
             /* Payment Success Receipt */
             <div className="space-y-4 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-blue- text-blue- flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -115,15 +115,15 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Status:</span>
-                  <span className="text-emerald-600 font-bold flex items-center gap-1">
+                  <span className="text-blue- font-bold flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" />
                     Captured (Assam GST Invoice Generated)
                   </span>
                 </div>
               </div>
 
-              <div className="bg-emerald-50 text-emerald-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="bg-blue- text-blue- rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-blue- shrink-0" />
                 <span>Diagnostic booking confirmed. Single-day reports guaranteed!</span>
               </div>
 
@@ -288,7 +288,7 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
               </div>
 
               <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-" />
                 <span>PCI-DSS Compliant • 256-Bit SSL Encryption</span>
               </div>
             </div>

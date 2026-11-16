@@ -350,14 +350,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         {/* Top Header */}
         <header className="relative z-10 max-w-5xl mx-auto w-full flex items-center justify-between py-2">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D494] to-[#005CB9] flex items-center justify-center shadow-lg shadow-[#005CB9]/30 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF5722] to-[#005CB9] flex items-center justify-center shadow-lg shadow-[#005CB9]/30 group-hover:scale-105 transition-transform">
               <FlaskConical className="w-5 h-5 text-white" />
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight text-white block leading-tight">
-                ZEST<span className="text-[#00D494]">MED</span>
+                ZEST<span className="text-[#FF5722]">MED</span>
               </span>
-              <span className="text-[10.5px] text-teal-200/80 tracking-wider uppercase block font-semibold">
+              <span className="text-[10.5px] text-blue-200/80 tracking-wider uppercase block font-semibold">
                 Patient Health Portal
               </span>
             </div>
@@ -390,15 +390,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             {/* Quick Benefits list */}
             <div className="my-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-left space-y-2.5">
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-blue- shrink-0" />
                 <span>NABL Accredited Digital Diagnostic Reports</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-blue- shrink-0" />
                 <span>Real-time Cold-Chain Medicine Tracking</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-blue- shrink-0" />
                 <span>Doctor Prescriptions & Family Health History</span>
               </div>
             </div>
@@ -430,7 +430,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             </div>
 
             <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-" />
               <span>256-bit Encrypted Medical Data • HIPAA & NABH Compliant</span>
             </div>
           </div>
@@ -727,10 +727,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={openCart}
-              className="relative p-1.5 sm:p-2 rounded-xl text-[#00A884] hover:bg-teal-50 transition"
+              className="relative p-1.5 sm:p-2 rounded-xl text-[#005CB9] hover:bg-blue-50 transition"
               title="View Cart"
             >
-              <ShoppingCart className="w-5 h-5 text-[#00A884]" />
+              <ShoppingCart className="w-5 h-5 text-[#005CB9]" />
               <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">
                 {cartCount > 0 ? cartCount : 2}
               </span>
@@ -892,7 +892,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   {labBookings.length}
                 </div>
-                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
+                <div className="text-[10px] sm:text-xs font-bold text-blue- mt-0.5 flex items-center gap-0.5">
                   <span>View All →</span>
                 </div>
               </div>
@@ -903,7 +903,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               onClick={() => setActiveMenu('bookings')}
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue- text-blue- flex items-center justify-center shrink-0">
                 <TestTubeIcon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <div>
@@ -913,7 +913,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   2
                 </div>
-                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
+                <div className="text-[10px] sm:text-xs font-bold text-blue- mt-0.5 flex items-center gap-0.5">
                   <span>Scheduled →</span>
                 </div>
               </div>
@@ -993,8 +993,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 {/* Appointment 1 */}
                 <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2">
                   <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                    {/* Mint date box */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E8F8F5] border border-emerald-100 text-[#00A884] flex flex-col items-center justify-center shrink-0">
+                    {/* Azure date box */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F0F6FE] border border-blue-100 text-[#005CB9] flex flex-col items-center justify-center shrink-0">
                       <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">Nov</span>
                       <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">15</span>
                     </div>
@@ -1008,7 +1008,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
                     </div>
                   </div>
-                  <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
+                  <span className="bg-blue- text-blue- border border-blue-/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
                     Confirmed
                   </span>
                 </div>
@@ -1069,7 +1069,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   onClick={() => navigate('/medicines')}
                   className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue- text-blue- flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Pill className="w-5 h-5 stroke-[2]" />
                   </div>
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
@@ -1158,7 +1158,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-blue- text-blue- border border-blue-/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1182,7 +1182,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-blue- text-blue- border border-blue-/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1314,7 +1314,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Heart className="w-5 h-5 text-emerald-500 fill-emerald-500" />
+                  <Heart className="w-5 h-5 text-blue- fill-blue-" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Health Tips
                   </h3>
@@ -1460,7 +1460,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               (b.status || '').toLowerCase().includes('report')
                                 ? 'bg-purple-50 text-purple-600 border border-purple-200'
                                 : (b.status || '').toLowerCase().includes('confirm')
-                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                ? 'bg-blue- text-blue- border border-blue-'
                                 : (b.status || '').toLowerCase().includes('cancel')
                                 ? 'bg-rose-50 text-rose-600 border border-rose-200'
                                 : 'bg-blue-50 text-blue-600 border border-blue-200'
@@ -1608,7 +1608,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span
                             className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                               order.status === 'Delivered'
-                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                ? 'bg-blue- text-blue- border border-blue-'
                                 : 'bg-sky-50 text-sky-600 border border-sky-200'
                             }`}
                           >
@@ -1698,7 +1698,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* Upload Dropzone Hero Card */}
               <div 
                 onClick={() => setIsPrescriptionUploadModalOpen(true)}
-                className="bg-gradient-to-br from-teal-50/60 via-emerald-50/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#005CB9]/40 hover:border-[#005CB9] transition cursor-pointer text-center group shadow-xs"
+                className="bg-gradient-to-br from-teal-50/60 via-blue-/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#005CB9]/40 hover:border-[#005CB9] transition cursor-pointer text-center group shadow-xs"
               >
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#005CB9] border border-teal-100 flex items-center justify-center mx-auto mb-3 shadow-xs group-hover:scale-105 transition-transform">
                   <UploadCloud className="w-7 h-7 sm:w-8 sm:h-8" />
@@ -1734,7 +1734,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </div>
                           <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
                             rx.status.toLowerCase().includes('verified')
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              ? 'bg-blue- text-blue- border border-blue-'
                               : 'bg-amber-50 text-amber-700 border border-amber-200'
                           }`}>
                             {rx.status}
@@ -1849,7 +1849,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </p>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                      <span className="text-[11px] font-bold text-blue- bg-blue- border border-blue- px-2.5 py-0.5 rounded-full shrink-0">
                         {rep.status}
                       </span>
                     </div>
@@ -2143,7 +2143,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   onClick={() => addToast('All notifications marked as read', 'success')}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-" />
                   <span>Mark All as Read</span>
                 </button>
               </div>
@@ -2372,19 +2372,19 @@ function HeartHealthGraphic() {
   return (
     <div className="w-12 h-12 relative shrink-0 flex items-center justify-center">
       <svg viewBox="0 0 60 60" className="w-full h-full">
-        {/* Two green leaves on the left */}
+        {/* Two Royal Blue leaves on the left */}
         <path
           d="M 12 38 C 5 32, 6 22, 16 22 C 16 30, 14 36, 12 38 Z"
-          fill="#10B981"
+          fill="#005CB9"
         />
         <path
           d="M 10 42 C 4 45, 6 52, 14 50 C 15 45, 12 43, 10 42 Z"
-          fill="#059669"
+          fill="#004C99"
         />
-        {/* Red Heart */}
+        {/* Heartbeat Orange Heart matching Logo */}
         <path
           d="M 34 16 C 30 10, 22 10, 19 16 C 15 23, 18 32, 34 46 C 50 32, 53 23, 49 16 C 46 10, 38 10, 34 16 Z"
-          fill="#EF4444"
+          fill="#FF5722"
         />
         {/* White ECG heartbeat pulse line through the heart */}
         <path

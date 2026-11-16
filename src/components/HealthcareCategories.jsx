@@ -38,10 +38,10 @@ export default function HealthcareCategories({
       title: 'Physiotherapist',
       sub: 'Home Visit & Clinic Rehab',
       badge: 'Senior Mobility',
-      badgeColor: 'bg-emerald-50 text-emerald-700',
-      iconBg: 'bg-emerald-50 text-emerald-600',
+      badgeColor: 'bg-blue-50 text-blue-700',
+      iconBg: 'bg-blue-50 text-[#005CB9]',
       onClick: onOpenPhysioModal,
-      icon: <Activity className="w-7 h-7 text-emerald-600" />
+      icon: <Activity className="w-7 h-7 text-[#005CB9]" />
     },
     {
       id: 'surgery-packages',

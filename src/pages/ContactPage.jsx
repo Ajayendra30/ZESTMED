@@ -264,8 +264,8 @@ export default function ContactPage() {
               </h2>
 
               {isSuccess && (
-                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-800 flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="p-4 rounded-2xl bg-blue- border border-blue- text-sm text-blue- flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-blue- shrink-0" />
                   <span>Your message has been sent successfully. Our support team will get in touch shortly.</span>
                 </div>
               )}

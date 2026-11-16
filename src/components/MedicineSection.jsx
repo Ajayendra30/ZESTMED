@@ -83,7 +83,7 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
               >
                 {/* Discount Badge */}
                 {product.discountPercent > 0 && (
-                  <div className="absolute top-3 left-3 z-10 bg-emerald-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-lg shadow-xs">
+                  <div className="absolute top-3 left-3 z-10 bg-blue- text-white text-[11px] font-bold px-2 py-0.5 rounded-lg shadow-xs">
                     {product.discountPercent}% OFF
                   </div>
                 )}
@@ -127,7 +127,7 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
                       </div>
                       <span className="text-[11px] text-muted">({product.reviewsCount})</span>
                       <span className="text-muted text-[11px]">•</span>
-                      <span className="text-[11px] font-medium text-emerald-600">In Stock</span>
+                      <span className="text-[11px] font-bold text-[#005CB9]">In Stock</span>
                     </div>
                   </div>
 
@@ -155,7 +155,7 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
                       }}
                       className={`p-2.5 rounded-xl font-semibold text-xs flex items-center gap-1 transition ${
                         inCart
-                          ? 'bg-emerald-600 text-white shadow-xs'
+                          ? 'bg-[#005CB9] text-white shadow-xs'
                           : 'bg-primary-50 text-primary hover:bg-primary hover:text-white'
                       }`}
                       title={inCart ? 'Item in cart' : 'Add to cart'}

@@ -107,7 +107,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                 to="/medicines"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
               >
-                <ShoppingCart className="w-4 h-4 text-emerald-600 shrink-0" />
+                <ShoppingCart className="w-4 h-4 text-[#005CB9] shrink-0" />
                 <span>Medicines</span>
               </Link>
             </div>

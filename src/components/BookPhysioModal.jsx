@@ -113,7 +113,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
           {bookingConfirmed ? (
             /* Confirmed View */
             <div className="space-y-5 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-blue- text-blue- flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -162,7 +162,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Session Fee</span>
                     <span className="text-base font-black text-slate-900">₹{bookingConfirmed.fee}</span>
                   </div>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[11px]">
+                  <span className="px-3 py-1 bg-blue- text-blue- rounded-full font-bold text-[11px]">
                     Pay Post Session / Online UPI Active
                   </span>
                 </div>
