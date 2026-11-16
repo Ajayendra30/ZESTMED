@@ -56,6 +56,9 @@ import RegisterPatientModal from '../components/RegisterPatientModal';
 import EditPatientModal from '../components/EditPatientModal';
 import DeletePatientModal from '../components/DeletePatientModal';
 import ViewPatientModal from '../components/ViewPatientModal';
+import AddExecutiveModal from '../components/AddExecutiveModal';
+import EditExecutiveModal from '../components/EditExecutiveModal';
+import DeleteExecutiveModal from '../components/DeleteExecutiveModal';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -78,6 +81,9 @@ export default function AdminDashboardPage() {
   const [editingPatient, setEditingPatient] = useState(null);
   const [deletingPatient, setDeletingPatient] = useState(null);
   const [viewingPatient, setViewingPatient] = useState(null);
+  const [isAddExecutiveModalOpen, setIsAddExecutiveModalOpen] = useState(false);
+  const [editingExecutive, setEditingExecutive] = useState(null);
+  const [deletingExecutive, setDeletingExecutive] = useState(null);
 
   // Exact Data from User Reference Image
   const kpiMetrics = [
@@ -167,12 +173,29 @@ export default function AdminDashboardPage() {
       console.error(e);
     }
   }, [patientsList]);
-  const [executivesList, setExecutivesList] = useState([
+  const initialExecutives = [
     { id: 'ZM-EXEC-01', name: 'Bikash Das', phone: '+91 92791 25091', zone: 'Dispur & GS Road Hub', tasksToday: 5, temp: '3.8°C', rating: '4.9 ★', status: 'On Route' },
     { id: 'ZM-EXEC-02', name: 'Manab Jyoti Barua', phone: '+91 98765 00001', zone: 'Ulubari & Paltan Bazar', tasksToday: 4, temp: '4.0°C', rating: '4.8 ★', status: 'Active' },
     { id: 'ZM-EXEC-03', name: 'Rohit Sharma', phone: '+91 94350 00002', zone: 'Jalukbari & Maligaon', tasksToday: 6, temp: '3.9°C', rating: '4.9 ★', status: 'Sample Collected' },
     { id: 'ZM-EXEC-04', name: 'Tridip Kalita', phone: '+91 97060 00003', zone: 'Khanapara & Beltola', tasksToday: 3, temp: '4.1°C', rating: '4.7 ★', status: 'Available' }
-  ]);
+  ];
+  const [executivesList, setExecutivesList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_admin_executives');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialExecutives;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_admin_executives', JSON.stringify(executivesList));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [executivesList]);
   const [adminsList, setAdminsList] = useState([
     { id: 'ADM-01', name: 'Dr. Arindam Sharma', email: 'arindam@zestmed.com', role: 'Super Admin & Medical Director', access: 'All Privileges', status: 'Active' },
     { id: 'ADM-02', name: 'Pankaj Barman', email: 'pankaj.pharma@zestmed.com', role: 'Chief Pharmacist Lead', access: 'Inventory & Prescriptions', status: 'Active' },
@@ -1288,7 +1311,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('Opening New Phlebotomist Onboarding Wizard', 'info')}
+                  onClick={() => setIsAddExecutiveModalOpen(true)}
                   className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
@@ -1333,13 +1356,31 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => addToast(`Dispatching push notification & route ping to ${ex.name}...`, 'info')}
-                      className="w-full py-2 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition text-center"
-                    >
-                      Assign Route / Ping
-                    </button>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => addToast(`Push notification & live route ping sent to ${ex.name}.`, 'info')}
+                        className="flex-1 py-2 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition text-center"
+                      >
+                        Assign Route / Ping
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingExecutive(ex)}
+                        className="p-2 bg-teal-50 hover:bg-teal-100 text-[#14B8A6] rounded-xl transition"
+                        title="Edit Executive Record"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeletingExecutive(ex)}
+                        className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition"
+                        title="Remove Executive"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -2284,6 +2325,44 @@ export default function AdminDashboardPage() {
           patient={viewingPatient}
           onClose={() => setViewingPatient(null)}
           onEdit={(patient) => setEditingPatient(patient)}
+        />
+      )}
+
+      {/* Add Executive Modal */}
+      {isAddExecutiveModalOpen && (
+        <AddExecutiveModal
+          isOpen={isAddExecutiveModalOpen}
+          onClose={() => setIsAddExecutiveModalOpen(false)}
+          onAddExecutive={(newExec) => {
+            setExecutivesList((prev) => [newExec, ...prev]);
+            setIsAddExecutiveModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* Edit Executive Modal */}
+      {editingExecutive && (
+        <EditExecutiveModal
+          isOpen={!!editingExecutive}
+          executive={editingExecutive}
+          onClose={() => setEditingExecutive(null)}
+          onSaveExecutive={(updated) => {
+            setExecutivesList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+            setEditingExecutive(null);
+          }}
+        />
+      )}
+
+      {/* Delete Executive Modal */}
+      {deletingExecutive && (
+        <DeleteExecutiveModal
+          isOpen={!!deletingExecutive}
+          executive={deletingExecutive}
+          onClose={() => setDeletingExecutive(null)}
+          onConfirmDelete={(execId) => {
+            setExecutivesList((prev) => prev.filter((item) => item.id !== execId));
+            setDeletingExecutive(null);
+          }}
         />
       )}
     </div>
