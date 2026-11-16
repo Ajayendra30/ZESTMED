@@ -273,7 +273,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                 {/* Single-Day Reports & Guwahati Service Guarantee */}
                 <div className="bg-teal-50 border border-teal-200/80 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-teal-900">
                   <Clock className="w-4 h-4 text-[#005CB9] shrink-0" />
-                  <span>⚡ <strong>Guwahati Fast:</strong> All lab reports delivered in a single day (12-24 Hrs)</span>
+                  <span><strong>Guwahati Fast:</strong> All lab reports delivered in a single day (12-24 Hrs)</span>
                 </div>
 
                 {/* Razorpay Checkout Button */}

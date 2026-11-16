@@ -163,7 +163,7 @@ export default function LocationModal() {
         {/* Footer */}
         <div className="px-6 py-3 bg-slate-50 border-t border-border flex items-center justify-between text-xs text-muted">
           <span>Active Hub: <strong className="text-dark">{currentLocation.city} ({currentLocation.pincode})</strong></span>
-          <span className="text-[#005CB9] font-semibold">Single-Day Reports ⚡</span>
+          <span className="text-[#005CB9] font-semibold">Single-Day Reports</span>
         </div>
       </div>
     </div>

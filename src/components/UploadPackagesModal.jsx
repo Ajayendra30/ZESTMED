@@ -199,7 +199,7 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-800">Preview ({fileRows.length} Tests / Packages):</span>
                 <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">
-                  Single-Day Reports ⚡
+                  Single-Day Reports
                 </span>
               </div>
               <div className="border border-slate-200 rounded-2xl overflow-hidden max-h-48 overflow-y-auto">

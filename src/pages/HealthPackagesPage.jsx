@@ -23,7 +23,7 @@ const PACKAGES_DATA = [
     price: 1999,
     mrp: 2999,
     includes: '70+ Tests Included (CBC, Lipid, LFT, KFT, Blood Sugar, Thyroid, Urine)',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-1-thumb.jpg',
     tag: 'Bestseller'
@@ -41,7 +41,7 @@ const PACKAGES_DATA = [
     price: 1499,
     mrp: 1999,
     includes: '55+ Tests Included (PSA, Testosterone, Cardiac Risk, Vitamin D, Lipid)',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-2-thumb.jpg',
     tag: 'Popular'
@@ -59,7 +59,7 @@ const PACKAGES_DATA = [
     price: 1799,
     mrp: 2599,
     includes: '58+ Tests Included (Thyroid Profile, Iron, Calcium, Vitamin D, Pap Smear)',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-3-thumb.jpg',
     tag: 'Popular'
@@ -77,7 +77,7 @@ const PACKAGES_DATA = [
     price: 1899,
     mrp: 2699,
     includes: '75+ Tests + Free 10km Roundtrip Sanitized AC Cab in Guwahati',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-4-thumb.jpg',
     tag: 'Free 10km Cab Included',
@@ -96,7 +96,7 @@ const PACKAGES_DATA = [
     price: 1299,
     mrp: 1599,
     includes: '42+ Tests Included (HbA1c, Fasting Blood Sugar, PPBS, Lipid, Microalbumin)',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-5-thumb.jpg',
     tag: 'Essential'
@@ -114,7 +114,7 @@ const PACKAGES_DATA = [
     price: 2499,
     mrp: 3299,
     includes: '48+ Tests Included (Lipid Profile, hs-CRP, ECG, Apolipoprotein, Homocysteine)',
-    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-6-thumb.jpg',
     tag: 'Recommended'

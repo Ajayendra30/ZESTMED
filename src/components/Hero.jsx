@@ -59,7 +59,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-orange-200 shadow-xs text-xs font-bold text-[#FF5722] backdrop-blur-xs">
                 <Clock className="w-3.5 h-3.5 text-[#FF5722] shrink-0" />
-                <span>Single-Day Reports Guaranteed ⚡</span>
+                <span>Single-Day Reports Guaranteed</span>
               </div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#005CB9]/10 border border-[#005CB9]/30 text-xs font-bold text-[#005CB9]">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -72,7 +72,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               Book Lab Tests, Consult <br />
               Doctors & Order Medicines <br />
               <span className="text-[#005CB9]">Test Reports in a </span>
-              <span className="text-[#FF5722]">Single Day ⚡</span>
+              <span className="text-[#FF5722]">Single Day</span>
             </h1>
 
             {/* Subheading */}

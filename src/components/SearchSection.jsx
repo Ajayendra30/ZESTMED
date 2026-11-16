@@ -83,7 +83,7 @@ export default function SearchSection({
             <FlaskConical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>1. Book Lab Test</span>
             <span className={`text-[10px] px-1 rounded font-bold ${activeTab === 'tests' ? 'bg-[#FF5722] text-white' : 'bg-orange-50 text-[#FF5722]'}`}>
-              Single Day ⚡
+              Single Day
             </span>
           </button>
 

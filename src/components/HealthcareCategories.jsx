@@ -16,7 +16,7 @@ export default function HealthcareCategories({
     {
       id: 'lab-tests',
       title: 'Lab & Diagnostic Tests',
-      sub: 'Single-Day Reports ⚡',
+      sub: 'Single-Day Reports',
       badge: '#1 First Order',
       badgeColor: 'bg-orange-100 text-[#FF5722] border border-orange-200/80',
       iconBg: 'bg-blue-50 text-[#005CB9]',

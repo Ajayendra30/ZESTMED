@@ -97,7 +97,7 @@ export default function Navbar({
 
   const primaryNavLinks = [
     { name: 'Home', href: '/', isRoute: true },
-    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true, badge: 'Single Day ⚡' },
+    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true, badge: 'Single Day' },
     { name: 'Book Doctor', onClick: onOpenDoctorModal, isModal: true },
     { name: 'Physiotherapist', onClick: onOpenPhysioModal, isModal: true },
     { name: 'Surgery Packages', onClick: onOpenSurgeryModal, isModal: true },
@@ -121,7 +121,7 @@ export default function Navbar({
           <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 overflow-hidden text-slate-200">
             <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-[11px] sm:text-xs md:text-sm text-orange-400">
               <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5722] shrink-0" />
-              <span>⚡ Reports Delivered in a Single Day (12-24 Hrs)</span>
+              <span>Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
             <button

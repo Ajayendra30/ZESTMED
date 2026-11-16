@@ -112,7 +112,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                   Health Checkup Packages
                 </h3>
                 <span className="text-[10px] font-bold bg-[#FF5722] text-white px-2 py-0.5 rounded-full">
-                  Single-Day Reports ⚡
+                  Single-Day Reports
                 </span>
               </div>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
