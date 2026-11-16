@@ -53,6 +53,9 @@ import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders } from '../mock-data/patientData';
 import AddDiagnosticTestModal from '../components/AddDiagnosticTestModal';
 import RegisterPatientModal from '../components/RegisterPatientModal';
+import EditPatientModal from '../components/EditPatientModal';
+import DeletePatientModal from '../components/DeletePatientModal';
+import ViewPatientModal from '../components/ViewPatientModal';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -72,6 +75,9 @@ export default function AdminDashboardPage() {
   const [testsList, setTestsList] = useState(MOCK_DIAGNOSTIC_TESTS);
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false);
   const [isRegisterPatientModalOpen, setIsRegisterPatientModalOpen] = useState(false);
+  const [editingPatient, setEditingPatient] = useState(null);
+  const [deletingPatient, setDeletingPatient] = useState(null);
+  const [viewingPatient, setViewingPatient] = useState(null);
 
   // Exact Data from User Reference Image
   const kpiMetrics = [
@@ -137,13 +143,30 @@ export default function AdminDashboardPage() {
     { id: '#ORD5420', customer: 'Amit Verma', items: 'Omeprazole 20 mg x 3, Antacid Gel x 1', total: 415, payment: 'COD', status: 'Processing', address: 'Jalukbari, Guwahati' },
     { id: '#ORD5415', customer: 'Bipul Shekhar', items: 'Metformin 500mg SR x 4', total: 180, payment: 'UPI Paid', status: 'Dispatched', address: 'Khanapara, Guwahati' }
   ]);
-  const [patientsList, setPatientsList] = useState([
+  const initialPatients = [
     { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', bookingsCount: 8, ordersCount: 5, status: 'Active' },
     { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', bookingsCount: 4, ordersCount: 2, status: 'Active' },
     { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Jorhat Central', bookingsCount: 3, ordersCount: 1, status: 'Active' },
     { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Dibrugarh City', bookingsCount: 6, ordersCount: 4, status: 'Active' },
     { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Silchar Town', bookingsCount: 2, ordersCount: 0, status: 'Active' }
-  ]);
+  ];
+  const [patientsList, setPatientsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_admin_patients');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return initialPatients;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_admin_patients', JSON.stringify(patientsList));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [patientsList]);
   const [executivesList, setExecutivesList] = useState([
     { id: 'ZM-EXEC-01', name: 'Bikash Das', phone: '+91 92791 25091', zone: 'Dispur & GS Road Hub', tasksToday: 5, temp: '3.8°C', rating: '4.9 ★', status: 'On Route' },
     { id: 'ZM-EXEC-02', name: 'Manab Jyoti Barua', phone: '+91 98765 00001', zone: 'Ulubari & Paltan Bazar', tasksToday: 4, temp: '4.0°C', rating: '4.8 ★', status: 'Active' },
@@ -1212,13 +1235,32 @@ export default function AdminDashboardPage() {
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => addToast(`Patient record ${p.id} verified and synced with Assam Health DB.`, 'info')}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition"
-                            >
-                              View Profile
-                            </button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setViewingPatient(p)}
+                                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition"
+                                title="View Patient Details"
+                              >
+                                View Profile
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingPatient(p)}
+                                className="p-1.5 bg-teal-50 hover:bg-teal-100 text-[#14B8A6] rounded-lg transition"
+                                title="Edit Patient Record"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeletingPatient(p)}
+                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition"
+                                title="Delete Patient Record"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -2206,6 +2248,42 @@ export default function AdminDashboardPage() {
             setTestsList((prev) => [newTest, ...prev]);
             setIsAddTestModalOpen(false);
           }}
+        />
+      )}
+
+      {/* Edit Patient Modal */}
+      {editingPatient && (
+        <EditPatientModal
+          isOpen={!!editingPatient}
+          patient={editingPatient}
+          onClose={() => setEditingPatient(null)}
+          onSavePatient={(updated) => {
+            setPatientsList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+            setEditingPatient(null);
+          }}
+        />
+      )}
+
+      {/* Delete Patient Confirmation Modal */}
+      {deletingPatient && (
+        <DeletePatientModal
+          isOpen={!!deletingPatient}
+          patient={deletingPatient}
+          onClose={() => setDeletingPatient(null)}
+          onConfirmDelete={(patientId) => {
+            setPatientsList((prev) => prev.filter((item) => item.id !== patientId));
+            setDeletingPatient(null);
+          }}
+        />
+      )}
+
+      {/* View Patient Details Modal */}
+      {viewingPatient && (
+        <ViewPatientModal
+          isOpen={!!viewingPatient}
+          patient={viewingPatient}
+          onClose={() => setViewingPatient(null)}
+          onEdit={(patient) => setEditingPatient(patient)}
         />
       )}
     </div>
