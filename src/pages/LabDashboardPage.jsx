@@ -395,26 +395,6 @@ export default function LabDashboardPage() {
               <span>My Profile</span>
             </button>
 
-            {/* Quick Switch Portals */}
-            <div className="pt-2 pb-1 border-t border-white/5 space-y-1">
-              <Link
-                to="/patient-dashboard"
-                onClick={() => setIsSidebarOpen(false)}
-                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
-              >
-                <User className="w-4 h-4 text-teal-400" />
-                <span>Switch to Patient Dashboard</span>
-              </Link>
-              <Link
-                to="/admin"
-                onClick={() => setIsSidebarOpen(false)}
-                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
-              >
-                <ShieldCheck className="w-4 h-4 text-rose-400" />
-                <span>Switch to Admin Panel</span>
-              </Link>
-            </div>
-
             {/* Logout */}
             <button
               type="button"
@@ -558,25 +538,6 @@ export default function LabDashboardPage() {
                     <p className="text-[11px] text-slate-400 font-mono">ID: PH-ASM-204</p>
                     <p className="text-[11px] text-teal-600 font-medium mt-0.5">Dispur Central Lab (Assam)</p>
                   </div>
-
-                  {/* Switch Portals */}
-                  <Link
-                    to="/patient-dashboard"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-                  >
-                    <User className="w-4 h-4 text-teal-600" />
-                    <span>Switch to Patient Dashboard</span>
-                  </Link>
-                  <Link
-                    to="/admin"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-rose-500" />
-                    <span>Switch to Admin Panel</span>
-                  </Link>
-
                   <div className="border-t border-slate-100 my-1" />
                   <Link
                     to="/"

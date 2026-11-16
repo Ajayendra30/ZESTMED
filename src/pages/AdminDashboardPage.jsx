@@ -599,24 +599,8 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        {/* Sidebar Footer Portal Switcher & Link back to Website */}
-        <div className="p-3 border-t border-white/5 space-y-1.5">
-          <Link
-            to="/patient-dashboard"
-            onClick={() => setIsSidebarOpen(false)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11.5px] font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition"
-          >
-            <User className="w-4 h-4 text-teal-400" />
-            <span>Patient Dashboard</span>
-          </Link>
-          <Link
-            to="/lab"
-            onClick={() => setIsSidebarOpen(false)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11.5px] font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition"
-          >
-            <FlaskConical className="w-4 h-4 text-emerald-400" />
-            <span>Lab Executive Portal</span>
-          </Link>
+        {/* Sidebar Footer Link back to Website */}
+        <div className="p-3 border-t border-white/5">
           <Link
             to="/"
             onClick={() => setIsSidebarOpen(false)}
