@@ -256,17 +256,14 @@ export default function PhysiotherapyPage() {
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
       {/* ========================================================================= */}
-      {/* 1. HERO BANNER - Full-Width Edge to Edge (Exact Hero Background Image)    */}
+      {/* 1. HERO BANNER - Full-Width Edge to Edge (Exact Hero Image)               */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-800 bg-[#000000] min-h-[380px] sm:min-h-[420px] lg:min-h-[450px] xl:min-h-[480px] flex items-center">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#EFFBF8] via-[#E2F2F8] to-[#D5EBF8] min-h-[350px] sm:min-h-[380px] lg:min-h-[420px] flex items-center">
         
-        {/* Full-Width Exact Hero Background Image - Anchored Right with 100% Visibility */}
-        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden flex justify-end items-center">
-          <img
-            src="/physio-hero-bg.jpg"
-            alt="ZESTMED Physiotherapy Hero"
-            className="h-full w-auto max-w-full lg:max-w-none object-contain object-right"
-          />
+        {/* Subtle Ambient Light Effects */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+          <div className="absolute -top-24 left-[10%] w-[380px] h-[380px] bg-teal-200/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 right-[15%] w-[420px] h-[420px] bg-sky-200/30 rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -275,20 +272,20 @@ export default function PhysiotherapyPage() {
           <div className="lg:col-span-7 xl:col-span-6 space-y-4">
             
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal-950/80 text-teal-300 border border-teal-500/40 text-xs font-bold shadow-2xs">
-              <Activity className="w-3.5 h-3.5 text-teal-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
+              <Activity className="w-3.5 h-3.5 text-[#007A64]" />
               <span>Physiotherapy & Rehabilitation</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-white leading-[1.18] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
               Expert Physiotherapy<br />
-              Care for a <span className="text-[#2DD4BF]">Healthier,</span><br />
-              <span className="text-[#2DD4BF]">More Active Life</span>
+              Care for a <span className="text-[#007A64]">Healthier,</span><br />
+              <span className="text-[#007A64]">More Active Life</span>
             </h1>
 
             {/* Subheading text */}
-            <p className="text-xs sm:text-sm md:text-base text-slate-300 font-medium leading-relaxed max-w-lg">
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
               Personalized physiotherapy treatment for pain relief, injury recovery and overall mobility improvement.
             </p>
 
@@ -307,26 +304,23 @@ export default function PhysiotherapyPage() {
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95 backdrop-blur-xs"
+                className="bg-white hover:bg-slate-50 text-[#0F172A] border border-slate-300 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
               >
-                <Stethoscope className="w-4 h-4 text-teal-300" />
+                <Stethoscope className="w-4 h-4 text-[#007A64]" />
                 <span>Consult a Physiotherapist</span>
               </button>
             </div>
           </div>
 
-          {/* Right Column: Hero Visual */}
+          {/* Right Column: Hero Visual with exact user-provided image */}
           <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
-            {/* On mobile / small screens, clean responsive card showcasing the exact visual */}
-            <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-slate-800 bg-black">
+            <div className="relative w-full max-w-[480px] lg:max-w-[530px] rounded-3xl overflow-hidden shadow-xl border-2 border-white/90 bg-black">
               <img
-                src="/physio-hero-bg.jpg"
-                alt="ZESTMED Physiotherapy Hero"
-                className="w-full h-auto object-contain select-none"
+                src="/physiotherapy-hero.jpg"
+                alt="Expert Physiotherapy Care"
+                className="w-full h-auto object-contain select-none transition-all duration-300"
               />
             </div>
-            {/* On desktop, keep open space so the crisp background image shines through without obstruction */}
-            <div className="hidden lg:block w-full min-h-[380px] pointer-events-none" />
           </div>
 
         </div>
