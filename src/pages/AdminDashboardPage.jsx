@@ -1,6 +1,6 @@
 // src/pages/AdminDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Admin Dashboard specification pixel-for-pixel
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
