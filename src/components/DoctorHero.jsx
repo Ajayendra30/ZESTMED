@@ -22,7 +22,7 @@ export default function DoctorHero({
   onOnlineConsultation
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-slate-200/90 shadow-sm min-h-[320px] sm:min-h-[340px] lg:min-h-[360px] bg-gradient-to-r from-[#F8FCFB] via-[#F0FAF7] to-[#E8F6F3] flex items-center">
+    <section className="relative overflow-hidden w-full border-b border-slate-200/80 min-h-[340px] sm:min-h-[360px] lg:min-h-[380px] bg-gradient-to-r from-[#F8FCFB] via-[#F0FAF7] to-[#E8F6F3] flex items-center">
       
       {/* 1. Raw Individual Doctor Image Asset (/doctor-hero-doctors.jpg) */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden flex items-center justify-center">
@@ -53,7 +53,7 @@ export default function DoctorHero({
       </div>
 
       {/* 2. Content Grid: Text CTAs (Left), Doctors Center Visual, Find a Doctor Card (Right) */}
-      <div className="relative z-10 w-full px-5 sm:px-8 lg:px-10 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 lg:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         
         {/* Left Column: Heading, Subtitle & Action Buttons */}
         <div className="lg:col-span-6 xl:col-span-5 space-y-3 sm:space-y-4">

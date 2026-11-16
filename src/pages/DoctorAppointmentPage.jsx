@@ -274,24 +274,24 @@ export default function DoctorAppointmentPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
-      {/* Main Full-Width Container matching Zestmed Site Standard */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4 sm:py-6 space-y-6 sm:space-y-8">
-        
-        {/* ========================================================================= */}
-        {/* 1. HERO BANNER - Recreated with individual React components & assets      */}
-        {/* ========================================================================= */}
-        <DoctorHero
-          selectedSpecialty={selectedSpecialty}
-          setSelectedSpecialty={setSelectedSpecialty}
-          selectedLocation={selectedLocation}
-          setSelectedLocation={setSelectedLocation}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          specialties={DOCTOR_SPECIALTIES}
-          onSearchSubmit={handleSearchSubmit}
-          onBookAppointment={handleOpenBooking}
-          onOnlineConsultation={handleOpenBooking}
-        />
+      {/* ========================================================================= */}
+      {/* 1. HERO BANNER - Full-Width Edge to Edge (No Outer Card Box)              */}
+      {/* ========================================================================= */}
+      <DoctorHero
+        selectedSpecialty={selectedSpecialty}
+        setSelectedSpecialty={setSelectedSpecialty}
+        selectedLocation={selectedLocation}
+        setSelectedLocation={setSelectedLocation}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        specialties={DOCTOR_SPECIALTIES}
+        onSearchSubmit={handleSearchSubmit}
+        onBookAppointment={handleOpenBooking}
+        onOnlineConsultation={handleOpenBooking}
+      />
+
+      {/* Main Container matching Zestmed Standard for remaining sections */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
