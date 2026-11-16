@@ -537,75 +537,75 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         <section className="rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#F4FBF9] to-[#EAF7F4] border border-[#D5EFE8] p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xs">
           
-          <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-[#0F1E36] tracking-tight mb-7 sm:mb-9">
             How to Book a Doctor Appointment?
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            {/* Left: 4-Step Interactive Flow */}
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-4 gap-4 items-center">
+            {/* Left: 4-Step Interactive Flow with Larger Icons & Typography */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-4 gap-5 sm:gap-6 items-start">
               
               {/* Step 1 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   1
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
-                  <Search className="w-5 h-5 stroke-[2.4]" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <Search className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Search Doctor
                 </h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
                   Find by specialty, location or name
                 </p>
               </div>
 
               {/* Step 2 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   2
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
-                  <Calendar className="w-5 h-5 stroke-[2.4]" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Select Date & Time
                 </h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
                   Choose a convenient slot
                 </p>
               </div>
 
               {/* Step 3 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   3
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
-                  <UserCheck className="w-5 h-5 stroke-[2.4]" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <UserCheck className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Book Appointment
                 </h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
                   Confirm your details and book
                 </p>
               </div>
 
               {/* Step 4 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   4
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
-                  <CheckCircle2 className="w-5 h-5 stroke-[2.4]" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Get Confirmation
                 </h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
                   Receive instant booking confirmation
                 </p>
               </div>
@@ -614,7 +614,7 @@ export default function DoctorAppointmentPage() {
 
             {/* Right: Desk Calendar 3D Graphic matching Reference Image */}
             <div className="lg:col-span-4 flex justify-center lg:justify-end">
-              <div className="relative w-48 sm:w-56 h-48 sm:h-56 flex items-center justify-center">
+              <div className="relative w-52 sm:w-60 lg:w-72 h-52 sm:h-60 lg:h-72 flex items-center justify-center">
                 {/* Ambient glow behind calendar */}
                 <div className="absolute inset-0 bg-teal-300/30 rounded-full blur-2xl pointer-events-none" />
                 
