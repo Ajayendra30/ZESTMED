@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-// Complete combined ZESTMED homepage following the exact specifications from Image 1 and Image 2
+// Complete combined ZESTMED homepage following the 11 major healthcare specifications
 import React, { useState } from 'react';
 import Hero from '../components/Hero';
 import SearchSection from '../components/SearchSection';
@@ -11,33 +11,75 @@ import FAQ from '../components/FAQ';
 import ProductDetailModal from '../components/ProductDetailModal';
 import TestDetailModal from '../components/TestDetailModal';
 import PackageDetailModal from '../components/PackageDetailModal';
+import BookDoctorModal from '../components/BookDoctorModal';
+import BookPhysioModal from '../components/BookPhysioModal';
+import BookSurgeryModal from '../components/BookSurgeryModal';
+import SeniorCitizenPickUpModal from '../components/SeniorCitizenPickUpModal';
 
-export default function Home({ searchInputRef }) {
+export default function Home({ 
+  searchInputRef,
+  isDoctorModalOpen: externalDoctorOpen,
+  setIsDoctorModalOpen: externalSetDoctorOpen,
+  isPhysioModalOpen: externalPhysioOpen,
+  setIsPhysioModalOpen: externalSetPhysioOpen,
+  isSurgeryModalOpen: externalSurgeryOpen,
+  setIsSurgeryModalOpen: externalSetSurgeryOpen,
+  isSeniorPickupOpen: externalSeniorOpen,
+  setIsSeniorPickupOpen: externalSetSeniorOpen
+}) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
 
+  // Local modal states fallback if not controlled externally
+  const [localDoctorOpen, setLocalDoctorOpen] = useState(false);
+  const [localPhysioOpen, setLocalPhysioOpen] = useState(false);
+  const [localSurgeryOpen, setLocalSurgeryOpen] = useState(false);
+  const [localSeniorOpen, setLocalSeniorOpen] = useState(false);
+
+  const isDoctorOpen = externalDoctorOpen !== undefined ? externalDoctorOpen : localDoctorOpen;
+  const setDoctorOpen = externalSetDoctorOpen || setLocalDoctorOpen;
+
+  const isPhysioOpen = externalPhysioOpen !== undefined ? externalPhysioOpen : localPhysioOpen;
+  const setPhysioOpen = externalSetPhysioOpen || setLocalPhysioOpen;
+
+  const isSurgeryOpen = externalSurgeryOpen !== undefined ? externalSurgeryOpen : localSurgeryOpen;
+  const setSurgeryOpen = externalSetSurgeryOpen || setLocalSurgeryOpen;
+
+  const isSeniorOpen = externalSeniorOpen !== undefined ? externalSeniorOpen : localSeniorOpen;
+  const setSeniorOpen = externalSetSeniorOpen || setLocalSeniorOpen;
+
   return (
     <main className="min-h-screen bg-white">
-      {/* ======================================================== */}
-      {/* PART 1: FIRST REFERENCE IMAGE CONTENT (Top to Bottom)    */}
-      {/* ======================================================== */}
+      {/* 1. Hero Section with Lab Tests in #1 Order & Single-Day Reports */}
+      <Hero
+        onOpenDoctorModal={() => setDoctorOpen(true)}
+        onOpenPhysioModal={() => setPhysioOpen(true)}
+        onOpenSurgeryModal={() => setSurgeryOpen(true)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
+      />
 
-      {/* 1. Hero Section with healthcare professionals & CTAs */}
-      <Hero />
-
-      {/* 2. Medicine / Lab Test / Health Packages Search Panel */}
+      {/* 2. Medicine / Lab Test / Doctor / Physio Search Panel */}
       <SearchSection
         searchInputRef={searchInputRef}
         onSelectProduct={(product) => setSelectedProduct(product)}
         onSelectTest={(test) => setSelectedTest(test)}
         onSelectPackage={(pkg) => setSelectedPackage(pkg)}
+        onOpenDoctorModal={() => setDoctorOpen(true)}
+        onOpenPhysioModal={() => setPhysioOpen(true)}
+        onOpenSurgeryModal={() => setSurgeryOpen(true)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
-      {/* 3. Healthcare Categories Strip */}
-      <HealthcareCategories />
+      {/* 3. Healthcare Categories Strip (Lab Tests 1st, Doctors, Physio, Surgery, Wellness, Medicines, Senior) */}
+      <HealthcareCategories
+        onOpenDoctorModal={() => setDoctorOpen(true)}
+        onOpenPhysioModal={() => setPhysioOpen(true)}
+        onOpenSurgeryModal={() => setSurgeryOpen(true)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
+      />
 
-      {/* 4. Popular Medicines & Diagnostic Tests */}
+      {/* 4. Popular Medicines & Diagnostic Tests (Single-day report badge) */}
       <PopularMedicinesAndTests
         onSelectProduct={(product) => setSelectedProduct(product)}
         onSelectTest={(test) => setSelectedTest(test)}
@@ -47,12 +89,13 @@ export default function Home({ searchInputRef }) {
       {/* 5. Health Checkup Packages, How It Works, Why Choose ZESTMED & Home Sample Collection */}
       <HomeFeaturesOverview
         onSelectPackage={(pkg) => setSelectedPackage(pkg)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
       {/* 6. What Our Customers Say? – Testimonials (3 cards) */}
       <Testimonials />
 
-      {/* 5. Frequently Asked Questions (FAQs) (6 accordion cards) */}
+      {/* 7. Frequently Asked Questions (FAQs) (6 accordion cards) */}
       <FAQ />
 
       {/* ======================================================== */}
@@ -71,6 +114,33 @@ export default function Home({ searchInputRef }) {
       <PackageDetailModal
         pkg={selectedPackage}
         onClose={() => setSelectedPackage(null)}
+      />
+
+      {/* 2. Book Doctor Modal */}
+      <BookDoctorModal
+        isOpen={isDoctorOpen}
+        onClose={() => setDoctorOpen(false)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
+      />
+
+      {/* 3. Book Physiotherapist Modal */}
+      <BookPhysioModal
+        isOpen={isPhysioOpen}
+        onClose={() => setPhysioOpen(false)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
+      />
+
+      {/* 4. Book Surgery Package Modal */}
+      <BookSurgeryModal
+        isOpen={isSurgeryOpen}
+        onClose={() => setSurgeryOpen(false)}
+        onOpenSeniorPickup={() => setSeniorOpen(true)}
+      />
+
+      {/* 8. Senior Citizen 10km Free Pick-up & Drop Modal */}
+      <SeniorCitizenPickUpModal
+        isOpen={isSeniorOpen}
+        onClose={() => setSeniorOpen(false)}
       />
     </main>
   );

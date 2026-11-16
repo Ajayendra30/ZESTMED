@@ -12,7 +12,14 @@ import {
   FlaskConical
 } from 'lucide-react';
 
-export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
+export default function Navbar({ 
+  onOpenPrescriptionModal, 
+  onSearchFocus,
+  onOpenDoctorModal,
+  onOpenPhysioModal,
+  onOpenSurgeryModal,
+  onOpenSeniorPickup
+}) {
   const { totalItemsCount, openCart } = useCart();
   const { currentLocation, openLocationModal } = useLocation();
   const { user, isLoggedIn, openAuth, logout } = useAuth();
@@ -72,9 +79,13 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
 
   const navLinks = [
     { name: 'Home', href: '/', isRoute: true },
+    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true, badge: 'Single Day ⚡' },
+    { name: 'Book Doctor', onClick: onOpenDoctorModal, isModal: true },
+    { name: 'Physiotherapist', onClick: onOpenPhysioModal, isModal: true },
+    { name: 'Surgery Packages', onClick: onOpenSurgeryModal, isModal: true },
+    { name: 'Wellness Packages', href: '/packages', isRoute: true },
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
-    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
-    { name: 'Health Packages', href: '/packages', isRoute: true },
+    { name: 'Senior Care (10km Free)', onClick: onOpenSeniorPickup, isModal: true, highlight: true },
     { name: 'About Us', href: '/about', isRoute: true },
     { name: 'Contact', href: '/contact', isRoute: true },
   ];
@@ -85,17 +96,17 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
       <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 overflow-hidden text-slate-200">
-            <span className="flex items-center gap-1.5 font-medium whitespace-nowrap text-[11px] sm:text-xs md:text-sm">
-              <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#14B8A6] shrink-0" />
-              <span>Free Home Sample Collection</span>
+            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-[11px] sm:text-xs md:text-sm text-teal-300">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+              <span>⚡ Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
-            <span className="hidden sm:inline font-medium whitespace-nowrap text-xs md:text-sm">
-              Up to 20% Off on Health Packages
+            <span className="hidden sm:inline font-medium whitespace-nowrap text-xs md:text-sm text-emerald-300">
+              🚗 Free Senior Citizen Pick-up & Drop within 10km (Guwahati)
             </span>
             <span className="hidden lg:inline text-slate-500">|</span>
-            <span className="hidden lg:inline font-semibold text-teal-300 whitespace-nowrap text-xs md:text-sm">
-              Trusted by 50,000+ Patients
+            <span className="hidden lg:inline font-bold text-white whitespace-nowrap text-xs md:text-sm bg-teal-800/60 px-2 py-0.5 rounded-full border border-teal-600/40">
+              📍 Serving Exclusively Guwahati, Assam
             </span>
           </div>
 
@@ -460,17 +471,39 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
                   );
                 }
 
+                if (link.isModal) {
+                  return (
+                    <button
+                      key={link.name}
+                      type="button"
+                      onClick={link.onClick}
+                      className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap ${
+                        link.highlight
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80 hover:bg-emerald-100 font-bold'
+                          : 'text-slate-700 hover:text-[#008F83] hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{link.name}</span>
+                    </button>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
+                    className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
                       routerLocation.pathname === link.href
                         ? 'text-[#008F83] font-bold'
                         : 'text-slate-700 hover:text-[#008F83]'
                     }`}
                   >
                     <span>{link.name}</span>
+                    {link.badge && (
+                      <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full">
+                        {link.badge}
+                      </span>
+                    )}
                     {routerLocation.pathname === link.href && (
                       <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
                     )}
@@ -619,21 +652,51 @@ export default function Navbar({ onOpenPrescriptionModal, onSearchFocus }) {
 
             {/* Mobile Navigation Links */}
             <nav className="flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between ${
-                    routerLocation.pathname === link.href
-                      ? 'bg-teal-50 text-[#008F83] font-bold'
-                      : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
-                  }`}
-                >
-                  <span>{link.name}</span>
-                  <ArrowRight className="w-4 h-4 opacity-40" />
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                if (link.isModal) {
+                  return (
+                    <button
+                      key={link.name}
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        link.onClick && link.onClick();
+                      }}
+                      className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between text-left ${
+                        link.highlight
+                          ? 'bg-emerald-50 text-emerald-800 font-bold'
+                          : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
+                      }`}
+                    >
+                      <span>{link.name}</span>
+                      <ArrowRight className="w-4 h-4 opacity-40" />
+                    </button>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between ${
+                      routerLocation.pathname === link.href
+                        ? 'bg-teal-50 text-[#008F83] font-bold'
+                        : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{link.name}</span>
+                      {link.badge && (
+                        <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full">
+                          {link.badge}
+                        </span>
+                      )}
+                    </div>
+                    <ArrowRight className="w-4 h-4 opacity-40" />
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Mobile Extra Quick Actions - Shown ONLY after user logs in or registers */}

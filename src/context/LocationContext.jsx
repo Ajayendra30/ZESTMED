@@ -3,17 +3,23 @@ import { useToast } from './ToastContext';
 
 const LocationContext = createContext(null);
 
+// Exclusively Guwahati, Assam Neighborhoods & Service Hubs
 export const DEFAULT_LOCATIONS = [
-  { city: 'Guwahati', pincode: '781001', district: 'Kamrup Metro', state: 'Assam', active: true },
-  { city: 'Dibrugarh', pincode: '786001', district: 'Dibrugarh', state: 'Assam', active: true },
-  { city: 'Silchar', pincode: '788001', district: 'Cachar', state: 'Assam', active: true },
-  { city: 'Jorhat', pincode: '785001', district: 'Jorhat', state: 'Assam', active: true },
-  { city: 'Nagaon', pincode: '782001', district: 'Nagaon', state: 'Assam', active: true },
-  { city: 'Tezpur', pincode: '784001', district: 'Sonitpur', state: 'Assam', active: true },
-  { city: 'Tinsukia', pincode: '786125', district: 'Tinsukia', state: 'Assam', active: true },
-  { city: 'Bongaigaon', pincode: '783380', district: 'Bongaigaon', state: 'Assam', active: true },
+  { city: 'Guwahati - Dispur / Secretariat', pincode: '781005', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '3 km from Central Lab' },
+  { city: 'Guwahati - Panbazar / Fancy Bazar', pincode: '781001', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '4.5 km from Central Lab' },
+  { city: 'Guwahati - GS Road / Christian Basti', pincode: '781005', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '2.5 km from Central Lab' },
+  { city: 'Guwahati - Ulubari / Paltan Bazar', pincode: '781007', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '3.8 km from Central Lab' },
+  { city: 'Guwahati - Jalukbari / Gauhati Univ', pincode: '781014', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '8.2 km from Central Lab' },
+  { city: 'Guwahati - Khanapara / Beltola', pincode: '781022', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '5.5 km from Central Lab' },
+  { city: 'Guwahati - Six Mile / VIP Road', pincode: '781022', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '6.0 km from Central Lab' },
+  { city: 'Guwahati - Chandmari / Silpukhuri', pincode: '781003', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '4.2 km from Central Lab' },
+  { city: 'Guwahati - Zoo Road / Geetanagar', pincode: '781024', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '3.5 km from Central Lab' },
+  { city: 'Guwahati - Bharalumukh / Shantipur', pincode: '781009', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '5.1 km from Central Lab' },
+  { city: 'Guwahati - Maligaon / Kamakhya', pincode: '781011', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '7.8 km from Central Lab' },
+  { city: 'Guwahati - Hatigaon / Bhetapara', pincode: '781038', district: 'Kamrup Metro', state: 'Assam', active: true, radiusKm: '5.8 km from Central Lab' },
 ];
 
+export const GUWAHATI_HUBS = DEFAULT_LOCATIONS;
 export const ASSAM_DISTRICTS = DEFAULT_LOCATIONS;
 
 export const LocationProvider = ({ children }) => {
@@ -23,8 +29,8 @@ export const LocationProvider = ({ children }) => {
       const saved = localStorage.getItem('zestmed_location');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Ensure legacy non-Assam stored locations are reset to Assam default
-        if (parsed.state === 'Assam') {
+        // Ensure city is strictly Guwahati
+        if (parsed.city && parsed.city.includes('Guwahati')) {
           return parsed;
         }
       }
@@ -47,7 +53,7 @@ export const LocationProvider = ({ children }) => {
   const selectLocation = (loc) => {
     setCurrentLocation(loc);
     setIsLocationModalOpen(false);
-    addToast(`Delivery location set to ${loc.city}, Assam (${loc.pincode})`, 'success');
+    addToast(`Delivery & Pickup set to ${loc.city} (${loc.pincode})`, 'success');
   };
 
   const setByPincode = (pincode) => {
@@ -55,30 +61,31 @@ export const LocationProvider = ({ children }) => {
     const match = DEFAULT_LOCATIONS.find(l => l.pincode === cleanPin);
     if (match) {
       selectLocation(match);
-      return { success: true, message: `Fastest delivery active in ${match.city}, Assam!` };
+      return { success: true, message: `Fastest service active in ${match.city}! Free Senior 10km pick-up active.` };
     }
 
-    // Assam postal codes always start with 78
-    if (/^78\d{4}$/.test(cleanPin)) {
+    // Guwahati postal codes strictly start with 7810xx or 781xxx
+    if (/^781\d{3}$/.test(cleanPin)) {
       const customLoc = {
-        city: 'Assam Region',
+        city: `Guwahati (PIN: ${cleanPin})`,
         pincode: cleanPin,
-        district: 'Assam Service District',
+        district: 'Kamrup Metro',
         state: 'Assam',
-        active: true
+        active: true,
+        radiusKm: 'Within Guwahati Coverage Area'
       };
       selectLocation(customLoc);
-      return { success: true, message: `Service active for PIN ${cleanPin} in Assam.` };
+      return { success: true, message: `Active in Guwahati PIN ${cleanPin}. Reports in a single day guaranteed!` };
     }
 
     if (/^\d{6}$/.test(cleanPin)) {
       return { 
         success: false, 
-        message: 'Zestmed Health operates exclusively in Assam (PIN codes starting with 78xxxx). Expansion to other states coming soon!' 
+        message: 'Zestmed operates exclusively in Guwahati, Assam (PIN codes starting with 781xxx). Free 10km senior citizen pick-up & drop is active throughout Guwahati!' 
       };
     }
 
-    return { success: false, message: 'Please enter a valid 6-digit Assam PIN code (e.g. 781001)' };
+    return { success: false, message: 'Please enter a valid 6-digit Guwahati PIN code (e.g. 781005)' };
   };
 
   return (

@@ -4,8 +4,9 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { 
   X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, 
-  FileText, ArrowRight, CheckCircle2, AlertTriangle, Truck
+  FileText, ArrowRight, CheckCircle2, AlertTriangle, Truck, Clock, Lock
 } from 'lucide-react';
+import RazorpayCheckoutModal from './RazorpayCheckoutModal';
 
 export default function CartDrawer({ onOpenPrescriptionModal }) {
   const { 
@@ -17,25 +18,31 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
   const { user } = useAuth();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutComplete, setCheckoutComplete] = useState(false);
+  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+  const [lastPayment, setLastPayment] = useState(null);
 
   if (!isDrawerOpen) return null;
 
   const hasPrescriptionItems = cartItems.some(i => i.prescriptionRequired);
+  const hasDiagnosticItems = cartItems.some(i => i.category === 'Diagnostic Test' || i.category === 'Health Package' || i.type === 'test' || i.turnaroundTime);
   const deliveryCharge = subtotal > 499 || subtotal === 0 ? 0 : 49;
   const grandTotal = subtotal + deliveryCharge;
 
-  const handleSimulatedCheckout = () => {
-    setIsCheckingOut(true);
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      setCheckoutComplete(true);
-      addToast('Simulated Order Placed Successfully! (Demo)', 'success');
-      clearCart();
-    }, 1200);
+  const handleOpenRazorpayCheckout = () => {
+    setIsRazorpayOpen(true);
+  };
+
+  const handlePaymentSuccess = (paymentData) => {
+    setLastPayment(paymentData);
+    setIsRazorpayOpen(false);
+    setCheckoutComplete(true);
+    clearCart();
+    addToast(`Order Confirmed via Razorpay! Payment ID: ${paymentData.paymentId}`, 'success');
   };
 
   const resetCheckout = () => {
     setCheckoutComplete(false);
+    setLastPayment(null);
     closeCart();
   };
 
@@ -73,19 +80,28 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
-              <h3 className="text-xl font-bold text-dark">Demo Order Confirmed!</h3>
+              <h3 className="text-xl font-bold text-dark">Order Confirmed!</h3>
               <p className="text-xs text-muted mt-2 max-w-xs leading-relaxed">
-                Thank you, {user?.name || 'Valued Patient'}! This simulated order has been registered in the frontend demo state.
+                Thank you, {user?.name || 'Valued Patient'}! Your order has been registered with Zestmed Central Hub, Guwahati.
               </p>
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800 mt-4 text-left w-full space-y-1">
-                <div className="font-semibold">Simulated Order Summary:</div>
-                <div>• Order ID: #ZM-2026-{Math.floor(1000 + Math.random() * 9000)}</div>
-                <div>• Estimated Delivery: Tomorrow, by 2:00 PM</div>
-                <div>• Status: Ready for Dispatch (Demo)</div>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-xs text-emerald-800 mt-4 text-left w-full space-y-1.5">
+                <div className="font-bold text-emerald-950 flex items-center justify-between">
+                  <span>Razorpay Payment Confirmed</span>
+                  <span className="text-[10px] bg-emerald-200 text-emerald-900 px-1.5 py-0.2 rounded font-mono">Captured</span>
+                </div>
+                {lastPayment && (
+                  <>
+                    <div className="font-mono text-[11px]">• Razorpay ID: {lastPayment.paymentId}</div>
+                    <div className="font-mono text-[11px]">• Order ID: {lastPayment.orderId}</div>
+                    <div>• Amount Paid: ₹{lastPayment.amount.toFixed(2)}</div>
+                  </>
+                )}
+                <div>• Single-Day Report Delivery: Guaranteed within 12-24 Hours</div>
+                <div>• Location: Guwahati, Assam (Assam GST Invoice Issued)</div>
               </div>
               <button
                 onClick={resetCheckout}
-                className="mt-6 bg-[#01333A] hover:bg-[#002227] text-white font-bold w-full py-3 text-sm rounded-xl transition shadow-sm active:scale-[0.98]"
+                className="mt-6 bg-[#008F83] hover:bg-[#007a70] text-white font-bold w-full py-3 text-sm rounded-xl transition shadow-sm active:scale-[0.98]"
               >
                 Continue Browsing
               </button>
@@ -254,32 +270,46 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                   )}
                 </div>
 
-                {/* Simulated Checkout Button */}
+                {/* Single-Day Reports & Guwahati Service Guarantee */}
+                <div className="bg-teal-50 border border-teal-200/80 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-teal-900">
+                  <Clock className="w-4 h-4 text-[#008F83] shrink-0" />
+                  <span>⚡ <strong>Guwahati Fast:</strong> All lab reports delivered in a single day (12-24 Hrs)</span>
+                </div>
+
+                {/* Razorpay Checkout Button */}
                 <button
                   type="button"
                   disabled={isCheckingOut}
-                  onClick={handleSimulatedCheckout}
-                  className="w-full bg-[#01333A] hover:bg-[#002227] text-white font-bold py-3 text-sm rounded-xl flex items-center justify-center gap-2 mt-2 disabled:opacity-75 transition shadow-sm active:scale-[0.98]"
+                  onClick={handleOpenRazorpayCheckout}
+                  className="w-full bg-[#0284C7] hover:bg-[#0369a1] text-white font-bold py-3 text-sm rounded-xl flex items-center justify-center gap-2 mt-2 transition shadow-md active:scale-[0.98]"
                 >
-                  {isCheckingOut ? (
-                    <span>Processing Demo Booking...</span>
-                  ) : (
-                    <>
-                      <span>Proceed to Checkout</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
+                  <Lock className="w-4 h-4" />
+                  <span>Pay via Razorpay • ₹{grandTotal.toFixed(2)}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <div className="flex items-center justify-center gap-2 text-[11px] text-muted pt-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-brand" />
-                  <span>Frontend Demo Checkout • No Actual Payment Charged</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Secured by Razorpay • UPI, Card & NetBanking</span>
                 </div>
               </div>
             </>
           )}
         </div>
       </div>
+
+      {/* Razorpay Checkout Modal */}
+      <RazorpayCheckoutModal
+        isOpen={isRazorpayOpen}
+        onClose={() => setIsRazorpayOpen(false)}
+        amount={grandTotal}
+        orderDetails={{
+          itemsCount: totalItemsCount,
+          subtotal,
+          deliveryCharge
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }

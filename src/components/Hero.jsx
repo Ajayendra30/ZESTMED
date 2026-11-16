@@ -1,13 +1,16 @@
 // src/components/Hero.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, FlaskConical, ArrowRight, Heart } from 'lucide-react';
+import { 
+  ShoppingCart, FlaskConical, ArrowRight, Heart, 
+  Stethoscope, Activity, Scissors, Car, Clock, ShieldCheck, MapPin 
+} from 'lucide-react';
 import heroTeamImg from '../assets/hero-team.png';
 
-export default function Hero() {
+export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-[#EFFBF9] via-[#E8F8F6] to-[#DEF7F5] pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20 border-b border-teal-100/60">
-      {/* 1. Subtle Floating Mint Medical Plus (+) Symbol right above scientist matching Reference Image */}
+      {/* 1. Subtle Floating Mint Medical Plus (+) Symbols */}
       <div className="absolute top-8 sm:top-10 left-[48%] lg:left-[52%] opacity-35 text-teal-300 font-bold text-5xl sm:text-6xl lg:text-7xl pointer-events-none select-none">
         +
       </div>
@@ -15,7 +18,7 @@ export default function Hero() {
         +
       </div>
 
-      {/* 2. Distinctive Organic Mint-Cyan Curved Backdrop behind Doctor & Delivery Partner matching Reference Image */}
+      {/* 2. Distinctive Organic Mint-Cyan Curved Backdrop */}
       <div className="absolute top-0 right-0 w-[64%] sm:w-[58%] lg:w-[50%] xl:w-[46%] h-full pointer-events-none select-none overflow-hidden">
         <svg
           viewBox="0 0 500 400"
@@ -50,44 +53,88 @@ export default function Hero() {
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-end">
           {/* Left Column: Heading, Value Prop, CTAs */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-4 sm:space-y-5 text-left self-center py-2 sm:py-4 lg:py-6 pr-0 lg:pr-4">
-            {/* Tag Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-emerald-300 shadow-xs text-xs sm:text-sm font-bold text-emerald-800 backdrop-blur-xs">
-              <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83] fill-[#008F83] shrink-0" />
-              <span>Your Health, Our Priority</span>
+          <div className="lg:col-span-5 xl:col-span-5 space-y-4 sm:space-y-4.5 text-left self-center py-2 sm:py-4 lg:py-6 pr-0 lg:pr-4">
+            
+            {/* Tag Badges Row */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-emerald-300 shadow-xs text-xs font-bold text-emerald-800 backdrop-blur-xs">
+                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span>Single-Day Reports Guaranteed</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#008F83]/10 border border-[#008F83]/30 text-xs font-bold text-[#008F83]">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span>Exclusively Guwahati</span>
+              </div>
             </div>
 
-            {/* Main Headline - Matches Reference Image exactly (3 distinct punchy lines) */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[40px] xl:text-[46px] 2xl:text-[50px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
-              Order Medicines, Book <br />
-              Lab Tests <br />
-              <span className="text-[#008F83]">& Get Reports Online</span>
+            {/* Main Headline - Lab Tests FIRST */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[38px] xl:text-[44px] 2xl:text-[48px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
+              Book Lab Tests, Consult <br />
+              Doctors & Order Medicines <br />
+              <span className="text-[#008F83]">Test Reports in a Single Day</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-slate-600 max-w-xl font-medium leading-relaxed">
-              A complete healthcare platform for medicines, diagnostic tests, health packages and home sample collection.
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-xl font-medium leading-relaxed">
+              Guwahati's unified healthcare destination for fast diagnostics with single-day reports, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-3 pt-2">
+            {/* CTAs - #1 Lab Tests is Primary Button */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
               <Link
-                to="/medicines"
-                className="bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition hover:shadow-md group whitespace-nowrap"
+                to="/diagnostics"
+                className="bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition hover:shadow-md group whitespace-nowrap"
               >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                <span>Order Medicines</span>
+                <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                <span>Book a Lab Test (1st)</span>
+                <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 py-0.5 rounded font-black">
+                  Fastest
+                </span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 
-              <Link
-                to="/diagnostics"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm group whitespace-nowrap"
+              <button
+                type="button"
+                onClick={onOpenDoctorModal}
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
               >
-                <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
-                <span>Book a Lab Test</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
+                <span>Book Doctor</span>
+              </button>
+
+              <Link
+                to="/medicines"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
+              >
+                <ShoppingCart className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Medicines</span>
               </Link>
+            </div>
+
+            {/* Senior Citizen Free Pick-up & Drop Feature Callout Banner */}
+            <div 
+              onClick={onOpenSeniorPickup}
+              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-2xl p-3 flex items-center justify-between gap-3 hover:border-[#008F83] transition group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div className="text-xs">
+                  <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>Within 10km Radius Free Pick-up & Drop</span>
+                    <span className="text-[10px] font-black bg-[#008F83] text-white px-1.5 py-0.2 rounded-full">
+                      Free for 60+
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 mt-0.5">
+                    Sanitized AC cab across Guwahati for diagnostics & clinics
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1">
+                Book Cab <ArrowRight className="w-3.5 h-3.5" />
+              </span>
             </div>
           </div>
 

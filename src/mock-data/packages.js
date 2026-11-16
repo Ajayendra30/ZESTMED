@@ -2,7 +2,7 @@ export const MOCK_HEALTH_PACKAGES = [
   {
     id: 'pkg-1',
     name: 'ZESTMED Basic Health Checkup',
-    badge: 'Popular Choice',
+    badge: 'Same-Day Report',
     testsCount: 42,
     gender: 'All Genders',
     ageGroup: '18+ Years',
@@ -10,22 +10,24 @@ export const MOCK_HEALTH_PACKAGES = [
     mrp: 1800.00,
     discountPercent: 50,
     fastingHours: '10-12 Hours Fasting',
-    turnaroundTime: 'Reports within 24 Hours',
-    shortDescription: 'Ideal annual baseline health screening evaluating basic organ function, blood counts, and metabolic indicators.',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
+    shortDescription: 'Ideal annual baseline health screening evaluating basic organ function, blood counts, and metabolic indicators with same-day reports.',
     includes: [
       'Complete Blood Count (CBC - 24 params)',
       'Liver Function Screen (LFT - 6 params)',
       'Kidney Function Screen (KFT - 4 params)',
       'Fasting Blood Glucose',
       'Lipid Profile Screen (4 params)',
-      'Urine Routine Examination (18 params)'
+      'Urine Routine Examination (18 params)',
+      'Digital Report on WhatsApp & Dashboard'
     ],
-    recommendedFor: 'Young professionals and adults seeking routine proactive preventive assessment.'
+    recommendedFor: 'Young professionals and adults seeking routine proactive preventive assessment in Guwahati.'
   },
   {
     id: 'pkg-2',
     name: 'Comprehensive Full Body Checkup Pro',
-    badge: 'Best Value',
+    badge: 'Best Value • Same-Day Report',
     testsCount: 84,
     gender: 'All Genders',
     ageGroup: '25+ Years',
@@ -33,8 +35,9 @@ export const MOCK_HEALTH_PACKAGES = [
     mrp: 4500.00,
     discountPercent: 55,
     fastingHours: '12 Hours Overnight Fasting',
-    turnaroundTime: 'Reports within 24-36 Hours',
-    shortDescription: 'In-depth full-body health audit including Vitamins, Thyroid, Heart markers, Liver, Kidney, and Iron profiles.',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
+    shortDescription: 'In-depth full-body health audit including Vitamins, Thyroid, Heart markers, Liver, Kidney, and Iron profiles with guaranteed single-day reports.',
     includes: [
       'Complete Hemogram CBC (24 params)',
       'Liver Function Test Comprehensive (11 params)',
@@ -44,46 +47,54 @@ export const MOCK_HEALTH_PACKAGES = [
       'Vitamin D (25-OH) & Vitamin B12',
       'HbA1c & Fasting Glucose',
       'Iron Deficiency Profile',
-      'Urine Routine Examination & Microscopic'
+      'Urine Routine Examination & Microscopic',
+      'Same-Day NABL Accredited Digital Verification'
     ],
-    recommendedFor: 'Comprehensive yearly health evaluation for all working individuals and home makers across Assam.'
+    recommendedFor: 'Comprehensive yearly health evaluation for all working individuals and families across Guwahati.'
   },
   {
-    id: 'pkg-3',
-    name: 'Advanced Diabetes Screening & Care',
-    badge: 'Specialized',
-    testsCount: 38,
+    id: 'pkg-5',
+    name: 'Senior Citizen Complete Care & Wellness Package',
+    badge: 'Free 10km Pick-up/Drop in Guwahati',
+    testsCount: 78,
     gender: 'All Genders',
-    ageGroup: 'All Ages',
-    price: 1199.00,
-    mrp: 2200.00,
-    discountPercent: 45,
-    fastingHours: '10-12 Hours Fasting',
-    turnaroundTime: 'Reports within 24 Hours',
-    shortDescription: 'Designed specifically to monitor glycemic control, end-organ kidney health, and lipid complications.',
+    ageGroup: '60+ Years',
+    price: 2499.00,
+    mrp: 5500.00,
+    discountPercent: 54,
+    fastingHours: '10-12 Hours Overnight Fasting',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
+    seniorPickUpIncluded: true,
+    shortDescription: 'Specially created for elders (60+) including FREE AC sanitised pick-up & drop service within 10 km in Guwahati, comprehensive vitals, and single-day reports.',
     includes: [
-      'HbA1c (Glycated Hemoglobin)',
-      'Average Blood Glucose (eAG)',
-      'Fasting Blood Glucose',
-      'Post-Prandial Glucose (Optional)',
-      'Serum Creatinine & eGFR',
-      'Microalbuminuria (Urine Ratio)',
-      'Complete Lipid Profile'
+      'FREE Senior Citizen AC Pick-up & Drop Service (Within 10 km Radius in Guwahati)',
+      'Same-Day Digital Lab Report Guaranteed',
+      'Lipid Profile & Comprehensive Cardiac Risk Markers',
+      'Kidney & Liver Function Comprehensive',
+      'Uric Acid (Gout & Joint Screen)',
+      'Erythrocyte Sedimentation Rate (ESR)',
+      'HbA1c with Fasting Blood Sugar',
+      'Calcium, Phosphorus & Electrolytes',
+      'Vitamin D3 & B12 Vitality Screen',
+      'Complete Urine Analysis',
+      'Dedicated Phlebotomist / Geriatric Care Support'
     ],
-    recommendedFor: 'Individuals with diabetes, pre-diabetes, or hereditary risk of glucose intolerance.'
+    recommendedFor: 'Senior citizens aged 60+ requiring stress-free clinic visit or doorstep sample collection with assisted mobility.'
   },
   {
     id: 'pkg-4',
-    name: 'Women\'s Wellness & Hormone Package',
-    badge: 'Tailored for Women',
+    name: 'Women\'s Complete Wellness & Hormone Package',
+    badge: 'Same-Day Report',
     testsCount: 68,
     gender: 'Females',
     ageGroup: '18-65 Years',
-    price: 2499.00,
-    mrp: 5200.00,
+    price: 2299.00,
+    mrp: 4800.00,
     discountPercent: 52,
     fastingHours: '10-12 Hours Fasting',
-    turnaroundTime: 'Reports within 36 Hours',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
     shortDescription: 'Comprehensive screening for female vitality covering hormonal balance, thyroid, bone mineral vitamins, and anemia markers.',
     includes: [
       'Thyroid Profile Total (T3, T4, TSH)',
@@ -92,39 +103,40 @@ export const MOCK_HEALTH_PACKAGES = [
       'Calcium & Alkaline Phosphatase',
       'Complete Hemogram (CBC)',
       'Complete Lipid & Liver Function',
-      'Kidney Function Profile'
+      'Kidney Function Profile',
+      'Single-Day Certified Report'
     ],
-    recommendedFor: 'Women experiencing fatigue, hormonal fluctuations, cycle irregularity or seeking annual wellness.'
+    recommendedFor: 'Women experiencing fatigue, hormonal fluctuations, cycle irregularity or seeking annual wellness in Guwahati.'
   },
   {
-    id: 'pkg-5',
-    name: 'Senior Citizen Health Package (Gold)',
-    badge: 'Senior Special',
-    testsCount: 76,
+    id: 'pkg-3',
+    name: 'Advanced Diabetes & Metabolic Screening',
+    badge: 'Same-Day Report',
+    testsCount: 38,
     gender: 'All Genders',
-    ageGroup: '60+ Years',
-    price: 2899.00,
-    mrp: 6000.00,
-    discountPercent: 51,
-    fastingHours: '12 Hours Overnight Fasting',
-    turnaroundTime: 'Reports within 24-36 Hours',
-    shortDescription: 'Specially created for elders to assess cardiac indicators, joint health, renal filtration, and bone calcium.',
+    ageGroup: 'All Ages',
+    price: 1199.00,
+    mrp: 2200.00,
+    discountPercent: 45,
+    fastingHours: '10-12 Hours Fasting',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
+    shortDescription: 'Designed specifically to monitor glycemic control, end-organ kidney health, and lipid complications with single-day report delivery.',
     includes: [
-      'Lipid Profile & Cardiac Risk Markers',
-      'Kidney & Liver Function Comprehensive',
-      'Uric Acid (Gout Screen)',
-      'Erythrocyte Sedimentation Rate (ESR)',
-      'HbA1c with Fasting Blood Sugar',
-      'Calcium, Phosphorus & Electrolytes',
-      'Vitamin D3 & B12',
-      'Complete Urine Analysis'
+      'HbA1c (Glycated Hemoglobin)',
+      'Average Blood Glucose (eAG)',
+      'Fasting Blood Glucose',
+      'Serum Creatinine & eGFR',
+      'Microalbuminuria (Urine Ratio)',
+      'Complete Lipid Profile',
+      'Same-Day Digital Delivery'
     ],
-    recommendedFor: 'Seniors aged 60 and above for comprehensive vital organ screening.'
+    recommendedFor: 'Individuals with diabetes, pre-diabetes, or hereditary risk of glucose intolerance in Guwahati.'
   },
   {
     id: 'pkg-6',
-    name: 'Cardiac Care & Stroke Risk Prevention',
-    badge: 'Cardio Focus',
+    name: 'Executive Cardiac & Stroke Prevention Wellness',
+    badge: 'Same-Day Report',
     testsCount: 54,
     gender: 'All Genders',
     ageGroup: '30+ Years',
@@ -132,7 +144,8 @@ export const MOCK_HEALTH_PACKAGES = [
     mrp: 4400.00,
     discountPercent: 50,
     fastingHours: '12 Hours Overnight Fasting',
-    turnaroundTime: 'Reports within 24 Hours',
+    turnaroundTime: 'Same Day (Within 12-24 Hours)',
+    sameDayReport: true,
     shortDescription: 'Advanced vascular risk assessment measuring arterial inflammation, Apo lipoproteins, lipid fractions, and homocysteine.',
     includes: [
       'Lipid Profile Comprehensive (8 params)',
@@ -141,7 +154,8 @@ export const MOCK_HEALTH_PACKAGES = [
       'Homocysteine Serum Levels',
       'Fasting Blood Glucose',
       'Kidney Function & Electrolytes Screen',
-      'Complete Hemogram (CBC)'
+      'Complete Hemogram (CBC)',
+      'Same-Day NABL Verification'
     ],
     recommendedFor: 'Individuals with family history of cardiovascular disease, elevated cholesterol, or high stress lifestyle.'
   }

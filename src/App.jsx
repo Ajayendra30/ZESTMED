@@ -19,6 +19,10 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
 import AboutPage from './pages/AboutPage';
+import BookDoctorModal from './components/BookDoctorModal';
+import BookPhysioModal from './components/BookPhysioModal';
+import BookSurgeryModal from './components/BookSurgeryModal';
+import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
 import { getActiveSubdomain } from './utils/subdomain';
 
 function AppContent() {
@@ -28,6 +32,12 @@ function AppContent() {
   const { addToast } = useToast();
   const activeSubdomain = getActiveSubdomain();
   const searchInputRef = useRef(null);
+
+  // Global Interactive Modals for New Core Services
+  const [isDoctorModalOpen, setIsDoctorModalOpen] = useState(false);
+  const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
+  const [isSurgeryModalOpen, setIsSurgeryModalOpen] = useState(false);
+  const [isSeniorPickupOpen, setIsSeniorPickupOpen] = useState(false);
 
   // Upload Prescription is NOT accessible directly from the homepage.
   // It is only available after login/registration, redirecting to the Patient Dashboard.
@@ -113,6 +123,10 @@ function AppContent() {
       <Navbar
         onOpenPrescriptionModal={handleOpenPrescriptionRequest}
         onSearchFocus={handleSearchFocus}
+        onOpenDoctorModal={() => setIsDoctorModalOpen(true)}
+        onOpenPhysioModal={() => setIsPhysioModalOpen(true)}
+        onOpenSurgeryModal={() => setIsSurgeryModalOpen(true)}
+        onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
       />
 
       {/* Main Routed Content */}
@@ -120,7 +134,19 @@ function AppContent() {
         <Routes>
           <Route
             path="/"
-            element={<Home searchInputRef={searchInputRef} />}
+            element={
+              <Home 
+                searchInputRef={searchInputRef}
+                isDoctorModalOpen={isDoctorModalOpen}
+                setIsDoctorModalOpen={setIsDoctorModalOpen}
+                isPhysioModalOpen={isPhysioModalOpen}
+                setIsPhysioModalOpen={setIsPhysioModalOpen}
+                isSurgeryModalOpen={isSurgeryModalOpen}
+                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
+                isSeniorPickupOpen={isSeniorPickupOpen}
+                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
+              />
+            }
           />
           <Route
             path="/medicines"
@@ -133,6 +159,54 @@ function AppContent() {
           <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
           <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
           <Route path="/packages" element={<HealthPackagesPage />} />
+          <Route 
+            path="/doctors" 
+            element={
+              <Home 
+                searchInputRef={searchInputRef}
+                isDoctorModalOpen={true}
+                setIsDoctorModalOpen={setIsDoctorModalOpen}
+                isPhysioModalOpen={isPhysioModalOpen}
+                setIsPhysioModalOpen={setIsPhysioModalOpen}
+                isSurgeryModalOpen={isSurgeryModalOpen}
+                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
+                isSeniorPickupOpen={isSeniorPickupOpen}
+                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
+              />
+            } 
+          />
+          <Route 
+            path="/physiotherapy" 
+            element={
+              <Home 
+                searchInputRef={searchInputRef}
+                isDoctorModalOpen={isDoctorModalOpen}
+                setIsDoctorModalOpen={setIsDoctorModalOpen}
+                isPhysioModalOpen={true}
+                setIsPhysioModalOpen={setIsPhysioModalOpen}
+                isSurgeryModalOpen={isSurgeryModalOpen}
+                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
+                isSeniorPickupOpen={isSeniorPickupOpen}
+                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
+              />
+            } 
+          />
+          <Route 
+            path="/surgeries" 
+            element={
+              <Home 
+                searchInputRef={searchInputRef}
+                isDoctorModalOpen={isDoctorModalOpen}
+                setIsDoctorModalOpen={setIsDoctorModalOpen}
+                isPhysioModalOpen={isPhysioModalOpen}
+                setIsPhysioModalOpen={setIsPhysioModalOpen}
+                isSurgeryModalOpen={true}
+                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
+                isSeniorPickupOpen={isSeniorPickupOpen}
+                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
+              />
+            } 
+          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route
@@ -152,6 +226,27 @@ function AppContent() {
       <LocationModal />
       <AuthModal />
       <ToastContainer />
+
+      {/* Global Core Service Modals */}
+      <BookDoctorModal
+        isOpen={isDoctorModalOpen}
+        onClose={() => setIsDoctorModalOpen(false)}
+        onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
+      />
+      <BookPhysioModal
+        isOpen={isPhysioModalOpen}
+        onClose={() => setIsPhysioModalOpen(false)}
+        onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
+      />
+      <BookSurgeryModal
+        isOpen={isSurgeryModalOpen}
+        onClose={() => setIsSurgeryModalOpen(false)}
+        onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
+      />
+      <SeniorCitizenPickUpModal
+        isOpen={isSeniorPickupOpen}
+        onClose={() => setIsSeniorPickupOpen(false)}
+      />
     </div>
   );
 }

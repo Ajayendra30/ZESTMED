@@ -6,7 +6,7 @@ import {
   ArrowRight, ShieldCheck, Check, Laptop, Search
 } from 'lucide-react';
 
-export default function HomeFeaturesOverview({ onSelectPackage }) {
+export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPickup }) {
   const checkupPackages = [
     {
       id: 'pkg-basic',
@@ -14,7 +14,7 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
       price: 999,
       mrp: 1499,
       testsCount: '58 Tests Included',
-      reportsTime: '12-24 Hours',
+      reportsTime: 'Same Day (12-24 Hours)',
       fasting: '10-12 Hours Fasting Required',
       description: 'Ideal starting package covering vital blood counts, glucose and basic lipid indicators.'
     },
@@ -24,7 +24,7 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
       price: 1999,
       mrp: 2999,
       testsCount: '84 Tests Included',
-      reportsTime: '24 Hours',
+      reportsTime: 'Same Day (Within 24 Hours)',
       fasting: '10-12 Hours Fasting Required',
       description: 'Comprehensive screening for liver, kidney, thyroid, heart and vital parameters.'
     },
@@ -34,7 +34,7 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
       price: 799,
       mrp: 1199,
       testsCount: '12 Tests Included',
-      reportsTime: '12 Hours',
+      reportsTime: 'Same Day (12 Hours)',
       fasting: '8-10 Hours Fasting Required',
       description: 'HbA1c, Fasting Blood Sugar, Urine Microalbumin & Lipid profiling for diabetes management.'
     },
@@ -44,19 +44,20 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
       price: 1299,
       mrp: 1995,
       testsCount: '65 Tests Included',
-      reportsTime: '24 Hours',
+      reportsTime: 'Same Day (Within 24 Hours)',
       fasting: 'Fasting Required',
       description: 'Designed specifically for women covering hormonal balance, thyroid, calcium, vitamin D & CBC.'
     },
     {
       id: 'pkg-senior',
-      name: 'Senior Citizen Health Package',
+      name: 'Senior Citizen Package',
       price: 1699,
       mrp: 2499,
       testsCount: '76 Tests Included',
-      reportsTime: '24 Hours',
+      reportsTime: 'Same Day (Within 24 Hours)',
       fasting: 'Fasting Required',
-      description: 'Focused health evaluation for adults aged 60+ covering cardiac risk, kidney, liver and bone density.'
+      description: 'Focused evaluation for age 60+ with free 10km pick-up & drop across Guwahati.',
+      hasFreeCab: true
     }
   ];
 
@@ -106,11 +107,16 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
               <HeartPulse className="w-6 h-6 text-[#008F83]" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                Health Checkup Packages
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                  Health Checkup Packages
+                </h3>
+                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
+                  Single-Day Reports ⚡
+                </span>
+              </div>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
-                Comprehensive test packages for a healthier you.
+                Comprehensive packages delivered in 12-24 hours across Guwahati.
               </p>
             </div>
           </div>
@@ -120,11 +126,22 @@ export default function HomeFeaturesOverview({ onSelectPackage }) {
             {checkupPackages.map((pkg, idx) => (
               <div
                 key={pkg.id}
-                onClick={() => onSelectPackage && onSelectPackage(pkg)}
+                onClick={() => {
+                  if (pkg.hasFreeCab && onOpenSeniorPickup) {
+                    onOpenSeniorPickup();
+                  } else if (onSelectPackage) {
+                    onSelectPackage(pkg);
+                  }
+                }}
                 className={`bg-white rounded-2xl border border-slate-200/80 p-3 text-center flex flex-col justify-center items-center hover:shadow-md hover:border-[#008F83]/50 transition cursor-pointer group ${
                   idx === checkupPackages.length - 1 ? 'col-span-2 sm:col-span-1' : ''
                 }`}
               >
+                {pkg.hasFreeCab && (
+                  <span className="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full mb-1">
+                    Free 10km Cab 🚗
+                  </span>
+                )}
                 <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug min-h-[32px] flex items-center justify-center text-center">
                   {pkg.name}
                 </h4>

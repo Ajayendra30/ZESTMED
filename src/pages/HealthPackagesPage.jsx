@@ -23,7 +23,7 @@ const PACKAGES_DATA = [
     price: 1999,
     mrp: 2999,
     includes: '70+ Tests Included (CBC, Lipid, LFT, KFT, Blood Sugar, Thyroid, Urine)',
-    reportsIn: 'Reports in 24 Hours',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-1-thumb.jpg',
     tag: 'Bestseller'
@@ -41,7 +41,7 @@ const PACKAGES_DATA = [
     price: 1499,
     mrp: 1999,
     includes: '55+ Tests Included (PSA, Testosterone, Cardiac Risk, Vitamin D, Lipid)',
-    reportsIn: 'Reports in 24 Hours',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-2-thumb.jpg',
     tag: 'Popular'
@@ -59,7 +59,7 @@ const PACKAGES_DATA = [
     price: 1799,
     mrp: 2599,
     includes: '58+ Tests Included (Thyroid Profile, Iron, Calcium, Vitamin D, Pap Smear)',
-    reportsIn: 'Reports in 24 Hours',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-3-thumb.jpg',
     tag: 'Popular'
@@ -67,20 +67,21 @@ const PACKAGES_DATA = [
   {
     id: 'pkg-4',
     name: 'Senior Citizen Health Package',
-    subtitle: 'Complete health screening for age 60+ with key tests.',
+    subtitle: 'Complete screening for age 60+ with free 10km transport in Guwahati.',
     category: 'senior',
     categoryName: 'Senior Citizen',
     testsCount: 75,
     discountPercent: 28,
-    rating: 4.5,
+    rating: 4.9,
     reviewsCount: '892',
     price: 1899,
     mrp: 2699,
-    includes: '75+ Tests Included (Bone Density, Cardiac, Kidney, Electrolytes, Arthritis)',
-    reportsIn: 'Reports in 24 Hours',
+    includes: '75+ Tests + Free 10km Roundtrip Sanitized AC Cab in Guwahati',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-4-thumb.jpg',
-    tag: 'Comprehensive'
+    tag: 'Free 10km Cab Included',
+    hasFreeCab: true
   },
   {
     id: 'pkg-5',
@@ -95,7 +96,7 @@ const PACKAGES_DATA = [
     price: 1299,
     mrp: 1599,
     includes: '42+ Tests Included (HbA1c, Fasting Blood Sugar, PPBS, Lipid, Microalbumin)',
-    reportsIn: 'Reports in 24 Hours',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-5-thumb.jpg',
     tag: 'Essential'
@@ -113,7 +114,7 @@ const PACKAGES_DATA = [
     price: 2499,
     mrp: 3299,
     includes: '48+ Tests Included (Lipid Profile, hs-CRP, ECG, Apolipoprotein, Homocysteine)',
-    reportsIn: 'Reports in 24 Hours',
+    reportsIn: 'Same Day (Within 12-24 Hours) ⚡',
     fasting: '10-12 hrs Fasting Required',
     image: '/packages/pkg-6-thumb.jpg',
     tag: 'Recommended'

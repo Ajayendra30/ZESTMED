@@ -44,7 +44,10 @@ import {
   Mail,
   FileCheck,
   Eye,
-  Sliders
+  Sliders,
+  UploadCloud,
+  Lock,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adminData';
@@ -59,6 +62,8 @@ import ViewPatientModal from '../components/ViewPatientModal';
 import AddExecutiveModal from '../components/AddExecutiveModal';
 import EditExecutiveModal from '../components/EditExecutiveModal';
 import DeleteExecutiveModal from '../components/DeleteExecutiveModal';
+import UploadInventoryModal from '../components/UploadInventoryModal';
+import UploadPackagesModal from '../components/UploadPackagesModal';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -84,6 +89,96 @@ export default function AdminDashboardPage() {
   const [isAddExecutiveModalOpen, setIsAddExecutiveModalOpen] = useState(false);
   const [editingExecutive, setEditingExecutive] = useState(null);
   const [deletingExecutive, setDeletingExecutive] = useState(null);
+
+  // Bulk Upload Modals for Inventory & Packages
+  const [isUploadInventoryOpen, setIsUploadInventoryOpen] = useState(false);
+  const [isUploadPackagesOpen, setIsUploadPackagesOpen] = useState(false);
+
+  // Razorpay Gateway Setup & Mandatory Statutory Business Documents
+  const [isRazorpayLiveMode, setIsRazorpayLiveMode] = useState(false);
+  const [showRazorpaySecret, setShowRazorpaySecret] = useState(false);
+  const [razorpayDocs, setRazorpayDocs] = useState([
+    {
+      id: 'doc-1',
+      title: 'Certificate of Incorporation / Partnership Deed',
+      category: 'Business Identity',
+      docNumber: 'CIN: U85110AS2024PTC023451',
+      file: 'Zestmed_Incorporation_Assam_MCA.pdf',
+      status: 'Verified',
+      mandatoryFor: 'Corporate Merchant Registration',
+      date: '10 Jan 2026'
+    },
+    {
+      id: 'doc-2',
+      title: 'Company PAN Card',
+      category: 'Statutory Tax Identity',
+      docNumber: 'PAN: AABCZ1234F',
+      file: 'Zestmed_Company_PAN.pdf',
+      status: 'Verified',
+      mandatoryFor: 'Tax & AML Verification',
+      date: '10 Jan 2026'
+    },
+    {
+      id: 'doc-3',
+      title: 'Assam State GSTIN Registration Certificate',
+      category: 'GST Compliance',
+      docNumber: 'GSTIN: 18AAACZ9901M1ZT (Kamrup Metro)',
+      file: 'Assam_Commercial_Taxes_GST_Reg.pdf',
+      status: 'Verified',
+      mandatoryFor: 'B2C/B2B Invoicing & Tax Ledger',
+      date: '12 Jan 2026'
+    },
+    {
+      id: 'doc-4',
+      title: 'Wholesale & Retail Drug License (Form 20B & 21B)',
+      category: 'Pharmaceutical Regulatory',
+      docNumber: 'Lic. No: DL-GUW-20B/21B-4492/24',
+      file: 'Assam_Drugs_Control_Admin_License.pdf',
+      status: 'Verified',
+      mandatoryFor: 'Online Medicine & Pharmacy Gateway',
+      date: '14 Jan 2026'
+    },
+    {
+      id: 'doc-5',
+      title: 'Clinical Establishment Act Registration (Govt. of Assam)',
+      category: 'Diagnostic Lab Regulatory',
+      docNumber: 'Reg. No: CEA-KAMRUP-METRO/2024/091',
+      file: 'Directorate_Health_Services_Clinical_Reg.pdf',
+      status: 'Verified',
+      mandatoryFor: 'Diagnostic Pathology Test Collection',
+      date: '15 Jan 2026'
+    },
+    {
+      id: 'doc-6',
+      title: 'Bank Account Cancelled Cheque / Account Statement',
+      category: 'Settlement Account',
+      docNumber: 'A/C: 502000889214 • HDFC Bank GS Road Branch',
+      file: 'HDFC_Bank_Current_Account_Cheque.pdf',
+      status: 'Verified',
+      mandatoryFor: 'T+1 Automatic Daily Settlements',
+      date: '16 Jan 2026'
+    },
+    {
+      id: 'doc-7',
+      title: 'Authorized Signatory & Directors KYC (Aadhaar & PAN)',
+      category: 'Director Verification',
+      docNumber: 'Dr. N. Bora & Ajayendra Shekhar',
+      file: 'Directors_KYC_Assam_Dossier.pdf',
+      status: 'Verified',
+      mandatoryFor: 'PMLA / Banking Compliance',
+      date: '16 Jan 2026'
+    },
+    {
+      id: 'doc-8',
+      title: 'Mandatory Healthcare Website Policies & Compliance URLs',
+      category: 'RBI / Gateway Policy',
+      docNumber: 'T&C, Privacy Policy, Refund Policy & Guwahati Grievance Lead',
+      file: 'https://zestmed.in/terms (All 4 Live)',
+      status: 'Verified',
+      mandatoryFor: 'Live Merchant Checkout Approval',
+      date: '18 Jan 2026'
+    }
+  ]);
 
   // Exact Data from User Reference Image
   const kpiMetrics = [
@@ -152,9 +247,9 @@ export default function AdminDashboardPage() {
   const initialPatients = [
     { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', bookingsCount: 8, ordersCount: 5, status: 'Active' },
     { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', bookingsCount: 4, ordersCount: 2, status: 'Active' },
-    { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Jorhat Central', bookingsCount: 3, ordersCount: 1, status: 'Active' },
-    { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Dibrugarh City', bookingsCount: 6, ordersCount: 4, status: 'Active' },
-    { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Silchar Town', bookingsCount: 2, ordersCount: 0, status: 'Active' }
+    { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', bookingsCount: 3, ordersCount: 1, status: 'Active' },
+    { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', bookingsCount: 6, ordersCount: 4, status: 'Active' },
+    { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Guwahati (Khanapara)', bookingsCount: 2, ordersCount: 0, status: 'Active' }
   ];
   const [patientsList, setPatientsList] = useState(() => {
     try {
@@ -1215,7 +1310,7 @@ export default function AdminDashboardPage() {
                     <span>Registered Patients Directory (Assam)</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    4,892 verified patient accounts registered across Guwahati, Jorhat, Dibrugarh & Silchar.
+                    4,892 verified patient accounts registered across Guwahati Hubs (Dispur, Panbazar, Ulubari, Jalukbari & Khanapara).
                   </p>
                 </div>
                 <button
@@ -1440,14 +1535,24 @@ export default function AdminDashboardPage() {
                     Central pharmaceutical warehouse stocks, batch numbers, and reorder levels (Dispur Hub).
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveMenu('medicines-add')}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Medicine</span>
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsUploadInventoryOpen(true)}
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                  >
+                    <UploadCloud className="w-4 h-4" />
+                    <span>Upload Inventory (CSV)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveMenu('medicines-add')}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Medicine</span>
+                  </button>
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -1712,14 +1817,24 @@ export default function AdminDashboardPage() {
                     Manage 56+ diagnostic tests, home collection parameters, and NABL pricing across Assam.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddTestModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Test</span>
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsUploadPackagesOpen(true)}
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                  >
+                    <UploadCloud className="w-4 h-4" />
+                    <span>Upload Packages (CSV)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddTestModalOpen(true)}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Test</span>
+                  </button>
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -2005,16 +2120,26 @@ export default function AdminDashboardPage() {
                     Automated low-stock threshold monitoring for Assam regional hubs.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
-                    addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
-                  }}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
-                >
-                  Bulk Restock All
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsUploadInventoryOpen(true)}
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                  >
+                    <UploadCloud className="w-4 h-4" />
+                    <span>Upload Inventory (CSV)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
+                      addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
+                    }}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
+                  >
+                    Bulk Restock All
+                  </button>
+                </div>
               </div>
 
               {/* Alert box */}
@@ -2068,31 +2193,169 @@ export default function AdminDashboardPage() {
           )}
 
           {/* ======================================================== */}
-          {/* PAYMENTS & REVENUE LEDGER                                */}
+          {/* PAYMENTS & RAZORPAY GATEWAY LEDGER                       */}
           {/* ======================================================== */}
           {activeMenu === 'payments' && (
             <div className="space-y-4 sm:space-y-6">
+              {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                     <CreditCard className="w-6 h-6 text-[#14B8A6]" />
-                    <span>Financial Transactions & Revenue Ledger</span>
+                    <span>Razorpay Gateway Integration & Revenue Ledger</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Razorpay UPI, Debit Card, and Cash Collection accounts reconciliation (Assam GSTIN: 18AAACZ9901M1ZT).
+                    Razorpay Healthcare Merchant ID: <strong className="font-mono text-slate-800">acc_ZM_GUW_2026</strong> • Settlement A/C: HDFC Bank, GS Road Branch, Guwahati.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => addToast('Downloading GST audited financial statement CSV...', 'info')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download Statement</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsRazorpayLiveMode(!isRazorpayLiveMode);
+                      addToast(
+                        isRazorpayLiveMode
+                          ? 'Switched to Razorpay Sandbox Test Mode'
+                          : 'Switched to Razorpay Live Production Mode (Documents Verified)',
+                        'info'
+                      );
+                    }}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs ${
+                      isRazorpayLiveMode
+                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                        : 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
+                    }`}
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>{isRazorpayLiveMode ? '● Mode: Live Production' : '● Mode: Sandbox Test'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addToast('Downloading GST audited financial statement CSV...', 'info')}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export Statement</span>
+                  </button>
+                </div>
               </div>
 
+              {/* SECTION: RAZORPAY BUSINESS DOCUMENTS & REGULATORY COMPLIANCE */}
+              <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-[#008F83]" />
+                      <h3 className="text-base font-bold text-slate-900">
+                        Mandatory Statutory Business Documents for Razorpay Healthcare Activation
+                      </h3>
+                      <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                        8 / 8 Verified
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Required by RBI Payment Aggregator Guidelines & Drugs and Cosmetics Act for pharmaceutical and diagnostic collections in Assam.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addToast('Regulatory KYC Dossier refreshed with Assam Licensing Authorities', 'success')}
+                    className="text-xs text-[#008F83] font-bold hover:underline flex items-center gap-1 shrink-0"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Refresh Verification</span>
+                  </button>
+                </div>
+
+                {/* Documents Table / Grid */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-2.5 px-3">Document Title</th>
+                        <th className="py-2.5 px-3">Category</th>
+                        <th className="py-2.5 px-3">Registration / License #</th>
+                        <th className="py-2.5 px-3">Mandatory For</th>
+                        <th className="py-2.5 px-3 text-center">Status</th>
+                        <th className="py-2.5 px-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {razorpayDocs.map((doc) => (
+                        <tr key={doc.id} className="hover:bg-slate-50/60 transition">
+                          <td className="py-3 px-3 font-semibold text-slate-900">
+                            <div>{doc.title}</div>
+                            <span className="text-[10px] text-slate-400 font-mono">{doc.file}</span>
+                          </td>
+                          <td className="py-3 px-3 text-slate-600">{doc.category}</td>
+                          <td className="py-3 px-3 font-mono font-medium text-slate-700">{doc.docNumber}</td>
+                          <td className="py-3 px-3 text-slate-500 text-[11px]">{doc.mandatoryFor}</td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>{doc.status}</span>
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => addToast(`Opening statutory document preview: ${doc.title}`, 'info')}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-teal-50 hover:text-[#008F83] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
+                            >
+                              View Doc
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => addToast(`Re-upload prompt for ${doc.title}`, 'info')}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
+                            >
+                              Re-upload
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* API Credentials Card */}
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+                  <div className="space-y-1">
+                    <span className="font-bold text-slate-800">Razorpay API Credentials (Guwahati Central Node):</span>
+                    <div className="flex flex-wrap items-center gap-3 text-slate-600 font-mono text-[11px]">
+                      <span>Key ID: <strong>rzp_test_GuwahatiCentral2026</strong></span>
+                      <span>•</span>
+                      <span>
+                        Key Secret:{' '}
+                        <strong>{showRazorpaySecret ? 'sk_live_98ab7100guw_zest' : '••••••••••••••••'}</strong>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowRazorpaySecret(!showRazorpaySecret)}
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 transition"
+                    >
+                      {showRazorpaySecret ? 'Hide Secret' : 'Reveal Secret'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addToast('Razorpay webhook verified on https://api.zestmed.in/razorpay/webhook', 'success')}
+                      className="px-3 py-1.5 bg-[#008F83] text-white hover:bg-[#007a70] rounded-lg text-xs font-bold transition shadow-xs"
+                    >
+                      Test Webhook
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Financial Transactions & Revenue Ledger Table */}
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-slate-900">Recent Customer Transactions</h3>
+                  <span className="text-xs text-slate-500">Auto-Reconciled</span>
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
@@ -2140,7 +2403,7 @@ export default function AdminDashboardPage() {
                   <span>Executive Clinical & Revenue Analytics</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
-                  Quarterly performance review for Guwahati, Jorhat, Dibrugarh, Silchar & Nagaon operations.
+                  Quarterly performance review for Guwahati Central Diagnostics & Polyclinic Hub operations.
                 </p>
               </div>
 
@@ -2362,6 +2625,30 @@ export default function AdminDashboardPage() {
           onConfirmDelete={(execId) => {
             setExecutivesList((prev) => prev.filter((item) => item.id !== execId));
             setDeletingExecutive(null);
+          }}
+        />
+      )}
+
+      {/* Bulk Upload Medicine Inventory Modal */}
+      {isUploadInventoryOpen && (
+        <UploadInventoryModal
+          isOpen={isUploadInventoryOpen}
+          onClose={() => setIsUploadInventoryOpen(false)}
+          onImportSuccess={(importedRows) => {
+            setAdminMedicines((prev) => [...importedRows, ...prev]);
+            addToast(`${importedRows.length} items added to warehouse stock!`, 'success');
+          }}
+        />
+      )}
+
+      {/* Bulk Upload Diagnostic Tests / Packages Modal */}
+      {isUploadPackagesOpen && (
+        <UploadPackagesModal
+          isOpen={isUploadPackagesOpen}
+          onClose={() => setIsUploadPackagesOpen(false)}
+          onImportSuccess={(importedRows) => {
+            setTestsList((prev) => [...importedRows, ...prev]);
+            addToast(`${importedRows.length} diagnostic packages added to active catalog!`, 'success');
           }}
         />
       )}

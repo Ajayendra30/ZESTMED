@@ -363,7 +363,7 @@ export default function DiagnosticPortalPage() {
               </h1>
               
               <p className="text-sm sm:text-base text-slate-600 max-w-xl font-medium leading-relaxed">
-                Book a wide range of lab tests online with home sample collection and get accurate reports quickly.
+                Book a wide range of lab tests online across Guwahati with home sample collection. All test reports delivered within a single day (12-24 Hours).
               </p>
 
               {/* 4 Trust Badges in a Horizontal Row */}
@@ -390,10 +390,10 @@ export default function DiagnosticPortalPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                    <Clock className="w-4 h-4 text-[#008F83]" />
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-amber-500 shadow-xs">
+                    <Clock className="w-4 h-4 text-amber-500" />
                   </div>
-                  <span>On-Time Reports</span>
+                  <span className="text-teal-900 font-extrabold">⚡ Single-Day Reports</span>
                 </div>
               </div>
             </div>
@@ -802,8 +802,8 @@ export default function DiagnosticPortalPage() {
                   </div>
 
                   <div className="flex flex-col items-center justify-center gap-1">
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83]" />
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 whitespace-nowrap">Reports in 24–48 Hours</span>
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                    <span className="text-[11px] sm:text-xs font-bold text-emerald-800 whitespace-nowrap">⚡ Reports in a Single Day (12-24 Hrs)</span>
                   </div>
                 </div>
 

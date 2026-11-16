@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
-import { MapPin, X, Search, Check, Navigation, ShieldCheck } from 'lucide-react';
+import { MapPin, X, Search, Check, Navigation, ShieldCheck, Heart, Car } from 'lucide-react';
 
 export default function LocationModal() {
   const { isLocationModalOpen, closeLocationModal, currentLocation, selectLocation, setByPincode } = useLocation();
@@ -12,7 +12,7 @@ export default function LocationModal() {
   const handlePinSubmit = (e) => {
     e.preventDefault();
     if (!pinInput.trim()) {
-      setErrorMsg('Please enter a 6-digit Assam PIN code');
+      setErrorMsg('Please enter a 6-digit Guwahati PIN code (e.g. 781005)');
       return;
     }
     const res = setByPincode(pinInput);
@@ -25,36 +25,36 @@ export default function LocationModal() {
   };
 
   const handleUseCurrentGeo = () => {
-    // Quick demo geolocation simulation in Assam
     selectLocation({
-      city: 'Guwahati (Central)',
-      pincode: '781001',
+      city: 'Guwahati - GS Road / Christian Basti',
+      pincode: '781005',
       district: 'Kamrup Metro',
       state: 'Assam',
-      active: true
+      active: true,
+      radiusKm: '2.5 km from Central Lab'
     });
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity">
       <div 
-        className="bg-white rounded-2xl shadow-dropdown border border-border w-full max-w-md max-h-[92vh] flex flex-col overflow-y-auto animate-scale-up"
+        className="bg-white rounded-3xl shadow-dropdown border border-border w-full max-w-lg max-h-[92vh] flex flex-col overflow-y-auto animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <MapPin className="w-4 h-4" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#008F83]/10 text-[#008F83] flex items-center justify-center shrink-0">
+              <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-base font-bold text-dark">Choose Delivery Location</h3>
-                <span className="text-[10px] font-bold bg-teal-50 text-teal-dark border border-teal-200 px-1.5 py-0.2 rounded">
-                  Assam Only
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-dark">Service Location: Guwahati</h3>
+                <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  Exclusively Guwahati
                 </span>
               </div>
-              <p className="text-xs text-muted">Select your city for medicine delivery & diagnostic tests in Assam</p>
+              <p className="text-xs text-muted">Single-day reports & free 10km senior citizen transport across all Guwahati hubs</p>
             </div>
           </div>
           <button
@@ -66,20 +66,35 @@ export default function LocationModal() {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-4">
+          {/* Senior Citizen 10km Radius Alert */}
+          <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 rounded-2xl p-3.5 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 mt-0.5">
+              <Car className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900">Within 10km Radius Free Pick-up & Drop</h4>
+              <p className="text-[11px] text-slate-600 leading-relaxed mt-0.5">
+                Special senior citizen (60+) mobility service available across all Guwahati zones for diagnostic tests, polyclinic visits & day surgeries.
+              </p>
+            </div>
+          </div>
+
           {/* Geolocation Button */}
           <button
             type="button"
             onClick={handleUseCurrentGeo}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-primary/30 text-primary font-medium hover:bg-primary-50 transition text-sm"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#008F83]/30 text-[#008F83] font-bold hover:bg-teal-50 transition text-xs sm:text-sm"
           >
             <Navigation className="w-4 h-4" />
-            <span>Detect Location (Assam)</span>
+            <span>Detect Current Location in Guwahati</span>
           </button>
 
           <div className="relative flex items-center justify-center">
             <div className="border-t border-border w-full" />
-            <span className="bg-white px-3 text-xs text-muted uppercase tracking-wider absolute">Or Enter Assam PIN Code</span>
+            <span className="bg-white px-3 text-[11px] text-muted uppercase tracking-wider font-semibold absolute">
+              Or Enter Guwahati PIN Code (781xxx)
+            </span>
           </div>
 
           {/* Form */}
@@ -95,13 +110,13 @@ export default function LocationModal() {
                     setPinInput(e.target.value.replace(/\D/g, ''));
                     setErrorMsg('');
                   }}
-                  placeholder="Enter Assam PIN code (e.g. 781001)"
-                  className="w-full pl-10 pr-3 py-2.5 text-sm rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                  placeholder="Enter Guwahati PIN code (e.g. 781005)"
+                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-border focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/20 outline-none transition"
                 />
               </div>
               <button
                 type="submit"
-                className="btn-primary text-sm px-4 py-2.5 whitespace-nowrap"
+                className="bg-[#008F83] hover:bg-[#007a70] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap"
               >
                 Apply
               </button>
@@ -111,33 +126,33 @@ export default function LocationModal() {
             )}
           </form>
 
-          {/* Popular Cities in Assam */}
+          {/* Guwahati Hubs List */}
           <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="text-xs font-semibold text-muted uppercase tracking-wider">
-                Assam Service Hubs
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Select Your Guwahati Neighborhood Hub
               </label>
-              <span className="text-[11px] text-teal-dark font-medium">8 Districts Active</span>
+              <span className="text-[11px] text-[#008F83] font-bold">12 Hubs Active</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
               {DEFAULT_LOCATIONS.map((loc) => {
-                const isSelected = currentLocation.pincode === loc.pincode;
+                const isSelected = currentLocation.pincode === loc.pincode && currentLocation.city === loc.city;
                 return (
                   <button
-                    key={loc.pincode}
+                    key={loc.city + loc.pincode}
                     type="button"
                     onClick={() => selectLocation(loc)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border text-left text-sm transition ${
+                    className={`flex items-center justify-between p-2.5 rounded-xl border text-left text-xs transition ${
                       isSelected
-                        ? 'border-primary bg-primary-50 text-primary font-semibold'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] font-semibold'
                         : 'border-border hover:border-slate-300 text-dark hover:bg-slate-50'
                     }`}
                   >
                     <div>
-                      <div className="leading-tight font-medium">{loc.city}</div>
-                      <span className="text-[11px] text-muted">{loc.pincode} • {loc.district}</span>
+                      <div className="leading-tight font-bold">{loc.city}</div>
+                      <span className="text-[10px] text-muted">{loc.pincode} • {loc.radiusKm}</span>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    {isSelected && <Check className="w-4 h-4 text-[#008F83] shrink-0" />}
                   </button>
                 );
               })}
@@ -147,8 +162,8 @@ export default function LocationModal() {
 
         {/* Footer */}
         <div className="px-6 py-3 bg-slate-50 border-t border-border flex items-center justify-between text-xs text-muted">
-          <span>Currently selected: <strong className="text-dark">{currentLocation.city}, Assam ({currentLocation.pincode})</strong></span>
-          <span className="text-emerald-600 font-medium">● Express Delivery Active</span>
+          <span>Active Hub: <strong className="text-dark">{currentLocation.city} ({currentLocation.pincode})</strong></span>
+          <span className="text-[#008F83] font-semibold">Single-Day Reports ⚡</span>
         </div>
       </div>
     </div>

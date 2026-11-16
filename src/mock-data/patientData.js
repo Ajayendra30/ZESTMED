@@ -416,14 +416,14 @@ export const initialAssamAddresses = [
   },
   {
     id: 'addr-3',
-    label: 'Parents Residence (Jorhat)',
+    label: 'Family Residence (Panbazar)',
     recipientName: 'Biren Verma',
     phone: '+91 92791 25091',
-    street: 'House No. 12, RKB Path, Near Tarajan Chariali',
-    city: 'Jorhat',
-    district: 'Jorhat',
+    street: 'House No. 12, MC Road, Near Dighalipukhuri, Panbazar',
+    city: 'Guwahati',
+    district: 'Kamrup Metro',
     state: 'Assam',
-    pincode: '785001',
+    pincode: '781001',
     isDefault: false
   }
 ];
