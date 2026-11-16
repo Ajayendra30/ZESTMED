@@ -259,22 +259,22 @@ export default function PhysiotherapyPage() {
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4 sm:py-6 space-y-8 sm:space-y-10">
         
         {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Matches Reference Image media_1794861767151_e7e8164d.jpg) */}
+        {/* 1. HERO SECTION (High-Resolution Background Image from Reference)         */}
         {/* ========================================================================= */}
-        <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#E6F7F3] to-[#DCF4ED] border border-[#CDEFE6] shadow-sm min-h-[340px] sm:min-h-[380px] lg:min-h-[420px] flex items-center">
+        <section className="relative overflow-hidden rounded-[24px] sm:rounded-[28px] border border-[#CDEFE6] shadow-sm bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7] to-[#DCF2ED] min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
           
-          {/* Subtle medical plus (+) symbols in background */}
-          <div className="absolute top-6 left-[38%] text-teal-400/30 font-bold text-5xl pointer-events-none select-none">
-            +
-          </div>
-          <div className="absolute bottom-8 left-[14%] text-teal-300/25 font-bold text-6xl pointer-events-none select-none">
-            +
-          </div>
-          <div className="absolute top-12 right-12 text-teal-300/20 font-bold text-7xl pointer-events-none select-none">
-            +
+          {/* High-Resolution Hero Background Image - Integrated Desktop Panorama */}
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden hidden lg:block">
+            <img
+              src="/physio-hero-bg.jpg"
+              alt="ZESTMED Physiotherapy Clinic Background"
+              className="w-full h-full object-cover object-[right_bottom]"
+            />
+            {/* Subtle left gradient overlay ensuring 100% crystal-clear text contrast */}
+            <div className="absolute inset-y-0 left-0 w-[55%] xl:w-[50%] bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7]/95 to-transparent pointer-events-none" />
           </div>
 
-          <div className="relative z-10 w-full px-5 sm:px-8 lg:px-12 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="relative z-10 w-full px-5 sm:px-8 lg:px-12 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Column: Heading, Subtitle & Action Buttons */}
             <div className="lg:col-span-7 xl:col-span-6 space-y-4">
@@ -320,16 +320,18 @@ export default function PhysiotherapyPage() {
               </div>
             </div>
 
-            {/* Right Column: Hero Visual with rounded organic curve */}
+            {/* Right Column: Hero Visual */}
             <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[460px] lg:max-w-[520px] rounded-3xl overflow-hidden shadow-lg border-2 border-white/80 bg-white">
+              {/* On mobile / small screens, clean responsive card showcasing the new clinic visual */}
+              <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-[#CDEFE6] bg-white">
                 <img
-                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80"
-                  onError={(e) => { e.currentTarget.src = '/physio-hero-raw.jpg'; }}
-                  alt="Physiotherapist treating a patient in clinic"
-                  className="w-full h-auto max-h-[320px] sm:max-h-[360px] object-cover object-center select-none"
+                  src="/physio-hero-bg.jpg"
+                  alt="ZESTMED Physiotherapy Clinic"
+                  className="w-full h-auto object-cover object-right max-h-[260px] select-none"
                 />
               </div>
+              {/* On desktop, keep open space so the background panorama shines through without obstruction */}
+              <div className="hidden lg:block w-full min-h-[340px] pointer-events-none" />
             </div>
 
           </div>
