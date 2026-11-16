@@ -19,6 +19,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
+import PhysiotherapyPage from './pages/PhysiotherapyPage';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
@@ -165,22 +166,9 @@ function AppContent() {
           <Route path="/doctors" element={<DoctorAppointmentPage />} />
           <Route path="/doctor" element={<DoctorAppointmentPage />} />
           <Route path="/book-doctor" element={<DoctorAppointmentPage />} />
-          <Route 
-            path="/physiotherapy" 
-            element={
-              <Home 
-                searchInputRef={searchInputRef}
-                isDoctorModalOpen={isDoctorModalOpen}
-                setIsDoctorModalOpen={setIsDoctorModalOpen}
-                isPhysioModalOpen={true}
-                setIsPhysioModalOpen={setIsPhysioModalOpen}
-                isSurgeryModalOpen={isSurgeryModalOpen}
-                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
-                isSeniorPickupOpen={isSeniorPickupOpen}
-                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
-              />
-            } 
-          />
+          <Route path="/physiotherapy" element={<PhysiotherapyPage />} />
+          <Route path="/physio" element={<PhysiotherapyPage />} />
+          <Route path="/physiotherapist" element={<PhysiotherapyPage />} />
           <Route 
             path="/surgeries" 
             element={

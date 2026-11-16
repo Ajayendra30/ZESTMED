@@ -83,7 +83,7 @@ export default function Navbar({
     { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
     { name: 'Health Packages', href: '/packages', isRoute: true },
     { name: 'Wellness Packages', href: '/packages', isRoute: true, highlightPill: true },
-    { name: 'Physiotherapy', onClick: onOpenPhysioModal, isModal: true },
+    { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
   ];
 
@@ -487,6 +487,18 @@ export default function Navbar({
                       key={link.name}
                       to={link.href}
                       className="px-3 xl:px-4 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] hover:bg-[#cbf0e7] transition shadow-2xs whitespace-nowrap"
+                    >
+                      <span>{link.name}</span>
+                    </Link>
+                  );
+                }
+
+                if (link.name === 'Physiotherapy' && (routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio')) {
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.href}
+                      className="px-3.5 xl:px-4.5 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] shadow-2xs whitespace-nowrap"
                     >
                       <span>{link.name}</span>
                     </Link>

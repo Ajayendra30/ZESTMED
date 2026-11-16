@@ -40,7 +40,7 @@ export default function HealthcareCategories({
       badge: 'Senior Mobility',
       badgeColor: 'bg-emerald-50 text-emerald-700',
       iconBg: 'bg-emerald-50 text-emerald-600',
-      onClick: onOpenPhysioModal,
+      link: '/physiotherapy',
       icon: <Activity className="w-7 h-7 text-emerald-600" />
     },
     {
