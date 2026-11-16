@@ -256,19 +256,17 @@ export default function PhysiotherapyPage() {
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
       {/* ========================================================================= */}
-      {/* 1. HERO BANNER - Full-Width Edge to Edge (No Outer Card Box)              */}
+      {/* 1. HERO BANNER - Full-Width Edge to Edge (Crisp Unblurred Background)     */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7] to-[#DCF2ED] min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E2F4F8] min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
         
-        {/* High-Resolution Hero Background Image - Integrated Full-Width Panorama */}
+        {/* Full-Width Crisp Background Image - 100% Sharp, No Blur, No Overlay */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
           <img
             src="/physio-hero-bg.jpg"
             alt="ZESTMED Physiotherapy Clinic Background"
             className="w-full h-full object-cover object-[right_bottom]"
           />
-          {/* Subtle left gradient overlay ensuring 100% crystal-clear text contrast */}
-          <div className="absolute inset-y-0 left-0 w-full lg:w-[58%] xl:w-[52%] bg-gradient-to-r from-[#DDF2F8]/95 via-[#DDF2F8]/85 to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -317,8 +315,19 @@ export default function PhysiotherapyPage() {
             </div>
           </div>
 
-          {/* Right Column: Open space ensuring clinic equipment is 100% visible and unobstructed */}
-          <div className="hidden lg:block lg:col-span-5 xl:col-span-6 min-h-[340px] pointer-events-none" />
+          {/* Right Column: Hero Visual */}
+          <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
+            {/* On mobile / small screens, clean responsive card showcasing the new clinic visual */}
+            <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-[#CDEFE6] bg-white">
+              <img
+                src="/physio-hero-bg.jpg"
+                alt="ZESTMED Physiotherapy Clinic"
+                className="w-full h-auto object-cover object-right max-h-[260px] select-none"
+              />
+            </div>
+            {/* On desktop, keep open space so the background panorama shines through without obstruction */}
+            <div className="hidden lg:block w-full min-h-[340px] pointer-events-none" />
+          </div>
 
         </div>
       </section>
