@@ -137,22 +137,12 @@ export default function Navbar({
             </span>
           </div>
 
-          {/* Top Bar Right: Direct Login / Register Link & Location Dropdown */}
+          {/* Top Bar Right: Location Dropdown */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            <Link
-              to="/login"
-              className="flex items-center gap-1.5 text-blue-200 hover:text-white font-bold transition text-xs sm:text-sm select-none"
-              title={isLoggedIn ? 'Go to Account' : 'Login or Register'}
-            >
-              <User className="w-3.5 h-3.5 text-[#FF5722] shrink-0" />
-              <span className="hidden sm:inline">{isLoggedIn ? displayName : 'Login / Register'}</span>
-              <span className="sm:hidden">{isLoggedIn ? 'Account' : 'Login'}</span>
-            </Link>
-            <span className="text-slate-600">|</span>
             <button
               type="button"
               onClick={openLocationModal}
-              className="flex items-center gap-1.5 sm:gap-2 text-slate-200 hover:text-white font-semibold transition shrink-0 text-xs sm:text-sm"
+              className="flex items-center gap-1.5 sm:gap-2 text-slate-200 hover:text-white font-semibold transition shrink-0 text-xs sm:text-sm cursor-pointer"
               title="Select Delivery City"
             >
               <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5722] shrink-0" />
