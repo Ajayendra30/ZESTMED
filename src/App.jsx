@@ -19,6 +19,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
 import AboutPage from './pages/AboutPage';
+import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
 import BookPhysioModal from './components/BookPhysioModal';
 import BookSurgeryModal from './components/BookSurgeryModal';
@@ -209,6 +210,9 @@ function AppContent() {
           />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<AuthPage defaultMode="login" />} />
+          <Route path="/register" element={<AuthPage defaultMode="register" />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route
             path="*"
             element={<Home searchInputRef={searchInputRef} />}

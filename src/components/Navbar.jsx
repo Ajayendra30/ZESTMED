@@ -574,6 +574,14 @@ export default function Navbar({
                         <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
                         <span>Patient Dashboard</span>
                       </Link>
+                      <Link
+                        to="/login"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-5 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium"
+                      >
+                        <User className="w-4 h-4 text-[#008F83]" />
+                        <span>Switch Account / Login Page</span>
+                      </Link>
                       <div className="border-t border-slate-100 my-1" />
                       <button
                         type="button"
@@ -590,15 +598,14 @@ export default function Navbar({
                   )}
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => openAuth('login')}
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 xl:px-4.5 py-1.5 sm:py-2 rounded-full border-2 border-slate-300 hover:border-[#008F83] text-slate-800 hover:text-[#008F83] font-bold text-xs sm:text-sm transition shadow-xs whitespace-nowrap shrink-0"
+                <Link
+                  to="/login"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 xl:px-4.5 py-1.5 sm:py-2 rounded-full border-2 border-[#008F83] bg-teal-50/60 hover:bg-[#008F83] text-[#008F83] hover:text-white font-bold text-xs sm:text-sm transition shadow-xs whitespace-nowrap shrink-0"
                   title="Login or Register"
                 >
                   <User className="w-4 h-4 shrink-0" />
-                  <span className="hidden sm:inline">Login / Register</span>
-                </button>
+                  <span>Login / Register</span>
+                </Link>
               )}
 
             </div>
@@ -637,16 +644,13 @@ export default function Navbar({
                   <p className="font-bold text-slate-900 text-sm">Welcome to ZESTMED</p>
                   <p className="text-xs text-slate-500 mt-0.5">Sign in for orders & reports</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openAuth('login');
-                  }}
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="px-4 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0"
                 >
                   Login / Register
-                </button>
+                </Link>
               </div>
             )}
 
