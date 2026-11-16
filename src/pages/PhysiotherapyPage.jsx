@@ -255,87 +255,87 @@ export default function PhysiotherapyPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
-      {/* Main Full-Width Container matching Zestmed Site Standard */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4 sm:py-6 space-y-8 sm:space-y-10">
+      {/* ========================================================================= */}
+      {/* 1. HERO BANNER - Full-Width Edge to Edge (No Outer Card Box)              */}
+      {/* ========================================================================= */}
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7] to-[#DCF2ED] min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
         
-        {/* ========================================================================= */}
-        {/* 1. HERO SECTION (High-Resolution Background Image from Reference)         */}
-        {/* ========================================================================= */}
-        <section className="relative overflow-hidden rounded-[24px] sm:rounded-[28px] border border-[#CDEFE6] shadow-sm bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7] to-[#DCF2ED] min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
+        {/* High-Resolution Hero Background Image - Integrated Desktop Panorama */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden hidden lg:block">
+          <img
+            src="/physio-hero-bg.jpg"
+            alt="ZESTMED Physiotherapy Clinic Background"
+            className="w-full h-full object-cover object-[right_bottom]"
+          />
+          {/* Subtle left gradient overlay ensuring 100% crystal-clear text contrast */}
+          <div className="absolute inset-y-0 left-0 w-[55%] xl:w-[50%] bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7]/95 to-transparent pointer-events-none" />
+        </div>
+
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* High-Resolution Hero Background Image - Integrated Desktop Panorama */}
-          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden hidden lg:block">
-            <img
-              src="/physio-hero-bg.jpg"
-              alt="ZESTMED Physiotherapy Clinic Background"
-              className="w-full h-full object-cover object-[right_bottom]"
-            />
-            {/* Subtle left gradient overlay ensuring 100% crystal-clear text contrast */}
-            <div className="absolute inset-y-0 left-0 w-[55%] xl:w-[50%] bg-gradient-to-r from-[#DDF2F8] via-[#E2F4F7]/95 to-transparent pointer-events-none" />
-          </div>
-
-          <div className="relative z-10 w-full px-5 sm:px-8 lg:px-12 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left Column: Heading, Subtitle & Action Buttons */}
+          <div className="lg:col-span-7 xl:col-span-6 space-y-4">
             
-            {/* Left Column: Heading, Subtitle & Action Buttons */}
-            <div className="lg:col-span-7 xl:col-span-6 space-y-4">
-              
-              {/* Pill Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
-                <Activity className="w-3.5 h-3.5 text-[#007A64]" />
-                <span>Physiotherapy & Rehabilitation</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
-                Expert Physiotherapy<br />
-                Care for a <span className="text-[#007A64]">Healthier,</span><br />
-                <span className="text-[#007A64]">More Active Life</span>
-              </h1>
-
-              {/* Subheading text */}
-              <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
-                Personalized physiotherapy treatment for pain relief, injury recovery and overall mobility improvement.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => scrollToForm()}
-                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Book a Session</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => scrollToForm()}
-                  className="bg-white hover:bg-slate-50 text-[#0F172A] border border-slate-300 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-                >
-                  <Stethoscope className="w-4 h-4 text-[#007A64]" />
-                  <span>Consult a Physiotherapist</span>
-                </button>
-              </div>
+            {/* Pill Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
+              <Activity className="w-3.5 h-3.5 text-[#007A64]" />
+              <span>Physiotherapy & Rehabilitation</span>
             </div>
 
-            {/* Right Column: Hero Visual */}
-            <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
-              {/* On mobile / small screens, clean responsive card showcasing the new clinic visual */}
-              <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-[#CDEFE6] bg-white">
-                <img
-                  src="/physio-hero-bg.jpg"
-                  alt="ZESTMED Physiotherapy Clinic"
-                  className="w-full h-auto object-cover object-right max-h-[260px] select-none"
-                />
-              </div>
-              {/* On desktop, keep open space so the background panorama shines through without obstruction */}
-              <div className="hidden lg:block w-full min-h-[340px] pointer-events-none" />
-            </div>
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
+              Expert Physiotherapy<br />
+              Care for a <span className="text-[#007A64]">Healthier,</span><br />
+              <span className="text-[#007A64]">More Active Life</span>
+            </h1>
 
+            {/* Subheading text */}
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
+              Personalized physiotherapy treatment for pain relief, injury recovery and overall mobility improvement.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => scrollToForm()}
+                className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>Book a Session</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => scrollToForm()}
+                className="bg-white hover:bg-slate-50 text-[#0F172A] border border-slate-300 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+              >
+                <Stethoscope className="w-4 h-4 text-[#007A64]" />
+                <span>Consult a Physiotherapist</span>
+              </button>
+            </div>
           </div>
-        </section>
+
+          {/* Right Column: Hero Visual */}
+          <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
+            {/* On mobile / small screens, clean responsive card showcasing the new clinic visual */}
+            <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-[#CDEFE6] bg-white">
+              <img
+                src="/physio-hero-bg.jpg"
+                alt="ZESTMED Physiotherapy Clinic"
+                className="w-full h-auto object-cover object-right max-h-[260px] select-none"
+              />
+            </div>
+            {/* On desktop, keep open space so the background panorama shines through without obstruction */}
+            <div className="hidden lg:block w-full min-h-[340px] pointer-events-none" />
+          </div>
+
+        </div>
+      </section>
+
+      {/* Main Container matching Zestmed Standard for remaining sections */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 pb-12 space-y-8 sm:space-y-10">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE HIGHLIGHTS (4 Items Bar matching Reference Image)              */}
