@@ -60,6 +60,7 @@ import AddAddressModal from '../components/AddAddressModal';
 import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import AuthModal from '../components/AuthModal';
+import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
 export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const navigate = useNavigate();
@@ -212,22 +213,22 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     setHealthTipIndex((prev) => (prev - 1 + healthTips.length) % healthTips.length);
   };
 
-  const handleOpenReportModal = (testName, dateStr) => {
-    // Find matching booking or create demo mock object
-    const match = labBookings.find((b) => b.testName.toLowerCase().includes(testName.toLowerCase().slice(0, 5))) || {
-      id: 'LB-9024',
-      bookingId: 'LB-9024',
-      testName: testName,
+  const handleOpenReportModal = (testName, dateStr, reportId, pathologist) => {
+    // Find matching booking or create demo mock object with full diagnostic parameters
+    const existing = labBookings.find((b) => b.testName.toLowerCase().includes(testName.toLowerCase().slice(0, 5)));
+    const detailed = getMockReportDetails(testName, dateStr, reportId || existing?.id, pathologist);
+    setSelectedReportBooking({
+      ...detailed,
+      ...(existing || {}),
+      reportData: detailed.reportData,
+      testName: testName || existing?.testName,
       patientName: patientFullName,
-      date: dateStr,
-      time: '10:00 AM',
-      type: 'Home Collection',
-      status: 'Report Ready',
-      price: 499,
-      labExecutive: 'Bikash Das',
-      barcode: 'ZM-ASSAM-2026-9024'
-    };
-    setSelectedReportBooking(match);
+      collectionDate: dateStr || existing?.date || 'Nov 07, 2026',
+      date: dateStr || existing?.date || 'Nov 07, 2026',
+      id: reportId || existing?.id || 'ZM-REP-9041',
+      bookingId: reportId || existing?.id || 'ZM-REP-9041',
+      reportingDoctor: pathologist || 'Dr. N. Bora, MD (Pathology)'
+    });
   };
 
   const handleOpenOrderModal = (medicineName, orderId) => {
@@ -1194,7 +1195,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleOpenReportModal('Complete Blood Count (CBC)', 'Nov 07, 2026')}
+                    onClick={() => {
+                      downloadClinicalReport({ test: 'Complete Blood Count (CBC)', date: 'Nov 07, 2026', id: 'ZM-REP-9041' });
+                      addToast('Official signed PDF report downloaded for Complete Blood Count (CBC).', 'success');
+                    }}
                     className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
                     title="Download Report"
                   >
@@ -1214,7 +1218,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleOpenReportModal('Lipid Profile', 'Oct 28, 2026')}
+                    onClick={() => {
+                      downloadClinicalReport({ test: 'Lipid Profile', date: 'Oct 28, 2026', id: 'ZM-REP-8812' });
+                      addToast('Official signed PDF report downloaded for Lipid Profile.', 'success');
+                    }}
                     className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
                     title="Download Report"
                   >
@@ -1234,7 +1241,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleOpenReportModal('Liver Function Test (LFT)', 'Oct 20, 2026')}
+                    onClick={() => {
+                      downloadClinicalReport({ test: 'Liver Function Test (LFT)', date: 'Oct 20, 2026', id: 'ZM-REP-8450' });
+                      addToast('Official signed PDF report downloaded for Liver Function Test (LFT).', 'success');
+                    }}
                     className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
                     title="Download Report"
                   >
@@ -1796,7 +1806,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
                       <button
                         type="button"
-                        onClick={() => handleOpenReportModal(rep.test, rep.date)}
+                        onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist)}
                         className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -1804,7 +1814,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success')}
+                        onClick={() => {
+                          downloadClinicalReport(rep);
+                          addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                        }}
                         className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
                         title="Download PDF"
                       >
@@ -1812,7 +1825,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => addToast('Secure doctor viewing link copied to clipboard!', 'info')}
+                        onClick={() => shareClinicalReport(rep, addToast)}
                         className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
                         title="Share with Doctor"
                       >
@@ -2160,6 +2173,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* Digital Lab Report Modal */}
       {selectedReportBooking && (
         <DigitalLabReportModal
+          isOpen={!!selectedReportBooking}
           booking={selectedReportBooking}
           onClose={() => setSelectedReportBooking(null)}
         />
@@ -2168,6 +2182,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* Order Invoice & Tracking Modal */}
       {selectedInvoiceOrder && (
         <OrderInvoiceModal
+          isOpen={!!selectedInvoiceOrder}
           order={selectedInvoiceOrder}
           onClose={() => setSelectedInvoiceOrder(null)}
         />
@@ -2176,6 +2191,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* Add Family Member Modal */}
       {isAddFamilyModalOpen && (
         <AddFamilyMemberModal
+          isOpen={isAddFamilyModalOpen}
           onClose={() => setIsAddFamilyModalOpen(false)}
           onAddMember={(newMember) => {
             setFamilyMembers((prev) => [newMember, ...prev]);
@@ -2188,6 +2204,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* Add Assam Address Modal */}
       {isAddAddressModalOpen && (
         <AddAddressModal
+          isOpen={isAddAddressModalOpen}
           onClose={() => setIsAddAddressModalOpen(false)}
           onAddAddress={(newAddr) => {
             setAddresses((prev) => [newAddr, ...prev]);
@@ -2200,6 +2217,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* Prescription Detail Modal */}
       {selectedPrescription && (
         <PrescriptionDetailModal
+          isOpen={!!selectedPrescription}
           prescription={selectedPrescription}
           onClose={() => setSelectedPrescription(null)}
         />

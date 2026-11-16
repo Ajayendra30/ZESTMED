@@ -4,7 +4,7 @@ import { X, MapPin, Building, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ASSAM_DISTRICTS } from '../context/LocationContext';
 
-export default function AddAddressModal({ isOpen, onClose, onAddAddress }) {
+export default function AddAddressModal({ isOpen = true, onClose, onAddAddress }) {
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     label: 'Home',

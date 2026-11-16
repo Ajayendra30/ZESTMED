@@ -51,6 +51,8 @@ import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adm
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders } from '../mock-data/patientData';
+import AddDiagnosticTestModal from '../components/AddDiagnosticTestModal';
+import RegisterPatientModal from '../components/RegisterPatientModal';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -67,6 +69,9 @@ export default function AdminDashboardPage() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookingModal, setSelectedBookingModal] = useState(null);
+  const [testsList, setTestsList] = useState(MOCK_DIAGNOSTIC_TESTS);
+  const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false);
+  const [isRegisterPatientModalOpen, setIsRegisterPatientModalOpen] = useState(false);
 
   // Exact Data from User Reference Image
   const kpiMetrics = [
@@ -1169,19 +1174,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    const newPat = {
-                      id: `ZM-PAT-${Math.floor(100 + Math.random() * 900)}`,
-                      name: 'New Registered Patient',
-                      phone: '+91 98765 00099',
-                      city: 'Guwahati (Panbazar)',
-                      bookingsCount: 0,
-                      ordersCount: 0,
-                      status: 'Active'
-                    };
-                    setPatientsList((prev) => [newPat, ...prev]);
-                    addToast(`New patient registered: ${newPat.id}`, 'success');
-                  }}
+                  onClick={() => setIsRegisterPatientModalOpen(true)}
                   className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
@@ -1638,7 +1631,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('Opening Test Definition Creator', 'info')}
+                  onClick={() => setIsAddTestModalOpen(true)}
                   className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
@@ -1661,7 +1654,7 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {MOCK_DIAGNOSTIC_TESTS.slice(0, 10).map((t) => (
+                      {testsList.map((t) => (
                         <tr key={t.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-3 px-4 font-bold text-slate-900">{t.name}</td>
                           <td className="py-3 px-4 text-slate-600 font-mono">{t.sampleType}</td>
@@ -2191,6 +2184,30 @@ export default function AdminDashboardPage() {
           )}
         </main>
       </div>
+
+      {/* Register Patient Modal */}
+      {isRegisterPatientModalOpen && (
+        <RegisterPatientModal
+          isOpen={isRegisterPatientModalOpen}
+          onClose={() => setIsRegisterPatientModalOpen(false)}
+          onRegisterPatient={(newPat) => {
+            setPatientsList((prev) => [newPat, ...prev]);
+            setIsRegisterPatientModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* Add Diagnostic Test Modal */}
+      {isAddTestModalOpen && (
+        <AddDiagnosticTestModal
+          isOpen={isAddTestModalOpen}
+          onClose={() => setIsAddTestModalOpen(false)}
+          onAddTest={(newTest) => {
+            setTestsList((prev) => [newTest, ...prev]);
+            setIsAddTestModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

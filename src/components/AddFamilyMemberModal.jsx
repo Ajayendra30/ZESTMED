@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, UserPlus, Heart, AlertCircle, Shield } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function AddFamilyMemberModal({ isOpen, onClose, onAddMember }) {
+export default function AddFamilyMemberModal({ isOpen = true, onClose, onAddMember }) {
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',

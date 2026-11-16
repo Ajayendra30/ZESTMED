@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, Activity, DollarSign, Clock, FileText } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function AddDiagnosticTestModal({ isOpen, onClose, onAddTest }) {
+export default function AddDiagnosticTestModal({ isOpen = true, onClose, onAddTest }) {
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -191,7 +191,7 @@ export default function AddDiagnosticTestModal({ isOpen, onClose, onAddTest }) {
               type="checkbox"
               id="testFastingCheck"
               checked={formData.fastingRequired}
-              onChange={(e) => setFastingRequired(e.target.checked)}
+              onChange={(e) => setFormData({ ...formData, fastingRequired: e.target.checked })}
               className="w-4 h-4 text-teal-700 rounded border-slate-300 focus:ring-teal-700 cursor-pointer"
             />
             <label htmlFor="testFastingCheck" className="text-slate-700 font-semibold cursor-pointer">

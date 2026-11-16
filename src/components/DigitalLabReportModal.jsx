@@ -2,14 +2,16 @@
 import React from 'react';
 import { X, FileText, Download, Printer, Share2, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
-export default function DigitalLabReportModal({ isOpen, onClose, booking }) {
+export default function DigitalLabReportModal({ isOpen = true, onClose, booking }) {
   const { addToast } = useToast();
 
   if (!isOpen || !booking) return null;
 
   const handleDownload = () => {
-    addToast(`Downloading Clinical Diagnostic Report for ${booking.id}... (Demo PDF)`, 'success');
+    downloadClinicalReport(booking);
+    addToast(`Clinical Diagnostic Report downloaded for ${booking.testName || booking.id}.`, 'success');
   };
 
   const handlePrint = () => {
@@ -17,7 +19,7 @@ export default function DigitalLabReportModal({ isOpen, onClose, booking }) {
   };
 
   const handleShare = () => {
-    addToast('Report link copied to clipboard. Ready to share with your physician.', 'info');
+    shareClinicalReport(booking, addToast);
   };
 
   return (

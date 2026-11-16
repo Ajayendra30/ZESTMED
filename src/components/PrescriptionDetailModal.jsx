@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
 import { medicines } from '../mock-data/medicines';
 
-export default function PrescriptionDetailModal({ isOpen, onClose, prescription }) {
+export default function PrescriptionDetailModal({ isOpen = true, onClose, prescription }) {
   const { addToast } = useToast();
   const { addToCart, openCart } = useCart();
 

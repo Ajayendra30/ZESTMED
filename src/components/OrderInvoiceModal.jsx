@@ -3,7 +3,7 @@ import React from 'react';
 import { X, Receipt, Download, Printer, CheckCircle2, Truck, Package, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function OrderInvoiceModal({ isOpen, onClose, order }) {
+export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
   const { addToast } = useToast();
 
   if (!isOpen || !order) return null;
