@@ -1009,7 +1009,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
                     </div>
                   </div>
-                  <span className="bg-blue-100 text-blue-50 border border-blue-600/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
+                  <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
                     Confirmed
                   </span>
                 </div>
@@ -1070,7 +1070,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   onClick={() => navigate('/medicines')}
                   className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-200 text-blue-50 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-[#005CB9] flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Pill className="w-5 h-5 stroke-[2]" />
                   </div>
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
@@ -1159,7 +1159,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-blue-600 text-blue-50 border border-blue-600/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1183,7 +1183,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-blue-200 text-blue-50 border border-blue-600/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1315,7 +1315,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Heart className="w-5 h-5 text-blue-200 fill-blue-500" />
+                  <Heart className="w-5 h-5 text-[#FF5722] fill-[#FF5722]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Health Tips
                   </h3>
@@ -1461,7 +1461,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               (b.status || '').toLowerCase().includes('report')
                                 ? 'bg-purple-50 text-purple-600 border border-purple-200'
                                 : (b.status || '').toLowerCase().includes('confirm')
-                                ? 'bg-blue-500 text-blue-50 border border-blue-600'
+                                ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
                                 : (b.status || '').toLowerCase().includes('cancel')
                                 ? 'bg-rose-50 text-rose-600 border border-rose-200'
                                 : 'bg-blue-50 text-blue-600 border border-blue-200'
@@ -1609,7 +1609,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span
                             className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                               order.status === 'Delivered'
-                                ? 'bg-blue-200 text-blue-50 border border-blue-600'
+                                ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
                                 : 'bg-sky-50 text-sky-600 border border-sky-200'
                             }`}
                           >
@@ -1746,7 +1746,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </div>
                           <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
                             rx.status.toLowerCase().includes('verified')
-                              ? 'bg-blue-50 text-blue-50 border border-blue-700'
+                              ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
                               : 'bg-amber-50 text-amber-700 border border-amber-200'
                           }`}>
                             {rx.status}
@@ -1861,7 +1861,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </p>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-blue-200 bg-blue-600 border border-blue-50 px-2.5 py-0.5 rounded-full shrink-0">
+                      <span className="text-[11px] font-bold text-[#005CB9] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full shrink-0">
                         {rep.status}
                       </span>
                     </div>
@@ -2155,7 +2155,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   onClick={() => addToast('All notifications marked as read', 'success')}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-blue-200" />
+                  <CheckCircle2 className="w-4 h-4 text-[#005CB9]" />
                   <span>Mark All as Read</span>
                 </button>
               </div>
