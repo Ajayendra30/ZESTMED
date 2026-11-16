@@ -85,12 +85,12 @@ export default function DoctorHero({
             </div>
           </div>
 
-          {/* Center Column: Both Doctors Image - Seamlessly Sits at the Bottom Edge */}
-          <div className="lg:col-span-4 xl:col-span-5 flex items-end justify-center relative overflow-hidden select-none pointer-events-none self-end -mb-3 sm:-mb-4 lg:-mb-5">
+          {/* Center Column: Both Doctors Image - Scaled Up to Fill Top Space */}
+          <div className="lg:col-span-4 xl:col-span-5 flex items-end justify-center relative select-none pointer-events-none self-end -mb-3 sm:-mb-4 lg:-mb-5">
             <img
               src="/doctor-hero-doctors.jpg"
               alt="ZESTMED Verified Specialist Doctors"
-              className="h-[260px] sm:h-[290px] md:h-[320px] lg:h-[340px] xl:h-[360px] w-auto max-w-full object-contain object-bottom drop-shadow-sm transition-all duration-300"
+              className="h-[310px] sm:h-[350px] md:h-[380px] lg:h-[410px] xl:h-[440px] w-auto max-w-none object-contain object-bottom drop-shadow-sm transition-all duration-300 scale-105 sm:scale-110 lg:scale-115 origin-bottom"
               style={{
                 maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
                 WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)'
