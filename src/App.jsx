@@ -18,6 +18,7 @@ import LabDashboardPage from './pages/LabDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
+import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
@@ -160,22 +161,10 @@ function AppContent() {
           <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
           <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
           <Route path="/packages" element={<HealthPackagesPage />} />
-          <Route 
-            path="/doctors" 
-            element={
-              <Home 
-                searchInputRef={searchInputRef}
-                isDoctorModalOpen={true}
-                setIsDoctorModalOpen={setIsDoctorModalOpen}
-                isPhysioModalOpen={isPhysioModalOpen}
-                setIsPhysioModalOpen={setIsPhysioModalOpen}
-                isSurgeryModalOpen={isSurgeryModalOpen}
-                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
-                isSeniorPickupOpen={isSeniorPickupOpen}
-                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
-              />
-            } 
-          />
+          <Route path="/doctor-appointment" element={<DoctorAppointmentPage />} />
+          <Route path="/doctors" element={<DoctorAppointmentPage />} />
+          <Route path="/doctor" element={<DoctorAppointmentPage />} />
+          <Route path="/book-doctor" element={<DoctorAppointmentPage />} />
           <Route 
             path="/physiotherapy" 
             element={

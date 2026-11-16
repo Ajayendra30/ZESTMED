@@ -84,7 +84,7 @@ export default function Navbar({
     { name: 'Health Packages', href: '/packages', isRoute: true },
     { name: 'Wellness Packages', href: '/packages', isRoute: true, highlightPill: true },
     { name: 'Physiotherapy', onClick: onOpenPhysioModal, isModal: true },
-    { name: 'Doctor Appointment', onClick: onOpenDoctorModal, isModal: true },
+    { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
   ];
 
   const secondaryNavLinks = [
@@ -487,6 +487,18 @@ export default function Navbar({
                       key={link.name}
                       to={link.href}
                       className="px-3 xl:px-4 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-blue-50 text-[#005CB9] border border-blue-200/80 hover:bg-blue-100 hover:border-blue-300 transition shadow-xs whitespace-nowrap"
+                    >
+                      <span>{link.name}</span>
+                    </Link>
+                  );
+                }
+
+                if (link.name === 'Doctor Appointment' && (routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors')) {
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.href}
+                      className="px-3 xl:px-4 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] shadow-2xs whitespace-nowrap"
                     >
                       <span>{link.name}</span>
                     </Link>
