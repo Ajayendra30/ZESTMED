@@ -7,10 +7,10 @@ import {
 /**
  * DoctorHero - Pixel-accurate Full-Width Hero Section for Doctor Appointment page
  * 
- * Guarantees:
- * - "Book an Appointment" and "Online Consultation" are side by side in a single horizontal line
- * - The exact doctor image (/doctor-hero-doctors.jpg) is scaled up, prominent, and fills available space
- * - Entire image is 100% fully visible with correct aspect ratio, no cropping, no distortion, no cut-offs
+ * Features:
+ * - "Find a Doctor" card moved slightly lower, grounded toward bottom to fill space below it
+ * - "Book an Appointment" and "Online Consultation" side by side in a single horizontal line
+ * - Doctor image prominently sized with 100% visibility and correct aspect ratio
  * - Fully responsive across mobile, tablet, and desktop
  */
 export default function DoctorHero({
@@ -59,7 +59,7 @@ export default function DoctorHero({
             multiple specialties, online or at the clinic.
           </p>
 
-          {/* Action Buttons - SIDE BY SIDE IN A SINGLE HORIZONTAL LINE */}
+          {/* Action Buttons - Side by side in a single horizontal line */}
           <div className="flex flex-row items-center gap-2 sm:gap-2.5 pt-1 flex-nowrap overflow-x-auto scrollbar-none">
             <button
               type="button"
@@ -82,7 +82,7 @@ export default function DoctorHero({
           </div>
         </div>
 
-        {/* Center Column: Exact Doctor Image Asset - Enlarged, Prominent, Fills Available Space, Fully Visible */}
+        {/* Center Column: Doctor Image Asset - Prominent, Grounded, Filling Space */}
         <div className="flex-1 w-full flex items-end justify-center relative select-none pointer-events-none self-end -mb-3 sm:-mb-4 lg:-mb-5 z-10 min-w-0">
           <img
             src="/doctor-hero-doctors.jpg"
@@ -91,14 +91,14 @@ export default function DoctorHero({
           />
         </div>
 
-        {/* Right Column: Floating White "Find a Doctor" Card */}
-        <div className="w-full lg:w-[320px] xl:w-[335px] shrink-0 flex justify-center lg:justify-end relative z-20">
-          <div className="w-full max-w-[340px] bg-white rounded-[22px] shadow-lg border border-slate-100 p-4 sm:p-4.5 space-y-2.5">
+        {/* Right Column: "Find a Doctor" Card - Positioned lower & filling space below */}
+        <div className="w-full lg:w-[330px] xl:w-[350px] shrink-0 flex justify-center lg:justify-end relative z-20 self-center lg:self-end lg:mb-2 xl:mb-3">
+          <div className="w-full max-w-[350px] bg-white rounded-[24px] shadow-xl border border-slate-100 p-5 sm:p-5.5 space-y-3">
             
             {/* Card Title */}
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-full bg-teal-50 flex items-center justify-center text-[#007A64]">
-                <Search className="w-3.5 h-3.5 text-[#007A64] stroke-[2.4]" />
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-full bg-teal-50 flex items-center justify-center text-[#007A64]">
+                <Search className="w-4 h-4 text-[#007A64] stroke-[2.4]" />
               </div>
               <h3 className="text-base sm:text-lg font-black text-[#0F1E36] tracking-tight">
                 Find a Doctor
@@ -106,17 +106,17 @@ export default function DoctorHero({
             </div>
 
             {/* Form Fields */}
-            <form onSubmit={onSearchSubmit} className="space-y-2">
+            <form onSubmit={onSearchSubmit} className="space-y-2.5">
               
               {/* Field 1: Select Speciality */}
               <div className="relative">
-                <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <Stethoscope className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold hover:border-[#007A64] transition">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <Stethoscope className="w-4 h-4 text-[#007A64] shrink-0" />
                     <select
                       value={selectedSpecialty}
                       onChange={(e) => setSelectedSpecialty(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
                     >
                       <option value="">Select Speciality</option>
                       {specialties.filter(s => s !== 'All Specialties').map((spec) => (
@@ -129,13 +129,13 @@ export default function DoctorHero({
 
               {/* Field 2: Select Location */}
               <div className="relative">
-                <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold hover:border-[#007A64] transition">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <MapPin className="w-4 h-4 text-[#007A64] shrink-0" />
                     <select
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
                     >
                       <option value="">Select Location</option>
                       <option value="Guwahati - GS Road Hub">Guwahati - GS Road Hub</option>
@@ -151,13 +151,13 @@ export default function DoctorHero({
 
               {/* Field 3: Preferred Date */}
               <div className="relative">
-                <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <Calendar className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold hover:border-[#007A64] transition">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <Calendar className="w-4 h-4 text-[#007A64] shrink-0" />
                     <select
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
                     >
                       <option value="">Preferred Date</option>
                       <option value="Today">Today ({new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })})</option>
@@ -172,10 +172,10 @@ export default function DoctorHero({
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full mt-1 bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full mt-1.5 bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <span>Search Doctors</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
