@@ -4,7 +4,8 @@ import {
   Calendar, ArrowRight, Video, Search, Stethoscope, 
   MapPin, ChevronDown, ShieldCheck, Clock, CreditCard, 
   Star, CheckCircle2, User, Phone, X, Award, AlertCircle,
-  CalendarCheck, FileText, Sparkles, Heart, Activity
+  CalendarCheck, FileText, Sparkles, Heart, Activity,
+  ChevronLeft, ChevronRight, UserCheck
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
@@ -273,18 +274,18 @@ export default function DoctorAppointmentPage() {
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
       {/* Main Container */}
-      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6">
+      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8">
         
         {/* ========================================================================= */}
-        {/* 1. HERO BANNER (Matches Reference Image media_1794858959908_ef45bd13.jpg) */}
+        {/* 1. HERO BANNER (Matches Reference Image media_1794860428279_9eb1e405.jpg) */}
         {/* ========================================================================= */}
-        <section className="relative overflow-hidden rounded-[28px] border border-slate-200/90 shadow-sm min-h-[300px] sm:min-h-[320px] lg:min-h-[340px] flex items-center">
+        <section className="relative overflow-hidden rounded-[28px] border border-slate-200/90 shadow-sm min-h-[310px] sm:min-h-[330px] lg:min-h-[350px] flex items-center">
           
-          {/* Background Image: Crystal-clear photo of the doctors in hospital corridor */}
+          {/* Background Image: Hospital corridor with two doctors */}
           <div 
             className="absolute inset-0 bg-no-repeat bg-cover pointer-events-none"
             style={{
-              backgroundImage: `url('/doctor-hero-bg.jpg')`,
+              backgroundImage: `url('/doctor-hero-banner.jpg')`,
               backgroundPosition: '55% 26%',
             }}
           />
@@ -298,7 +299,7 @@ export default function DoctorAppointmentPage() {
           />
 
           {/* Mobile responsive backdrop tint */}
-          <div className="lg:hidden absolute inset-0 bg-white/80 pointer-events-none" />
+          <div className="lg:hidden absolute inset-0 bg-white/85 pointer-events-none" />
 
           {/* Content Grid */}
           <div className="relative z-10 w-full px-5 sm:px-8 lg:px-10 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -357,7 +358,9 @@ export default function DoctorAppointmentPage() {
                 
                 {/* Card Title */}
                 <div className="flex items-center gap-2 mb-3">
-                  <Search className="w-5 h-5 text-[#007A64] stroke-[2.4]" />
+                  <div className="w-7 h-7 rounded-full bg-teal-50 flex items-center justify-center text-[#007A64]">
+                    <Search className="w-4 h-4 text-[#007A64] stroke-[2.4]" />
+                  </div>
                   <h3 className="text-lg font-black text-[#0F1E36] tracking-tight">
                     Find a Doctor
                   </h3>
@@ -570,7 +573,7 @@ export default function DoctorAppointmentPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 4. TOP DOCTORS SECTION (Exact Cards matching Reference Image)            */}
+        {/* 4. TOP DOCTORS SECTION (Exact Cards with User's Uploaded Photos)         */}
         {/* ========================================================================= */}
         <section id="top-doctors-section" className="space-y-3.5 pt-1">
           
@@ -610,25 +613,13 @@ export default function DoctorAppointmentPage() {
                 >
                   <div className="flex items-start gap-3.5 sm:gap-4">
                     
-                    {/* Doctor Avatar */}
-                    <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs bg-slate-50 relative">
-                      {doc.spritePosition ? (
-                        <div 
-                          className="w-full h-full bg-no-repeat"
-                          style={{
-                            backgroundImage: `url('/doctor-page-reference.jpg')`,
-                            backgroundPosition: doc.id === 'doc-1' ? '6.8% 90%' : doc.id === 'doc-2' ? '38.2% 90%' : '69.5% 90%',
-                            backgroundSize: '1350%',
-                          }}
-                          title={doc.name}
-                        />
-                      ) : (
-                        <img
-                          src={doc.avatar}
-                          alt={doc.name}
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                        />
-                      )}
+                    {/* Doctor Avatar - Uses provided image */}
+                    <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-900 relative">
+                      <img
+                        src={doc.avatar}
+                        alt={doc.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
 
                     {/* Doctor Details */}
@@ -694,10 +685,362 @@ export default function DoctorAppointmentPage() {
 
         </section>
 
+        {/* ========================================================================= */}
+        {/* 5. HOW TO BOOK A DOCTOR APPOINTMENT? (Matches Reference Image)            */}
+        {/* ========================================================================= */}
+        <section className="rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#F4FBF9] to-[#EAF7F4] border border-[#D5EFE8] p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xs">
+          
+          <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight mb-6 sm:mb-8">
+            How to Book a Doctor Appointment?
+          </h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left: 4-Step Interactive Flow */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-4 gap-4 items-center">
+              
+              {/* Step 1 */}
+              <div className="flex flex-col items-start relative text-left">
+                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                  1
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
+                  <Search className="w-5 h-5 stroke-[2.4]" />
+                </div>
+                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                  Search Doctor
+                </h4>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                  Find by specialty, location or name
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-start relative text-left">
+                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                  2
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
+                  <Calendar className="w-5 h-5 stroke-[2.4]" />
+                </div>
+                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                  Select Date & Time
+                </h4>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                  Choose a convenient slot
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-start relative text-left">
+                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                  3
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
+                  <UserCheck className="w-5 h-5 stroke-[2.4]" />
+                </div>
+                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                  Book Appointment
+                </h4>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                  Confirm your details and book
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-start relative text-left">
+                <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                  4
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-3 shadow-2xs">
+                  <CheckCircle2 className="w-5 h-5 stroke-[2.4]" />
+                </div>
+                <h4 className="text-sm font-black text-[#0F1E36] leading-tight">
+                  Get Confirmation
+                </h4>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+                  Receive instant booking confirmation
+                </p>
+              </div>
+
+            </div>
+
+            {/* Right: Desk Calendar 3D Graphic matching Reference Image */}
+            <div className="lg:col-span-4 flex justify-center lg:justify-end">
+              <div className="relative w-48 sm:w-56 h-48 sm:h-56 flex items-center justify-center">
+                {/* Ambient glow behind calendar */}
+                <div className="absolute inset-0 bg-teal-300/30 rounded-full blur-2xl pointer-events-none" />
+                
+                {/* Illustrated 3D Desk Calendar SVG */}
+                <svg viewBox="0 0 200 180" className="w-full h-full drop-shadow-xl select-none" fill="none">
+                  {/* Calendar Base Drop Shadow / Stand */}
+                  <rect x="25" y="45" width="150" height="120" rx="18" fill="#FFFFFF" stroke="#D5EFE8" strokeWidth="2.5" />
+                  
+                  {/* Top Binder Header Band */}
+                  <path d="M25 60 C25 48, 25 48, 38 48 L162 48 C175 48, 175 48, 175 60 L175 72 L25 72 Z" fill="#007A64" />
+                  
+                  {/* Binder Ring 1 */}
+                  <rect x="52" y="36" width="10" height="24" rx="5" fill="#005B4E" stroke="#FFFFFF" strokeWidth="2" />
+                  
+                  {/* Binder Ring 2 */}
+                  <rect x="138" y="36" width="10" height="24" rx="5" fill="#005B4E" stroke="#FFFFFF" strokeWidth="2" />
+                  
+                  {/* Calendar Sheet Grid Dots */}
+                  <g fill="#CBD5E1">
+                    <circle cx="50" cy="90" r="4.5" />
+                    <circle cx="75" cy="90" r="4.5" />
+                    <circle cx="100" cy="90" r="4.5" />
+                    <circle cx="125" cy="90" r="4.5" />
+                    <circle cx="150" cy="90" r="4.5" />
+                    
+                    <circle cx="50" cy="112" r="4.5" />
+                    <circle cx="75" cy="112" r="4.5" />
+                    <circle cx="100" cy="112" r="4.5" />
+                    <circle cx="125" cy="112" r="4.5" />
+                    
+                    <circle cx="50" cy="134" r="4.5" />
+                    <circle cx="75" cy="134" r="4.5" />
+                    <circle cx="100" cy="134" r="4.5" />
+                  </g>
+                  
+                  {/* Large Green Checkmark Badge on Calendar */}
+                  <circle cx="146" cy="126" r="24" fill="#007A64" stroke="#FFFFFF" strokeWidth="3" />
+                  <path d="M137 126 L143 132 L155 120" stroke="#FFFFFF" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 6. WHY CHOOSE ZESTMED? (4 Cards matching Reference Image)                */}
+        {/* ========================================================================= */}
+        <section className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+            Why Choose ZESTMED?
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-6 h-6 text-[#007A64]" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Verified Specialists</h4>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Experienced & trusted doctors</p>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Video className="w-6 h-6 text-[#007A64]" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Online & On-site Consultation</h4>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Choose what suits you</p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <CalendarCheck className="w-6 h-6 text-[#007A64]" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Quick & Easy Booking</h4>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Book in just a few clicks</p>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <span className="text-xl font-black text-[#007A64]">₹</span>
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Secure Payments</h4>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Multiple payment options</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 7. WHAT OUR PATIENTS SAY (Testimonials with Carousel Controls)           */}
+        {/* ========================================================================= */}
+        <section className="space-y-4">
+          
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+              What Our Patients Say
+            </h2>
+
+            {/* Carousel Navigation Buttons */}
+            <div className="flex items-center gap-2">
+              <button 
+                type="button" 
+                aria-label="Previous Testimonial"
+                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button 
+                type="button" 
+                aria-label="Next Testimonial"
+                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            
+            {/* Testimonial 1 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                  <img 
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" 
+                    alt="Ankit Kumar"
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Ankit Kumar</h4>
+                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "Very easy to book an appointment. The doctor was highly professional and explained everything clearly."
+              </p>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                  <img 
+                    src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" 
+                    alt="Priya Sharma"
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Priya Sharma</h4>
+                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "Great experience! I booked an online consultation and got the guidance I needed without visiting the clinic."
+              </p>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                  <img 
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" 
+                    alt="Rohit Das"
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Rohit Das</h4>
+                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">
+                "Zestmed makes it so convenient to find and consult the right doctor. Highly recommended!"
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 8. BOTTOM CTA BANNER (Consult with Expert Doctors Today!)                */}
+        {/* ========================================================================= */}
+        <section className="rounded-[28px] bg-gradient-to-r from-[#006A57] via-[#007A64] to-[#008970] text-white p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-md flex flex-col lg:flex-row items-center justify-between gap-6">
+          
+          {/* Ambient background blur elements */}
+          <div className="absolute -right-8 -bottom-8 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute left-1/3 top-0 w-48 h-48 bg-teal-300/15 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Left Text */}
+          <div className="relative z-10 space-y-1.5 text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              Consult with Expert Doctors Today!
+            </h2>
+            <p className="text-xs sm:text-sm text-[#D1FAE5] font-medium leading-relaxed max-w-lg">
+              Book your appointment now and take the first step towards better health.
+            </p>
+          </div>
+
+          {/* Right Action Button & Medical Clipboard Illustration */}
+          <div className="relative z-10 flex items-center gap-6 shrink-0">
+            
+            <button
+              type="button"
+              onClick={() => handleOpenBooking(null, 'Clinic Visit')}
+              className="bg-white hover:bg-slate-50 text-[#007A64] font-extrabold text-xs sm:text-sm px-6 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
+            >
+              <Calendar className="w-4 h-4 text-[#007A64]" />
+              <span>Book an Appointment</span>
+              <ArrowRight className="w-4 h-4 text-[#007A64]" />
+            </button>
+
+            {/* Illustrated Medical Clipboard with Green Cross & Stethoscope */}
+            <div className="hidden sm:block w-24 h-24 relative select-none">
+              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg" fill="none">
+                {/* Clipboard Board */}
+                <rect x="25" y="16" width="54" height="74" rx="8" fill="#FFFFFF" stroke="#D1FAE5" strokeWidth="2" />
+                
+                {/* Clipboard Top Clip */}
+                <rect x="38" y="10" width="28" height="12" rx="4" fill="#005B4E" stroke="#FFFFFF" strokeWidth="1.5" />
+                <circle cx="52" cy="14" r="2.5" fill="#FFFFFF" />
+                
+                {/* Green Cross on Board */}
+                <rect x="47" y="32" width="10" height="26" rx="2" fill="#007A64" />
+                <rect x="39" y="40" width="26" height="10" rx="2" fill="#007A64" />
+                
+                {/* Clipboard Document Lines */}
+                <rect x="36" y="66" width="32" height="3" rx="1.5" fill="#CBD5E1" />
+                <rect x="36" y="73" width="22" height="3" rx="1.5" fill="#CBD5E1" />
+                
+                {/* Stethoscope Curving Around Board */}
+                <path d="M78 84 C78 92, 22 92, 22 66 C22 50, 20 40, 16 34" stroke="#004D40" strokeWidth="3" strokeLinecap="round" />
+                <circle cx="16" cy="32" r="4.5" fill="#007A64" stroke="#FFFFFF" strokeWidth="1.5" />
+              </svg>
+            </div>
+
+          </div>
+
+        </section>
+
       </div>
 
       {/* ========================================================================= */}
-      {/* 5. INTERACTIVE APPOINTMENT BOOKING MODAL                                  */}
+      {/* 9. INTERACTIVE APPOINTMENT BOOKING MODAL                                  */}
       {/* ========================================================================= */}
       {isBookingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-fade-in">
@@ -748,60 +1091,59 @@ export default function DoctorAppointmentPage() {
                   </p>
                 </div>
 
-                {/* Appointment Pass Details */}
-                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 space-y-3.5 text-xs sm:text-sm">
+                {/* Details Breakdown */}
+                <div className="bg-slate-50 rounded-2xl p-4.5 border border-slate-200/80 space-y-3 text-xs">
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Doctor</span>
-                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.doctor} ({confirmedBooking.doctorSpecialty})</span>
+                    <span className="font-bold text-slate-900">{confirmedBooking.doctor} ({confirmedBooking.doctorSpecialty})</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Date & Slot</span>
-                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.date} at {confirmedBooking.time}</span>
+                    <span className="font-bold text-[#007A64]">{confirmedBooking.date} • {confirmedBooking.time}</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                    <span className="text-slate-500">Consultation Mode</span>
-                    <span className="font-bold text-[#007A64]">{confirmedBooking.mode}</span>
+                    <span className="text-slate-500">Mode</span>
+                    <span className="font-bold text-slate-900">{confirmedBooking.mode}</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                    <span className="text-slate-500">Patient Name</span>
-                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.patientName} ({confirmedBooking.patientAge}y, {confirmedBooking.patientGender})</span>
+                    <span className="text-slate-500">Patient</span>
+                    <span className="font-bold text-slate-900">{confirmedBooking.patientName} ({confirmedBooking.patientAge} Yrs, {confirmedBooking.patientGender})</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                    <span className="text-slate-500">Contact Number</span>
-                    <span className="font-mono font-bold text-[#0F1E36]">+91 {confirmedBooking.patientPhone}</span>
+                    <span className="text-slate-500">Phone</span>
+                    <span className="font-bold text-slate-900">{confirmedBooking.patientPhone}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Location</span>
-                    <span className="font-semibold text-slate-800">Zestmed Central Clinic, GS Road, Guwahati</span>
+                  <div className="flex justify-between items-center pt-1 text-sm font-extrabold text-[#0F1E36]">
+                    <span>Consultation Fee</span>
+                    <span className="text-[#007A64]">₹{confirmedBooking.fee} (Pay at Clinic / Post Consult)</span>
                   </div>
+
                   {confirmedBooking.freeCab && (
-                    <div className="p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-orange-800 font-bold text-xs flex items-center gap-2">
-                      <span>🚗 Complimentary AC Cab Pick-up registered for Senior Citizen</span>
+                    <div className="mt-2 p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-orange-900 text-[11px] font-bold flex items-center gap-2">
+                      <span>🚗</span>
+                      <span>Complimentary Senior Citizen Pick-up & Drop within 10km (Guwahati) Confirmed</span>
                     </div>
                   )}
                 </div>
 
-                {/* Modal Footer Buttons */}
-                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                {/* Bottom Actions */}
+                <div className="flex items-center justify-end gap-3 pt-2">
                   <button
                     type="button"
                     onClick={() => {
                       setIsBookingModalOpen(false);
                       navigate('/patient-dashboard');
                     }}
-                    className="w-full sm:flex-1 py-3 bg-[#007A64] hover:bg-[#006852] text-white font-bold rounded-xl text-sm shadow-md transition text-center cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
                   >
                     View in Patient Dashboard
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setConfirmedBooking(null);
-                      setIsBookingModalOpen(false);
-                    }}
-                    className="w-full sm:w-auto px-6 py-3 border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold rounded-xl text-sm transition cursor-pointer"
+                    onClick={() => setIsBookingModalOpen(false)}
+                    className="px-5 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white text-xs font-bold transition shadow-xs"
                   >
-                    Close
+                    Done
                   </button>
                 </div>
 
@@ -809,157 +1151,155 @@ export default function DoctorAppointmentPage() {
             ) : (
               <form onSubmit={handleConfirmAppointment} className="p-6 space-y-5">
                 
-                {/* Doctor Selection / Summary */}
-                <div className="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 flex items-center justify-between gap-3">
+                {/* Doctor Selection Pill */}
+                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-white border border-teal-200 flex items-center justify-center font-bold text-sm text-[#007A64] shadow-2xs">
-                      <Stethoscope className="w-6 h-6 text-[#007A64]" />
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shrink-0">
+                      <img 
+                        src={bookingDoctor?.avatar || '/doctor-amit-sharma.jpg'} 
+                        alt={bookingDoctor?.name}
+                        className="w-full h-full object-cover object-top" 
+                      />
                     </div>
                     <div>
-                      <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">
-                        {bookingDoctor?.name || 'Dr. Amit Sharma'}
-                      </h4>
-                      <p className="text-xs text-slate-600 font-semibold">
-                        {bookingDoctor?.specialty} • {bookingDoctor?.degree}
-                      </p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        {bookingDoctor?.experience} • Fee: <span className="font-bold text-[#0F1E36]">₹{bookingDoctor?.fee || 600}</span>
-                      </p>
+                      <h4 className="text-sm font-black text-[#0F1E36]">{bookingDoctor?.name || 'Dr. Amit Sharma'}</h4>
+                      <p className="text-xs text-slate-600 font-medium">{bookingDoctor?.specialty} • {bookingDoctor?.degree}</p>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <select
-                      value={bookingDoctor?.id}
-                      onChange={(e) => {
-                        const doc = MOCK_DOCTORS.find(d => d.id === e.target.value);
-                        if (doc) setBookingDoctor(doc);
-                      }}
-                      className="text-xs font-bold text-[#007A64] bg-white border border-teal-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer"
-                    >
-                      {MOCK_DOCTORS.map((d) => (
-                        <option key={d.id} value={d.id}>{d.name}</option>
-                      ))}
-                    </select>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Fee</span>
+                    <span className="text-sm font-black text-[#007A64]">₹{bookingDoctor?.fee || 600}</span>
                   </div>
                 </div>
 
-                {/* Consultation Mode Picker */}
+                {/* Mode Selector */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Consultation Type
+                    Consultation Mode
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setConsultationMode('Clinic Visit')}
-                      className={`py-3 px-4 rounded-xl border text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
                         consultationMode === 'Clinic Visit'
-                          ? 'border-[#007A64] bg-[#007A64] text-white shadow-xs'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                          ? 'border-[#007A64] bg-teal-50/50 text-[#007A64] shadow-2xs'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
-                      <MapPin className="w-4 h-4" />
-                      <span>In-Clinic Visit</span>
+                      <Stethoscope className="w-4 h-4 text-[#007A64]" />
+                      <span>Clinic Visit (Guwahati Hub)</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setConsultationMode('Online Consultation')}
-                      className={`py-3 px-4 rounded-xl border text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
                         consultationMode === 'Online Consultation'
-                          ? 'border-[#007A64] bg-[#007A64] text-white shadow-xs'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                          ? 'border-[#007A64] bg-teal-50/50 text-[#007A64] shadow-2xs'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
-                      <Video className="w-4 h-4" />
-                      <span>Video Online</span>
+                      <Video className="w-4 h-4 text-[#007A64]" />
+                      <span>Online Video Consult</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Date & Time Slot Picker */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Slot Selector */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                       Select Date
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {['Today', 'Tomorrow', 'Day After'].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => setAppointmentSlotDate(d)}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold border transition text-center cursor-pointer ${
-                            appointmentSlotDate === d
-                              ? 'bg-teal-50 border-[#007A64] text-[#007A64]'
-                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
+                    <select
+                      value={appointmentSlotDate}
+                      onChange={(e) => setAppointmentSlotDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-800 outline-none focus:border-[#007A64]"
+                    >
+                      <option value="Today">Today ({new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })})</option>
+                      <option value="Tomorrow">Tomorrow</option>
+                      <option value="Nov 18, 2026">Nov 18, 2026</option>
+                      <option value="Nov 19, 2026">Nov 19, 2026</option>
+                    </select>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                       Select Time Slot
                     </label>
                     <select
                       value={appointmentTimeSlot}
                       onChange={(e) => setAppointmentTimeSlot(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 outline-none focus:border-[#007A64] cursor-pointer"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-800 outline-none focus:border-[#007A64]"
                     >
-                      <option value="10:00 AM">Morning: 10:00 AM</option>
-                      <option value="11:30 AM">Morning: 11:30 AM</option>
-                      <option value="02:00 PM">Afternoon: 02:00 PM</option>
-                      <option value="04:30 PM">Evening: 04:30 PM (Recommended)</option>
-                      <option value="06:00 PM">Evening: 06:00 PM</option>
+                      <option value="10:30 AM">10:30 AM (Morning)</option>
+                      <option value="11:30 AM">11:30 AM (Morning)</option>
+                      <option value="04:30 PM">04:30 PM (Evening)</option>
+                      <option value="05:30 PM">05:30 PM (Evening)</option>
+                      <option value="06:30 PM">06:30 PM (Evening)</option>
                     </select>
                   </div>
                 </div>
 
                 {/* Patient Information Form */}
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Patient Details
-                  </label>
+                  </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Full Name *
+                      </label>
                       <input
                         type="text"
-                        placeholder="Patient Full Name *"
+                        required
                         value={patientForm.name}
                         onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
-                        required
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
+                        placeholder="e.g. Rahul Verma"
                       />
                     </div>
+
                     <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Phone Number (10 digits) *
+                      </label>
                       <input
                         type="tel"
-                        placeholder="Mobile Number (10 digits) *"
+                        required
+                        maxLength={10}
                         value={patientForm.phone}
                         onChange={(e) => setPatientForm({ ...patientForm, phone: e.target.value })}
-                        required
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
+                        placeholder="9876543210"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Age (Years)
+                      </label>
                       <input
                         type="number"
-                        placeholder="Age"
+                        min="1"
+                        max="120"
                         value={patientForm.age}
                         onChange={(e) => setPatientForm({ ...patientForm, age: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
+                        placeholder="34"
                       />
                     </div>
+
                     <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Gender
+                      </label>
                       <select
                         value={patientForm.gender}
                         onChange={(e) => setPatientForm({ ...patientForm, gender: e.target.value })}
@@ -973,9 +1313,12 @@ export default function DoctorAppointmentPage() {
                   </div>
 
                   <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      Reason for Consultation / Symptoms (Optional)
+                    </label>
                     <input
                       type="text"
-                      placeholder="Symptoms or reason for consultation (e.g. Fever, Knee pain, General checkup)"
+                      placeholder="e.g. Mild fever, persistent cough, knee joint stiffness"
                       value={patientForm.symptoms}
                       onChange={(e) => setPatientForm({ ...patientForm, symptoms: e.target.value })}
                       className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
@@ -1003,23 +1346,29 @@ export default function DoctorAppointmentPage() {
                     <p className="text-lg font-black text-[#0F1E36]">₹{bookingDoctor?.fee || 600}</p>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-7 py-3.5 bg-[#007A64] hover:bg-[#006852] disabled:bg-slate-300 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsBookingModalOpen(false)}
+                      className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-6 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-bold transition shadow-xs hover:shadow-md disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                    >
+                      {isSubmitting ? (
                         <span>Securing Slot...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Confirm Appointment</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
+                      ) : (
+                        <>
+                          <span>Confirm Appointment</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
               </form>

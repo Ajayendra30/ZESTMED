@@ -29,9 +29,8 @@ export const MOCK_DOCTORS = [
     fee: 600,
     nextSlot: 'Today, 04:30 PM',
     modes: ['Clinic Visit', 'Online Consultation'],
-    avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
-    bio: 'Senior Consultant Physician specializing in internal medicine, chronic disease management, and adult preventive care.',
-    spritePosition: { left: '-36px', top: '-480px' }
+    avatar: '/doctor-amit-sharma.jpg',
+    bio: 'Senior Consultant Physician specializing in internal medicine, chronic disease management, and adult preventive care.'
   },
   {
     id: 'doc-2',
@@ -46,9 +45,8 @@ export const MOCK_DOCTORS = [
     fee: 750,
     nextSlot: 'Today, 05:30 PM',
     modes: ['Clinic Visit', 'Online Consultation'],
-    avatar: 'https://images.unsplash.com/photo-1594824813508-2022797e8ec9?auto=format&fit=crop&w=400&q=80',
-    bio: 'Renowned Obstetrician & Gynecologist specializing in high-risk pregnancies, hormonal health, and reproductive wellness.',
-    spritePosition: { left: '-357px', top: '-480px' }
+    avatar: '/doctor-neha-verma.jpg',
+    bio: 'Renowned Obstetrician & Gynecologist specializing in high-risk pregnancies, hormonal health, and reproductive wellness.'
   },
   {
     id: 'doc-3',
@@ -63,9 +61,8 @@ export const MOCK_DOCTORS = [
     fee: 700,
     nextSlot: 'Tomorrow, 11:00 AM',
     modes: ['Clinic Visit', 'Online Consultation'],
-    avatar: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80',
-    bio: 'Orthopedic Surgeon with extensive expertise in arthroscopic surgery, joint replacement, and sports trauma management.',
-    spritePosition: { left: '-678px', top: '-480px' }
+    avatar: '/doctor-rohan-das.jpg',
+    bio: 'Orthopedic Surgeon with extensive expertise in arthroscopic surgery, joint replacement, and sports trauma management.'
   },
   {
     id: 'doc-4',

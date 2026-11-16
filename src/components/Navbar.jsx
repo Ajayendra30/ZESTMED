@@ -498,7 +498,7 @@ export default function Navbar({
                     <Link
                       key={link.name}
                       to={link.href}
-                      className="px-3 xl:px-4 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] shadow-2xs whitespace-nowrap"
+                      className="px-3.5 xl:px-4.5 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#007A64] text-white shadow-2xs whitespace-nowrap"
                     >
                       <span>{link.name}</span>
                     </Link>
