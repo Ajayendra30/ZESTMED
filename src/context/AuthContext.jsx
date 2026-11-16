@@ -82,6 +82,18 @@ export const AuthProvider = ({ children }) => {
     addToast('You have been logged out successfully.', 'info');
   };
 
+  const updateUser = (updatedFields) => {
+    setUser((prev) => {
+      const updated = { ...(prev || {}), ...updatedFields };
+      try {
+        localStorage.setItem('zestmed_user', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
   const openAuth = (mode = 'login') => {
     setAuthMode(mode);
     setIsAuthModalOpen(true);
@@ -99,6 +111,7 @@ export const AuthProvider = ({ children }) => {
       loginWithGoogle,
       loginDemo,
       logout,
+      updateUser,
       isAuthModalOpen,
       authMode,
       setAuthMode,

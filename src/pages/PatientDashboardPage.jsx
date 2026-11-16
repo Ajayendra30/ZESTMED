@@ -64,7 +64,7 @@ import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } fro
 
 export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const navigate = useNavigate();
-  const { user, isLoggedIn, logout, openAuth, loginWithGoogle } = useAuth();
+  const { user, isLoggedIn, logout, openAuth, loginWithGoogle, updateUser } = useAuth();
   const { cartCount, openCart } = useCart();
   const { addToast } = useToast();
 
@@ -170,16 +170,25 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   const [bookingFilter, setBookingFilter] = useState('all');
   const [orderFilter, setOrderFilter] = useState('all');
-  const [profileForm, setProfileForm] = useState({
-    name: user?.name || 'Verified Patient',
-    uhid: user?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '781001'}` : 'ZM-PAT-781001'),
-    email: user?.email || 'patient@zestmed.com',
-    phone: user?.contact || '+91 92791 25091',
-    age: '34',
-    gender: 'Male',
-    bloodGroup: 'B+',
-    emergencyContact: 'Emergency Contact (+91 92791 25091)',
-    city: 'Guwahati, Assam'
+  const [profileForm, setProfileForm] = useState(() => {
+    let saved = null;
+    try {
+      const stored = localStorage.getItem('zestmed_patient_profile');
+      if (stored) saved = JSON.parse(stored);
+    } catch (e) {
+      console.error(e);
+    }
+    return {
+      name: user?.name || saved?.name || 'Rahul Verma',
+      uhid: user?.uhid || saved?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284'),
+      email: user?.email || saved?.email || 'rahul.verma@gmail.com',
+      phone: user?.contact || user?.phone || saved?.phone || '+91 92791 25091',
+      age: user?.age || saved?.age || '34',
+      gender: user?.gender || saved?.gender || 'Male',
+      bloodGroup: user?.bloodGroup || saved?.bloodGroup || 'B+',
+      emergencyContact: user?.emergencyContact || saved?.emergencyContact || 'Emergency Contact (+91 92791 25091)',
+      city: user?.city || saved?.city || 'Guwahati, Assam'
+    };
   });
 
   const handleCancelBooking = (bookingId) => {
@@ -195,13 +204,58 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   };
 
   const handleDeleteAddress = (addressId) => {
-    setAddresses((prev) => prev.filter((a) => a.id !== addressId));
+    setAddresses((prev) => {
+      const updated = prev.filter((a) => a.id !== addressId);
+      try {
+        localStorage.setItem('zestmed_saved_addresses', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
     addToast('Address removed.', 'info');
   };
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    addToast('Patient profile updated successfully!', 'success');
+    if (!profileForm.name.trim()) {
+      addToast('Please enter your full legal name.', 'error');
+      return;
+    }
+
+    const updatedProfile = {
+      ...profileForm,
+      name: profileForm.name.trim(),
+      email: profileForm.email.trim(),
+      phone: profileForm.phone.trim(),
+      bloodGroup: profileForm.bloodGroup.trim(),
+      emergencyContact: profileForm.emergencyContact.trim(),
+    };
+
+    setProfileForm(updatedProfile);
+
+    if (updateUser) {
+      updateUser({
+        name: updatedProfile.name,
+        email: updatedProfile.email,
+        contact: updatedProfile.phone,
+        phone: updatedProfile.phone,
+        bloodGroup: updatedProfile.bloodGroup,
+        emergencyContact: updatedProfile.emergencyContact,
+        age: updatedProfile.age,
+        gender: updatedProfile.gender,
+        city: updatedProfile.city,
+        uhid: updatedProfile.uhid
+      });
+    }
+
+    try {
+      localStorage.setItem('zestmed_patient_profile', JSON.stringify(updatedProfile));
+    } catch (err) {
+      console.error(err);
+    }
+
+    addToast('Profile changes saved successfully!', 'success');
   };
 
   // Handlers for interactive actions
@@ -270,8 +324,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         ...prev,
         name: user.name || prev.name,
         email: user.email || prev.email,
-        phone: user.contact || prev.phone,
-        uhid: user.uhid || (user.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '781001'}` : prev.uhid)
+        phone: user.contact || user.phone || prev.phone,
+        bloodGroup: user.bloodGroup || prev.bloodGroup,
+        emergencyContact: user.emergencyContact || prev.emergencyContact,
+        uhid: user.uhid || (user.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : prev.uhid)
       }));
     }
   }, [user]);
@@ -280,7 +336,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const greetingText = currentHour < 12 ? 'Good Morning' : currentHour < 17 ? 'Good Afternoon' : 'Good Evening';
   const patientFullName = user?.name || profileForm.name || 'Patient';
   const patientFirstName = patientFullName.split(' ')[0] || 'Patient';
-  const patientUHID = user?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '781001'}` : profileForm.uhid);
+  const patientUHID = user?.uhid || profileForm.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284');
 
   // Protected Route Authentication Guard:
   // If user is not authenticated, show professional ZESTMED Patient Portal Login Gate
@@ -2010,9 +2066,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                        className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
                       >
-                        Save Profile Changes
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Save Profile Changes</span>
                       </button>
                     </div>
                   </form>
@@ -2207,8 +2264,16 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           isOpen={isAddAddressModalOpen}
           onClose={() => setIsAddAddressModalOpen(false)}
           onAddAddress={(newAddr) => {
-            setAddresses((prev) => [newAddr, ...prev]);
-            addToast(`Address added for ${newAddr.locality}, ${newAddr.city}.`, 'success');
+            setAddresses((prev) => {
+              const updated = [newAddr, ...prev];
+              try {
+                localStorage.setItem('zestmed_saved_addresses', JSON.stringify(updated));
+              } catch (e) {
+                console.error(e);
+              }
+              return updated;
+            });
+            addToast(`Address added for ${newAddr.locality || newAddr.city}.`, 'success');
             setIsAddAddressModalOpen(false);
           }}
         />
