@@ -14,7 +14,7 @@ import { useAuth } from '../context/AuthContext';
 // Pixel-accurate Medical Specialty SVG Icons matching Reference Image
 // =========================================================================
 
-function StethoscopeIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function StethoscopeIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M4.5 3v5a4.5 4.5 0 0 0 9 0V3" />
@@ -26,7 +26,7 @@ function StethoscopeIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function CardiologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function CardiologyIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
@@ -35,7 +35,7 @@ function CardiologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function OrthopedicsIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function OrthopedicsIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M8 3c-1.5 0-2.5 1-2.5 2.5 0 1.2.7 2 1.8 2.3L8 12l-.7 4.2c-1.1.3-1.8 1.1-1.8 2.3 0 1.5 1 2.5 2.5 2.5s2.5-1 2.5-2.5c0-.8-.4-1.5-1-1.9L10 12l.5-4.6c-.6-.4-1-1.1-1-1.9C9.5 4 8.5 3 8 3z" />
@@ -45,7 +45,7 @@ function OrthopedicsIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function GynecologyIcon({ className = "w-8 h-8 text-[#E11D48]" }) {
+function GynecologyIcon({ className = "w-7 h-7 text-[#E11D48]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 21v-8" />
@@ -57,7 +57,7 @@ function GynecologyIcon({ className = "w-8 h-8 text-[#E11D48]" }) {
   );
 }
 
-function PediatricsIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function PediatricsIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <circle cx="12" cy="13" r="8" />
@@ -71,7 +71,7 @@ function PediatricsIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function DermatologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function DermatologyIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 2v10" />
@@ -82,7 +82,7 @@ function DermatologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function EntIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function EntIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M7 13c0-4 2.5-8 7-8s6 3 6 7c0 3-1.5 5-3.5 6.5C14.5 20 13 22 10 22c-2.5 0-4-2-4-4.5" />
@@ -91,7 +91,7 @@ function EntIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function GastroenterologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function GastroenterologyIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M11 3v4c0 1.5-1 2.5-2.5 2.5C5.5 9.5 4 12 4 15c0 4 3 6.5 7 6.5 4.5 0 8-3.5 8-8 0-3-1.5-5.5-4-6.5V3" />
@@ -100,7 +100,7 @@ function GastroenterologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function NeurologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function NeurologyIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M9.5 4a3.5 3.5 0 0 0-3.5 3.5c0 .4.1.8.2 1.2A3 3 0 0 0 4 11.5c0 1 .5 1.9 1.3 2.5A3 3 0 0 0 5 16.5c0 1.4.9 2.5 2.2 2.9A3 3 0 0 0 10 21h2" />
@@ -116,7 +116,7 @@ function NeurologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
   );
 }
 
-function PulmonologyIcon({ className = "w-8 h-8 text-[#007A64]" }) {
+function PulmonologyIcon({ className = "w-7 h-7 text-[#007A64]" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 3v9" />
@@ -273,56 +273,74 @@ export default function DoctorAppointmentPage() {
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
       {/* Main Container */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-5 sm:py-7 space-y-6 sm:space-y-8">
+      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6">
         
         {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Exact visual layout from reference image)               */}
+        {/* 1. HERO BANNER (Matches Reference Image media_1794858959908_ef45bd13.jpg) */}
         {/* ========================================================================= */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#EBF7F5] via-[#F2FAFA] to-[#E6F3FB] border border-[#D5EBE6] shadow-sm p-6 sm:p-8 lg:p-10 xl:p-12">
+        <section className="relative overflow-hidden rounded-[28px] border border-slate-200/90 shadow-sm min-h-[300px] sm:min-h-[320px] lg:min-h-[340px] flex items-center">
           
-          {/* Subtle Ambient Decorative Glows */}
-          <div className="absolute -top-12 -left-12 w-72 h-72 bg-[#D1FAE5]/40 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-[#E0F2FE]/45 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          {/* Background Image: Crystal-clear photo of the doctors in hospital corridor */}
+          <div 
+            className="absolute inset-0 bg-no-repeat bg-cover pointer-events-none"
+            style={{
+              backgroundImage: `url('/doctor-hero-bg.jpg')`,
+              backgroundPosition: '55% 26%',
+            }}
+          />
+
+          {/* Left Fade Overlay: Keeps text 100% crisp, contrasty, and readable */}
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 34%, rgba(255,255,255,0.7) 46%, rgba(255,255,255,0.1) 58%, rgba(255,255,255,0) 70%)'
+            }}
+          />
+
+          {/* Mobile responsive backdrop tint */}
+          <div className="lg:hidden absolute inset-0 bg-white/80 pointer-events-none" />
+
+          {/* Content Grid */}
+          <div className="relative z-10 w-full px-5 sm:px-8 lg:px-10 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
             {/* Left Column: Heading, Subtitle & Action Buttons */}
-            <div className="lg:col-span-5 space-y-4 sm:space-y-5">
+            <div className="lg:col-span-6 xl:col-span-5 space-y-3 sm:space-y-4">
               
               {/* Doctor Appointment Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#DCFCE7] text-[#047857] border border-teal-200/60 text-xs font-bold shadow-2xs">
-                <Calendar className="w-3.5 h-3.5 text-[#047857]" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
+                <Calendar className="w-3.5 h-3.5 text-[#007A64]" />
                 <span>Doctor Appointment</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-slate-900 leading-[1.16] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] font-black text-[#0F1E36] leading-[1.18] tracking-tight">
                 Book Doctor Appointment<br />
-                <span className="font-extrabold">with </span>
+                <span className="font-extrabold text-[#0F1E36]">with </span>
                 <span className="text-[#007A64] font-black">Trusted Specialists</span>
               </h1>
 
               {/* Subheading text */}
-              <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
-                Consult experienced and verified doctors across multiple specialties, online or at the clinic.
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md">
+                Consult experienced and verified doctors across<br className="hidden sm:inline" />
+                multiple specialties, online or at the clinic.
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
                 <button
                   type="button"
                   onClick={() => handleOpenBooking(null, 'Clinic Visit')}
-                  className="bg-[#007A64] hover:bg-[#006654] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
+                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4.5 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Book an Appointment</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleOpenBooking(null, 'Online Consultation')}
-                  className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/90 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3.5 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="bg-white hover:bg-slate-50 text-[#0F1E36] border border-slate-300 font-bold text-xs sm:text-sm px-4.5 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
                   <Video className="w-4 h-4 text-[#007A64]" />
                   <span>Online Consultation</span>
@@ -330,48 +348,33 @@ export default function DoctorAppointmentPage() {
               </div>
             </div>
 
-            {/* Center Column: Two Smiling Doctors (Female on Left, Male on Right) */}
-            <div className="lg:col-span-3 flex items-end justify-center self-end relative -mb-6 sm:-mb-8 lg:-mb-10 min-h-[220px] sm:min-h-[260px] lg:min-h-[290px]">
-              <div className="relative w-full max-w-[340px] h-[260px] sm:h-[280px] lg:h-[300px] flex items-end justify-center">
-                {/* Clean cutout visual of the doctors duo matching reference image */}
-                <div 
-                  className="w-full h-full bg-no-repeat bg-contain bg-bottom drop-shadow-lg"
-                  style={{
-                    backgroundImage: `url('/doctor-page-reference.jpg')`,
-                    backgroundPosition: '54.5% 22%',
-                    backgroundSize: '295%',
-                  }}
-                  title="Verified Zestmed Specialist Doctors"
-                />
-              </div>
-            </div>
+            {/* Spacer for doctors visual in the background */}
+            <div className="hidden lg:block lg:col-span-2 xl:col-span-3" />
 
             {/* Right Column: Floating White "Find a Doctor" Card */}
-            <div className="lg:col-span-4">
-              <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-5 sm:p-6 lg:p-7 relative z-20">
+            <div className="lg:col-span-4 xl:col-span-4 flex justify-end">
+              <div className="w-full max-w-[340px] bg-white rounded-[24px] shadow-xl border border-slate-100 p-5 sm:p-6 space-y-3">
                 
                 {/* Card Title */}
-                <div className="flex items-center gap-2.5 mb-4 sm:mb-5">
-                  <div className="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center text-[#007A64]">
-                    <Search className="w-4 h-4 text-[#007A64]" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                <div className="flex items-center gap-2 mb-3">
+                  <Search className="w-5 h-5 text-[#007A64] stroke-[2.4]" />
+                  <h3 className="text-lg font-black text-[#0F1E36] tracking-tight">
                     Find a Doctor
                   </h3>
                 </div>
 
                 {/* Form Fields */}
-                <form onSubmit={handleSearchSubmit} className="space-y-3 sm:space-y-3.5">
+                <form onSubmit={handleSearchSubmit} className="space-y-2.5">
                   
                   {/* Field 1: Select Speciality */}
                   <div className="relative">
-                    <div className="flex items-center justify-between w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-xs sm:text-sm font-medium hover:border-[#007A64] focus-within:border-[#007A64] transition shadow-2xs">
+                    <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <Stethoscope className="w-4 h-4 text-[#007A64] shrink-0" />
                         <select
                           value={selectedSpecialty}
                           onChange={(e) => setSelectedSpecialty(e.target.value)}
-                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
+                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
                         >
                           <option value="">Select Speciality</option>
                           {DOCTOR_SPECIALTIES.filter(s => s !== 'All Specialties').map((spec) => (
@@ -384,13 +387,13 @@ export default function DoctorAppointmentPage() {
 
                   {/* Field 2: Select Location */}
                   <div className="relative">
-                    <div className="flex items-center justify-between w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-xs sm:text-sm font-medium hover:border-[#007A64] focus-within:border-[#007A64] transition shadow-2xs">
+                    <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <MapPin className="w-4 h-4 text-[#007A64] shrink-0" />
                         <select
                           value={selectedLocation}
                           onChange={(e) => setSelectedLocation(e.target.value)}
-                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
+                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
                         >
                           <option value="">Select Location</option>
                           <option value="Guwahati - GS Road Hub">Guwahati - GS Road Hub</option>
@@ -406,13 +409,13 @@ export default function DoctorAppointmentPage() {
 
                   {/* Field 3: Preferred Date */}
                   <div className="relative">
-                    <div className="flex items-center justify-between w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-xs sm:text-sm font-medium hover:border-[#007A64] focus-within:border-[#007A64] transition shadow-2xs">
+                    <div className="flex items-center justify-between w-full px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold hover:border-[#007A64] transition">
                       <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <Calendar className="w-4 h-4 text-[#007A64] shrink-0" />
                         <select
                           value={selectedDate}
                           onChange={(e) => setSelectedDate(e.target.value)}
-                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-sm truncate"
+                          className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs truncate"
                         >
                           <option value="">Preferred Date</option>
                           <option value="Today">Today ({new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })})</option>
@@ -427,7 +430,7 @@ export default function DoctorAppointmentPage() {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full mt-2 bg-[#007A64] hover:bg-[#006654] text-white font-bold text-xs sm:text-sm py-3.5 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                    className="w-full mt-1 bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                   >
                     <span>Search Doctors</span>
                     <ArrowRight className="w-4 h-4" />
@@ -443,61 +446,61 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
         {/* ========================================================================= */}
-        <section className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-4 sm:p-5">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-4 px-4 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             
             {/* Feature 1 */}
-            <div className="flex items-center gap-3 pt-2 md:pt-0 first:pt-0 md:first:pl-0 pl-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50/80 border border-teal-100/80 text-[#007A64] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Verified Doctors</p>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Qualified & experienced</p>
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Verified Doctors</p>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Qualified & experienced</p>
               </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="flex items-center gap-3 pt-2 md:pt-0 pl-2 md:pl-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-50/80 border border-teal-100/80 text-[#007A64] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
                 <CalendarCheck className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Easy Booking</p>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Quick & hassle-free</p>
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Easy Booking</p>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Quick & hassle-free</p>
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="flex items-center gap-3 pt-2 md:pt-0 pl-2 md:pl-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-50/80 border border-teal-100/80 text-[#007A64] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
                 <Video className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Online Consultation</p>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Consult from home</p>
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Online Consultation</p>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Consult from home</p>
               </div>
             </div>
 
             {/* Feature 4 */}
-            <div className="flex items-center gap-3 pt-2 md:pt-0 pl-2 md:pl-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-50/80 border border-teal-100/80 text-[#007A64] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
                 <Clock className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Flexible Slots</p>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Choose a time that suits you</p>
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Flexible Slots</p>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Choose a time that suits you</p>
               </div>
             </div>
 
             {/* Feature 5 */}
-            <div className="flex items-center gap-3 pt-2 md:pt-0 pl-2 md:pl-4">
-              <div className="w-10 h-10 rounded-xl bg-teal-50/80 border border-teal-100/80 text-[#007A64] flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
                 <CreditCard className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Secure & Easy Payment</p>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Multiple payment options</p>
+                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Secure & Easy Payment</p>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Multiple payment options</p>
               </div>
             </div>
 
@@ -507,11 +510,11 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 3. BROWSE BY SPECIALTY (10 Medical Specialties matching Reference)       */}
         {/* ========================================================================= */}
-        <section className="space-y-4">
+        <section className="space-y-3.5">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
               Browse by Specialty
             </h2>
             <button
@@ -528,7 +531,7 @@ export default function DoctorAppointmentPage() {
           </div>
 
           {/* 10 Specialty Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5 sm:gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5 sm:gap-3">
             {SPECIALTY_LIST.map((spec) => {
               const IconComp = spec.icon;
               const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
@@ -543,15 +546,15 @@ export default function DoctorAppointmentPage() {
                       setActiveSpecialtyFilter(spec.name);
                     }
                   }}
-                  className={`bg-white rounded-2xl border p-3.5 sm:p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[115px] select-none ${
+                  className={`bg-white rounded-2xl border p-3.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[108px] select-none ${
                     isSelected
                       ? 'border-[#007A64] ring-2 ring-[#007A64]/20 shadow-md bg-teal-50/20 scale-102'
-                      : 'border-slate-100 hover:border-teal-200 hover:shadow-md shadow-2xs hover:scale-102'
+                      : 'border-slate-200/80 hover:border-teal-200 hover:shadow-md shadow-2xs hover:scale-102'
                   }`}
                 >
                   {/* Clean Vector Icon */}
-                  <div className="h-10 w-10 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-                    <IconComp className={`w-8 h-8 ${spec.color}`} />
+                  <div className="h-9 w-9 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <IconComp className={`w-7 h-7 ${spec.color}`} />
                   </div>
 
                   {/* Title Label */}
@@ -569,12 +572,12 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 4. TOP DOCTORS SECTION (Exact Cards matching Reference Image)            */}
         {/* ========================================================================= */}
-        <section id="top-doctors-section" className="space-y-4 pt-2">
+        <section id="top-doctors-section" className="space-y-3.5 pt-1">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
                 Top Doctors
               </h2>
               {activeSpecialtyFilter !== 'All' && (
@@ -607,7 +610,7 @@ export default function DoctorAppointmentPage() {
                 >
                   <div className="flex items-start gap-3.5 sm:gap-4">
                     
-                    {/* Doctor Avatar: Exact Portrait cutout from reference with high-res fallback */}
+                    {/* Doctor Avatar */}
                     <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs bg-slate-50 relative">
                       {doc.spritePosition ? (
                         <div 
@@ -634,7 +637,7 @@ export default function DoctorAppointmentPage() {
                       {/* Name & Experience Badge in Top Row */}
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#007A64] transition-colors leading-tight">
+                          <h3 className="text-sm sm:text-base font-extrabold text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
                             {doc.name}
                           </h3>
                           <p className="text-xs font-semibold text-slate-700 mt-0.5">
@@ -672,13 +675,13 @@ export default function DoctorAppointmentPage() {
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                     <div className="text-xs">
                       <span className="text-slate-500 font-medium">Consultation Fee</span>
-                      <p className="text-sm font-black text-slate-900">₹{doc.fee || 600}</p>
+                      <p className="text-sm font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
-                      className="bg-[#007A64] hover:bg-[#006654] text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+                      className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
                     >
                       Book Appointment
                     </button>
@@ -710,7 +713,7 @@ export default function DoctorAppointmentPage() {
                   <Stethoscope className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-slate-900">
+                  <h3 className="text-base sm:text-lg font-black text-[#0F1E36]">
                     {confirmedBooking ? 'Appointment Confirmed!' : 'Book Doctor Appointment'}
                   </h3>
                   <p className="text-xs text-slate-500 font-medium">
@@ -737,11 +740,11 @@ export default function DoctorAppointmentPage() {
                   <div className="w-12 h-12 rounded-full bg-[#16A34A] text-white flex items-center justify-center mx-auto shadow-sm">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
-                  <h4 className="text-lg font-black text-slate-900">
+                  <h4 className="text-lg font-black text-[#0F1E36]">
                     Appointment Successfully Scheduled!
                   </h4>
                   <p className="text-xs text-slate-600 max-w-md mx-auto">
-                    Appointment ID: <span className="font-mono font-bold text-slate-900">{confirmedBooking.id}</span>
+                    Appointment ID: <span className="font-mono font-bold text-[#0F1E36]">{confirmedBooking.id}</span>
                   </p>
                 </div>
 
@@ -749,11 +752,11 @@ export default function DoctorAppointmentPage() {
                 <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 space-y-3.5 text-xs sm:text-sm">
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Doctor</span>
-                    <span className="font-bold text-slate-900">{confirmedBooking.doctor} ({confirmedBooking.doctorSpecialty})</span>
+                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.doctor} ({confirmedBooking.doctorSpecialty})</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Date & Slot</span>
-                    <span className="font-bold text-slate-900">{confirmedBooking.date} at {confirmedBooking.time}</span>
+                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.date} at {confirmedBooking.time}</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Consultation Mode</span>
@@ -761,11 +764,11 @@ export default function DoctorAppointmentPage() {
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Patient Name</span>
-                    <span className="font-bold text-slate-900">{confirmedBooking.patientName} ({confirmedBooking.patientAge}y, {confirmedBooking.patientGender})</span>
+                    <span className="font-bold text-[#0F1E36]">{confirmedBooking.patientName} ({confirmedBooking.patientAge}y, {confirmedBooking.patientGender})</span>
                   </div>
                   <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span className="text-slate-500">Contact Number</span>
-                    <span className="font-mono font-bold text-slate-900">+91 {confirmedBooking.patientPhone}</span>
+                    <span className="font-mono font-bold text-[#0F1E36]">+91 {confirmedBooking.patientPhone}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500">Location</span>
@@ -786,7 +789,7 @@ export default function DoctorAppointmentPage() {
                       setIsBookingModalOpen(false);
                       navigate('/patient-dashboard');
                     }}
-                    className="w-full sm:flex-1 py-3 bg-[#007A64] hover:bg-[#006654] text-white font-bold rounded-xl text-sm shadow-md transition text-center cursor-pointer"
+                    className="w-full sm:flex-1 py-3 bg-[#007A64] hover:bg-[#006852] text-white font-bold rounded-xl text-sm shadow-md transition text-center cursor-pointer"
                   >
                     View in Patient Dashboard
                   </button>
@@ -813,14 +816,14 @@ export default function DoctorAppointmentPage() {
                       <Stethoscope className="w-6 h-6 text-[#007A64]" />
                     </div>
                     <div>
-                      <h4 className="text-sm sm:text-base font-extrabold text-slate-900">
+                      <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">
                         {bookingDoctor?.name || 'Dr. Amit Sharma'}
                       </h4>
                       <p className="text-xs text-slate-600 font-semibold">
                         {bookingDoctor?.specialty} • {bookingDoctor?.degree}
                       </p>
                       <p className="text-[11px] text-slate-500 mt-0.5">
-                        {bookingDoctor?.experience} • Fee: <span className="font-bold text-slate-900">₹{bookingDoctor?.fee || 600}</span>
+                        {bookingDoctor?.experience} • Fee: <span className="font-bold text-[#0F1E36]">₹{bookingDoctor?.fee || 600}</span>
                       </p>
                     </div>
                   </div>
@@ -997,13 +1000,13 @@ export default function DoctorAppointmentPage() {
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs text-slate-500 font-medium">Total Consultation Fee</p>
-                    <p className="text-lg font-black text-slate-900">₹{bookingDoctor?.fee || 600}</p>
+                    <p className="text-lg font-black text-[#0F1E36]">₹{bookingDoctor?.fee || 600}</p>
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-7 py-3.5 bg-[#007A64] hover:bg-[#006654] disabled:bg-slate-300 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
+                    className="px-7 py-3.5 bg-[#007A64] hover:bg-[#006852] disabled:bg-slate-300 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>
