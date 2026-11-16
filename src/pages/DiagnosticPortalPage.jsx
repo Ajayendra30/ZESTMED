@@ -714,7 +714,7 @@ export default function DiagnosticPortalPage() {
                               <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-1">
                                 {test.name}
                               </h3>
-                              <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold whitespace-nowrap shrink-0">
+                              <span className="px-1.5 py-0.5 rounded bg-orange-50 text-[#FF5722] border border-orange-200/60 text-[10px] font-bold whitespace-nowrap shrink-0">
                                 {test.discountPercent}% OFF
                               </span>
                             </div>

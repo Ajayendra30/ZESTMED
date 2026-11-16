@@ -580,7 +580,7 @@ export default function HealthPackagesPage() {
                       <div className="flex-1 min-w-0 space-y-1">
                         {/* Top: Discount Badge + Wishlist */}
                         <div className="flex items-center justify-between">
-                          <span className="px-2 py-0.5 rounded-md bg-[#EAF8EF] text-[#16A34A] text-[10px] sm:text-[11px] font-bold">
+                          <span className="px-2 py-0.5 rounded-md bg-orange-50 text-[#FF5722] border border-orange-200/60 text-[10px] sm:text-[11px] font-bold">
                             {pkg.discountPercent}% OFF
                           </span>
                           <button

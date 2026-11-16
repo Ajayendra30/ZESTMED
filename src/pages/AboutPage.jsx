@@ -235,15 +235,15 @@ export default function AboutPage() {
                   'Reports anytime, anywhere'
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#16A34A] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#005CB9] shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right: 2x2 Stats Grid in Soft Mint Container */}
-            <div className="lg:col-span-4 bg-[#F2FBF9] border border-teal-100/70 rounded-2xl p-4 sm:p-5">
+            {/* Right: 2x2 Stats Grid in Soft Ice Azure Container */}
+            <div className="lg:col-span-4 bg-[#F0F6FE] border border-blue-100 rounded-2xl p-4 sm:p-5">
               <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
                 {/* 50,000+ Happy Patients */}
                 <div className="bg-white rounded-xl p-3.5 text-center shadow-xs border border-teal-50 flex flex-col items-center">

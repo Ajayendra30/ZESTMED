@@ -602,7 +602,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                       <div>
                         {/* Top Row: Discount badge & Wishlist Heart */}
                         <div className="flex items-center justify-between mb-2">
-                          <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-orange-50 text-[#FF5722] border border-orange-200/60 text-[10px] font-bold">
                             {item.discountPercent}% OFF
                           </span>
 
