@@ -226,7 +226,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                         <span className="line-through text-xs text-slate-400 font-medium">
                           ₹{med.mrp}
                         </span>
-                        <span className="text-[10px] font-bold text-blue- bg-blue- px-1.5 py-0.5 rounded border border-blue-/60 ml-auto">
+                        <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60 ml-auto">
                           {med.discount}
                         </span>
                       </div>
@@ -323,7 +323,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                             ₹{test.mrp}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-blue- bg-blue- px-1.5 py-0.5 rounded border border-blue-/60">
+                        <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60">
                           {test.discount}
                         </span>
                       </div>

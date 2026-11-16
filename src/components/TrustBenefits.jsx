@@ -17,8 +17,8 @@ export default function TrustBenefits() {
       subtitle: 'Safe, convenient & on-time',
       icon: Home,
       color: 'text-[#005CB9]',
-      bg: 'bg-blue-',
-      border: 'border-blue-'
+      bg: 'bg-blue-50',
+      border: 'border-blue-200'
     },
     {
       title: 'Digital Reports',

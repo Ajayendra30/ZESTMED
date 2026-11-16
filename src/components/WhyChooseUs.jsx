@@ -20,7 +20,7 @@ export default function WhyChooseUs() {
           <div className="lg:col-span-5 bg-white rounded-3xl p-8 sm:p-10 border-2 border-slate-100 shadow-sm flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <ShieldCheck className="w-8 h-8 text-blue-" />
+                <ShieldCheck className="w-8 h-8 text-blue-500" />
                 <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   Why Choose ZESTMED?
                 </h3>

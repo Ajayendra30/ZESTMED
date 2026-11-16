@@ -109,7 +109,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
           {bookingConfirmed ? (
             /* Confirmed Screen */
             <div className="space-y-5 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-blue- text-blue- flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -150,13 +150,13 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                   </div>
                 </div>
 
-                <div className="bg-blue- border border-blue- rounded-xl p-3 flex items-center justify-between">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-blue- uppercase font-bold block">All-Inclusive Package Price</span>
-                    <span className="text-lg font-black text-blue-">₹{bookingConfirmed.pkg.packagePrice.toLocaleString('en-IN')}</span>
+                    <span className="text-[10px] text-blue-800 uppercase font-bold block">All-Inclusive Package Price</span>
+                    <span className="text-lg font-black text-blue-950">₹{bookingConfirmed.pkg.packagePrice.toLocaleString('en-IN')}</span>
                     <span className="line-through text-slate-400 text-xs ml-2">₹{bookingConfirmed.pkg.mrp.toLocaleString('en-IN')}</span>
                   </div>
-                  <span className="text-xs font-bold text-blue- bg-blue- px-3 py-1 rounded-full">
+                  <span className="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
                     {bookingConfirmed.pkg.cashlessInsurance}
                   </span>
                 </div>
@@ -350,7 +350,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                         <span className="text-[11px] font-bold text-[#005CB9] bg-teal-50 px-2 py-0.5 rounded-md">
                           {s.category}
                         </span>
-                        <span className="text-[11px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded-md">
+                        <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
                           {s.stay}
                         </span>
                       </div>
@@ -368,7 +368,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                           <Building2 className="w-3.5 h-3.5 text-[#005CB9] shrink-0" />
                           <span className="truncate">{s.hospitalLocation}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-blue- font-medium">
+                        <div className="flex items-center gap-1.5 text-blue-700 font-medium">
                           <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                           <span>{s.cashlessInsurance}</span>
                         </div>

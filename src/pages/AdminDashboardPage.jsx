@@ -64,6 +64,7 @@ import EditExecutiveModal from '../components/EditExecutiveModal';
 import DeleteExecutiveModal from '../components/DeleteExecutiveModal';
 import UploadInventoryModal from '../components/UploadInventoryModal';
 import UploadPackagesModal from '../components/UploadPackagesModal';
+import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf } from '../utils/pdfGenerator';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -205,8 +206,8 @@ export default function AdminDashboardPage() {
       value: '2,168',
       trend: '↑ +14.2%',
       icon: ShoppingCart,
-      bgColor: 'bg-blue-',
-      iconColor: 'text-blue-',
+      bgColor: 'bg-blue-50',
+      iconColor: 'text-blue-500',
       targetMenu: 'orders'
     },
     {
@@ -232,11 +233,11 @@ export default function AdminDashboardPage() {
   // Interactive Management States
   const [adminMedicines, setAdminMedicines] = useState(initialInventoryMedicines);
   const [adminBookings, setAdminBookings] = useState([
-    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue- text-blue- border border-blue-/60', amount: 349, slot: '09:00 AM' },
+    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 349, slot: '09:00 AM' },
     { id: '#LB10233', patient: 'Priya Sharma', phone: '+91 94350 12345', test: 'Thyroid Profile', type: 'Lab Visit', executive: 'Rohit Sharma', status: 'Sample Collected', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 599, slot: '10:30 AM' },
     { id: '#LB10232', patient: 'Amit Verma', phone: '+91 97060 98765', test: 'Diabetes Package', type: 'Home Collection', executive: 'Manab Barua', status: 'In Process', statusBg: 'bg-amber-50 text-amber-600 border border-amber-200/60', amount: 899, slot: '11:00 AM' },
     { id: '#LB10231', patient: 'Sneha Singh', phone: '+91 91270 54321', test: 'Full Body Checkup', type: 'Lab Visit', executive: 'Dr. N. Bora', status: 'Report Ready', statusBg: 'bg-purple-50 text-purple-600 border border-purple-200/60', amount: 1499, slot: '12:15 PM' },
-    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue- text-blue- border border-blue-/60', amount: 499, slot: '02:00 PM' }
+    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 499, slot: '02:00 PM' }
   ]);
   const [adminOrders, setAdminOrders] = useState([
     { id: '#ORD5487', customer: 'Rajesh Kumar', items: 'Paracetamol 500 mg x 2, Vitamin C x 1', total: 340, payment: 'UPI Paid', status: 'Delivered', address: 'Dispur, Guwahati' },
@@ -318,7 +319,7 @@ export default function AdminDashboardPage() {
       test: 'Complete Blood Count',
       type: 'Home Collection',
       status: 'Confirmed',
-      statusBg: 'bg-blue- text-blue- border border-blue-/60'
+      statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60'
     },
     {
       id: '#LB10233',
@@ -966,7 +967,7 @@ export default function AdminDashboardPage() {
                     <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-0.5">
                       {kpi.value}
                     </div>
-                    <div className="text-[11px] sm:text-xs font-semibold text-blue- mt-0.5 flex items-center gap-0.5">
+                    <div className="text-[11px] sm:text-xs font-semibold text-blue-600 mt-0.5 flex items-center gap-0.5">
                       <span>{kpi.trend}</span>
                       <span className="text-[10px] text-slate-400 font-normal">→</span>
                     </div>
@@ -1348,7 +1349,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-center font-bold text-teal-600">{p.bookingsCount}</td>
                           <td className="py-3.5 px-4 text-center font-bold text-sky-600">{p.ordersCount}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue- text-blue- border border-blue-">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                               {p.status}
                             </span>
                           </td>
@@ -1427,7 +1428,7 @@ export default function AdminDashboardPage() {
                           <span className="text-[11px] text-slate-400 font-mono">{ex.id}</span>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded-full border border-blue-">
+                      <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                         {ex.status}
                       </span>
                     </div>
@@ -1512,7 +1513,7 @@ export default function AdminDashboardPage() {
                     <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
                       <div>Email: <strong className="text-slate-800">{adm.email}</strong></div>
                       <div>Privileges: <strong className="text-slate-800">{adm.access}</strong></div>
-                      <div className="text-blue- font-semibold mt-1">✓ 2FA Hardware Key Active</div>
+                      <div className="text-blue-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
                     </div>
                   </div>
                 ))}
@@ -1579,7 +1580,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3 px-4 text-center font-mono">
                             <span className={`px-2 py-0.5 rounded-full font-bold ${
-                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-blue- text-blue-'
+                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600'
                             }`}>
                               {m.stock} units
                             </span>
@@ -2004,7 +2005,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 font-black text-slate-900">₹{o.total}</td>
                           <td className="py-3.5 px-4 text-slate-600">{o.payment}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue- text-blue- border border-blue-">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                               {o.status}
                             </span>
                           </td>
@@ -2063,7 +2064,7 @@ export default function AdminDashboardPage() {
                         <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient}</h3>
                       </div>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        rx.status === 'Approved' ? 'bg-blue- text-blue-' : 'bg-amber-50 text-amber-600'
+                        rx.status === 'Approved' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
                       }`}>
                         {rx.status}
                       </span>
@@ -2222,7 +2223,7 @@ export default function AdminDashboardPage() {
                     }}
                     className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs ${
                       isRazorpayLiveMode
-                        ? 'bg-blue- text-white hover:bg-blue-'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
                         : 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
                     }`}
                   >
@@ -2249,7 +2250,7 @@ export default function AdminDashboardPage() {
                       <h3 className="text-base font-bold text-slate-900">
                         Mandatory Statutory Business Documents for Razorpay Healthcare Activation
                       </h3>
-                      <span className="text-[10px] font-bold bg-blue- text-blue- px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                         8 / 8 Verified
                       </span>
                     </div>
@@ -2291,18 +2292,33 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-3 font-mono font-medium text-slate-700">{doc.docNumber}</td>
                           <td className="py-3 px-3 text-slate-500 text-[11px]">{doc.mandatoryFor}</td>
                           <td className="py-3 px-3 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue- text-blue- border border-blue-">
-                              <CheckCircle2 className="w-3 h-3 text-blue-" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                              <CheckCircle2 className="w-3 h-3 text-blue-600" />
                               <span>{doc.status}</span>
                             </span>
                           </td>
                           <td className="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
                             <button
                               type="button"
-                              onClick={() => addToast(`Opening statutory document preview: ${doc.title}`, 'info')}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-teal-50 hover:text-[#005CB9] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
+                              onClick={() => {
+                                openStatutoryDocumentPdf(doc);
+                                addToast(`Opening official certified PDF: ${doc.title}`, 'info');
+                              }}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-[#005CB9] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
+                              title="View PDF Document"
                             >
-                              View Doc
+                              View PDF
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                downloadStatutoryDocumentPdf(doc);
+                                addToast(`Statutory certificate PDF downloaded: ${doc.title}`, 'success');
+                              }}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-[#005CB9] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
+                              title="Download PDF Certificate"
+                            >
+                              Download
                             </button>
                             <button
                               type="button"
@@ -2379,7 +2395,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-slate-500 font-mono">{tx.date}</td>
                           <td className="py-3.5 px-4 font-black text-slate-900">₹{tx.amount}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue- text-blue- border border-blue-">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                               {tx.status}
                             </span>
                           </td>
@@ -2411,12 +2427,12 @@ export default function AdminDashboardPage() {
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Average Order Value</span>
                   <div className="text-2xl font-black text-slate-900">₹742.50</div>
-                  <span className="text-xs text-blue- font-bold">↑ +14.8% vs last month</span>
+                  <span className="text-xs text-blue-600 font-bold">↑ +14.8% vs last month</span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Diagnostic Fulfillment Rate</span>
                   <div className="text-2xl font-black text-slate-900">99.2%</div>
-                  <span className="text-xs text-blue- font-bold">Cold chain compliance 100%</span>
+                  <span className="text-xs text-blue-600 font-bold">Cold chain compliance 100%</span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Active Assam Pin Codes</span>

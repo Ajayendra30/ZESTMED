@@ -137,7 +137,7 @@ export default function AuthPage({ defaultMode = 'login' }) {
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-blue-/30 flex items-center justify-center text-blue- shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-lg bg-blue-500/30 flex items-center justify-center text-blue-300 shrink-0 mt-0.5">
                   <Car className="w-3.5 h-3.5" />
                 </div>
                 <span><strong>Free Senior Citizen Transport:</strong> Dedicated AC cab within 10km radius in Guwahati.</span>

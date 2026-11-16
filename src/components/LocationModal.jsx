@@ -50,7 +50,7 @@ export default function LocationModal() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-dark">Service Location: Guwahati</h3>
-                <span className="text-[10px] font-bold bg-blue- text-blue- border border-blue- px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
                   Exclusively Guwahati
                 </span>
               </div>
@@ -68,7 +68,7 @@ export default function LocationModal() {
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Senior Citizen 10km Radius Alert */}
-          <div className="bg-gradient-to-r from-teal-50 to-blue- border border-teal-200/80 rounded-2xl p-3.5 flex items-start gap-3">
+          <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200/80 rounded-2xl p-3.5 flex items-start gap-3">
             <div className="w-8 h-8 rounded-xl bg-[#005CB9] text-white flex items-center justify-center shrink-0 mt-0.5">
               <Car className="w-4 h-4" />
             </div>

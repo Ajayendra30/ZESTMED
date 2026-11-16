@@ -83,7 +83,7 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
               >
                 {/* Discount Badge */}
                 {product.discountPercent > 0 && (
-                  <div className="absolute top-3 left-3 z-10 bg-blue- text-white text-[11px] font-bold px-2 py-0.5 rounded-lg shadow-xs">
+                  <div className="absolute top-3 left-3 z-10 bg-blue-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-lg shadow-xs">
                     {product.discountPercent}% OFF
                   </div>
                 )}

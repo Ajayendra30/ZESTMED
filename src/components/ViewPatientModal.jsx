@@ -48,7 +48,7 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
                 <p className="text-slate-500 font-mono text-[11px] mt-0.5">{patient.phone}</p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue- text-blue- border border-blue-">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-200">
               {patient.status || 'Active'}
             </span>
           </div>
@@ -64,8 +64,8 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
             </div>
             <div>
               <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Registration Status</span>
-              <span className="font-semibold text-blue- flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-" />
+              <span className="font-semibold text-blue-700 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                 Verified Citizen Record
               </span>
             </div>

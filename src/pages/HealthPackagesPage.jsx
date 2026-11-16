@@ -126,7 +126,7 @@ const CATEGORY_PILLS = [
   { id: 'fullbody', label: 'Full Body Checkup', icon: HeartPulse, iconColor: 'text-blue-500' },
   { id: 'men', label: "Men's Health", icon: UserCheck, iconColor: 'text-sky-500' },
   { id: 'women', label: "Women's Health", icon: Heart, iconColor: 'text-pink-500' },
-  { id: 'senior', label: 'Senior Citizen', icon: Users, iconColor: 'text-blue-' },
+  { id: 'senior', label: 'Senior Citizen', icon: Users, iconColor: 'text-blue-500' },
   { id: 'diabetes', label: 'Diabetes Care', icon: Droplet, iconColor: 'text-rose-500' },
   { id: 'heart', label: 'Heart Care', icon: Activity, iconColor: 'text-red-500' },
   { id: 'preventive', label: 'Preventive Care', icon: ShieldCheck, iconColor: 'text-teal-600' },

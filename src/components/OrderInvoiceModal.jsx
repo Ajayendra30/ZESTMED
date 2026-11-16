@@ -1,7 +1,8 @@
 // src/components/OrderInvoiceModal.jsx
 import React from 'react';
-import { X, Receipt, Download, Printer, CheckCircle2, Truck, Package, ShieldCheck } from 'lucide-react';
+import { X, Receipt, Download, Printer, CheckCircle2, Truck, Package, ShieldCheck, ExternalLink } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { downloadOrderInvoicePdf, openOrderInvoicePdf } from '../utils/pdfGenerator';
 
 export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
   const { addToast } = useToast();
@@ -9,7 +10,13 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
   if (!isOpen || !order) return null;
 
   const handleDownload = () => {
-    addToast(`Downloading Tax Invoice for ${order.id}... (Demo PDF)`, 'success');
+    downloadOrderInvoicePdf(order);
+    addToast(`Tax Invoice PDF downloaded for Order #${order.id}.`, 'success');
+  };
+
+  const handleOpenPdf = () => {
+    openOrderInvoicePdf(order);
+    addToast(`Opening Invoice #${order.id} in a new tab...`, 'info');
   };
 
   const handlePrint = () => {
@@ -27,13 +34,13 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
       {/* Modal Dialog */}
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-primary text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <Receipt className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-primary-100">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-blue-100">
                 Official Medicine Tax Invoice
               </div>
               <h3 className="text-base font-bold text-white">
@@ -53,9 +60,18 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
             </button>
             <button
               type="button"
+              onClick={handleOpenPdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition border border-white/20 shadow-sm"
+              title="Open PDF in New Tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Open PDF</span>
+            </button>
+            <button
+              type="button"
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-primary text-xs font-bold transition shadow-sm"
-              title="Download PDF"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-[#005CB9] text-xs font-bold transition shadow-sm"
+              title="Download PDF File"
             >
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Save PDF</span>
@@ -90,7 +106,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
             </div>
 
             <div className="text-left sm:text-right space-y-1">
-              <div className="inline-flex items-center gap-1 font-bold text-blue- bg-blue- px-2.5 py-1 rounded-full text-xs">
+              <div className="inline-flex items-center gap-1 font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {order.status}
               </div>
@@ -149,7 +165,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
               <span>Total MRP Value</span>
               <span className="font-mono line-through">₹{order.mrpTotal}</span>
             </div>
-            <div className="flex justify-between text-blue- font-semibold">
+            <div className="flex justify-between text-blue-700 font-semibold">
               <span>Zestmed Direct Health Discount</span>
               <span className="font-mono">-₹{order.savings}</span>
             </div>

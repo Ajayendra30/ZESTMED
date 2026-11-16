@@ -199,7 +199,7 @@ export default function UploadInventoryModal({ isOpen, onClose, onImportSuccess 
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-800">Preview ({fileRows.length} Items Detected):</span>
-                <span className="text-blue- font-semibold bg-blue- px-2 py-0.5 rounded-md">
+                <span className="text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded-md">
                   Validation: Passed
                 </span>
               </div>

@@ -1,5 +1,8 @@
 // src/utils/reportGenerator.js
 // Generates official clinical diagnostic report data, downloadable report documents, and sharing handlers
+import { downloadClinicalReportPdf, openClinicalReportPdf } from './pdfGenerator';
+
+export { downloadClinicalReportPdf, openClinicalReportPdf };
 
 export const getDiagnosticParameters = (testName = '') => {
   const lower = testName.toLowerCase();
@@ -82,138 +85,7 @@ export const getMockReportDetails = (testName, dateStr, reportId, pathologist) =
 };
 
 export const downloadClinicalReport = (report) => {
-  const testName = report.test || report.testName || 'Diagnostic Investigation';
-  const reportId = report.id || report.bookingId || 'ZM-REP-9041';
-  const patientName = report.patientName || 'Rahul Verma';
-  const uhid = report.uhid || 'ZM-PAT-1082';
-  const dateStr = report.collectionDate || report.date || 'Nov 07, 2026';
-  const specimen = report.specimen || 'EDTA Whole Blood / Serum';
-  const pathologist = report.reportingDoctor || report.pathologist || 'Dr. N. Bora, MD (Pathology)';
-  const remark = report.pathologistRemark || 'All parameters evaluated under automated standard calibration.';
-  const parameters = report.reportData && report.reportData.length > 0 ? report.reportData : getDiagnosticParameters(testName);
-
-  const rowsHtml = parameters.map((row) => {
-    const isAbnormal = row.status === 'Deficient' || row.flag === 'LOW' || row.flag === 'HIGH';
-    return `
-      <tr style="${isAbnormal ? 'background-color: #fef2f2;' : ''}">
-        <td style="padding: 10px 14px; font-weight: 600; color: #1e293b; border-bottom: 1px solid #e2e8f0;">${row.name}</td>
-        <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: ${isAbnormal ? '#b91c1c' : '#0f172a'}; border-bottom: 1px solid #e2e8f0; font-family: monospace;">${row.value}</td>
-        <td style="padding: 10px 14px; text-align: center; color: #64748b; border-bottom: 1px solid #e2e8f0; font-family: monospace;">${row.normalRange}</td>
-        <td style="padding: 10px 14px; text-align: center; color: #64748b; border-bottom: 1px solid #e2e8f0;">${row.unit}</td>
-        <td style="padding: 10px 14px; text-align: right; border-bottom: 1px solid #e2e8f0;">
-          <span style="display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; background: ${isAbnormal ? '#fee2e2' : '#dcfce7'}; color: ${isAbnormal ? '#991b1b' : '#166534'};">
-            ${row.status || 'Normal'}
-          </span>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>ZESTMED Diagnostic Report - ${reportId}</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 32px; color: #1e293b; background: #ffffff; }
-    .container { max-width: 820px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 16px; padding: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .header { border-bottom: 2px solid #0f766e; padding-bottom: 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
-    .brand-title { font-size: 22px; font-weight: 900; color: #0f766e; letter-spacing: -0.5px; }
-    .brand-sub { font-size: 11px; color: #475569; margin-top: 3px; font-weight: 500; }
-    .badge { display: inline-block; background: #ccfbf1; color: #0f766e; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; border: 1px solid #99f6e4; }
-    .patient-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; }
-    .patient-card div span { display: block; font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; margin-bottom: 2px; }
-    .patient-card div strong { font-size: 12px; color: #0f172a; }
-    .investigation-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .investigation-title { font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 12px; }
-    th { background: #0f766e; color: #ffffff; padding: 10px 14px; text-align: left; font-weight: 700; }
-    .remarks { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 24px; font-size: 11.5px; color: #334155; }
-    .footer { border-top: 2px solid #e2e8f0; padding-top: 18px; display: flex; justify-content: space-between; align-items: flex-end; }
-    .disclaimer { font-size: 10.5px; color: #64748b; max-width: 480px; line-height: 1.5; }
-    .sign-box { text-align: right; }
-    .sign-title { font-size: 12px; font-weight: 800; color: #0f172a; }
-    .sign-sub { font-size: 10.5px; color: #64748b; }
-    @media print {
-      body { padding: 0; background: none; }
-      .container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <div class="brand-title">ZESTMED DIAGNOSTICS & POLYCLINIC</div>
-        <div class="brand-sub">Central Clinical Reference Laboratory • NABL Accredited (ISO 15189:2022) • ICMR Approved</div>
-        <div class="brand-sub">G.S. Road, Dispur, Guwahati, Assam - 781005 • Helpline: 1800-890-ZEST / +91 92791 25091</div>
-      </div>
-      <div style="text-align: right;">
-        <span class="badge">OFFICIAL CLINICAL REPORT</span>
-        <div style="font-family: monospace; font-size: 11px; color: #475569; margin-top: 6px; font-weight: 700;">REPORT ID: ${reportId}</div>
-        <div style="font-family: monospace; font-size: 10px; color: #94a3b8;">BARCODE: AS-LAB-${reportId.replace(/\D/g, '') || '781001'}</div>
-      </div>
-    </div>
-
-    <div class="patient-card">
-      <div><span>Patient Name</span><strong>${patientName}</strong></div>
-      <div><span>UHID / Patient ID</span><strong>${uhid}</strong></div>
-      <div><span>Age / Gender</span><strong>34 Yrs / Male</strong></div>
-      <div><span>Collection Date</span><strong>${dateStr}</strong></div>
-      <div><span>Specimen Type</span><strong>${specimen}</strong></div>
-      <div><span>Collection Hub</span><strong>Guwahati Central Lab, Assam</strong></div>
-    </div>
-
-    <div class="investigation-header">
-      <div class="investigation-title">Investigation: ${testName}</div>
-      <div style="font-size: 11px; color: #64748b;">Methodology: Fully Automated Clinical Analyzer</div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Test Parameter</th>
-          <th style="text-align: center;">Observed Result</th>
-          <th style="text-align: center;">Biological Reference</th>
-          <th style="text-align: center;">Units</th>
-          <th style="text-align: right;">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rowsHtml}
-      </tbody>
-    </table>
-
-    <div class="remarks">
-      <strong style="color: #0f172a; display: block; margin-bottom: 4px;">Pathologist Note & Clinical Interpretation:</strong>
-      <em>"${remark}"</em>
-    </div>
-
-    <div class="footer">
-      <div class="disclaimer">
-        <p>• Verified against standard automated clinical calibration with daily internal quality controls.</p>
-        <p>• This digital pathology report is electronically signed and legally valid under IT Act 2000 & Digital Health Standards.</p>
-      </div>
-      <div class="sign-box">
-        <div style="font-family: cursive; font-size: 16px; color: #0f766e; font-weight: 700; margin-bottom: 4px;">${pathologist.split(',')[0]}</div>
-        <div class="sign-title">${pathologist}</div>
-        <div class="sign-sub">Consultant Clinical Pathologist</div>
-        <div class="sign-sub" style="font-family: monospace;">Reg: AMC-29182-AS (Assam Medical Council)</div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `ZESTMED_Report_${(reportId).replace(/[^a-zA-Z0-9_-]/g, '_')}_${testName.replace(/[^a-zA-Z0-9]/g, '_')}.html`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  downloadClinicalReportPdf(report);
 };
 
 export const shareClinicalReport = async (report, addToast) => {

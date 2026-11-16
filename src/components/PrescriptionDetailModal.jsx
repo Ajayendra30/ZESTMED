@@ -98,7 +98,7 @@ export default function PrescriptionDetailModal({ isOpen = true, onClose, prescr
               <span className={`inline-flex items-center gap-1 text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
                 isExpired 
                   ? 'bg-rose-50 text-rose-700 border border-rose-200' 
-                  : 'bg-blue- text-blue- border border-blue-'
+                  : 'bg-blue-50 text-blue-700 border border-blue-200'
               }`}>
                 {isExpired ? <AlertCircle className="w-3 h-3" /> : <CheckCircle2 className="w-3 h-3" />}
                 {prescription.status}

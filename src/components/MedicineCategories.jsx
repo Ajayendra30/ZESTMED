@@ -33,8 +33,8 @@ export default function MedicineCategories() {
       name: 'Personal Care',
       icon: Sparkles,
       bg: 'bg-[#F0FDF4]',
-      border: 'border-blue- hover:border-blue-',
-      iconColor: 'text-blue- bg-blue-',
+      border: 'border-blue-200 hover:border-blue-400',
+      iconColor: 'text-blue-600 bg-blue-100',
       categorySlug: 'personal'
     },
     {

@@ -112,7 +112,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
           {bookingConfirmed ? (
             /* Confirmed Screen */
             <div className="space-y-5 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-blue- text-blue- flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -157,7 +157,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Consultation Fee</span>
                     <span className="text-base font-black text-slate-900">₹{bookingConfirmed.fee}</span>
                   </div>
-                  <span className="px-3 py-1 bg-blue- text-blue- rounded-full font-bold text-[11px]">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-bold text-[11px]">
                     Pay at Clinic / Razorpay Active
                   </span>
                 </div>
@@ -408,7 +408,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                           <span className="truncate">{doc.hospital}</span>
                         </div>
                         <div className="flex items-center justify-between text-[11px] pt-1">
-                          <span className="text-blue- font-semibold bg-blue- px-2 py-0.5 rounded-md">
+                          <span className="text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded-md">
                             Next: {doc.nextSlot}
                           </span>
                           <span className="font-black text-slate-900">

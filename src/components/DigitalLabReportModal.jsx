@@ -1,17 +1,40 @@
 // src/components/DigitalLabReportModal.jsx
 import React from 'react';
-import { X, FileText, Download, Printer, Share2, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, FileText, Download, Printer, Share2, CheckCircle2, AlertTriangle, ShieldCheck, ExternalLink } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
+import { getDiagnosticParameters, shareClinicalReport } from '../utils/reportGenerator';
+import { downloadClinicalReportPdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function DigitalLabReportModal({ isOpen = true, onClose, booking }) {
   const { addToast } = useToast();
 
   if (!isOpen || !booking) return null;
 
+  const reportId = booking.id || booking.bookingId || 'ZM-REP-9041';
+  const testName = booking.testName || booking.test || 'Diagnostic Investigation';
+  const sampleBarcode = booking.barcode || `AS-LAB-${reportId.replace(/\D/g, '') || '781001'}`;
+  const reportRows = (booking.reportData && booking.reportData.length > 0)
+    ? booking.reportData
+    : getDiagnosticParameters(testName);
+
+  const fullReportObject = {
+    ...booking,
+    id: reportId,
+    bookingId: reportId,
+    testName,
+    test: testName,
+    barcode: sampleBarcode,
+    reportData: reportRows
+  };
+
   const handleDownload = () => {
-    downloadClinicalReport(booking);
-    addToast(`Clinical Diagnostic Report downloaded for ${booking.testName || booking.id}.`, 'success');
+    downloadClinicalReportPdf(fullReportObject);
+    addToast(`Clinical Diagnostic PDF downloaded for ${testName} (${reportId}).`, 'success');
+  };
+
+  const handleOpenPdf = () => {
+    openClinicalReportPdf(fullReportObject);
+    addToast('Opening official signed PDF in a new tab...', 'info');
   };
 
   const handlePrint = () => {
@@ -19,7 +42,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
   };
 
   const handleShare = () => {
-    shareClinicalReport(booking, addToast);
+    shareClinicalReport(fullReportObject, addToast);
   };
 
   return (
@@ -43,7 +66,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
                 Official Clinical Lab Report
               </div>
               <h3 className="text-sm sm:text-base font-bold text-white">
-                {booking.testName}
+                {testName}
               </h3>
             </div>
           </div>
@@ -67,8 +90,17 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
             </button>
             <button
               type="button"
+              onClick={handleOpenPdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition border border-slate-700 shadow-sm"
+              title="Open PDF in New Tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Open PDF</span>
+            </button>
+            <button
+              type="button"
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold transition shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white text-xs font-bold transition shadow-sm"
               title="Download PDF"
             >
               <Download className="w-3.5 h-3.5" />
@@ -92,7 +124,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
             <div>
               <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="Zestmed Diagnostics & Polyclinic" className="h-8 sm:h-9 w-auto object-contain" />
-                <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                <span className="text-[11px] font-bold text-[#005CB9] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                   CENTRAL DIAGNOSTICS
                 </span>
               </div>
@@ -106,12 +138,12 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
 
             <div className="text-left sm:text-right space-y-0.5">
               <div className="text-xs font-mono font-bold text-slate-800">
-                Report No: <span className="text-primary">{booking.id}</span>
+                Report No: <span className="text-[#005CB9]">{reportId}</span>
               </div>
               <div className="text-[11px] text-slate-500 font-mono">
-                Sample Barcode: AS-LAB-{booking.id.replace(/\D/g, '') || '781001'}
+                Sample Barcode: {sampleBarcode}
               </div>
-              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded">
+              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
                 <ShieldCheck className="w-3 h-3" />
                 NABL Guidelines Referenced
               </div>
@@ -154,7 +186,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
           <div>
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                Investigation Results ({booking.testName})
+                Investigation Results ({testName})
               </h4>
               <span className="text-[11px] text-slate-500 font-medium">
                 Methodology: Automated Photometry & Cell Counter
@@ -173,8 +205,8 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {booking.reportData && booking.reportData.length > 0 ? (
-                    booking.reportData.map((row, idx) => {
+                  {reportRows && reportRows.length > 0 ? (
+                    reportRows.map((row, idx) => {
                       const isAbnormal = row.status === 'Deficient' || row.flag === 'LOW' || row.flag === 'HIGH';
                       return (
                         <tr key={idx} className={isAbnormal ? 'bg-amber-50/40' : 'hover:bg-slate-50/50'}>
@@ -199,7 +231,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
                                 {row.flag || 'Low'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-blue- bg-blue- px-2 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
                                 <CheckCircle2 className="w-3 h-3" />
                                 Normal
                               </span>

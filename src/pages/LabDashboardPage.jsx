@@ -47,6 +47,7 @@ import SampleCollectionModal from '../components/SampleCollectionModal';
 import PublishReportModal from '../components/PublishReportModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import NewLabJobModal from '../components/NewLabJobModal';
+import { downloadClinicalReportPdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function LabDashboardPage() {
   const navigate = useNavigate();
@@ -666,7 +667,7 @@ export default function LabDashboardPage() {
               onClick={() => setActiveMenu('collection')}
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue- text-blue- flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
                 <Syringe className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
@@ -769,7 +770,7 @@ export default function LabDashboardPage() {
                   >
                     {/* Time Badge */}
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="px-2.5 py-1 rounded-lg bg-blue- text-blue- text-xs font-semibold shrink-0">
+                      <div className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold shrink-0">
                         {row.time}
                       </div>
 
@@ -821,7 +822,7 @@ export default function LabDashboardPage() {
                           Check In
                         </button>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-blue- bg-blue- px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-200">
                           <Check className="w-3.5 h-3.5" />
                           <span>{row.action}</span>
                         </span>
@@ -961,7 +962,7 @@ export default function LabDashboardPage() {
                     }}
                     className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-blue- text-blue- flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Syringe className="w-5 h-5 stroke-[2]" />
                     </div>
                     <span className="text-[11px] font-bold text-slate-800 leading-tight">
@@ -1056,7 +1057,7 @@ export default function LabDashboardPage() {
                 {/* Activity 1 */}
                 <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-blue- text-blue- flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-bold text-slate-800 truncate">
@@ -1071,7 +1072,7 @@ export default function LabDashboardPage() {
                 {/* Activity 2 */}
                 <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-blue- text-blue- flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-bold text-slate-800 truncate">
@@ -1632,27 +1633,53 @@ export default function LabDashboardPage() {
                           <td className="py-3.5 px-4 text-slate-500 font-mono">{c.time}</td>
                           <td className="py-3.5 px-4 text-slate-600">{c.pathologist}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue- text-blue- border border-blue-">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                               {c.status}
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSelectedJobForReportView({
-                                  bookingId: c.id,
-                                  patientName: c.patient,
-                                  testName: c.test,
-                                  date: 'Nov 13, 2026',
-                                  barcode: 'ZM-ASSAM-9021',
-                                  status: 'Report Ready'
-                                });
-                              }}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-[#005CB9] hover:text-white rounded-xl text-xs font-bold transition"
-                            >
-                              View PDF
-                            </button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedJobForReportView({
+                                    id: c.id,
+                                    bookingId: c.id,
+                                    patientName: c.patient,
+                                    patient: c.patient,
+                                    testName: c.test,
+                                    test: c.test,
+                                    date: 'Nov 13, 2026',
+                                    collectionDate: 'Nov 13, 2026',
+                                    barcode: `AS-LAB-${c.id.replace(/\D/g, '') || '9021'}`,
+                                    pathologist: c.pathologist,
+                                    reportingDoctor: c.pathologist,
+                                    status: 'Report Ready'
+                                  });
+                                }}
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-[#005CB9] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition shadow-2xs"
+                              >
+                                View PDF
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  downloadClinicalReportPdf({
+                                    id: c.id,
+                                    bookingId: c.id,
+                                    patientName: c.patient,
+                                    testName: c.test,
+                                    date: 'Nov 13, 2026',
+                                    reportingDoctor: c.pathologist
+                                  });
+                                  addToast(`Signed PDF report downloaded for ${c.patient} (${c.id})`, 'success');
+                                }}
+                                className="p-1.5 bg-slate-100 hover:bg-[#005CB9] hover:text-white text-slate-600 rounded-xl transition shadow-2xs"
+                                title="Download PDF File"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1783,8 +1810,19 @@ export default function LabDashboardPage() {
           job={selectedJobForPublish}
           onClose={() => setSelectedJobForPublish(null)}
           onPublish={(reportData) => {
+            setCompletedList(prev => [
+              {
+                id: `REP-${Math.floor(1000 + Math.random() * 9000)}`,
+                patient: selectedJobForPublish.patientName || selectedJobForPublish.patient || 'Patient',
+                test: selectedJobForPublish.testName || selectedJobForPublish.test || 'Diagnostic Screen',
+                time: 'Just now',
+                pathologist: 'Dr. Pranabesh Sarma, MD Pathology',
+                status: 'Signed & Published'
+              },
+              ...prev
+            ]);
             setSelectedJobForPublish(null);
-            addToast(`Diagnostic report for ${selectedJobForPublish.patientName} (${selectedJobForPublish.id}) signed & published!`, 'success');
+            addToast(`Diagnostic report for ${selectedJobForPublish.patientName || selectedJobForPublish.patient} signed & published!`, 'success');
           }}
         />
       )}

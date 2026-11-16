@@ -63,7 +63,7 @@ function HeartPulseSvg({ className = "w-6 h-6 text-rose-500" }) {
   );
 }
 
-function CapsuleSvg({ className = "w-6 h-6 text-blue-" }) {
+function CapsuleSvg({ className = "w-6 h-6 text-blue-600" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
@@ -498,7 +498,7 @@ export default function DiagnosticPortalPage() {
                           : pill.id === 'kidney'
                           ? 'text-purple-600'
                           : pill.id === 'vitamins'
-                          ? 'text-blue-'
+                          ? 'text-blue-600'
                           : pill.id === 'cancer'
                           ? 'text-pink-600'
                           : 'text-sky-600'
@@ -803,7 +803,7 @@ export default function DiagnosticPortalPage() {
 
                   <div className="flex flex-col items-center justify-center gap-1">
                     <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                    <span className="text-[11px] sm:text-xs font-bold text-blue- whitespace-nowrap">Reports in a Single Day (12-24 Hrs)</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-blue-800 whitespace-nowrap">Reports in a Single Day (12-24 Hrs)</span>
                   </div>
                 </div>
 

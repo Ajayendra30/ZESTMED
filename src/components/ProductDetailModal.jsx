@@ -54,7 +54,7 @@ export default function ProductDetailModal({ product, onClose }) {
                 className="w-full h-64 object-contain rounded-xl transition duration-300 group-hover:scale-105"
               />
               {product.discountPercent > 0 && (
-                <div className="absolute top-3 left-3 bg-blue- text-white font-bold text-xs px-2.5 py-1 rounded-lg shadow-xs">
+                <div className="absolute top-3 left-3 bg-blue-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg shadow-xs">
                   {product.discountPercent}% OFF
                 </div>
               )}
@@ -93,7 +93,7 @@ export default function ProductDetailModal({ product, onClose }) {
                     <span className="text-sm text-muted line-through">MRP ₹{product.mrp.toFixed(2)}</span>
                   )}
                   {product.discountPercent > 0 && (
-                    <span className="text-xs font-bold text-blue- bg-blue- px-2 py-0.5 rounded-md">
+                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                       Save {product.discountPercent}%
                     </span>
                   )}
@@ -104,7 +104,7 @@ export default function ProductDetailModal({ product, onClose }) {
               {/* Key Trust Highlights */}
               <div className="space-y-2 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-blue- shrink-0" />
+                  <Check className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>100% Genuine product sourced directly from certified stockists</span>
                 </div>
                 <div className="flex items-center gap-2">
