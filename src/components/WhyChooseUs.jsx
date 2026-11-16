@@ -20,7 +20,7 @@ export default function WhyChooseUs() {
           <div className="lg:col-span-5 bg-white rounded-3xl p-8 sm:p-10 border-2 border-slate-100 shadow-sm flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <ShieldCheck className="w-8 h-8 text-blue-500" />
+                <ShieldCheck className="w-8 h-8 text-emerald-500" />
                 <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   Why Choose ZESTMED?
                 </h3>
@@ -29,7 +29,7 @@ export default function WhyChooseUs() {
               <div className="space-y-4 mt-6">
                 {points.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-3.5">
-                    <CheckCircle2 className="w-6 h-6 text-[#005CB9] shrink-0 stroke-[2.2]" />
+                    <CheckCircle2 className="w-6 h-6 text-[#008F83] shrink-0 stroke-[2.2]" />
                     <span className="text-base sm:text-lg font-semibold text-slate-700 leading-snug">
                       {pt}
                     </span>

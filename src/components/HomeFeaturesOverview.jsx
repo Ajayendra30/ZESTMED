@@ -66,22 +66,22 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
       title: 'Search & Choose Medicines or Tests',
       icon: (
         <div className="relative">
-          <Laptop className="w-5 h-5 text-[#005CB9]" />
-          <Search className="w-3 h-3 text-[#005CB9] absolute -bottom-1 -right-1" />
+          <Laptop className="w-5 h-5 text-[#008F83]" />
+          <Search className="w-3 h-3 text-[#008F83] absolute -bottom-1 -right-1" />
         </div>
       )
     },
     {
       title: 'Book / Order Online',
-      icon: <Calendar className="w-5 h-5 text-[#005CB9]" />
+      icon: <Calendar className="w-5 h-5 text-[#008F83]" />
     },
     {
       title: 'Home Sample Collection or Lab Visit',
-      icon: <Home className="w-5 h-5 text-[#005CB9]" />
+      icon: <Home className="w-5 h-5 text-[#008F83]" />
     },
     {
       title: 'Get Reports Online',
-      icon: <FileText className="w-5 h-5 text-[#005CB9]" />
+      icon: <FileText className="w-5 h-5 text-[#008F83]" />
     }
   ];
 
@@ -100,20 +100,19 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
         {/* =========================================================================
             ROW 1: HEALTH CHECKUP PACKAGES HORIZONTAL STRIP
             ========================================================================= */}
-        <div className="bg-[#F0F6FE] border border-[#BFDBFE] rounded-3xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs">
+        <div className="bg-[#EDFBF9] border border-[#C6F1E9] rounded-3xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs">
           {/* Left Title Block */}
           <div className="flex items-center gap-3 shrink-0 lg:max-w-xs">
-            <div className="w-11 h-11 rounded-2xl bg-white text-[#005CB9] border border-blue-200 flex items-center justify-center shadow-xs shrink-0">
-              <HeartPulse className="w-6 h-6 text-[#FF5722]" />
+            <div className="w-11 h-11 rounded-2xl bg-white text-[#008F83] border border-teal-200 flex items-center justify-center shadow-xs shrink-0">
+              <HeartPulse className="w-6 h-6 text-[#008F83]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
                   Health Checkup Packages
                 </h3>
-                <span className="text-[10px] font-bold bg-[#FF5722] text-white px-2 py-0.5 rounded-full">
-                  Single-Day Reports
-                </span>
+                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
+                  Single-Day Reports </span>
               </div>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
                 Comprehensive packages delivered in 12-24 hours across Guwahati.
@@ -133,16 +132,16 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                     onSelectPackage(pkg);
                   }
                 }}
-                className={`bg-white rounded-2xl border border-slate-200/80 p-3 text-center flex flex-col justify-center items-center hover:shadow-md hover:border-[#005CB9]/50 transition cursor-pointer group ${
+                className={`bg-white rounded-2xl border border-slate-200/80 p-3 text-center flex flex-col justify-center items-center hover:shadow-md hover:border-[#008F83]/50 transition cursor-pointer group ${
                   idx === checkupPackages.length - 1 ? 'col-span-2 sm:col-span-1' : ''
                 }`}
               >
                 {pkg.hasFreeCab && (
-                  <span className="text-[9px] font-bold bg-orange-100 text-[#FF5722] px-1.5 py-0.2 rounded-full mb-1">
+                  <span className="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full mb-1">
                     Free 10km Cab 🚗
                   </span>
                 )}
-                <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#005CB9] transition leading-snug min-h-[32px] flex items-center justify-center text-center">
+                <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug min-h-[32px] flex items-center justify-center text-center">
                   {pkg.name}
                 </h4>
                 <div className="flex items-baseline gap-1.5 mt-1">
@@ -166,7 +165,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
             {/* Left Header */}
             <div className="lg:w-1/4 shrink-0 text-left">
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-                How <span className="text-[#005CB9]">It Works?</span>
+                How <span className="text-[#008F83]">It Works?</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium leading-relaxed">
                 Get healthcare services in just a few simple steps.
@@ -189,7 +188,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
 
                   {/* Arrow Indicator */}
                   {idx < steps.length - 1 && (
-                    <div className="hidden sm:flex items-center justify-center text-[#005CB9] shrink-0">
+                    <div className="hidden sm:flex items-center justify-center text-[#008F83] shrink-0">
                       <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                     </div>
                   )}
@@ -209,8 +208,8 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
             <div>
               {/* Header */}
               <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
-                <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#005CB9] border border-teal-100 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5 text-[#005CB9] stroke-[2.4]" />
+                <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#008F83] border border-teal-100 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-[#008F83] stroke-[2.4]" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   Why Choose ZESTMED?
@@ -221,7 +220,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
               <div className="space-y-3.5">
                 {whyChoosePoints.map((pt, idx) => (
                   <div key={idx} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-teal-100/90 text-[#005CB9] flex items-center justify-center shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-teal-100/90 text-[#008F83] flex items-center justify-center shrink-0">
                       <Check className="w-3.5 h-3.5 stroke-[3]" />
                     </div>
                     <span className="text-xs sm:text-sm font-bold text-slate-700 leading-snug">
@@ -234,10 +233,10 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
           </div>
 
           {/* Right Column: Home Sample Collection at Your Doorstep Banner */}
-          <div className="lg:col-span-7 bg-gradient-to-r from-[#0A1E34] via-[#005CB9] to-[#0B5ED7] rounded-3xl p-6 sm:p-8 lg:p-9 text-white relative shadow-sm overflow-hidden flex flex-col sm:flex-row items-center justify-between min-h-[220px] lg:min-h-[250px]">
+          <div className="lg:col-span-7 bg-gradient-to-r from-[#00545D] via-[#00626D] to-[#00747E] rounded-3xl p-6 sm:p-8 lg:p-9 text-white relative shadow-sm overflow-hidden flex flex-col sm:flex-row items-center justify-between min-h-[220px] lg:min-h-[250px]">
             {/* Background Soft Glow */}
-            <div className="absolute -top-16 -right-16 w-64 h-64 bg-orange-400/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-[55%] h-full bg-gradient-to-l from-blue-400/20 via-orange-300/10 to-transparent rounded-l-full pointer-events-none" />
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-[55%] h-full bg-gradient-to-l from-teal-400/20 via-cyan-300/10 to-transparent rounded-l-full pointer-events-none" />
 
             {/* Left Content */}
             <div className="relative z-10 max-w-xs sm:max-w-sm lg:max-w-md space-y-2.5 text-left mb-4 sm:mb-0">
@@ -245,16 +244,16 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                 Home Sample Collection <br className="hidden sm:inline" />
                 at Your Doorstep
               </h3>
-              <p className="text-xs sm:text-sm text-blue-100 leading-relaxed font-medium">
-                Book your diagnostic test and get sample collection from home with same-day reports.
+              <p className="text-xs sm:text-sm text-teal-100/90 leading-relaxed font-medium">
+                Book your diagnostic test and get sample collection from home.
               </p>
               <div className="pt-2">
                 <Link
                   to="/diagnostics"
-                  className="inline-flex items-center gap-2 bg-[#FF5722] hover:bg-[#E64A19] text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black shadow-md transition-all duration-200 group"
+                  className="inline-flex items-center gap-2 bg-white hover:bg-teal-50 text-[#00545D] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black shadow-md transition-all duration-200 group"
                 >
                   <span>Book a Test Now</span>
-                  <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 text-[#00545D] group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>

@@ -121,14 +121,14 @@ export default function TestDetailModal({ test, onClose, onScheduleCollection })
                 {test.mrp && test.mrp > test.price && (
                   <span className="text-xs text-muted line-through">₹{test.mrp.toFixed(2)}</span>
                 )}
-                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
                   {test.discountPercent}% OFF
                 </span>
               </div>
             </div>
             <div className="text-right text-[11px] text-muted">
               <div>Free Home Sample Collection</div>
-              <div className="text-blue-600 font-semibold">100% Sterile Kit</div>
+              <div className="text-emerald-600 font-semibold">100% Sterile Kit</div>
             </div>
           </div>
         </div>

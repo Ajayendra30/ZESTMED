@@ -34,13 +34,13 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
       {/* Modal Dialog */}
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#01333A] text-white">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <Receipt className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-blue-100">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-teal-200">
                 Official Medicine Tax Invoice
               </div>
               <h3 className="text-base font-bold text-white">
@@ -70,7 +70,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-[#005CB9] text-xs font-bold transition shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-[#01333A] text-xs font-bold transition shadow-sm"
               title="Download PDF File"
             >
               <Download className="w-3.5 h-3.5" />
@@ -106,7 +106,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
             </div>
 
             <div className="text-left sm:text-right space-y-1">
-              <div className="inline-flex items-center gap-1 font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full text-xs">
+              <div className="inline-flex items-center gap-1 font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {order.status}
               </div>
@@ -165,7 +165,7 @@ export default function OrderInvoiceModal({ isOpen = true, onClose, order }) {
               <span>Total MRP Value</span>
               <span className="font-mono line-through">₹{order.mrpTotal}</span>
             </div>
-            <div className="flex justify-between text-blue-700 font-semibold">
+            <div className="flex justify-between text-teal-700 font-semibold">
               <span>Zestmed Direct Health Discount</span>
               <span className="font-mono">-₹{order.savings}</span>
             </div>

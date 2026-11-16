@@ -33,8 +33,8 @@ export default function MedicineCategories() {
       name: 'Personal Care',
       icon: Sparkles,
       bg: 'bg-[#F0FDF4]',
-      border: 'border-blue-200 hover:border-blue-400',
-      iconColor: 'text-blue-600 bg-blue-100',
+      border: 'border-emerald-200 hover:border-emerald-400',
+      iconColor: 'text-emerald-600 bg-emerald-100',
       categorySlug: 'personal'
     },
     {
@@ -65,7 +65,7 @@ export default function MedicineCategories() {
           </h2>
           <Link
             to="/medicines"
-            className="text-sm sm:text-base font-bold text-[#005CB9] hover:underline flex items-center gap-1.5 transition"
+            className="text-sm sm:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition"
           >
             <span>View All Categories</span>
             <ArrowRight className="w-5 h-5" />

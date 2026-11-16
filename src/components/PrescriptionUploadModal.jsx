@@ -64,8 +64,8 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
         {/* Header - Compact on mobile */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-surface shrink-0">
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-50 text-[#005CB9] border border-teal-100 flex items-center justify-center shrink-0">
-              <UploadCloud className="w-4 h-4 sm:w-5 sm:h-5 text-[#005CB9]" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-50 text-[#008F83] border border-teal-100 flex items-center justify-center shrink-0">
+              <UploadCloud className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83]" />
             </div>
             <div className="min-w-0">
               <h3 className="text-sm sm:text-base font-bold text-dark truncate">Upload Doctor's Prescription</h3>
@@ -84,14 +84,14 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
         {/* Content */}
         {isSubmitted ? (
           <div className="p-5 sm:p-7 text-center">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
               <CheckCircle2 className="w-7 h-7 sm:w-9 sm:h-9" />
             </div>
             <h4 className="text-base sm:text-lg font-bold text-dark">Prescription Uploaded Successfully!</h4>
             <p className="text-xs text-muted mt-1.5 max-w-sm mx-auto leading-relaxed">
               Our registered pharmacist is reviewing your prescription ({selectedFile?.name}). You will receive an SMS and WhatsApp notification with medicine pricing and confirmation within 15 minutes.
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-800 text-left mt-4 space-y-1">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800 text-left mt-4 space-y-1">
               <div className="font-semibold">Simulated Workflow Status:</div>
               <div>• Ticket ID: #RX-ZEST-{Math.floor(10000 + Math.random() * 90000)}</div>
               <div>• Verification Desk: In Review (Demo)</div>
@@ -107,15 +107,15 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
             {/* Upload Box - Compact on mobile */}
-            <div className="border-2 border-dashed border-[#005CB9]/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 text-center bg-teal-50/30 hover:bg-teal-50/60 transition group cursor-pointer relative">
+            <div className="border-2 border-dashed border-[#008F83]/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 text-center bg-teal-50/30 hover:bg-teal-50/60 transition group cursor-pointer relative">
               <input
                 type="file"
                 accept="image/*,application/pdf"
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
               />
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white shadow-xs text-[#005CB9] border border-teal-100 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
-                <Camera className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 text-[#005CB9]" />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white shadow-xs text-[#008F83] border border-teal-100 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+                <Camera className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 text-[#008F83]" />
               </div>
               <h5 className="text-xs sm:text-sm font-bold text-dark">
                 Drag & Drop prescription or click to browse
@@ -129,7 +129,7 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
             {selectedFile ? (
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface border border-border text-xs">
                 <div className="flex items-center gap-2 truncate">
-                  <FileText className="w-4 h-4 text-[#005CB9] shrink-0" />
+                  <FileText className="w-4 h-4 text-[#008F83] shrink-0" />
                   <span className="font-semibold text-dark truncate">{selectedFile.name}</span>
                   <span className="text-muted text-[10px] shrink-0">({selectedFile.size})</span>
                 </div>
@@ -146,7 +146,7 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={handleSimulateSampleRx}
-                  className="text-[11px] sm:text-xs text-[#005CB9] font-semibold hover:underline inline-flex items-center gap-1.5"
+                  className="text-[11px] sm:text-xs text-[#008F83] font-semibold hover:underline inline-flex items-center gap-1.5"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>Attach demo sample prescription (1-Click Test)</span>
@@ -158,15 +158,15 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
             <div className="bg-slate-50 rounded-xl p-2.5 sm:p-3 border border-border text-xs space-y-1">
               <span className="font-bold text-slate-800 text-[11px] block">Prescription Requirements:</span>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span className="truncate">Doctor's name, clinic & medical registration number</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span className="truncate">Patient name, age and consultation date</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span className="truncate">Medication dosage, frequency & signature</span>
               </div>
             </div>
@@ -181,14 +181,14 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
                 value={patientNote}
                 onChange={(e) => setPatientNote(e.target.value)}
                 placeholder="e.g. Deliver 30 days dosage, call between 2-4 PM..."
-                className="w-full px-3 py-2 text-xs rounded-xl border border-border focus:border-[#005CB9] focus:ring-2 focus:ring-[#005CB9]/15 outline-none transition"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-border focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/15 outline-none transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white py-2.5 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-75 shadow-xs"
+              className="w-full bg-[#008F83] hover:bg-[#007A70] text-white py-2.5 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-75 shadow-xs"
             >
               {isSubmitting ? (
                 <span>Submitting Prescription...</span>

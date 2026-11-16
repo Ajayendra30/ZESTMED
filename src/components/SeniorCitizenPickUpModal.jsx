@@ -71,9 +71,9 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-blue-50 via-slate-50 to-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-gradient-to-r from-emerald-50 via-teal-50 to-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#005CB9] text-white flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shadow-sm shrink-0">
               <Car className="w-5 h-5" />
             </div>
             <div>
@@ -81,7 +81,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Senior Citizen Pick-up & Drop Service
                 </h3>
-                <span className="text-[10px] font-bold bg-[#FF5722] text-white px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
                   100% Free
                 </span>
               </div>
@@ -103,7 +103,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
           {bookingConfirmed ? (
             /* Confirmed Confirmation Screen */
             <div className="space-y-5 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-[#005CB9] flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -119,7 +119,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
               <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 text-left text-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                   <span className="text-slate-500 font-medium">Booking Reference</span>
-                  <span className="font-mono font-bold text-[#005CB9] text-sm">{bookingConfirmed.bookingRef}</span>
+                  <span className="font-mono font-bold text-[#008F83] text-sm">{bookingConfirmed.bookingRef}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -142,17 +142,17 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
 
                 <div className="border-t border-slate-200 pt-2.5 space-y-1">
                   <div className="flex items-start gap-2 text-slate-700">
-                    <MapPin className="w-4 h-4 text-[#FF5722] shrink-0 mt-0.5" />
+                    <MapPin className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span><strong>From:</strong> {bookingConfirmed.pickupAddress}</span>
                   </div>
                   <div className="flex items-start gap-2 text-slate-700">
-                    <Navigation className="w-4 h-4 text-[#005CB9] shrink-0 mt-0.5" />
+                    <Navigation className="w-4 h-4 text-[#008F83] shrink-0 mt-0.5" />
                     <span><strong>To:</strong> {bookingConfirmed.destination}</span>
                   </div>
                 </div>
 
-                <div className="bg-blue-50 text-blue-900 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#005CB9] shrink-0" />
+                <div className="bg-emerald-50 text-emerald-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Free service sponsored by Zestmed Senior Care Initiative. Zero charges applicable.</span>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
                 >
                   Done
                 </button>
@@ -171,8 +171,8 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
             /* Booking Form */
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Highlight Banner */}
-              <div className="bg-gradient-to-r from-blue-500/10 via-orange-500/10 to-blue-500/10 border border-blue-200 rounded-2xl p-3.5 flex items-center gap-3">
-                <Heart className="w-6 h-6 text-[#005CB9] fill-[#005CB9] shrink-0" />
+              <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 border border-teal-200 rounded-2xl p-3.5 flex items-center gap-3">
+                <Heart className="w-6 h-6 text-[#008F83] fill-[#008F83] shrink-0" />
                 <div className="text-xs">
                   <strong className="text-slate-900 block font-bold">100% Free Door-to-Door Sanitized AC Cab</strong>
                   <span className="text-slate-600">Available for Senior Citizens (60+) traveling for diagnostic lab tests, doctor consults, or day surgeries in Guwahati.</span>
@@ -188,7 +188,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     value={formData.patientName}
                     onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
                     placeholder="e.g. Ramesh Chandra Barua"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>
 
@@ -201,7 +201,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     required
                     value={formData.patientAge}
                     onChange={(e) => setFormData({ ...formData, patientAge: e.target.value })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>
 
@@ -213,7 +213,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     value={formData.contactPhone}
                     onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>
 
@@ -224,7 +224,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     value={formData.emergencyPhone}
                     onChange={(e) => setFormData({ ...formData, emergencyPhone: e.target.value })}
                     placeholder="+91 94350 12345"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <select
                   value={formData.servicePurpose}
                   onChange={(e) => setFormData({ ...formData, servicePurpose: e.target.value })}
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none bg-white font-medium"
+                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none bg-white font-medium"
                 >
                   <option value="Lab Test & Diagnostics">Lab Test & Diagnostics (Same-Day Report Center)</option>
                   <option value="Doctor Consultation">Specialist Doctor Consultation</option>
@@ -253,9 +253,9 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     value={formData.pickupAddress}
                     onChange={(e) => setFormData({ ...formData, pickupAddress: e.target.value })}
                     placeholder="e.g. House 14, Rajgarh Road, Guwahati"
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
-                  <span className="text-[10px] text-[#005CB9] font-bold block mt-0.5">
+                  <span className="text-[10px] text-emerald-600 font-semibold block mt-0.5">
                     ✓ Verified within 10 km service radius in Guwahati
                   </span>
                 </div>
@@ -279,7 +279,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     required
                     value={formData.pickupDate}
                     onChange={(e) => setFormData({ ...formData, pickupDate: e.target.value })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>
 
@@ -288,7 +288,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                   <select
                     value={formData.pickupTime}
                     onChange={(e) => setFormData({ ...formData, pickupTime: e.target.value })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#005CB9] outline-none bg-white font-medium"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none bg-white font-medium"
                   >
                     <option value="07:30 AM">07:30 AM (Fasting blood collection)</option>
                     <option value="08:30 AM">08:30 AM (Morning diagnostics)</option>
@@ -307,7 +307,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     type="checkbox"
                     checked={formData.wheelchairAssistance}
                     onChange={(e) => setFormData({ ...formData, wheelchairAssistance: e.target.checked })}
-                    className="w-4 h-4 text-[#005CB9] rounded focus:ring-[#005CB9]"
+                    className="w-4 h-4 text-[#008F83] rounded focus:ring-[#008F83]"
                   />
                   <span>Wheelchair-accessible vehicle & ramp assistance requested</span>
                 </label>
@@ -316,7 +316,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     type="checkbox"
                     checked={formData.careAssistantRequired}
                     onChange={(e) => setFormData({ ...formData, careAssistantRequired: e.target.checked })}
-                    className="w-4 h-4 text-[#005CB9] rounded focus:ring-[#005CB9]"
+                    className="w-4 h-4 text-[#008F83] rounded focus:ring-[#008F83]"
                   />
                   <span>Dedicated Zestmed Care Companion to accompany inside center</span>
                 </label>
@@ -327,7 +327,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-sm disabled:opacity-75"
+                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-sm disabled:opacity-75"
                 >
                   <Car className="w-4 h-4" />
                   <span>{isSubmitting ? 'Reserving Dedicated Vehicle...' : 'Book Free Pick-up & Drop Service'}</span>

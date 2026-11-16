@@ -90,7 +90,7 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
           {paymentSuccessData ? (
             /* Payment Success Receipt */
             <div className="space-y-4 text-center py-2">
-              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -115,22 +115,22 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Status:</span>
-                  <span className="text-blue-600 font-bold flex items-center gap-1">
+                  <span className="text-emerald-600 font-bold flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" />
                     Captured (Assam GST Invoice Generated)
                   </span>
                 </div>
               </div>
 
-              <div className="bg-blue-50 text-blue-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
+              <div className="bg-emerald-50 text-emerald-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Diagnostic booking confirmed. Single-day reports guaranteed!</span>
               </div>
 
               <button
                 type="button"
                 onClick={handleFinish}
-                className="w-full bg-[#005CB9] hover:bg-[#004C99] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
               >
                 Close & Return
               </button>
@@ -288,7 +288,7 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
               </div>
 
               <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>PCI-DSS Compliant • 256-Bit SSL Encryption</span>
               </div>
             </div>

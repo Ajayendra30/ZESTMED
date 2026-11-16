@@ -163,7 +163,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
             {/* Header */}
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
                   <Pill className="w-4 h-4" />
                 </div>
                 <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
@@ -172,7 +172,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
               </div>
               <Link
                 to="/medicines"
-                className="text-xs sm:text-sm font-bold text-[#005CB9] hover:text-[#004C99] flex items-center gap-1 group transition"
+                className="text-xs sm:text-sm font-bold text-[#008F83] hover:text-[#007a70] flex items-center gap-1 group transition"
               >
                 <span>View All</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -187,7 +187,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                   <div
                     key={med.id}
                     onClick={() => onSelectProduct && onSelectProduct(med)}
-                    className="bg-white rounded-2xl border border-slate-200/80 p-3 flex flex-col justify-between hover:shadow-md hover:border-[#005CB9]/40 transition cursor-pointer relative group"
+                    className="bg-white rounded-2xl border border-slate-200/80 p-3 flex flex-col justify-between hover:shadow-md hover:border-[#008F83]/40 transition cursor-pointer relative group"
                   >
                     {/* Wishlist Button */}
                     <button
@@ -226,7 +226,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                         <span className="line-through text-xs text-slate-400 font-medium">
                           ₹{med.mrp}
                         </span>
-                        <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60 ml-auto">
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 ml-auto">
                           {med.discount}
                         </span>
                       </div>
@@ -236,7 +236,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                     <button
                       type="button"
                       onClick={(e) => handleAddToCart(med, e)}
-                      className="w-full mt-3 bg-[#005CB9] hover:bg-[#004C99] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs transition"
+                      className="w-full mt-3 bg-[#008F83] hover:bg-[#007a70] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs transition"
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
                       <span>Add to Cart</span>
@@ -252,7 +252,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
             {/* Header */}
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
                   <FlaskConical className="w-4 h-4" />
                 </div>
                 <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
@@ -261,7 +261,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
               </div>
               <Link
                 to="/diagnostics"
-                className="text-xs sm:text-sm font-bold text-[#005CB9] hover:text-[#004C99] flex items-center gap-1 group transition"
+                className="text-xs sm:text-sm font-bold text-[#008F83] hover:text-[#007a70] flex items-center gap-1 group transition"
               >
                 <span>View All</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -276,7 +276,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                   <div
                     key={test.id}
                     onClick={() => onSelectTest && onSelectTest(test)}
-                    className="bg-white rounded-2xl border border-slate-200/80 p-3 flex flex-col justify-between hover:shadow-md hover:border-[#005CB9]/40 transition cursor-pointer relative group text-center"
+                    className="bg-white rounded-2xl border border-slate-200/80 p-3 flex flex-col justify-between hover:shadow-md hover:border-[#008F83]/40 transition cursor-pointer relative group text-center"
                   >
                     {/* Wishlist Button */}
                     <button
@@ -323,7 +323,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                             ₹{test.mrp}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60">
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
                           {test.discount}
                         </span>
                       </div>
@@ -333,7 +333,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                     <button
                       type="button"
                       onClick={(e) => handleBookTest(test, e)}
-                      className="w-full mt-3 bg-[#005CB9] hover:bg-[#004C99] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs transition"
+                      className="w-full mt-3 bg-[#008F83] hover:bg-[#007a70] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs transition"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       <span>Book Now</span>

@@ -44,7 +44,7 @@ export default function PopularServices() {
           </h2>
           <Link
             to="/medicines"
-            className="text-sm sm:text-base font-bold text-[#005CB9] hover:underline flex items-center gap-1.5 transition"
+            className="text-sm sm:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition"
           >
             <span>View All</span>
             <ArrowRight className="w-5 h-5" />
@@ -70,7 +70,7 @@ export default function PopularServices() {
               {/* Text Info & CTA */}
               <div className="flex flex-col flex-1 justify-between">
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-[#005CB9] transition">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-[#008F83] transition">
                     {srv.title}
                   </h3>
                   <p className="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
@@ -80,7 +80,7 @@ export default function PopularServices() {
 
                 <Link
                   to={srv.link}
-                  className="inline-flex items-center gap-2 bg-[#005CB9] hover:bg-[#004C99] text-white px-6 py-3.5 rounded-2xl text-sm sm:text-base font-bold w-fit mt-6 transition shadow-sm"
+                  className="inline-flex items-center gap-2 bg-[#008F83] hover:bg-[#007a70] text-white px-6 py-3.5 rounded-2xl text-sm sm:text-base font-bold w-fit mt-6 transition shadow-sm"
                 >
                   <span>{srv.buttonText}</span>
                   <ArrowRight className="w-4 h-4" />

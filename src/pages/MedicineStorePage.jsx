@@ -267,13 +267,13 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           >
             <defs>
               <linearGradient id="medOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#BFDBFE" stopOpacity="0.4" />
-                <stop offset="45%" stopColor="#93C5FD" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.4" />
+                <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
               </linearGradient>
               <linearGradient id="medOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#DBEAFE" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
               </linearGradient>
             </defs>
             <path
@@ -286,7 +286,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
               opacity="0.65"
             />
           </svg>
-          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#60A5FA]/45 via-[#93C5FD]/25 to-transparent rounded-full blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 md:pt-8 lg:pt-9 pb-7 md:pb-8 lg:pb-9 relative z-10 min-h-[250px] lg:min-h-[270px] flex items-center">
@@ -295,7 +295,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
             {/* Left Column */}
             <div className="lg:col-span-7 xl:col-span-7 z-10 space-y-3 sm:space-y-4">
               <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-tight">
-                Medicines <span className="text-[#005CB9]">Store</span>
+                Medicines <span className="text-[#008F83]">Store</span>
               </h1>
               
               <p className="text-sm sm:text-base text-slate-600 max-w-2xl font-medium leading-relaxed">
@@ -305,29 +305,29 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
               {/* 4 Trust Badges in a Horizontal Row */}
               <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
-                    <ShieldCheck className="w-4 h-4 text-[#005CB9]" />
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                    <ShieldCheck className="w-4 h-4 text-[#008F83]" />
                   </div>
                   <span>100% Genuine Medicines</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
-                    <Truck className="w-4 h-4 text-[#005CB9]" />
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                    <Truck className="w-4 h-4 text-[#008F83]" />
                   </div>
                   <span>Express Delivery</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
-                    <Tag className="w-4 h-4 text-[#005CB9]" />
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                    <Tag className="w-4 h-4 text-[#008F83]" />
                   </div>
                   <span>Best Prices</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#005CB9] shadow-xs">
-                    <RotateCcw className="w-4 h-4 text-[#005CB9]" />
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                    <RotateCcw className="w-4 h-4 text-[#008F83]" />
                   </div>
                   <span>Easy Returns</span>
                 </div>
@@ -352,8 +352,8 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           ========================================================================= */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-semibold">
-          <Link to="/" className="flex items-center gap-1.5 hover:text-[#005CB9] transition">
-            <Home className="w-4 h-4 text-[#005CB9]" />
+          <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
+            <Home className="w-4 h-4 text-[#008F83]" />
             <span>Home</span>
           </Link>
           <span className="text-slate-400">&gt;</span>
@@ -373,7 +373,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
             {/* Box 1: Categories */}
             <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs">
               <div className="flex items-center gap-2 mb-4 pb-2.5 border-b border-slate-100">
-                <Layers className="w-4 h-4 text-[#005CB9]" />
+                <Layers className="w-4 h-4 text-[#008F83]" />
                 <h3 className="text-sm font-bold text-slate-900">Categories</h3>
               </div>
 
@@ -390,9 +390,9 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleCategory(cat.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#005CB9] focus:ring-[#005CB9] cursor-pointer"
+                          className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
                         />
-                        <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#005CB9] font-bold' : 'font-medium'}`}>
+                        <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
                           {cat.name}
                         </span>
                       </div>
@@ -404,7 +404,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => setIsViewMoreCategories(!isViewMoreCategories)}
-                  className="flex items-center gap-1 text-xs font-bold text-[#005CB9] hover:underline pt-1.5 cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-bold text-[#008F83] hover:underline pt-1.5 cursor-pointer"
                 >
                   <span>{isViewMoreCategories ? 'View Less' : 'View More'}</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isViewMoreCategories ? 'rotate-180' : ''}`} />
@@ -415,7 +415,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
             {/* Box 2: Filter by (Price Range, Discount, Brand) */}
             <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-5">
               <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                <Filter className="w-4 h-4 text-[#005CB9]" />
+                <Filter className="w-4 h-4 text-[#008F83]" />
                 <h3 className="text-sm font-bold text-slate-900">Filter by</h3>
               </div>
 
@@ -429,7 +429,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                   step="50"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-[#005CB9] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                  className="w-full accent-[#008F83] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
                 />
                 <div className="flex items-center justify-between text-xs text-slate-600 font-bold mt-2">
                   <span>₹0</span>
@@ -458,9 +458,9 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => toggleDiscount(d.val)}
-                            className="w-4 h-4 rounded border-slate-300 text-[#005CB9] focus:ring-[#005CB9] cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
                           />
-                          <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#005CB9] font-bold' : 'font-medium'}`}>
+                          <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
                             {d.label}
                           </span>
                         </div>
@@ -481,7 +481,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                     value={brandSearch}
                     onChange={(e) => setBrandSearch(e.target.value)}
                     placeholder="Search brand..."
-                    className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] transition"
+                    className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] transition"
                   />
                 </div>
               </div>
@@ -512,7 +512,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
             
             {/* Top Search Bar */}
             <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs flex items-center p-1 sm:p-1.5 pl-4 focus-within:border-[#005CB9] focus-within:ring-2 focus-within:ring-[#005CB9]/20 transition">
+              <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs flex items-center p-1 sm:p-1.5 pl-4 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/20 transition">
                 <Search className="w-5 h-5 text-slate-400 shrink-0 mr-3" />
                 <input
                   type="text"
@@ -538,7 +538,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                 )}
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#005CB9] hover:bg-[#00786E] text-white text-sm font-semibold rounded-lg transition shrink-0 cursor-pointer shadow-xs"
+                  className="px-6 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white text-sm font-semibold rounded-lg transition shrink-0 cursor-pointer shadow-xs"
                 >
                   Search
                 </button>
@@ -557,7 +557,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#005CB9] cursor-pointer shadow-2xs"
+                    className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#008F83] cursor-pointer shadow-2xs"
                   >
                     <option value="Popularity">Popularity</option>
                     <option value="Price: Low to High">Price: Low to High</option>
@@ -584,7 +584,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                     setSearchQuery('');
                     setSearchInputVal('');
                   }}
-                  className="px-4 py-2 bg-[#005CB9] text-white text-xs font-bold rounded-lg mt-2 cursor-pointer"
+                  className="px-4 py-2 bg-[#008F83] text-white text-xs font-bold rounded-lg mt-2 cursor-pointer"
                 >
                   Reset Filters
                 </button>
@@ -602,7 +602,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                       <div>
                         {/* Top Row: Discount badge & Wishlist Heart */}
                         <div className="flex items-center justify-between mb-2">
-                          <span className="px-1.5 py-0.5 rounded bg-orange-50 text-[#FF5722] border border-orange-200/60 text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold">
                             {item.discountPercent}% OFF
                           </span>
 
@@ -635,7 +635,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
 
                         {/* Product Title & Pack */}
                         <div className="space-y-0.5 mt-2">
-                          <h4 className="text-[13px] sm:text-sm font-bold text-slate-900 group-hover:text-[#005CB9] transition leading-snug line-clamp-1">
+                          <h4 className="text-[13px] sm:text-sm font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug line-clamp-1">
                             {item.name}
                           </h4>
                           <p className="text-[11px] text-slate-500 font-medium">
@@ -670,7 +670,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => handleAddToCart(item)}
-                        className="w-full mt-3 py-2 px-3 bg-[#005CB9] hover:bg-[#00786E] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer"
+                        className="w-full mt-3 py-2 px-3 bg-[#008F83] hover:bg-[#00786E] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer"
                       >
                         <ShoppingCart className="w-3.5 h-3.5" />
                         <span>Add to Cart</span>
@@ -698,7 +698,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                   onClick={() => setCurrentPage(page)}
                   className={`w-8 h-8 rounded-lg text-xs font-bold transition cursor-pointer ${
                     currentPage === page
-                      ? 'bg-[#005CB9] text-white shadow-xs'
+                      ? 'bg-[#008F83] text-white shadow-xs'
                       : 'border border-slate-200 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
@@ -713,7 +713,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                 onClick={() => setCurrentPage(144)}
                 className={`w-10 h-8 rounded-lg text-xs font-bold transition cursor-pointer ${
                   currentPage === 144
-                    ? 'bg-[#005CB9] text-white shadow-xs'
+                    ? 'bg-[#008F83] text-white shadow-xs'
                     : 'border border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >

@@ -135,7 +135,7 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-[#FF5722] font-bold block">
+                    <span className="text-[10px] text-emerald-600 font-semibold block">
                       Save {test.discountPercent}% Demo Offer
                     </span>
                   </div>
@@ -147,7 +147,7 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
                       addItem(test, 'diagnostic');
                     }}
                     className={`btn-primary text-xs py-2 px-4 rounded-xl font-semibold transition ${
-                      inCart ? 'bg-[#004C99] hover:bg-[#003E7D]' : ''
+                      inCart ? 'bg-emerald-600 hover:bg-emerald-700' : ''
                     }`}
                   >
                     {inCart ? (

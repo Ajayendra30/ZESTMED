@@ -131,16 +131,16 @@ export function createClinicalReportPdfBlob(report) {
         { name: 'Monocytes', value: '5', normalRange: '2 - 10', unit: '%', status: 'Normal' }
       ];
 
-  // Header Banner (Royal Blue: #005CB9 -> 0, 0.36, 0.73)
-  doc.rect(36, 742, 523, 62, [0, 0.36, 0.73], null);
+  // Header Banner (Zestmed Brand Teal: #008F83 -> [0, 0.56, 0.51])
+  doc.rect(36, 742, 523, 62, [0, 0.56, 0.51], null);
   doc.text('ZESTMED DIAGNOSTICS & POLYCLINIC', 50, 782, { bold: true, size: 16, color: [1, 1, 1] });
-  doc.text('Central Clinical Reference Laboratory - NABL Accredited (ISO 15189) - Guwahati, Assam', 50, 766, { size: 8.5, color: [0.92, 0.96, 1] });
-  doc.text('GS Road, Dispur, Guwahati - 781005 | Helpline: +91 92791 25091 | www.zestmed.in', 50, 752, { size: 8, color: [0.85, 0.92, 1] });
+  doc.text('Central Clinical Reference Laboratory - NABL Accredited (ISO 15189) - Guwahati, Assam', 50, 766, { size: 8.5, color: [0.92, 0.98, 0.98] });
+  doc.text('GS Road, Dispur, Guwahati - 781005 | Helpline: +91 92791 25091 | www.zestmed.in', 50, 752, { size: 8, color: [0.85, 0.95, 0.95] });
   doc.text(`REPORT ID: ${reportId}`, 425, 782, { bold: true, size: 9.5, color: [1, 1, 1] });
-  doc.text(`BARCODE: AS-LAB-${reportId.replace(/\D/g, '') || '781001'}`, 425, 766, { size: 8, color: [0.9, 0.95, 1] });
+  doc.text(`BARCODE: AS-LAB-${reportId.replace(/\D/g, '') || '781001'}`, 425, 766, { size: 8, color: [0.9, 0.98, 0.98] });
 
   // Patient Card
-  doc.rect(36, 666, 523, 66, [0.96, 0.98, 1], [0.8, 0.88, 0.96], 1);
+  doc.rect(36, 666, 523, 66, [0.95, 0.99, 0.98], [0.8, 0.93, 0.91], 1);
   doc.text('PATIENT NAME:', 48, 716, { size: 8, color: [0.4, 0.46, 0.55] });
   doc.text(patientName, 48, 703, { bold: true, size: 10 });
   doc.text(`UHID: ${uhid}`, 48, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
@@ -152,16 +152,16 @@ export function createClinicalReportPdfBlob(report) {
   doc.text(`Specimen: ${specimen}`, 225, 676, { size: 8.5, color: [0.35, 0.4, 0.5] });
 
   doc.text('REPORT STATUS:', 420, 716, { size: 8, color: [0.4, 0.46, 0.55] });
-  doc.text('Verified / Released', 420, 703, { bold: true, size: 9.5, color: [0, 0.36, 0.73] });
+  doc.text('Verified / Released', 420, 703, { bold: true, size: 9.5, color: [0, 0.56, 0.51] });
   doc.text('Hub: Guwahati Central Hub', 420, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
   doc.text('Sample Type: Barcoded Vacuum Tube', 420, 676, { size: 8, color: [0.35, 0.4, 0.5] });
 
   // Investigation Subheading
-  doc.text(`INVESTIGATION FINDINGS: ${testName.toUpperCase()}`, 38, 646, { bold: true, size: 9.5, color: [0.04, 0.12, 0.2] });
+  doc.text(`INVESTIGATION FINDINGS: ${testName.toUpperCase()}`, 38, 646, { bold: true, size: 9.5, color: [0.004, 0.20, 0.23] });
   doc.text('Methodology: Fully Automated Clinical Analyzer & Laser Flow Cytometry', 280, 646, { italic: true, size: 8, color: [0.4, 0.45, 0.5] });
 
-  // Table Header (Royal Blue)
-  doc.rect(36, 620, 523, 20, [0, 0.36, 0.73], null);
+  // Table Header (Zestmed Brand Teal)
+  doc.rect(36, 620, 523, 20, [0, 0.56, 0.51], null);
   doc.text('Test Parameter', 46, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
   doc.text('Observed Result', 220, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
   doc.text('Biological Reference Range', 320, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
@@ -183,7 +183,7 @@ export function createClinicalReportPdfBlob(report) {
     doc.text(String(p.value), 220, y, { bold: true, size: 8.5, color: isAbnormal ? [0.8, 0.1, 0.1] : [0.05, 0.1, 0.18] });
     doc.text(p.normalRange || 'Normal', 320, y, { size: 8, color: [0.35, 0.4, 0.5] });
     doc.text(p.unit || '-', 445, y, { size: 8, color: [0.35, 0.4, 0.5] });
-    doc.text(p.status || 'Normal', 505, y, { bold: true, size: 8, color: isAbnormal ? [0.8, 0.1, 0.1] : [0, 0.36, 0.73] });
+    doc.text(p.status || 'Normal', 505, y, { bold: true, size: 8, color: isAbnormal ? [0.8, 0.1, 0.1] : [0, 0.56, 0.51] });
 
     y -= 18;
   });
@@ -228,28 +228,28 @@ export function createOrderInvoicePdfBlob(order) {
         { name: 'Vitamin D3 60k Cholecalciferol (Strip of 4)', batch: 'ZM-D881', expiry: '08/28', qty: 1, price: 420 }
       ];
 
-  // Top Navy / Royal Blue Header
-  doc.rect(36, 742, 523, 62, [0, 0.36, 0.73], null);
+  // Top Deep Teal / Forest Green Header
+  doc.rect(36, 742, 523, 62, [0.004, 0.20, 0.23], null);
   doc.text('ZESTMED PHARMACEUTICALS - TAX INVOICE', 50, 782, { bold: true, size: 15, color: [1, 1, 1] });
-  doc.text('Zestmed Health Private Limited • Central Pharmacy Hub, Guwahati, Assam', 50, 766, { size: 8.5, color: [0.92, 0.96, 1] });
-  doc.text('GSTIN: 18AAACZ9901M1ZT | Drug Lic: DL-GUW-20B/21B-4492/24 | Helpline: +91 92791 25091', 50, 752, { size: 8, color: [0.85, 0.92, 1] });
+  doc.text('Zestmed Health Private Limited • Central Pharmacy Hub, Guwahati, Assam', 50, 766, { size: 8.5, color: [0.92, 0.98, 0.98] });
+  doc.text('GSTIN: 18AAACZ9901M1ZT | Drug Lic: DL-GUW-20B/21B-4492/24 | Helpline: +91 92791 25091', 50, 752, { size: 8, color: [0.85, 0.95, 0.95] });
   doc.text(`INVOICE #: ${invoiceId}`, 425, 782, { bold: true, size: 9.5, color: [1, 1, 1] });
-  doc.text(`DATE: ${orderDate}`, 425, 766, { size: 8, color: [0.9, 0.95, 1] });
+  doc.text(`DATE: ${orderDate}`, 425, 766, { size: 8, color: [0.9, 0.98, 0.98] });
 
   // Bill To & Dispatch Details
-  doc.rect(36, 666, 523, 66, [0.97, 0.98, 1], [0.82, 0.88, 0.96], 1);
+  doc.rect(36, 666, 523, 66, [0.95, 0.99, 0.98], [0.8, 0.93, 0.91], 1);
   doc.text('BILLED TO (PATIENT):', 48, 716, { size: 8, color: [0.4, 0.46, 0.55] });
   doc.text(patientName, 48, 703, { bold: true, size: 10 });
   doc.text(`Phone: ${phone}`, 48, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
   doc.text(address, 48, 676, { size: 8, color: [0.35, 0.4, 0.5] });
 
   doc.text('PAYMENT DETAILS:', 340, 716, { size: 8, color: [0.4, 0.46, 0.55] });
-  doc.text('Status: PAID IN FULL', 340, 703, { bold: true, size: 9.5, color: [0, 0.36, 0.73] });
+  doc.text('Status: PAID IN FULL', 340, 703, { bold: true, size: 9.5, color: [0, 0.56, 0.51] });
   doc.text('Payment Gateway: Razorpay Verified (UPI/Card)', 340, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
   doc.text('Delivery: Senior Citizen Free Dispatch (< 10km Guwahati)', 340, 676, { size: 8, color: [0.35, 0.4, 0.5] });
 
   // Table Header
-  doc.rect(36, 620, 523, 20, [0, 0.36, 0.73], null);
+  doc.rect(36, 620, 523, 20, [0.004, 0.20, 0.23], null);
   doc.text('Item Description / Medicine Name', 46, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
   doc.text('Batch / Exp', 280, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
   doc.text('Qty', 390, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
@@ -277,26 +277,26 @@ export function createOrderInvoicePdfBlob(order) {
     doc.text(`${itBatch} (${itExp})`, 280, y, { size: 8, color: [0.35, 0.4, 0.5] });
     doc.text(String(itQty), 395, y, { size: 8.5, color: [0.2, 0.25, 0.35] });
     doc.text(`Rs. ${itPrice}`, 445, y, { size: 8.5, color: [0.2, 0.25, 0.35] });
-    doc.text(`Rs. ${itTotal}`, 505, y, { bold: true, size: 8.5, color: [0, 0.36, 0.73] });
+    doc.text(`Rs. ${itTotal}`, 505, y, { bold: true, size: 8.5, color: [0.004, 0.20, 0.23] });
 
     y -= 18;
   });
 
   // Summary Box
   const summaryY = Math.max(y - 15, 200);
-  doc.rect(340, summaryY - 60, 219, 65, [0.98, 0.99, 1], [0.85, 0.9, 0.96], 1);
+  doc.rect(340, summaryY - 60, 219, 65, [0.95, 0.99, 0.98], [0.8, 0.93, 0.91], 1);
   doc.text('Taxable Subtotal:', 350, summaryY - 8, { size: 8.5, color: [0.4, 0.45, 0.55] });
   doc.text(`Rs. ${total}`, 485, summaryY - 8, { bold: true, size: 8.5 });
 
   doc.text('Senior Citizen 10km Free Delivery:', 350, summaryY - 22, { size: 8, color: [0.4, 0.45, 0.55] });
-  doc.text('Rs. 0.00', 485, summaryY - 22, { bold: true, size: 8, color: [0, 0.36, 0.73] });
+  doc.text('Rs. 0.00', 485, summaryY - 22, { bold: true, size: 8, color: [0, 0.56, 0.51] });
 
   doc.text('Applicable GST (CGST+SGST):', 350, summaryY - 36, { size: 8, color: [0.4, 0.45, 0.55] });
   doc.text('Included', 485, summaryY - 36, { size: 8, color: [0.4, 0.45, 0.55] });
 
   doc.line(340, summaryY - 42, 559, summaryY - 42, [0.8, 0.85, 0.9], 1);
-  doc.text('NET AMOUNT PAID:', 350, summaryY - 54, { bold: true, size: 9.5, color: [0.04, 0.12, 0.2] });
-  doc.text(`Rs. ${total}`, 485, summaryY - 54, { bold: true, size: 10.5, color: [0, 0.36, 0.73] });
+  doc.text('NET AMOUNT PAID:', 350, summaryY - 54, { bold: true, size: 9.5, color: [0.004, 0.20, 0.23] });
+  doc.text(`Rs. ${total}`, 485, summaryY - 54, { bold: true, size: 10.5, color: [0.004, 0.20, 0.23] });
 
   // Footer & Pharmacist Sign
   doc.line(36, 120, 559, 120, [0.8, 0.85, 0.9], 1);
@@ -323,26 +323,26 @@ export function createStatutoryDocPdfBlob(docData) {
   const mandatoryFor = docData.mandatoryFor || 'Razorpay Healthcare Activation';
 
   // Government / Corporate Seal Header
-  doc.rect(36, 742, 523, 62, [0.04, 0.12, 0.2], null);
+  doc.rect(36, 742, 523, 62, [0.004, 0.20, 0.23], null);
   doc.text('GOVERNMENT OF ASSAM / REGULATORY STATUTORY DOSSIER', 50, 782, { bold: true, size: 13, color: [1, 1, 1] });
-  doc.text('Official Certified Copy - Registered for Zestmed Health Private Limited, Guwahati', 50, 766, { size: 8.5, color: [0.85, 0.9, 1] });
-  doc.text(`DOCUMENT ID: ${docNumber}`, 50, 752, { bold: true, size: 8, color: [0.9, 0.95, 1] });
+  doc.text('Official Certified Copy - Registered for Zestmed Health Private Limited, Guwahati', 50, 766, { size: 8.5, color: [0.92, 0.98, 0.98] });
+  doc.text(`DOCUMENT ID: ${docNumber}`, 50, 752, { bold: true, size: 8, color: [0.9, 0.98, 0.98] });
   doc.text('STATUS: VERIFIED', 430, 782, { bold: true, size: 10, color: [0.3, 0.9, 0.4] });
-  doc.text('COMPLIANCE: RBI/DRUGS ACT', 410, 766, { size: 7.5, color: [0.85, 0.9, 1] });
+  doc.text('COMPLIANCE: RBI/DRUGS ACT', 410, 766, { size: 7.5, color: [0.92, 0.98, 0.98] });
 
   // Main Certificate Card
-  doc.rect(36, 520, 523, 210, [0.98, 0.99, 1], [0.8, 0.85, 0.92], 1.5);
-  doc.text('CERTIFICATE OF REGULATORY COMPLIANCE', 140, 705, { bold: true, size: 13, color: [0, 0.36, 0.73] });
-  doc.line(140, 698, 455, 698, [0, 0.36, 0.73], 1);
+  doc.rect(36, 520, 523, 210, [0.95, 0.99, 0.98], [0.8, 0.93, 0.91], 1.5);
+  doc.text('CERTIFICATE OF REGULATORY COMPLIANCE', 140, 705, { bold: true, size: 13, color: [0, 0.56, 0.51] });
+  doc.line(140, 698, 455, 698, [0, 0.56, 0.51], 1);
 
   doc.text('Document Title:', 50, 675, { size: 8.5, color: [0.4, 0.45, 0.55] });
-  doc.text(title, 50, 660, { bold: true, size: 11, color: [0.04, 0.12, 0.2] });
+  doc.text(title, 50, 660, { bold: true, size: 11, color: [0.004, 0.20, 0.23] });
 
   doc.text('Category:', 50, 638, { size: 8.5, color: [0.4, 0.45, 0.55] });
   doc.text(category, 50, 625, { bold: true, size: 9.5 });
 
   doc.text('Statutory Registration / License Number:', 260, 638, { size: 8.5, color: [0.4, 0.45, 0.55] });
-  doc.text(docNumber, 260, 625, { bold: true, size: 9.5, color: [0, 0.36, 0.73] });
+  doc.text(docNumber, 260, 625, { bold: true, size: 9.5, color: [0, 0.56, 0.51] });
 
   doc.text('Issued Entity:', 50, 603, { size: 8.5, color: [0.4, 0.45, 0.55] });
   doc.text('Zestmed Health Private Limited (Dispur, Guwahati - 781005, Assam)', 50, 590, { bold: true, size: 9 });

@@ -39,13 +39,13 @@ export default function AboutPage() {
           >
             <defs>
               <linearGradient id="aboutOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#BFDBFE" stopOpacity="0.4" />
-                <stop offset="45%" stopColor="#93C5FD" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.4" />
+                <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
               </linearGradient>
               <linearGradient id="aboutOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#DBEAFE" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
               </linearGradient>
             </defs>
             <path
@@ -58,7 +58,7 @@ export default function AboutPage() {
               opacity="0.65"
             />
           </svg>
-          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#60A5FA]/45 via-[#93C5FD]/25 to-transparent rounded-full blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10 min-h-[230px] sm:min-h-[250px] lg:min-h-[270px] flex items-center">
@@ -66,8 +66,8 @@ export default function AboutPage() {
           <div className="relative z-20 max-w-lg lg:max-w-xl xl:max-w-2xl py-6 sm:py-7 lg:py-8 space-y-2">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold mb-1.5">
-              <Link to="/" className="flex items-center gap-1.5 hover:text-[#005CB9] transition">
-                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#005CB9]" />
+              <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
+                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83]" />
                 <span>Home</span>
               </Link>
               <span className="text-slate-400">&gt;</span>
@@ -76,7 +76,7 @@ export default function AboutPage() {
 
             {/* Page Title */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-black text-[#0B1728] tracking-tight leading-tight mb-1.5">
-              About <span className="text-[#005CB9]">ZESTMED</span>
+              About <span className="text-[#008F83]">ZESTMED</span>
             </h1>
 
             {/* Subheading */}
@@ -119,7 +119,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {/* Mission Card */}
             <div className="bg-[#E2F7F8] border border-[#C6EFEF] rounded-2xl sm:rounded-3xl p-6 sm:p-7 flex items-start gap-4 sm:gap-5 transition-shadow hover:shadow-md">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#AEF2F1] text-[#005CB9] flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#AEF2F1] text-[#008F83] flex items-center justify-center shrink-0 shadow-xs">
                 <Target className="w-7 h-7 stroke-[2.2]" />
               </div>
               <div className="space-y-1.5">
@@ -154,7 +154,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {/* 1. Order Medicines */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-teal-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
                 <Pill className="w-6 h-6 stroke-[2]" />
               </div>
               <div>
@@ -192,8 +192,8 @@ export default function AboutPage() {
             </div>
 
             {/* 4. Home Sample Collection */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-blue-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-emerald-200 transition">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <Home className="w-6 h-6 stroke-[2]" />
               </div>
               <div>
@@ -223,7 +223,7 @@ export default function AboutPage() {
             {/* Center: Title + 5 Bullet Points */}
             <div className="lg:col-span-4 space-y-4">
               <h3 className="text-2xl sm:text-3xl font-black text-[#0B1728] tracking-tight">
-                Why Choose <span className="text-[#005CB9]">ZESTMED?</span>
+                Why Choose <span className="text-[#008F83]">ZESTMED?</span>
               </h3>
 
               <div className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-700">
@@ -235,19 +235,19 @@ export default function AboutPage() {
                   'Reports anytime, anywhere'
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#005CB9] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#16A34A] shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right: 2x2 Stats Grid in Soft Ice Azure Container */}
-            <div className="lg:col-span-4 bg-[#F0F6FE] border border-blue-100 rounded-2xl p-4 sm:p-5">
+            {/* Right: 2x2 Stats Grid in Soft Mint Container */}
+            <div className="lg:col-span-4 bg-[#F2FBF9] border border-teal-100/70 rounded-2xl p-4 sm:p-5">
               <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
                 {/* 50,000+ Happy Patients */}
                 <div className="bg-white rounded-xl p-3.5 text-center shadow-xs border border-teal-50 flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#005CB9] flex items-center justify-center mb-1">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#008F83] flex items-center justify-center mb-1">
                     <Users className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="text-base sm:text-lg font-black text-[#0B1728]">50,000+</div>
@@ -256,7 +256,7 @@ export default function AboutPage() {
 
                 {/* 100+ Lab Tests */}
                 <div className="bg-white rounded-xl p-3.5 text-center shadow-xs border border-teal-50 flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#005CB9] flex items-center justify-center mb-1">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#008F83] flex items-center justify-center mb-1">
                     <FlaskConical className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="text-base sm:text-lg font-black text-[#0B1728]">100+</div>
@@ -265,7 +265,7 @@ export default function AboutPage() {
 
                 {/* 5,000+ Medicines */}
                 <div className="bg-white rounded-xl p-3.5 text-center shadow-xs border border-teal-50 flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#005CB9] flex items-center justify-center mb-1">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#008F83] flex items-center justify-center mb-1">
                     <Package className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="text-base sm:text-lg font-black text-[#0B1728]">5,000+</div>
@@ -274,7 +274,7 @@ export default function AboutPage() {
 
                 {/* 10+ Partner Labs */}
                 <div className="bg-white rounded-xl p-3.5 text-center shadow-xs border border-teal-50 flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#005CB9] flex items-center justify-center mb-1">
+                  <div className="w-8 h-8 rounded-lg bg-teal-50 text-[#008F83] flex items-center justify-center mb-1">
                     <MapPin className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div className="text-base sm:text-lg font-black text-[#0B1728]">10+</div>
@@ -294,7 +294,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {/* 1. Trust */}
             <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-teal-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-[#005CB9] flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-[#008F83] flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-6 h-6 stroke-[2]" />
               </div>
               <div>
@@ -332,8 +332,8 @@ export default function AboutPage() {
             </div>
 
             {/* 4. Accessibility */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-blue-200 transition">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 shadow-xs hover:shadow-md hover:border-emerald-200 transition">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <Leaf className="w-6 h-6 stroke-[2]" />
               </div>
               <div>

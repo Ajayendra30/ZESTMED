@@ -66,7 +66,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
       {/* Modal Dialog */}
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#14B8A6] text-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <Edit3 className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-medium"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-medium"
             />
           </div>
 
@@ -106,7 +106,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono"
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
               <select
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
               >
                 <option value="Guwahati (Panbazar)">Guwahati (Panbazar)</option>
                 <option value="Guwahati (Dispur)">Guwahati (Dispur)</option>
@@ -134,7 +134,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white font-semibold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white font-semibold"
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -148,7 +148,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
                 min="0"
                 value={formData.bookingsCount}
                 onChange={(e) => setFormData({ ...formData, bookingsCount: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-bold text-teal-700"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-bold text-teal-700"
               />
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
                 min="0"
                 value={formData.ordersCount}
                 onChange={(e) => setFormData({ ...formData, ordersCount: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-bold text-sky-700"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-bold text-sky-700"
               />
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function EditPatientModal({ isOpen = true, onClose, patient, onSa
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
             >
               <UserCheck className="w-4 h-4" />
               <span>Save Changes</span>

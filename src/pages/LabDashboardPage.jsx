@@ -47,7 +47,6 @@ import SampleCollectionModal from '../components/SampleCollectionModal';
 import PublishReportModal from '../components/PublishReportModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import NewLabJobModal from '../components/NewLabJobModal';
-import { downloadClinicalReportPdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function LabDashboardPage() {
   const navigate = useNavigate();
@@ -198,10 +197,10 @@ export default function LabDashboardPage() {
       )}
 
       {/* ======================================================== */}
-      {/* 1. LEFT SIDEBAR (Dark Navy #0A1E34)                      */}
+      {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0A1E34] flex flex-col border-r border-[#081827] justify-between overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0B2238] flex flex-col border-r border-[#081827] justify-between overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
           isSidebarOpen
             ? 'translate-x-0 visible pointer-events-auto'
             : '-translate-x-full invisible pointer-events-none'
@@ -241,7 +240,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'dashboard'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -259,7 +258,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'assigned'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -277,7 +276,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'schedule'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -295,7 +294,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'collection'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -313,7 +312,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'processing'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -331,7 +330,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'upload-reports'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -349,7 +348,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'completed'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -367,7 +366,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'notifications'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -388,7 +387,7 @@ export default function LabDashboardPage() {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'profile'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -454,7 +453,7 @@ export default function LabDashboardPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search booking ID, patient..."
-                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:ring-1 focus:ring-[#005CB9] transition"
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
               />
             </div>
           </div>
@@ -481,7 +480,7 @@ export default function LabDashboardPage() {
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <span className="text-xs font-bold text-slate-900">Lab Operation Alerts</span>
-                    <span className="text-[10px] font-bold text-[#005CB9] bg-teal-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-[#14B8A6] bg-teal-50 px-2 py-0.5 rounded-full">
                       3 New
                     </span>
                   </div>
@@ -506,7 +505,7 @@ export default function LabDashboardPage() {
                 className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Circular Photo Avatar */}
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#005CB9]/20 bg-slate-100 shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#14B8A6]/20 bg-slate-100 shrink-0">
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                     alt="Rohit Das"
@@ -611,7 +610,7 @@ export default function LabDashboardPage() {
                         addToast(`Shift date selected: ${opt}`, 'info');
                       }}
                       className={`w-full text-left px-4 py-1.5 text-xs font-medium ${
-                        dateRange === opt ? 'text-[#005CB9] font-bold bg-teal-50/60' : 'text-slate-700 hover:bg-slate-50'
+                        dateRange === opt ? 'text-[#14B8A6] font-bold bg-teal-50/60' : 'text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       {opt}
@@ -667,7 +666,7 @@ export default function LabDashboardPage() {
               onClick={() => setActiveMenu('collection')}
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-3.5 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                 <Syringe className="w-5 h-5 stroke-[2]" />
               </div>
               <div>
@@ -743,7 +742,7 @@ export default function LabDashboardPage() {
             <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#005CB9]" />
+                  <Calendar className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Today's Schedule (12)
                   </h3>
@@ -754,7 +753,7 @@ export default function LabDashboardPage() {
                     setActiveMenu('schedule');
                     addToast('Opening full 12 appointment roster (Assam Phlebotomy)', 'info');
                   }}
-                  className="text-xs font-semibold text-[#005CB9] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
                 >
                   <span>View Full Schedule</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -770,7 +769,7 @@ export default function LabDashboardPage() {
                   >
                     {/* Time Badge */}
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold shrink-0">
+                      <div className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold shrink-0">
                         {row.time}
                       </div>
 
@@ -809,7 +808,7 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-[#005CB9] hover:bg-[#004C99] text-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-semibold shadow-xs transition"
+                          className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-semibold shadow-xs transition"
                         >
                           Collect Sample
                         </button>
@@ -817,12 +816,12 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-white hover:bg-teal-50 text-[#005CB9] border border-[#005CB9] px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-xl text-xs font-semibold transition"
+                          className="bg-white hover:bg-teal-50 text-[#14B8A6] border border-[#14B8A6] px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-xl text-xs font-semibold transition"
                         >
                           Check In
                         </button>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-200">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-emerald-200">
                           <Check className="w-3.5 h-3.5" />
                           <span>{row.action}</span>
                         </span>
@@ -838,7 +837,7 @@ export default function LabDashboardPage() {
               {/* Upper Card: Task Progress Today */}
               <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
                 <div className="flex items-center gap-2 mb-3">
-                  <FlaskConical className="w-5 h-5 text-[#005CB9]" />
+                  <FlaskConical className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Task Progress Today
                   </h3>
@@ -855,7 +854,7 @@ export default function LabDashboardPage() {
                         cy="80"
                         r="60"
                         fill="transparent"
-                        stroke="#005CB9"
+                        stroke="#14B8A6"
                         strokeWidth="20"
                         strokeDasharray="167.4 377"
                         strokeDashoffset="0"
@@ -900,7 +899,7 @@ export default function LabDashboardPage() {
                   <div className="space-y-2.5 flex-1 text-xs">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#005CB9]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]" />
                         <span className="text-slate-700 font-medium text-[11.5px]">Samples Collected</span>
                       </div>
                       <span className="font-bold text-slate-900 text-xs">8</span>
@@ -936,7 +935,7 @@ export default function LabDashboardPage() {
               {/* Lower Card: Quick Actions */}
               <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-5 h-5 text-[#005CB9]" />
+                  <Zap className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Quick Actions
                   </h3>
@@ -960,9 +959,9 @@ export default function LabDashboardPage() {
                         status: 'Pending Collection'
                       });
                     }}
-                    className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Syringe className="w-5 h-5 stroke-[2]" />
                     </div>
                     <span className="text-[11px] font-bold text-slate-800 leading-tight">
@@ -976,7 +975,7 @@ export default function LabDashboardPage() {
                     onClick={() => {
                       addToast('Diagnostic specimen marked: In-Analyzer Centrifugation (Dispur Lab)', 'success');
                     }}
-                    className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <FlaskConical className="w-5 h-5 stroke-[2]" />
@@ -998,7 +997,7 @@ export default function LabDashboardPage() {
                         collectedAt: '10:15 AM'
                       });
                     }}
-                    className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Upload className="w-5 h-5 stroke-[2]" />
@@ -1015,7 +1014,7 @@ export default function LabDashboardPage() {
                       setActiveMenu('assigned');
                       addToast('Viewing all 28 assigned bookings for Assam region', 'info');
                     }}
-                    className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Layers className="w-5 h-5 stroke-[2]" />
@@ -1037,7 +1036,7 @@ export default function LabDashboardPage() {
             <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-[#005CB9]" />
+                  <Activity className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Recent Activities
                   </h3>
@@ -1045,7 +1044,7 @@ export default function LabDashboardPage() {
                 <button
                   type="button"
                   onClick={() => addToast('Opening comprehensive lab executive audit trail', 'info')}
-                  className="text-xs font-semibold text-[#005CB9] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
                 >
                   <span>View All</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1057,7 +1056,7 @@ export default function LabDashboardPage() {
                 {/* Activity 1 */}
                 <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-bold text-slate-800 truncate">
@@ -1072,7 +1071,7 @@ export default function LabDashboardPage() {
                 {/* Activity 2 */}
                 <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-bold text-slate-800 truncate">
@@ -1119,7 +1118,7 @@ export default function LabDashboardPage() {
             {/* Right Column: Assigned Tests Overview (~55% width -> lg:col-span-7) */}
             <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center gap-2">
-                <Layers className="w-5 h-5 text-[#005CB9]" />
+                <Layers className="w-5 h-5 text-[#14B8A6]" />
                 <h3 className="text-sm font-bold text-slate-900">
                   Assigned Tests Overview
                 </h3>
@@ -1134,7 +1133,7 @@ export default function LabDashboardPage() {
                     <span className="font-bold text-slate-900 font-mono">10</span>
                   </div>
                   <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#005CB9] rounded-full" style={{ width: '75%' }} />
+                    <div className="h-full bg-[#14B8A6] rounded-full" style={{ width: '75%' }} />
                   </div>
                 </div>
 
@@ -1184,7 +1183,7 @@ export default function LabDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Users className="w-6 h-6 text-[#005CB9]" />
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
                     <span>Assigned Phlebotomy & Lab Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1194,7 +1193,7 @@ export default function LabDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsNewJobModalOpen(true)}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>New Job Dispatch</span>
@@ -1214,7 +1213,7 @@ export default function LabDashboardPage() {
                     onClick={() => setAssignedFilter(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                       assignedFilter === f.id
-                        ? 'bg-[#005CB9] text-white shadow-xs'
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1281,7 +1280,7 @@ export default function LabDashboardPage() {
                           <button
                             type="button"
                             onClick={() => handleActionClick(j)}
-                            className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
                           >
                             <Syringe className="w-3.5 h-3.5" />
                             <span>{j.action}</span>
@@ -1318,7 +1317,7 @@ export default function LabDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Calendar className="w-6 h-6 text-[#005CB9]" />
+                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
                     <span>Today's Shift Roster & Route Schedule</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1340,7 +1339,7 @@ export default function LabDashboardPage() {
                       className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-teal-100/60 text-[#005CB9] font-black text-sm flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-teal-100/60 text-[#14B8A6] font-black text-sm flex items-center justify-center shrink-0">
                           #{idx + 1}
                         </div>
                         <div>
@@ -1362,7 +1361,7 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="px-4 py-2 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                          className="px-4 py-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
                         >
                           {row.action}
                         </button>
@@ -1381,7 +1380,7 @@ export default function LabDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Syringe className="w-6 h-6 text-[#005CB9]" />
+                  <Syringe className="w-6 h-6 text-[#14B8A6]" />
                   <span>Phlebotomy Sample Collection Workbench</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1431,14 +1430,14 @@ export default function LabDashboardPage() {
                     value={barcodeInput}
                     onChange={(e) => setBarcodeInput(e.target.value)}
                     placeholder="Scan or enter barcode (e.g. AS-BC-781005-092)"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-[#005CB9]"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-[#14B8A6]"
                   />
                   <button
                     type="button"
                     onClick={() => {
                       addToast(`Barcode ${barcodeInput} verified and associated with cold-box CCB-01!`, 'success');
                     }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl transition shrink-0"
+                    className="w-full sm:w-auto px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl transition shrink-0"
                   >
                     Scan & Link
                   </button>
@@ -1458,7 +1457,7 @@ export default function LabDashboardPage() {
                       <button
                         type="button"
                         onClick={() => handleActionClick(row)}
-                        className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl shadow-xs transition"
+                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
                       >
                         Collect Sample
                       </button>
@@ -1476,7 +1475,7 @@ export default function LabDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Package className="w-6 h-6 text-[#005CB9]" />
+                  <Package className="w-6 h-6 text-[#14B8A6]" />
                   <span>Laboratory Testing & Analyzer Centrifugation</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1501,10 +1500,10 @@ export default function LabDashboardPage() {
                     <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between text-slate-600">
                         <span>Machine: <strong>{proc.analyzer}</strong></span>
-                        <span className="font-bold text-[#005CB9]">{proc.progress}%</span>
+                        <span className="font-bold text-[#14B8A6]">{proc.progress}%</span>
                       </div>
                       <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#005CB9] rounded-full transition-all duration-500" style={{ width: `${proc.progress}%` }} />
+                        <div className="h-full bg-[#14B8A6] rounded-full transition-all duration-500" style={{ width: `${proc.progress}%` }} />
                       </div>
                     </div>
 
@@ -1518,7 +1517,7 @@ export default function LabDashboardPage() {
                           );
                           addToast(`Specimen ${proc.id} testing finished! Ready for report release.`, 'success');
                         }}
-                        className="px-3 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl font-bold transition shadow-xs"
+                        className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl font-bold transition shadow-xs"
                       >
                         Authorize Results
                       </button>
@@ -1536,7 +1535,7 @@ export default function LabDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Upload className="w-6 h-6 text-[#005CB9]" />
+                  <Upload className="w-6 h-6 text-[#14B8A6]" />
                   <span>Pathology Diagnostic Report Upload Desk</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1581,7 +1580,7 @@ export default function LabDashboardPage() {
                                   collectedAt: j.time
                                 });
                               }}
-                              className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
                             >
                               Fill & Publish
                             </button>
@@ -1602,7 +1601,7 @@ export default function LabDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <CheckCircle2 className="w-6 h-6 text-[#005CB9]" />
+                  <CheckCircle2 className="w-6 h-6 text-[#14B8A6]" />
                   <span>Authorized & Published Test Reports (34)</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1633,53 +1632,27 @@ export default function LabDashboardPage() {
                           <td className="py-3.5 px-4 text-slate-500 font-mono">{c.time}</td>
                           <td className="py-3.5 px-4 text-slate-600">{c.pathologist}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
                               {c.status}
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setSelectedJobForReportView({
-                                    id: c.id,
-                                    bookingId: c.id,
-                                    patientName: c.patient,
-                                    patient: c.patient,
-                                    testName: c.test,
-                                    test: c.test,
-                                    date: 'Nov 13, 2026',
-                                    collectionDate: 'Nov 13, 2026',
-                                    barcode: `AS-LAB-${c.id.replace(/\D/g, '') || '9021'}`,
-                                    pathologist: c.pathologist,
-                                    reportingDoctor: c.pathologist,
-                                    status: 'Report Ready'
-                                  });
-                                }}
-                                className="px-3 py-1.5 bg-slate-100 hover:bg-[#005CB9] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition shadow-2xs"
-                              >
-                                View PDF
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  downloadClinicalReportPdf({
-                                    id: c.id,
-                                    bookingId: c.id,
-                                    patientName: c.patient,
-                                    testName: c.test,
-                                    date: 'Nov 13, 2026',
-                                    reportingDoctor: c.pathologist
-                                  });
-                                  addToast(`Signed PDF report downloaded for ${c.patient} (${c.id})`, 'success');
-                                }}
-                                className="p-1.5 bg-slate-100 hover:bg-[#005CB9] hover:text-white text-slate-600 rounded-xl transition shadow-2xs"
-                                title="Download PDF File"
-                              >
-                                <Download className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedJobForReportView({
+                                  bookingId: c.id,
+                                  patientName: c.patient,
+                                  testName: c.test,
+                                  date: 'Nov 13, 2026',
+                                  barcode: 'ZM-ASSAM-9021',
+                                  status: 'Report Ready'
+                                });
+                              }}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition"
+                            >
+                              View PDF
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -1698,7 +1671,7 @@ export default function LabDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-[#005CB9]" />
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
                     <span>Phlebotomy Dispatch & Field Alerts</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1736,7 +1709,7 @@ export default function LabDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <User className="w-6 h-6 text-[#005CB9]" />
+                  <User className="w-6 h-6 text-[#14B8A6]" />
                   <span>Phlebotomist & Lab Executive Profile</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1782,7 +1755,7 @@ export default function LabDashboardPage() {
                 <button
                   type="button"
                   onClick={() => addToast('Executive credentials verified and active with central dispatch.', 'success')}
-                  className="w-full py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl text-xs transition shadow-xs"
+                  className="w-full py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl text-xs transition shadow-xs"
                 >
                   Verify Active Shift Status
                 </button>
@@ -1810,19 +1783,8 @@ export default function LabDashboardPage() {
           job={selectedJobForPublish}
           onClose={() => setSelectedJobForPublish(null)}
           onPublish={(reportData) => {
-            setCompletedList(prev => [
-              {
-                id: `REP-${Math.floor(1000 + Math.random() * 9000)}`,
-                patient: selectedJobForPublish.patientName || selectedJobForPublish.patient || 'Patient',
-                test: selectedJobForPublish.testName || selectedJobForPublish.test || 'Diagnostic Screen',
-                time: 'Just now',
-                pathologist: 'Dr. Pranabesh Sarma, MD Pathology',
-                status: 'Signed & Published'
-              },
-              ...prev
-            ]);
             setSelectedJobForPublish(null);
-            addToast(`Diagnostic report for ${selectedJobForPublish.patientName || selectedJobForPublish.patient} signed & published!`, 'success');
+            addToast(`Diagnostic report for ${selectedJobForPublish.patientName} (${selectedJobForPublish.id}) signed & published!`, 'success');
           }}
         />
       )}
@@ -1862,7 +1824,7 @@ function SidebarBeakersGraphic() {
         {/* Large Beaker */}
         <path
           d="M20 16 L20 22 L12 50 C10 56 14 60 21 60 L41 60 C48 60 52 56 50 50 L42 22 L42 16 Z"
-          stroke="#005CB9"
+          stroke="#14B8A6"
           strokeWidth="2.5"
           fill="none"
           strokeLinejoin="round"
@@ -1870,7 +1832,7 @@ function SidebarBeakersGraphic() {
         {/* Liquid level */}
         <path
           d="M16 43 C22 41 28 45 36 43 C42 41 45 42 47 43 L49 50 C51 55 48 58 42 58 L20 58 C14 58 12 54 13 50 Z"
-          fill="#005CB9"
+          fill="#14B8A6"
           fillOpacity="0.35"
         />
         {/* Small Beaker / Flask behind right */}

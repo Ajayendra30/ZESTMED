@@ -40,7 +40,7 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
           {/* Header Card */}
           <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-teal-50 text-[#005CB9] font-black text-lg flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-teal-50 text-[#14B8A6] font-black text-lg flex items-center justify-center">
                 {patient.name?.charAt(0) || 'P'}
               </div>
               <div>
@@ -48,7 +48,7 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
                 <p className="text-slate-500 font-mono text-[11px] mt-0.5">{patient.phone}</p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-200">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
               {patient.status || 'Active'}
             </span>
           </div>
@@ -58,14 +58,14 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
             <div>
               <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Assam City / District</span>
               <span className="font-semibold text-slate-900 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#005CB9]" />
+                <MapPin className="w-3.5 h-3.5 text-[#14B8A6]" />
                 {patient.city}
               </span>
             </div>
             <div>
               <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Registration Status</span>
-              <span className="font-semibold text-blue-700 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+              <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 Verified Citizen Record
               </span>
             </div>
@@ -86,7 +86,7 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-teal-50/60 rounded-xl border border-teal-100 text-teal-900 text-[11px]">
-            <ShieldCheck className="w-4 h-4 text-[#005CB9] shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0" />
             <span>Health ID is synchronized with Assam Central Health Registry & Electronic Health Records (EHR).</span>
           </div>
 
@@ -98,7 +98,7 @@ export default function ViewPatientModal({ isOpen = true, onClose, patient, onEd
                 onClose();
                 onEdit(patient);
               }}
-              className="px-4 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#005CB9] font-bold text-xs transition flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#14B8A6] font-bold text-xs transition flex items-center gap-1.5"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>Edit Patient</span>

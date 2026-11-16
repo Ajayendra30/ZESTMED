@@ -44,7 +44,7 @@ export default function Testimonials() {
         <div className="flex items-center justify-between mb-10">
           <div>
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              What Our <span className="text-[#005CB9]">Customers Say?</span>
+              What Our <span className="text-[#008F83]">Customers Say?</span>
             </h2>
           </div>
 
@@ -53,7 +53,7 @@ export default function Testimonials() {
             <button
               type="button"
               onClick={prev}
-              className="w-11 h-11 rounded-full border-2 border-slate-200 hover:border-[#005CB9] hover:text-[#005CB9] bg-white flex items-center justify-center text-slate-600 transition shadow-xs"
+              className="w-11 h-11 rounded-full border-2 border-slate-200 hover:border-[#008F83] hover:text-[#008F83] bg-white flex items-center justify-center text-slate-600 transition shadow-xs"
               title="Previous"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -61,7 +61,7 @@ export default function Testimonials() {
             <button
               type="button"
               onClick={next}
-              className="w-11 h-11 rounded-full border-2 border-slate-200 hover:border-[#005CB9] hover:text-[#005CB9] bg-white flex items-center justify-center text-slate-600 transition shadow-xs"
+              className="w-11 h-11 rounded-full border-2 border-slate-200 hover:border-[#008F83] hover:text-[#008F83] bg-white flex items-center justify-center text-slate-600 transition shadow-xs"
               title="Next"
             >
               <ChevronRight className="w-5 h-5" />

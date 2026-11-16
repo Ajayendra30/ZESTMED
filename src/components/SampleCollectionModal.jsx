@@ -110,7 +110,7 @@ export default function SampleCollectionModal({ isOpen, onClose, job, onConfirmC
             </div>
           ) : (
             <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Non-fasting test. Sample can be collected at current appointment slot.</span>
             </div>
           )}

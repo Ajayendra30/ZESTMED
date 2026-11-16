@@ -54,6 +54,7 @@ import {
   initialAssamAddresses
 } from '../mock-data/patientData';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
+import { downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 import OrderInvoiceModal from '../components/OrderInvoiceModal';
 import AddFamilyMemberModal from '../components/AddFamilyMemberModal';
 import AddAddressModal from '../components/AddAddressModal';
@@ -61,7 +62,6 @@ import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import AuthModal from '../components/AuthModal';
 import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
-import { downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const navigate = useNavigate();
@@ -346,19 +346,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       <div className="min-h-screen bg-gradient-to-br from-[#071828] via-[#0D233A] to-[#0A1A2A] flex flex-col justify-between p-4 sm:p-6 text-white select-none relative overflow-hidden">
         {/* Ambient background glows */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#00BFA5]/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#005CB9]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#008F83]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Top Header */}
         <header className="relative z-10 max-w-5xl mx-auto w-full flex items-center justify-between py-2">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF5722] to-[#005CB9] flex items-center justify-center shadow-lg shadow-[#005CB9]/30 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D494] to-[#008F83] flex items-center justify-center shadow-lg shadow-[#008F83]/30 group-hover:scale-105 transition-transform">
               <FlaskConical className="w-5 h-5 text-white" />
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight text-white block leading-tight">
-                ZEST<span className="text-[#FF5722]">MED</span>
+                ZEST<span className="text-[#00D494]">MED</span>
               </span>
-              <span className="text-[10.5px] text-blue-200/80 tracking-wider uppercase block font-semibold">
+              <span className="text-[10.5px] text-teal-200/80 tracking-wider uppercase block font-semibold">
                 Patient Health Portal
               </span>
             </div>
@@ -377,7 +377,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         <div className="relative z-10 max-w-md mx-auto w-full my-auto py-8">
           <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-slate-900 text-center animate-in fade-in zoom-in-95 duration-200">
             {/* Glowing Icon */}
-            <div className="mx-auto w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#005CB9] shadow-inner mb-4">
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-[#008F83] shadow-inner mb-4">
               <ShieldCheck className="w-8 h-8" />
             </div>
 
@@ -391,15 +391,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             {/* Quick Benefits list */}
             <div className="my-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-left space-y-2.5">
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>NABL Accredited Digital Diagnostic Reports</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>Real-time Cold-Chain Medicine Tracking</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>Doctor Prescriptions & Family Health History</span>
               </div>
             </div>
@@ -409,7 +409,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <button
                 type="button"
                 onClick={() => openAuth('login')}
-                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-gradient-to-r from-[#005CB9] to-[#00BFA5] hover:from-[#007b70] hover:to-[#00a892] text-white font-bold text-sm shadow-lg shadow-teal-500/25 transition transform active:scale-[0.98] cursor-pointer"
+                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-gradient-to-r from-[#008F83] to-[#00BFA5] hover:from-[#007b70] hover:to-[#00a892] text-white font-bold text-sm shadow-lg shadow-teal-500/25 transition transform active:scale-[0.98] cursor-pointer"
               >
                 <Phone className="w-4 h-4" />
                 <span>Login with Mobile OTP</span>
@@ -431,7 +431,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             </div>
 
             <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-500" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
               <span>256-bit Encrypted Medical Data • HIPAA & NABH Compliant</span>
             </div>
           </div>
@@ -459,10 +459,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       )}
 
       {/* ======================================================== */}
-      {/* 1. LEFT SIDEBAR (Dark Navy #0A1E34)                      */}
+      {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0A1E34] flex flex-col border-r border-[#081827] justify-between overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0B2238] flex flex-col border-r border-[#081827] justify-between overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
           isSidebarOpen
             ? 'translate-x-0 visible pointer-events-auto'
             : '-translate-x-full invisible pointer-events-none'
@@ -502,7 +502,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'dashboard'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -533,7 +533,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'bookings'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -564,7 +564,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'orders'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -587,7 +587,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
-              <UploadCloud className={`w-4 h-4 ${activeMenu === 'prescription' ? 'text-[#005CB9]' : ''}`} />
+              <UploadCloud className={`w-4 h-4 ${activeMenu === 'prescription' ? 'text-[#14B8A6]' : ''}`} />
               <span>Upload Prescription</span>
             </button>
 
@@ -601,7 +601,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'reports'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -619,7 +619,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'family'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -637,7 +637,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'profile'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -655,7 +655,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'notifications'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -717,7 +717,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search medicines, lab tests..."
-                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:ring-1 focus:ring-[#005CB9] transition"
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
               />
             </div>
           </div>
@@ -728,10 +728,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={openCart}
-              className="relative p-1.5 sm:p-2 rounded-xl text-[#005CB9] hover:bg-blue-50 transition"
+              className="relative p-1.5 sm:p-2 rounded-xl text-[#00A884] hover:bg-teal-50 transition"
               title="View Cart"
             >
-              <ShoppingCart className="w-5 h-5 text-[#005CB9]" />
+              <ShoppingCart className="w-5 h-5 text-[#00A884]" />
               <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">
                 {cartCount > 0 ? cartCount : 2}
               </span>
@@ -757,7 +757,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <span className="text-xs font-bold text-slate-900">Health Alerts & Updates</span>
-                    <span className="text-[10px] font-bold text-[#005CB9] bg-teal-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-[#14B8A6] bg-teal-50 px-2 py-0.5 rounded-full">
                       3 New
                     </span>
                   </div>
@@ -782,7 +782,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Circular Patient Photo Avatar */}
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#005CB9]/20 bg-slate-100 shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#14B8A6]/20 bg-slate-100 shrink-0">
                   <img
                     src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(patientFullName)}&background=14B8A6&color=fff`}
                     alt={patientFullName}
@@ -861,7 +861,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           <div className="relative rounded-2xl p-4 sm:p-6 overflow-hidden border border-[#D5EAEF] bg-gradient-to-r from-[#EEF7F9] via-[#E8F4F6] to-[#DBEFF3] shadow-xs">
             <div className="relative z-10 max-w-xl">
-              <h1 className="text-xl sm:text-2xl font-black text-[#0A1E34] tracking-tight flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black text-[#0B2238] tracking-tight flex items-center gap-2">
                 <span>{greetingText}, {patientFirstName}</span>
                 <span className="text-xl sm:text-2xl inline-block transform hover:rotate-12 transition-transform select-none">👋</span>
               </h1>
@@ -893,7 +893,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   {labBookings.length}
                 </div>
-                <div className="text-[10px] sm:text-xs font-bold text-blue-600 mt-0.5 flex items-center gap-0.5">
+                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                   <span>View All →</span>
                 </div>
               </div>
@@ -904,7 +904,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               onClick={() => setActiveMenu('bookings')}
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                 <TestTubeIcon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <div>
@@ -914,7 +914,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
                   2
                 </div>
-                <div className="text-[10px] sm:text-xs font-bold text-blue-600 mt-0.5 flex items-center gap-0.5">
+                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                   <span>Scheduled →</span>
                 </div>
               </div>
@@ -971,7 +971,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#005CB9]" />
+                  <Calendar className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Upcoming Appointments
                   </h3>
@@ -982,7 +982,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     setActiveMenu('bookings');
                     addToast('Displaying full laboratory appointments list (Assam Hub)', 'info');
                   }}
-                  className="text-xs font-semibold text-[#005CB9] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
                 >
                   <span>View All</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -994,8 +994,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 {/* Appointment 1 */}
                 <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2">
                   <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                    {/* Azure date box */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F0F6FE] border border-blue-100 text-[#005CB9] flex flex-col items-center justify-center shrink-0">
+                    {/* Mint date box */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E8F8F5] border border-emerald-100 text-[#00A884] flex flex-col items-center justify-center shrink-0">
                       <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">Nov</span>
                       <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">15</span>
                     </div>
@@ -1009,7 +1009,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
                     </div>
                   </div>
-                  <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
+                  <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
                     Confirmed
                   </span>
                 </div>
@@ -1042,7 +1042,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             {/* Right Card: Quick Actions (~42% width) */}
             <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-5 h-5 text-[#005CB9]" />
+                <Zap className="w-5 h-5 text-[#14B8A6]" />
                 <h3 className="text-sm font-bold text-slate-900">
                   Quick Actions
                 </h3>
@@ -1054,7 +1054,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => navigate('/diagnostics')}
-                  className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <FlaskConical className="w-5 h-5 stroke-[2]" />
@@ -1068,9 +1068,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => navigate('/medicines')}
-                  className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-[#005CB9] flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Pill className="w-5 h-5 stroke-[2]" />
                   </div>
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
@@ -1086,7 +1086,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     setIsPrescriptionUploadModalOpen(true);
                     addToast('Opening Doctor\'s Prescription Upload Vault', 'info');
                   }}
-                  className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
                 >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Upload className="w-5 h-5 stroke-[2]" />
@@ -1100,7 +1100,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => setIsAddFamilyModalOpen(true)}
-                  className="bg-white border border-slate-100 hover:border-[#005CB9] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Users className="w-5 h-5 stroke-[2]" />
@@ -1122,7 +1122,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-[#005CB9]" />
+                  <ShoppingCart className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Recent Medicine Orders
                   </h3>
@@ -1133,7 +1133,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     setActiveMenu('orders');
                     addToast('Opening complete pharmacy orders ledger', 'info');
                   }}
-                  className="text-xs font-semibold text-[#005CB9] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
                 >
                   <span>View All</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1150,7 +1150,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   <div className="flex items-center gap-3">
                     <MedicineBoxThumb type="paracetamol" />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#005CB9] transition">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
                         Paracetamol 500 mg
                       </h4>
                       <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -1159,7 +1159,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1174,7 +1174,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   <div className="flex items-center gap-3">
                     <MedicineBoxThumb type="vitamind3" />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#005CB9] transition">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
                         Vitamin D3 600 IU
                       </h4>
                       <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -1183,7 +1183,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="bg-blue-50 text-[#005CB9] border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
                       Delivered
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -1198,7 +1198,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   <div className="flex items-center gap-3">
                     <MedicineBoxThumb type="omeprazole" />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#005CB9] transition">
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
                         Omeprazole 20 mg
                       </h4>
                       <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -1220,7 +1220,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#005CB9]" />
+                  <FileText className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Recent Reports
                   </h3>
@@ -1231,7 +1231,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     setActiveMenu('reports');
                     addToast('Opening digital reports archive', 'info');
                   }}
-                  className="text-xs font-semibold text-[#005CB9] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
                 >
                   <span>View All</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1315,7 +1315,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Heart className="w-5 h-5 text-[#FF5722] fill-[#FF5722]" />
+                  <Heart className="w-5 h-5 text-emerald-500 fill-emerald-500" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Health Tips
                   </h3>
@@ -1325,7 +1325,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div className="flex items-start gap-3">
                   <HeartHealthGraphic />
                   <div>
-                    <h4 className="text-xs font-extrabold text-[#0A1E34] leading-tight">
+                    <h4 className="text-xs font-extrabold text-[#0B2238] leading-tight">
                       {healthTips[healthTipIndex].title}
                     </h4>
                     <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
@@ -1355,7 +1355,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       onClick={() => setHealthTipIndex(i)}
                       className={`transition-all duration-200 ${
                         healthTipIndex === i
-                          ? 'w-4 h-1.5 rounded-full bg-[#005CB9]'
+                          ? 'w-4 h-1.5 rounded-full bg-[#14B8A6]'
                           : 'w-1.5 h-1.5 rounded-full bg-slate-300 hover:bg-slate-400'
                       }`}
                     />
@@ -1384,7 +1384,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FlaskConical className="w-6 h-6 text-[#005CB9]" />
+                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
                     <span>My Diagnostic & Lab Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1394,7 +1394,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => navigate('/diagnostics')}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Book New Lab Test</span>
@@ -1415,7 +1415,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     onClick={() => setBookingFilter(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                       bookingFilter === f.id
-                        ? 'bg-[#005CB9] text-white shadow-xs'
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1461,7 +1461,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               (b.status || '').toLowerCase().includes('report')
                                 ? 'bg-purple-50 text-purple-600 border border-purple-200'
                                 : (b.status || '').toLowerCase().includes('confirm')
-                                ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                                 : (b.status || '').toLowerCase().includes('cancel')
                                 ? 'bg-rose-50 text-rose-600 border border-rose-200'
                                 : 'bg-blue-50 text-blue-600 border border-blue-200'
@@ -1498,7 +1498,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <button
                               type="button"
                               onClick={() => handleOpenReportModal(b.testName, b.date)}
-                              className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
                             >
                               <FileCheck className="w-3.5 h-3.5" />
                               <span>View Report</span>
@@ -1536,7 +1536,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <ShoppingCart className="w-6 h-6 text-[#005CB9]" />
+                    <ShoppingCart className="w-6 h-6 text-[#14B8A6]" />
                     <span>My Medicine Orders</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1546,7 +1546,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => navigate('/medicines')}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Buy Medicines</span>
@@ -1566,7 +1566,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     onClick={() => setOrderFilter(f.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                       orderFilter === f.id
-                        ? 'bg-[#005CB9] text-white shadow-xs'
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1609,7 +1609,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span
                             className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                               order.status === 'Delivered'
-                                ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                                 : 'bg-sky-50 text-sky-600 border border-sky-200'
                             }`}
                           >
@@ -1628,7 +1628,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         ]).map((it, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs text-slate-700">
                             <div className="flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#005CB9]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6]" />
                               <span className="font-semibold text-slate-800">{it.name}</span>
                               <span className="text-slate-400 font-normal">({it.dosage || 'Standard'})</span>
                             </div>
@@ -1646,21 +1646,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <button
                             type="button"
                             onClick={() => handleOpenOrderModal(order.items?.[0]?.name || 'Medicines', order.id)}
-                            className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>View Invoice & Tracking</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              downloadOrderInvoicePdf(order);
-                              addToast(`Tax Invoice PDF downloaded for Order #${order.id}.`, 'success');
-                            }}
-                            className="p-1.5 text-slate-600 hover:text-[#005CB9] hover:bg-slate-100 rounded-xl transition border border-slate-200"
-                            title="Download Invoice PDF"
-                          >
-                            <Download className="w-4 h-4" />
                           </button>
                           <button
                             type="button"
@@ -1690,7 +1679,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <UploadCloud className="w-6 h-6 text-[#005CB9]" />
+                    <UploadCloud className="w-6 h-6 text-[#14B8A6]" />
                     <span>Doctor's Prescription Vault</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1700,7 +1689,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => setIsPrescriptionUploadModalOpen(true)}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
                 >
                   <UploadCloud className="w-4 h-4" />
                   <span>Upload New Prescription</span>
@@ -1710,9 +1699,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* Upload Dropzone Hero Card */}
               <div 
                 onClick={() => setIsPrescriptionUploadModalOpen(true)}
-                className="bg-gradient-to-br from-teal-50/60 via-blue-200/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#005CB9]/40 hover:border-[#005CB9] transition cursor-pointer text-center group shadow-xs"
+                className="bg-gradient-to-br from-teal-50/60 via-emerald-50/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#14B8A6]/40 hover:border-[#14B8A6] transition cursor-pointer text-center group shadow-xs"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#005CB9] border border-teal-100 flex items-center justify-center mx-auto mb-3 shadow-xs group-hover:scale-105 transition-transform">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#14B8A6] border border-teal-100 flex items-center justify-center mx-auto mb-3 shadow-xs group-hover:scale-105 transition-transform">
                   <UploadCloud className="w-7 h-7 sm:w-8 sm:h-8" />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900">
@@ -1721,7 +1710,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
                   Drag & drop your prescription image (JPG, PNG) or PDF document. Our Guwahati chief pharmacist verifies and pre-fills your medicine cart within 15 minutes.
                 </p>
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-teal-200 text-[#005CB9] text-xs font-bold shadow-2xs">
+                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-teal-200 text-[#008F83] text-xs font-bold shadow-2xs">
                   <span>🔒 100% Confidential • Verified by Licensed Pharmacists</span>
                 </div>
               </div>
@@ -1740,13 +1729,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <div>
                         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                           <div>
-                            <span className="font-mono text-xs font-bold text-[#005CB9]">{rx.id}</span>
+                            <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
                             <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName}</h4>
                             <p className="text-[11px] text-slate-500">{rx.specialty} • {rx.hospital}</p>
                           </div>
                           <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
                             rx.status.toLowerCase().includes('verified')
-                              ? 'bg-blue-50 text-[#005CB9] border border-blue-200'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : 'bg-amber-50 text-amber-700 border border-amber-200'
                           }`}>
                             {rx.status}
@@ -1775,7 +1764,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
                             openCart();
                           }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
                         >
                           <ShoppingCart className="w-3.5 h-3.5" />
                           <span>Order Medicines</span>
@@ -1796,7 +1785,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FileText className="w-6 h-6 text-[#005CB9]" />
+                    <FileText className="w-6 h-6 text-[#14B8A6]" />
                     <span>My Diagnostic Test Reports</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1806,7 +1795,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => navigate('/diagnostics')}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Book Another Test</span>
@@ -1861,21 +1850,21 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </p>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-[#005CB9] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full shrink-0">
+                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
                         {rep.status}
                       </span>
                     </div>
 
                     <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl flex items-center justify-between">
                       <span>Pathologist: <strong className="text-slate-700">{rep.pathologist}</strong></span>
-                      <ShieldCheck className="w-4 h-4 text-[#005CB9]" />
+                      <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
                     </div>
 
                     <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
                       <button
                         type="button"
                         onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist)}
-                        className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>View Report</span>
@@ -1914,7 +1903,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Users className="w-6 h-6 text-[#005CB9]" />
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
                     <span>Family Members & Beneficiaries</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1924,7 +1913,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => setIsAddFamilyModalOpen(true)}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Family Member</span>
@@ -1946,7 +1935,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           </div>
                           <div>
                             <h3 className="text-sm font-bold text-slate-900">{member.name}</h3>
-                            <span className="inline-block bg-teal-50 text-[#005CB9] text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">
+                            <span className="inline-block bg-teal-50 text-[#14B8A6] text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">
                               {member.relationship || 'Family'}
                             </span>
                           </div>
@@ -1975,7 +1964,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           addToast(`Booking lab test for ${member.name}...`, 'info');
                           navigate('/diagnostics');
                         }}
-                        className="flex-1 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
+                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
                       >
                         Book Test
                       </button>
@@ -2001,7 +1990,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <User className="w-6 h-6 text-[#005CB9]" />
+                  <User className="w-6 h-6 text-[#14B8A6]" />
                   <span>My Profile & Saved Addresses</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -2013,7 +2002,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 {/* Left: Profile Form */}
                 <div className="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4">
                   <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#005CB9]" />
+                    <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
                     <span>Personal Health Identity</span>
                   </h3>
 
@@ -2025,7 +2014,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="text"
                           value={profileForm.name}
                           onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#005CB9]"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
                       <div>
@@ -2043,7 +2032,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="email"
                           value={profileForm.email}
                           onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#005CB9]"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
                       <div>
@@ -2052,7 +2041,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="text"
                           value={profileForm.phone}
                           onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#005CB9]"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
                       <div>
@@ -2061,7 +2050,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="text"
                           value={profileForm.bloodGroup}
                           onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#005CB9]"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
                       <div>
@@ -2070,7 +2059,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="text"
                           value={profileForm.emergencyContact}
                           onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#005CB9]"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
                     </div>
@@ -2078,7 +2067,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="px-5 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
+                        className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4" />
                         <span>Save Profile Changes</span>
@@ -2092,13 +2081,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-[#005CB9]" />
+                        <MapPin className="w-4 h-4 text-[#14B8A6]" />
                         <span>Saved Assam Addresses</span>
                       </h3>
                       <button
                         type="button"
                         onClick={() => setIsAddAddressModalOpen(true)}
-                        className="text-xs text-[#005CB9] hover:underline font-bold flex items-center gap-1"
+                        className="text-xs text-[#14B8A6] hover:underline font-bold flex items-center gap-1"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Add New</span>
@@ -2143,7 +2132,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-[#005CB9]" />
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
                     <span>Notification Center</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -2155,7 +2144,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   onClick={() => addToast('All notifications marked as read', 'success')}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-[#005CB9]" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Mark All as Read</span>
                 </button>
               </div>
@@ -2169,7 +2158,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   >
                     <div className="flex items-start gap-3.5">
                       <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5">
-                        <Bell className="w-5 h-5 text-[#005CB9]" />
+                        <Bell className="w-5 h-5 text-[#14B8A6]" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -2190,7 +2179,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             setActiveMenu('reports');
                             addToast('Navigating to verified reports', 'info');
                           }}
-                          className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                         >
                           View Report
                         </button>
@@ -2202,7 +2191,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             setActiveMenu('bookings');
                             addToast('Navigating to active lab bookings', 'info');
                           }}
-                          className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                         >
                           Track Visit
                         </button>
@@ -2214,7 +2203,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             setActiveMenu('orders');
                             addToast('Navigating to medicine orders', 'info');
                           }}
-                          className="px-3.5 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                         >
                           Track Delivery
                         </button>
@@ -2321,13 +2310,13 @@ function SidebarClipboardGraphic() {
         {/* Clipboard back board */}
         <rect x="15" y="15" width="70" height="95" rx="8" fill="#1E3E5B" />
         {/* Clip top */}
-        <rect x="35" y="8" width="30" height="14" rx="4" fill="#005CB9" />
-        <circle cx="50" cy="15" r="3" fill="#0A1E34" />
+        <rect x="35" y="8" width="30" height="14" rx="4" fill="#14B8A6" />
+        <circle cx="50" cy="15" r="3" fill="#0B2238" />
         {/* Paper sheet */}
         <rect x="23" y="24" width="54" height="78" rx="4" fill="#FFFFFF" />
         {/* Document lines */}
         <line x1="30" y1="36" x2="65" y2="36" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
-        <line x1="30" y1="46" x2="70" y2="46" stroke="#005CB9" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="30" y1="46" x2="70" y2="46" stroke="#14B8A6" strokeWidth="2.5" strokeLinecap="round" />
         <line x1="30" y1="56" x2="60" y2="56" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
         <line x1="30" y1="66" x2="52" y2="66" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" />
         {/* Pulse / Heart circle badge overlapping bottom right */}
@@ -2351,7 +2340,7 @@ function StethoscopeGraphic() {
     <div className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 w-64 h-32 opacity-95 pointer-events-none select-none">
       <svg viewBox="0 0 280 140" fill="none" className="w-full h-full">
         {/* Soft background glow */}
-        <circle cx="180" cy="70" r="50" fill="#005CB9" fillOpacity="0.08" />
+        <circle cx="180" cy="70" r="50" fill="#14B8A6" fillOpacity="0.08" />
         {/* Tubing */}
         <path
           d="M 20 20 C 50 110, 110 130, 160 90 C 200 60, 230 85, 235 95"
@@ -2384,19 +2373,19 @@ function HeartHealthGraphic() {
   return (
     <div className="w-12 h-12 relative shrink-0 flex items-center justify-center">
       <svg viewBox="0 0 60 60" className="w-full h-full">
-        {/* Two Royal Blue leaves on the left */}
+        {/* Two green leaves on the left */}
         <path
           d="M 12 38 C 5 32, 6 22, 16 22 C 16 30, 14 36, 12 38 Z"
-          fill="#005CB9"
+          fill="#10B981"
         />
         <path
           d="M 10 42 C 4 45, 6 52, 14 50 C 15 45, 12 43, 10 42 Z"
-          fill="#004C99"
+          fill="#059669"
         />
-        {/* Heartbeat Orange Heart matching Logo */}
+        {/* Red Heart */}
         <path
           d="M 34 16 C 30 10, 22 10, 19 16 C 15 23, 18 32, 34 46 C 50 32, 53 23, 49 16 C 46 10, 38 10, 34 16 Z"
-          fill="#FF5722"
+          fill="#EF4444"
         />
         {/* White ECG heartbeat pulse line through the heart */}
         <path

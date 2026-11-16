@@ -125,7 +125,7 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#005CB9]/10 text-[#005CB9] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#008F83]/10 text-[#008F83] flex items-center justify-center shrink-0">
               <FlaskConical className="w-5 h-5" />
             </div>
             <div>
@@ -167,7 +167,7 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
               <button
                 type="button"
                 onClick={handleLoadDemoSample}
-                className="px-3 py-2 bg-[#005CB9] text-white rounded-xl text-xs font-bold hover:bg-[#004C99] transition shadow-xs whitespace-nowrap"
+                className="px-3 py-2 bg-[#008F83] text-white rounded-xl text-xs font-bold hover:bg-[#007a70] transition shadow-xs whitespace-nowrap"
               >
                 Load Sample Batch
               </button>
@@ -175,14 +175,14 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
           </div>
 
           {/* Upload Drag & Drop Area */}
-          <div className="border-2 border-dashed border-slate-200 hover:border-[#005CB9] rounded-2xl p-6 text-center transition cursor-pointer bg-slate-50/50 hover:bg-teal-50/20 relative">
+          <div className="border-2 border-dashed border-slate-200 hover:border-[#008F83] rounded-2xl p-6 text-center transition cursor-pointer bg-slate-50/50 hover:bg-teal-50/20 relative">
             <input
               type="file"
               accept=".csv, .xlsx, .json"
               onChange={handleFileChange}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
-            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-[#005CB9] flex items-center justify-center mx-auto mb-2 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-[#008F83] flex items-center justify-center mx-auto mb-2 shadow-xs">
               <UploadCloud className="w-6 h-6" />
             </div>
             <p className="text-xs font-bold text-slate-800">
@@ -198,9 +198,8 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-800">Preview ({fileRows.length} Tests / Packages):</span>
-                <span className="text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded-md">
-                  Single-Day Reports
-                </span>
+                <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">
+                  Single-Day Reports </span>
               </div>
               <div className="border border-slate-200 rounded-2xl overflow-hidden max-h-48 overflow-y-auto">
                 <table className="w-full text-left text-[11px]">
@@ -220,7 +219,7 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
                         <td className="py-2 px-3 text-slate-600">{row.category}</td>
                         <td className="py-2 px-3 font-bold text-slate-800">₹{row.price}</td>
                         <td className="py-2 px-3 font-mono font-bold text-teal-700">{row.parameters || row.parametersCount || '8'}</td>
-                        <td className="py-2 px-3 text-blue-600 font-semibold">12-24 Hrs (Single Day)</td>
+                        <td className="py-2 px-3 text-emerald-600 font-semibold">12-24 Hrs (Single Day)</td>
                       </tr>
                     ))}
                   </tbody>
@@ -242,7 +241,7 @@ export default function UploadPackagesModal({ isOpen, onClose, onImportSuccess }
               type="button"
               disabled={fileRows.length === 0 || isImporting}
               onClick={handleConfirmImport}
-              className="w-2/3 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-2/3 py-2.5 bg-[#008F83] hover:bg-[#007a70] text-white rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Check className="w-4 h-4" />
               <span>{isImporting ? 'Importing Packages...' : `Import ${fileRows.length} Packages to Catalog`}</span>

@@ -65,7 +65,7 @@ export default function HomeCollection() {
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-gradient-to-br from-[#0C4778] via-[#1677C8] to-[#004C99] text-white relative overflow-hidden">
+    <section className="py-14 sm:py-20 bg-gradient-to-br from-[#0C4778] via-[#1677C8] to-[#0D9488] text-white relative overflow-hidden">
       {/* Decorative patterns */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
@@ -182,11 +182,11 @@ export default function HomeCollection() {
                 {pinStatus && (
                   <div className={`p-3 rounded-xl text-xs flex items-start gap-2 ${
                     pinStatus.available
-                      ? 'bg-blue-50 text-blue-800 border border-blue-200'
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                       : 'bg-rose-50 text-rose-800 border border-rose-200'
                   }`}>
                     {pinStatus.available ? (
-                      <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     ) : (
                       <MapPin className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                     )}
@@ -250,7 +250,7 @@ export default function HomeCollection() {
             {/* Content */}
             {scheduledSuccess ? (
               <div className="p-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-9 h-9" />
                 </div>
                 <h4 className="text-xl font-bold text-dark">Home Visit Slot Reserved!</h4>
@@ -259,7 +259,7 @@ export default function HomeCollection() {
                   <strong className="text-dark">{scheduleData.date}</strong> during{' '}
                   <strong className="text-dark">{scheduleData.timeSlot}</strong>.
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs text-blue-800 text-left space-y-1.5">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-800 text-left space-y-1.5">
                   <div className="font-bold">Booking Details (Demo):</div>
                   <div>• Patient: {scheduleData.patientName}</div>
                   <div>• Contact: {scheduleData.phone}</div>

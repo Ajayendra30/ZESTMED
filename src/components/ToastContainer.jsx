@@ -11,8 +11,8 @@ export default function ToastContainer() {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
       {toasts.map((toast) => {
         let Icon = CheckCircle2;
-        let borderClass = 'border-blue-200 bg-white text-blue-800';
-        let iconColor = 'text-blue-500';
+        let borderClass = 'border-emerald-200 bg-white text-emerald-800';
+        let iconColor = 'text-emerald-500';
 
         if (toast.type === 'error') {
           Icon = AlertCircle;

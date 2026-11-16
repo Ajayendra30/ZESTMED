@@ -16,9 +16,9 @@ export default function TrustBenefits() {
       title: 'Home Sample Collection',
       subtitle: 'Safe, convenient & on-time',
       icon: Home,
-      color: 'text-[#005CB9]',
-      bg: 'bg-blue-50',
-      border: 'border-blue-200'
+      color: 'text-[#008F83]',
+      bg: 'bg-emerald-50',
+      border: 'border-emerald-200'
     },
     {
       title: 'Digital Reports',

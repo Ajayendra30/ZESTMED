@@ -44,13 +44,13 @@ export default function LocationModal() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#005CB9]/10 text-[#005CB9] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#008F83]/10 text-[#008F83] flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-dark">Service Location: Guwahati</h3>
-                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
                   Exclusively Guwahati
                 </span>
               </div>
@@ -68,8 +68,8 @@ export default function LocationModal() {
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Senior Citizen 10km Radius Alert */}
-          <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200/80 rounded-2xl p-3.5 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#005CB9] text-white flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 rounded-2xl p-3.5 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 mt-0.5">
               <Car className="w-4 h-4" />
             </div>
             <div>
@@ -84,7 +84,7 @@ export default function LocationModal() {
           <button
             type="button"
             onClick={handleUseCurrentGeo}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#005CB9]/30 text-[#005CB9] font-bold hover:bg-teal-50 transition text-xs sm:text-sm"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#008F83]/30 text-[#008F83] font-bold hover:bg-teal-50 transition text-xs sm:text-sm"
           >
             <Navigation className="w-4 h-4" />
             <span>Detect Current Location in Guwahati</span>
@@ -111,12 +111,12 @@ export default function LocationModal() {
                     setErrorMsg('');
                   }}
                   placeholder="Enter Guwahati PIN code (e.g. 781005)"
-                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-border focus:border-[#005CB9] focus:ring-2 focus:ring-[#005CB9]/20 outline-none transition"
+                  className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border border-border focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/20 outline-none transition"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap"
+                className="bg-[#008F83] hover:bg-[#007a70] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition shadow-xs whitespace-nowrap"
               >
                 Apply
               </button>
@@ -132,7 +132,7 @@ export default function LocationModal() {
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Select Your Guwahati Neighborhood Hub
               </label>
-              <span className="text-[11px] text-[#005CB9] font-bold">12 Hubs Active</span>
+              <span className="text-[11px] text-[#008F83] font-bold">12 Hubs Active</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
               {DEFAULT_LOCATIONS.map((loc) => {
@@ -144,7 +144,7 @@ export default function LocationModal() {
                     onClick={() => selectLocation(loc)}
                     className={`flex items-center justify-between p-2.5 rounded-xl border text-left text-xs transition ${
                       isSelected
-                        ? 'border-[#005CB9] bg-teal-50/80 text-[#005CB9] font-semibold'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] font-semibold'
                         : 'border-border hover:border-slate-300 text-dark hover:bg-slate-50'
                     }`}
                   >
@@ -152,7 +152,7 @@ export default function LocationModal() {
                       <div className="leading-tight font-bold">{loc.city}</div>
                       <span className="text-[10px] text-muted">{loc.pincode} • {loc.radiusKm}</span>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-[#005CB9] shrink-0" />}
+                    {isSelected && <Check className="w-4 h-4 text-[#008F83] shrink-0" />}
                   </button>
                 );
               })}
@@ -163,7 +163,7 @@ export default function LocationModal() {
         {/* Footer */}
         <div className="px-6 py-3 bg-slate-50 border-t border-border flex items-center justify-between text-xs text-muted">
           <span>Active Hub: <strong className="text-dark">{currentLocation.city} ({currentLocation.pincode})</strong></span>
-          <span className="text-[#005CB9] font-semibold">Single-Day Reports</span>
+          <span className="text-[#008F83] font-semibold">Single-Day Reports </span>
         </div>
       </div>
     </div>

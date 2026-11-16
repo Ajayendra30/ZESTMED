@@ -127,7 +127,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
           </div>
           <div className="text-right shrink-0">
             <span className="text-sm font-bold text-dark">₹{item.price.toFixed(2)}</span>
-            <span className="text-[10px] text-blue-600 block font-semibold">Free Pickup</span>
+            <span className="text-[10px] text-emerald-600 block font-semibold">Free Pickup</span>
           </div>
         </div>
 
@@ -360,7 +360,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
 
           {step === 4 && (
             <div className="text-center py-4 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
               <h4 className="text-lg font-bold text-dark">Appointment Confirmed!</h4>
@@ -368,10 +368,10 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                 Thank you, <strong className="text-dark">{patientName}</strong>! Your doorstep sample collection appointment has been registered in our Assam diagnostic queue.
               </p>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 text-left space-y-1.5">
-                <div className="font-bold border-b border-blue-200/60 pb-1 flex justify-between">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 text-left space-y-1.5">
+                <div className="font-bold border-b border-emerald-200/60 pb-1 flex justify-between">
                   <span>Assam Booking Slip</span>
-                  <span className="text-[10px] text-blue-700">{bookingRef}</span>
+                  <span className="text-[10px] text-emerald-700">{bookingRef}</span>
                 </div>
                 <div>• Service: <strong>{item.name}</strong></div>
                 <div>• Patient: {patientName} ({patientAge} Yrs, {patientGender})</div>

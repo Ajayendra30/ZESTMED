@@ -206,8 +206,8 @@ export default function AdminDashboardPage() {
       value: '2,168',
       trend: '↑ +14.2%',
       icon: ShoppingCart,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-500',
+      bgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-500',
       targetMenu: 'orders'
     },
     {
@@ -233,11 +233,11 @@ export default function AdminDashboardPage() {
   // Interactive Management States
   const [adminMedicines, setAdminMedicines] = useState(initialInventoryMedicines);
   const [adminBookings, setAdminBookings] = useState([
-    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 349, slot: '09:00 AM' },
+    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 349, slot: '09:00 AM' },
     { id: '#LB10233', patient: 'Priya Sharma', phone: '+91 94350 12345', test: 'Thyroid Profile', type: 'Lab Visit', executive: 'Rohit Sharma', status: 'Sample Collected', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 599, slot: '10:30 AM' },
     { id: '#LB10232', patient: 'Amit Verma', phone: '+91 97060 98765', test: 'Diabetes Package', type: 'Home Collection', executive: 'Manab Barua', status: 'In Process', statusBg: 'bg-amber-50 text-amber-600 border border-amber-200/60', amount: 899, slot: '11:00 AM' },
     { id: '#LB10231', patient: 'Sneha Singh', phone: '+91 91270 54321', test: 'Full Body Checkup', type: 'Lab Visit', executive: 'Dr. N. Bora', status: 'Report Ready', statusBg: 'bg-purple-50 text-purple-600 border border-purple-200/60', amount: 1499, slot: '12:15 PM' },
-    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 499, slot: '02:00 PM' }
+    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 499, slot: '02:00 PM' }
   ]);
   const [adminOrders, setAdminOrders] = useState([
     { id: '#ORD5487', customer: 'Rajesh Kumar', items: 'Paracetamol 500 mg x 2, Vitamin C x 1', total: 340, payment: 'UPI Paid', status: 'Delivered', address: 'Dispur, Guwahati' },
@@ -319,7 +319,7 @@ export default function AdminDashboardPage() {
       test: 'Complete Blood Count',
       type: 'Home Collection',
       status: 'Confirmed',
-      statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60'
+      statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60'
     },
     {
       id: '#LB10233',
@@ -392,10 +392,10 @@ export default function AdminDashboardPage() {
       )}
 
       {/* ======================================================== */}
-      {/* 1. LEFT SIDEBAR (Dark Navy #0A1E34)                      */}
+      {/* 1. LEFT SIDEBAR (Dark Navy #0B2238)                      */}
       {/* ======================================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0A1E34] flex flex-col select-none border-r border-[#081827] overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[80vw] bg-[#0B2238] flex flex-col select-none border-r border-[#081827] overflow-hidden transition-all duration-300 ease-in-out lg:static lg:translate-x-0 lg:shrink-0 lg:visible lg:pointer-events-auto ${
           isSidebarOpen
             ? 'translate-x-0 visible pointer-events-auto'
             : '-translate-x-full invisible pointer-events-none'
@@ -433,7 +433,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'dashboard'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -469,7 +469,7 @@ export default function AdminDashboardPage() {
                     addToast('Filtered view: Registered Assam Patients', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'users-patients' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'users-patients' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -483,7 +483,7 @@ export default function AdminDashboardPage() {
                     addToast('Filtered view: On-Duty Lab Executives & Phlebotomists', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'users-executives' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'users-executives' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -497,7 +497,7 @@ export default function AdminDashboardPage() {
                     addToast('Super Admin Role Overview', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'users-admins' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'users-admins' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -517,7 +517,7 @@ export default function AdminDashboardPage() {
               }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
                 activeMenu === 'medicines' || activeMenu === 'medicines-all' || activeMenu === 'medicines-categories' || activeMenu === 'medicines-add'
-                  ? 'bg-[#005CB9] text-white shadow-sm'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -541,7 +541,7 @@ export default function AdminDashboardPage() {
                     addToast('Opening Central Pharmacy Catalog', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'medicines-all' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'medicines-all' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -555,7 +555,7 @@ export default function AdminDashboardPage() {
                     addToast('Opening Category Breakdown', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'medicines-categories' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'medicines-categories' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -569,7 +569,7 @@ export default function AdminDashboardPage() {
                     addToast('Add New Medicine Form', 'info');
                   }}
                   className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
-                    activeMenu === 'medicines-add' ? 'text-[#005CB9] font-bold' : 'text-[#88A0B8] hover:text-white'
+                    activeMenu === 'medicines-add' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
@@ -589,7 +589,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'diagnostic-tests'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -607,7 +607,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'lab-bookings'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -625,7 +625,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'orders'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -643,7 +643,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'prescriptions'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -661,7 +661,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'inventory'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -679,7 +679,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'payments'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -697,7 +697,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'analytics'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -715,7 +715,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
               activeMenu === 'notifications'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -737,7 +737,7 @@ export default function AdminDashboardPage() {
             }}
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
               activeMenu === 'settings'
-                ? 'bg-[#005CB9] text-white shadow-sm'
+                ? 'bg-[#14B8A6] text-white shadow-sm'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
             }`}
           >
@@ -784,7 +784,7 @@ export default function AdminDashboardPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search patients, orders, bookings..."
-                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#005CB9] focus:ring-1 focus:ring-[#005CB9] transition"
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
               />
             </div>
           </div>
@@ -811,7 +811,7 @@ export default function AdminDashboardPage() {
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <span className="text-xs font-bold text-slate-900">Notifications</span>
-                    <span className="text-[10px] font-bold text-[#005CB9] bg-teal-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-[#14B8A6] bg-teal-50 px-2 py-0.5 rounded-full">
                       3 New
                     </span>
                   </div>
@@ -835,7 +835,7 @@ export default function AdminDashboardPage() {
                 className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Avatar with initial 'A' in teal */}
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#005CB9] text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#14B8A6] text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
                   A
                 </div>
                 <div className="hidden sm:block">
@@ -933,7 +933,7 @@ export default function AdminDashboardPage() {
                         addToast(`Date filter updated: ${opt}`, 'info');
                       }}
                       className={`w-full text-left px-4 py-1.5 text-xs font-medium ${
-                        dateRange === opt ? 'text-[#005CB9] font-bold bg-teal-50/60' : 'text-slate-700 hover:bg-slate-50'
+                        dateRange === opt ? 'text-[#14B8A6] font-bold bg-teal-50/60' : 'text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       {opt}
@@ -967,7 +967,7 @@ export default function AdminDashboardPage() {
                     <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-0.5">
                       {kpi.value}
                     </div>
-                    <div className="text-[11px] sm:text-xs font-semibold text-blue-600 mt-0.5 flex items-center gap-0.5">
+                    <div className="text-[11px] sm:text-xs font-semibold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                       <span>{kpi.trend}</span>
                       <span className="text-[10px] text-slate-400 font-normal">→</span>
                     </div>
@@ -985,7 +985,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <BarChart2 className="w-5 h-5 text-[#005CB9]" />
+                  <BarChart2 className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Revenue Overview
                   </h3>
@@ -1001,9 +1001,9 @@ export default function AdminDashboardPage() {
                   <defs>
                     {/* Linear Gradient for Area under curve */}
                     <linearGradient id="revenueTealGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#005CB9" stopOpacity="0.22" />
-                      <stop offset="85%" stopColor="#005CB9" stopOpacity="0.02" />
-                      <stop offset="100%" stopColor="#005CB9" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="#14B8A6" stopOpacity="0.22" />
+                      <stop offset="85%" stopColor="#14B8A6" stopOpacity="0.02" />
+                      <stop offset="100%" stopColor="#14B8A6" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
@@ -1039,7 +1039,7 @@ export default function AdminDashboardPage() {
                   <path
                     d={pathD}
                     fill="none"
-                    stroke="#005CB9"
+                    stroke="#14B8A6"
                     strokeWidth="2.75"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1053,7 +1053,7 @@ export default function AdminDashboardPage() {
                         cy={pt.y}
                         r="4.5"
                         fill="#FFFFFF"
-                        stroke="#005CB9"
+                        stroke="#14B8A6"
                         strokeWidth="2.5"
                         className="cursor-pointer hover:scale-125 transition-transform"
                       />
@@ -1077,7 +1077,7 @@ export default function AdminDashboardPage() {
             {/* Right Card: Orders by Category (Width ~35%) */}
             <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-2">
-                <PieChartIcon className="w-5 h-5 text-[#005CB9]" />
+                <PieChartIcon className="w-5 h-5 text-[#14B8A6]" />
                 <h3 className="text-sm font-bold text-slate-900">
                   Orders by Category
                 </h3>
@@ -1094,7 +1094,7 @@ export default function AdminDashboardPage() {
                       cy="80"
                       r="60"
                       fill="transparent"
-                      stroke="#005CB9"
+                      stroke="#14B8A6"
                       strokeWidth="22"
                       strokeDasharray="218.66 377"
                       strokeDashoffset="0"
@@ -1149,7 +1149,7 @@ export default function AdminDashboardPage() {
                 <div className="space-y-3 flex-1 text-xs">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#005CB9]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]" />
                       <span className="text-slate-700 font-medium">Medicines</span>
                     </div>
                     <span className="font-bold text-slate-900">58%</span>
@@ -1193,7 +1193,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#005CB9]" />
+                  <Calendar className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Recent Bookings
                   </h3>
@@ -1253,7 +1253,7 @@ export default function AdminDashboardPage() {
             <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Pill className="w-5 h-5 text-[#005CB9]" />
+                  <Pill className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Low Stock Medicines
                   </h3>
@@ -1307,7 +1307,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Users className="w-6 h-6 text-[#005CB9]" />
+                    <Users className="w-6 h-6 text-[#14B8A6]" />
                     <span>Registered Patients Directory (Assam)</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1317,7 +1317,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsRegisterPatientModalOpen(true)}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Register Patient</span>
@@ -1349,7 +1349,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-center font-bold text-teal-600">{p.bookingsCount}</td>
                           <td className="py-3.5 px-4 text-center font-bold text-sky-600">{p.ordersCount}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
                               {p.status}
                             </span>
                           </td>
@@ -1366,7 +1366,7 @@ export default function AdminDashboardPage() {
                               <button
                                 type="button"
                                 onClick={() => setEditingPatient(p)}
-                                className="p-1.5 bg-teal-50 hover:bg-teal-100 text-[#005CB9] rounded-lg transition"
+                                className="p-1.5 bg-teal-50 hover:bg-teal-100 text-[#14B8A6] rounded-lg transition"
                                 title="Edit Patient Record"
                               >
                                 <Edit className="w-3.5 h-3.5" />
@@ -1398,7 +1398,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Activity className="w-6 h-6 text-[#005CB9]" />
+                    <Activity className="w-6 h-6 text-[#14B8A6]" />
                     <span>Lab Executives & Phlebotomists Roster</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1408,7 +1408,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsAddExecutiveModalOpen(true)}
-                  className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Executive</span>
@@ -1428,7 +1428,7 @@ export default function AdminDashboardPage() {
                           <span className="text-[11px] text-slate-400 font-mono">{ex.id}</span>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                         {ex.status}
                       </span>
                     </div>
@@ -1456,14 +1456,14 @@ export default function AdminDashboardPage() {
                       <button
                         type="button"
                         onClick={() => addToast(`Push notification & live route ping sent to ${ex.name}.`, 'info')}
-                        className="flex-1 py-2 bg-slate-100 hover:bg-[#005CB9] hover:text-white rounded-xl text-xs font-bold transition text-center"
+                        className="flex-1 py-2 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition text-center"
                       >
                         Assign Route / Ping
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingExecutive(ex)}
-                        className="p-2 bg-teal-50 hover:bg-teal-100 text-[#005CB9] rounded-xl transition"
+                        className="p-2 bg-teal-50 hover:bg-teal-100 text-[#14B8A6] rounded-xl transition"
                         title="Edit Executive Record"
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -1490,7 +1490,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <ShieldCheck className="w-6 h-6 text-[#005CB9]" />
+                  <ShieldCheck className="w-6 h-6 text-[#14B8A6]" />
                   <span>Administrative Staff & Access Roles</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1513,7 +1513,7 @@ export default function AdminDashboardPage() {
                     <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
                       <div>Email: <strong className="text-slate-800">{adm.email}</strong></div>
                       <div>Privileges: <strong className="text-slate-800">{adm.access}</strong></div>
-                      <div className="text-blue-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
+                      <div className="text-emerald-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
                     </div>
                   </div>
                 ))}
@@ -1529,7 +1529,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Pill className="w-6 h-6 text-[#005CB9]" />
+                    <Pill className="w-6 h-6 text-[#14B8A6]" />
                     <span>Pharmacy Inventory Catalog</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1540,7 +1540,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setIsUploadInventoryOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#005CB9] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
                   >
                     <UploadCloud className="w-4 h-4" />
                     <span>Upload Inventory (CSV)</span>
@@ -1548,7 +1548,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setActiveMenu('medicines-add')}
-                    className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New Medicine</span>
@@ -1580,7 +1580,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3 px-4 text-center font-mono">
                             <span className={`px-2 py-0.5 rounded-full font-bold ${
-                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-blue-50 text-blue-600'
+                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
                             }`}>
                               {m.stock} units
                             </span>
@@ -1596,7 +1596,7 @@ export default function AdminDashboardPage() {
                                 );
                                 addToast(`Restocked +100 units for ${m.name}`, 'success');
                               }}
-                              className="px-2.5 py-1 bg-teal-50 text-[#005CB9] hover:bg-[#005CB9] hover:text-white rounded-lg text-xs font-bold transition mr-2"
+                              className="px-2.5 py-1 bg-teal-50 text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-bold transition mr-2"
                             >
                               +100 Stock
                             </button>
@@ -1627,7 +1627,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Layers className="w-6 h-6 text-[#005CB9]" />
+                  <Layers className="w-6 h-6 text-[#14B8A6]" />
                   <span>Pharmaceutical Categories</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1684,7 +1684,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Plus className="w-6 h-6 text-[#005CB9]" />
+                  <Plus className="w-6 h-6 text-[#14B8A6]" />
                   <span>Add New Medicine to Pharmacy</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1725,7 +1725,7 @@ export default function AdminDashboardPage() {
                         placeholder="e.g. Dolo 650 Tablets"
                         value={newMedForm.name}
                         onChange={(e) => setNewMedForm({ ...newMedForm, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9]"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
                         required
                       />
                     </div>
@@ -1736,7 +1736,7 @@ export default function AdminDashboardPage() {
                         placeholder="e.g. Paracetamol IP 650mg"
                         value={newMedForm.genericName}
                         onChange={(e) => setNewMedForm({ ...newMedForm, genericName: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9]"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
                       />
                     </div>
                     <div>
@@ -1744,7 +1744,7 @@ export default function AdminDashboardPage() {
                       <select
                         value={newMedForm.categoryName}
                         onChange={(e) => setNewMedForm({ ...newMedForm, categoryName: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9] bg-white"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6] bg-white"
                       >
                         <option>General Medicines</option>
                         <option>Diabetes Care</option>
@@ -1759,7 +1759,7 @@ export default function AdminDashboardPage() {
                         type="number"
                         value={newMedForm.stock}
                         onChange={(e) => setNewMedForm({ ...newMedForm, stock: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9]"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
                       />
                     </div>
                     <div>
@@ -1768,7 +1768,7 @@ export default function AdminDashboardPage() {
                         type="number"
                         value={newMedForm.price}
                         onChange={(e) => setNewMedForm({ ...newMedForm, price: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9]"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
                       />
                     </div>
                     <div>
@@ -1778,7 +1778,7 @@ export default function AdminDashboardPage() {
                         placeholder="e.g. Dec 2027"
                         value={newMedForm.expiry}
                         onChange={(e) => setNewMedForm({ ...newMedForm, expiry: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005CB9]"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
                       />
                     </div>
                   </div>
@@ -1786,7 +1786,7 @@ export default function AdminDashboardPage() {
                   <div className="pt-2 flex items-center gap-3">
                     <button
                       type="submit"
-                      className="px-5 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl shadow-xs transition"
+                      className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
                     >
                       Save to Inventory
                     </button>
@@ -1811,7 +1811,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FlaskConical className="w-6 h-6 text-[#005CB9]" />
+                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
                     <span>Diagnostic Pathology Tests Catalog</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1822,7 +1822,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setIsUploadPackagesOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#005CB9] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
                   >
                     <UploadCloud className="w-4 h-4" />
                     <span>Upload Packages (CSV)</span>
@@ -1830,7 +1830,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddTestModalOpen(true)}
-                    className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New Test</span>
@@ -1873,7 +1873,7 @@ export default function AdminDashboardPage() {
                             <button
                               type="button"
                               onClick={() => addToast(`Price configuration for ${t.name} updated.`, 'success')}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-[#005CB9] hover:text-white rounded-lg text-xs font-semibold transition"
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-semibold transition"
                             >
                               Edit Price
                             </button>
@@ -1895,7 +1895,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Calendar className="w-6 h-6 text-[#005CB9]" />
+                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
                     <span>Central Diagnostic & Home Collection Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -1950,7 +1950,7 @@ export default function AdminDashboardPage() {
                                 );
                                 addToast(`Booking ${b.id} advanced to ${nextStatus}`, 'success');
                               }}
-                              className="px-2.5 py-1 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-lg text-xs font-bold transition shadow-xs"
+                              className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
                             >
                               Advance Status
                             </button>
@@ -1971,7 +1971,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Package className="w-6 h-6 text-[#005CB9]" />
+                  <Package className="w-6 h-6 text-[#14B8A6]" />
                   <span>Customer Pharmacy Orders & Deliveries</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -2005,7 +2005,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 font-black text-slate-900">₹{o.total}</td>
                           <td className="py-3.5 px-4 text-slate-600">{o.payment}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
                               {o.status}
                             </span>
                           </td>
@@ -2047,7 +2047,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <FileText className="w-6 h-6 text-[#005CB9]" />
+                  <FileText className="w-6 h-6 text-[#14B8A6]" />
                   <span>Chief Pharmacist Prescription Verification</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -2064,7 +2064,7 @@ export default function AdminDashboardPage() {
                         <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient}</h3>
                       </div>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        rx.status === 'Approved' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
+                        rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                       }`}>
                         {rx.status}
                       </span>
@@ -2085,7 +2085,7 @@ export default function AdminDashboardPage() {
                           );
                           addToast(`Prescription ${rx.id} approved! Order created for ${rx.patient}.`, 'success');
                         }}
-                        className="flex-1 py-1.5 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
+                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
                       >
                         Approve & Dispense
                       </button>
@@ -2114,7 +2114,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Layers className="w-6 h-6 text-[#005CB9]" />
+                    <Layers className="w-6 h-6 text-[#14B8A6]" />
                     <span>Central Warehouse Stock & Reorder Levels</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -2125,7 +2125,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setIsUploadInventoryOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#005CB9] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
                   >
                     <UploadCloud className="w-4 h-4" />
                     <span>Upload Inventory (CSV)</span>
@@ -2136,7 +2136,7 @@ export default function AdminDashboardPage() {
                       setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
                       addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
                     }}
-                    className="bg-[#005CB9] hover:bg-[#004C99] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
                   >
                     Bulk Restock All
                   </button>
@@ -2179,7 +2179,7 @@ export default function AdminDashboardPage() {
                                 );
                                 addToast(`+100 units added to ${m.name}`, 'success');
                               }}
-                              className="px-3 py-1 bg-[#005CB9] hover:bg-[#004C99] text-white rounded-lg text-xs font-bold transition shadow-xs"
+                              className="px-3 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
                             >
                               Restock +100
                             </button>
@@ -2202,7 +2202,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <CreditCard className="w-6 h-6 text-[#005CB9]" />
+                    <CreditCard className="w-6 h-6 text-[#14B8A6]" />
                     <span>Razorpay Gateway Integration & Revenue Ledger</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -2223,7 +2223,7 @@ export default function AdminDashboardPage() {
                     }}
                     className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs ${
                       isRazorpayLiveMode
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                         : 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
                     }`}
                   >
@@ -2246,11 +2246,11 @@ export default function AdminDashboardPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-[#005CB9]" />
+                      <ShieldCheck className="w-5 h-5 text-[#008F83]" />
                       <h3 className="text-base font-bold text-slate-900">
                         Mandatory Statutory Business Documents for Razorpay Healthcare Activation
                       </h3>
-                      <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
                         8 / 8 Verified
                       </span>
                     </div>
@@ -2261,7 +2261,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => addToast('Regulatory KYC Dossier refreshed with Assam Licensing Authorities', 'success')}
-                    className="text-xs text-[#005CB9] font-bold hover:underline flex items-center gap-1 shrink-0"
+                    className="text-xs text-[#008F83] font-bold hover:underline flex items-center gap-1 shrink-0"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Refresh Verification</span>
@@ -2292,31 +2292,23 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-3 font-mono font-medium text-slate-700">{doc.docNumber}</td>
                           <td className="py-3 px-3 text-slate-500 text-[11px]">{doc.mandatoryFor}</td>
                           <td className="py-3 px-3 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                              <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                               <span>{doc.status}</span>
                             </span>
                           </td>
                           <td className="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
                             <button
                               type="button"
-                              onClick={() => {
-                                openStatutoryDocumentPdf(doc);
-                                addToast(`Opening official certified PDF: ${doc.title}`, 'info');
-                              }}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-[#005CB9] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
-                              title="View PDF Document"
+                              onClick={() => { openStatutoryDocumentPdf(doc); addToast(`Opening official certified PDF: ${doc.title}`, 'info'); }}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-teal-50 hover:text-[#008F83] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
                             >
-                              View PDF
+                              View Doc
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
-                                downloadStatutoryDocumentPdf(doc);
-                                addToast(`Statutory certificate PDF downloaded: ${doc.title}`, 'success');
-                              }}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-[#005CB9] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
-                              title="Download PDF Certificate"
+                              onClick={() => { downloadStatutoryDocumentPdf(doc); addToast(`Statutory certificate PDF downloaded: ${doc.title}`, 'success'); }}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-teal-50 hover:text-[#008F83] text-slate-700 rounded-lg text-[11px] font-bold transition shadow-2xs"
                             >
                               Download
                             </button>
@@ -2358,7 +2350,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => addToast('Razorpay webhook verified on https://api.zestmed.in/razorpay/webhook', 'success')}
-                      className="px-3 py-1.5 bg-[#005CB9] text-white hover:bg-[#004C99] rounded-lg text-xs font-bold transition shadow-xs"
+                      className="px-3 py-1.5 bg-[#008F83] text-white hover:bg-[#007a70] rounded-lg text-xs font-bold transition shadow-xs"
                     >
                       Test Webhook
                     </button>
@@ -2395,7 +2387,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 text-slate-500 font-mono">{tx.date}</td>
                           <td className="py-3.5 px-4 font-black text-slate-900">₹{tx.amount}</td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
                               {tx.status}
                             </span>
                           </td>
@@ -2415,7 +2407,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <BarChart2 className="w-6 h-6 text-[#005CB9]" />
+                  <BarChart2 className="w-6 h-6 text-[#14B8A6]" />
                   <span>Executive Clinical & Revenue Analytics</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -2427,12 +2419,12 @@ export default function AdminDashboardPage() {
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Average Order Value</span>
                   <div className="text-2xl font-black text-slate-900">₹742.50</div>
-                  <span className="text-xs text-blue-600 font-bold">↑ +14.8% vs last month</span>
+                  <span className="text-xs text-emerald-600 font-bold">↑ +14.8% vs last month</span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Diagnostic Fulfillment Rate</span>
                   <div className="text-2xl font-black text-slate-900">99.2%</div>
-                  <span className="text-xs text-blue-600 font-bold">Cold chain compliance 100%</span>
+                  <span className="text-xs text-emerald-600 font-bold">Cold chain compliance 100%</span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
                   <span className="text-xs text-slate-400 font-bold uppercase">Active Assam Pin Codes</span>
@@ -2451,7 +2443,7 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-[#005CB9]" />
+                    <Bell className="w-6 h-6 text-[#14B8A6]" />
                     <span>System Alerts & Operations Feed</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
@@ -2488,7 +2480,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Settings className="w-6 h-6 text-[#005CB9]" />
+                  <Settings className="w-6 h-6 text-[#14B8A6]" />
                   <span>Platform & Regional Settings</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -2536,7 +2528,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => addToast('Platform and regional operational settings saved!', 'success')}
-                    className="px-5 py-2.5 bg-[#005CB9] hover:bg-[#004C99] text-white font-bold rounded-xl shadow-xs transition"
+                    className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
                   >
                     Save Platform Settings
                   </button>

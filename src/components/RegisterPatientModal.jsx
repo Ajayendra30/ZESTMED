@@ -77,7 +77,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
       {/* Modal Dialog */}
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#005CB9] text-white">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#14B8A6] text-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center">
               <UserPlus className="w-4 h-4" />
@@ -106,7 +106,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g. Bhupen Hazarika"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="e.g. 98765 43210"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono"
               />
             </div>
             <div>
@@ -129,7 +129,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="patient@gmail.com"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
               />
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                 placeholder="32"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
               />
             </div>
             <div>
@@ -153,7 +153,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -165,7 +165,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
               <select
                 value={formData.bloodGroup}
                 onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white font-bold"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white font-bold"
               >
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -185,7 +185,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
               <select
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800 bg-white font-medium"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white font-medium"
               >
                 <option value="Guwahati (Panbazar)">Guwahati (Panbazar)</option>
                 <option value="Guwahati (Dispur)">Guwahati (Dispur)</option>
@@ -203,7 +203,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 placeholder="House No., Street name"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
               />
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
               value={formData.medicalNotes}
               onChange={(e) => setFormData({ ...formData, medicalNotes: e.target.value })}
               placeholder="e.g. Penicillin allergy, Type 2 Diabetes"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#005CB9] text-slate-800"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
             />
           </div>
 
@@ -229,7 +229,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>Register & Issue UHID</span>

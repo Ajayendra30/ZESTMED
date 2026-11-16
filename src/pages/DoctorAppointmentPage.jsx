@@ -984,12 +984,12 @@ export default function DoctorAppointmentPage() {
 
                   {/* Free Senior Citizen Cab Perks */}
                   {parseInt(patientForm.age, 10) >= 60 && (
-                    <div className="p-3 bg-orange-50 border border-orange-200 rounded-xl text-xs text-orange-900 flex items-center justify-between">
+                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span>🚗</span>
                         <span className="font-bold">Eligible for Free Senior Citizen AC Cab Pick-up within 10km (Guwahati)</span>
                       </div>
-                      <span className="text-[10px] font-black bg-[#FF5722] text-white px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full">
                         FREE
                       </span>
                     </div>

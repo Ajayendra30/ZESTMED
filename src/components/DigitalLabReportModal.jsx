@@ -100,7 +100,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#005CB9] hover:bg-[#004C99] text-white text-xs font-bold transition shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#008F83] hover:bg-[#007A6F] text-white text-xs font-bold transition shadow-sm"
               title="Download PDF"
             >
               <Download className="w-3.5 h-3.5" />
@@ -124,7 +124,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
             <div>
               <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="Zestmed Diagnostics & Polyclinic" className="h-8 sm:h-9 w-auto object-contain" />
-                <span className="text-[11px] font-bold text-[#005CB9] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                <span className="text-[11px] font-bold text-[#008F83] bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
                   CENTRAL DIAGNOSTICS
                 </span>
               </div>
@@ -138,12 +138,12 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
 
             <div className="text-left sm:text-right space-y-0.5">
               <div className="text-xs font-mono font-bold text-slate-800">
-                Report No: <span className="text-[#005CB9]">{reportId}</span>
+                Report No: <span className="text-[#008F83]">{reportId}</span>
               </div>
               <div className="text-[11px] text-slate-500 font-mono">
                 Sample Barcode: {sampleBarcode}
               </div>
-              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">
                 <ShieldCheck className="w-3 h-3" />
                 NABL Guidelines Referenced
               </div>
@@ -231,7 +231,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
                                 {row.flag || 'Low'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full">
                                 <CheckCircle2 className="w-3 h-3" />
                                 Normal
                               </span>
