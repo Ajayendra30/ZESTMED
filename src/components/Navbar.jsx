@@ -82,7 +82,7 @@ export default function Navbar({
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
     { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
     { name: 'Health Packages', href: '/packages', isRoute: true },
-    { name: 'Wellness Packages', href: '/packages', isRoute: true, highlightPill: true },
+    { name: 'Wellness Packages', href: '/packages?type=wellness', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
   ];
@@ -481,18 +481,6 @@ export default function Navbar({
                   );
                 }
 
-                if (link.highlightPill) {
-                  return (
-                    <Link
-                      key={link.name}
-                      to={link.href}
-                      className="px-3 xl:px-4 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] hover:bg-[#cbf0e7] transition shadow-2xs whitespace-nowrap"
-                    >
-                      <span>{link.name}</span>
-                    </Link>
-                  );
-                }
-
                 if (link.name === 'Physiotherapy' && (routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio')) {
                   return (
                     <Link
@@ -530,18 +518,24 @@ export default function Navbar({
                   );
                 }
 
+                const isCurrentActive = link.name === 'Wellness Packages'
+                  ? routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness')
+                  : link.name === 'Health Packages'
+                  ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
+                  : routerLocation.pathname === link.href;
+
                 return (
                   <Link
                     key={link.name}
                     to={link.href}
                     className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
-                      routerLocation.pathname === link.href
+                      isCurrentActive
                         ? 'text-[#008F83] font-bold'
                         : 'text-slate-700 hover:text-[#008F83]'
                     }`}
                   >
                     <span>{link.name}</span>
-                    {routerLocation.pathname === link.href && (
+                    {isCurrentActive && (
                       <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
                     )}
                   </Link>
@@ -715,16 +709,20 @@ export default function Navbar({
                   );
                 }
 
+                const isMobileActive = link.name === 'Wellness Packages'
+                  ? routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness')
+                  : link.name === 'Health Packages'
+                  ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
+                  : routerLocation.pathname === link.href;
+
                 return (
                   <Link
                     key={link.name}
                     to={link.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between ${
-                      routerLocation.pathname === link.href
+                      isMobileActive
                         ? 'bg-teal-50 text-[#008F83] font-bold'
-                        : link.highlightPill
-                        ? 'bg-[#D8F3EC] text-[#007A64] font-bold'
                         : 'text-slate-800 hover:bg-slate-50 hover:text-[#008F83]'
                     }`}
                   >
