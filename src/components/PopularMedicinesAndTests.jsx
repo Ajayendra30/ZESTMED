@@ -67,7 +67,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       mrp: 600,
       discount: '33% Off',
       type: 'test',
-      iconType: 'blood'
+      image: '/popular-test-cbc.jpg'
     },
     {
       id: 'test-thyroid-profile',
@@ -76,7 +76,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       mrp: 1000,
       discount: '30% Off',
       type: 'test',
-      iconType: 'thyroid'
+      image: '/popular-test-thyroid.jpg'
     },
     {
       id: 'test-lft-profile',
@@ -85,7 +85,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       mrp: 850,
       discount: '30% Off',
       type: 'test',
-      iconType: 'liver'
+      image: '/popular-test-lft.png'
     }
   ];
 
@@ -288,23 +288,14 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                       <Heart className={`w-4 h-4 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
                     </button>
 
-                    {/* Centered Graphic Icon */}
-                    <div className="w-full h-24 rounded-xl bg-slate-50 flex items-center justify-center mb-2.5">
-                      {test.iconType === 'blood' && (
-                        <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                          <Droplet className="w-6 h-6 fill-rose-500 text-rose-500" />
-                        </div>
-                      )}
-                      {test.iconType === 'thyroid' && (
-                        <div className="w-12 h-12 rounded-2xl bg-pink-50 border border-pink-100 text-pink-500 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                          <Activity className="w-6 h-6 text-pink-500" />
-                        </div>
-                      )}
-                      {test.iconType === 'liver' && (
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                          <ShieldCheck className="w-6 h-6 text-amber-600" />
-                        </div>
-                      )}
+                    {/* Diagnostic Test Image */}
+                    <div className="w-full h-24 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center mb-2.5">
+                      <img
+                        src={test.image}
+                        alt={test.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
                     </div>
 
                     {/* Content */}
