@@ -614,10 +614,10 @@ export default function Navbar({
               ) : (
                 <Link
                   to="/login"
-                  className={`p-2 sm:p-2.5 rounded-full transition shrink-0 flex items-center justify-center ${
+                  className={`p-2 sm:p-2.5 rounded-full transition shrink-0 flex items-center justify-center hover:bg-slate-100 ${
                     routerLocation.pathname === '/login'
-                      ? 'text-[#008F83] bg-teal-50'
-                      : 'text-slate-700 hover:text-[#008F83] hover:bg-slate-100'
+                      ? 'text-[#008F83]'
+                      : 'text-slate-700 hover:text-[#008F83]'
                   }`}
                   title="Login"
                   aria-label="Login"
