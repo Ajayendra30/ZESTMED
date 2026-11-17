@@ -614,11 +614,11 @@ export default function Navbar({
               ) : (
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4.5 py-2 sm:py-2.5 rounded-xl bg-[#008F83] hover:bg-[#007a70] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition whitespace-nowrap shrink-0"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#008F83] hover:bg-[#007A70] text-white flex items-center justify-center shadow-xs hover:shadow-md transition-all shrink-0 active:scale-95"
                   title="Login"
+                  aria-label="Login"
                 >
-                  <User className="w-4 h-4 shrink-0" />
-                  <span>Login</span>
+                  <User className="w-5 h-5 text-white shrink-0" />
                 </Link>
               )}
 
