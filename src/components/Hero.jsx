@@ -112,9 +112,6 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                       For Senior Citizen
                     </span>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5 leading-snug">
-                    Sanitized AC cab across Guwahati for diagnostics & clinics
-                  </p>
                 </div>
               </div>
               <span className="text-xs sm:text-[13px] font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1 shrink-0 self-end sm:self-center">
