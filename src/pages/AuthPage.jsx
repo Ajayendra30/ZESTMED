@@ -30,7 +30,7 @@ function ZestmedLogo() {
 
 function LandscapeIllustration() {
   return (
-    <div className="w-full pointer-events-none select-none mt-auto pt-4 sm:pt-6">
+    <div className="w-full pointer-events-none select-none mt-6">
       <svg viewBox="0 0 360 85" fill="none" className="w-full h-auto" preserveAspectRatio="none">
         {/* Back Hill */}
         <path d="M0,85 L0,48 Q90,20 180,45 T360,35 L360,85 Z" fill="#E8F8FA" />
@@ -169,7 +169,7 @@ export default function AuthPage() {
     <div className="min-h-[calc(100vh-80px)] bg-[#F8FAFC] flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans select-none">
       
       {/* Mobile Frame Container matching Reference Mockup */}
-      <div className="w-full max-w-[410px] bg-white rounded-[28px] sm:rounded-[32px] shadow-xl border border-slate-100 flex flex-col min-h-[600px] sm:min-h-[640px] relative overflow-hidden transition-all">
+      <div className="w-full max-w-[400px] bg-white rounded-[28px] sm:rounded-[32px] shadow-xl border border-slate-100 flex flex-col relative overflow-hidden transition-all">
         
         {/* Top Header Row with Back Button */}
         <div className="pt-5 sm:pt-6 px-5 sm:px-6 flex items-center justify-between shrink-0">
@@ -191,19 +191,19 @@ export default function AuthPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="px-6 sm:px-7 pt-2 pb-0 flex-1 flex flex-col justify-between">
+        <div className="px-6 sm:px-7 pt-1 pb-0 flex flex-col">
           
           {/* Top Brand Logo */}
-          <div className="flex justify-center mb-6 sm:mb-7">
+          <div className="flex justify-center mb-5 sm:mb-6">
             <ZestmedLogo />
           </div>
 
           {step === 1 ? (
             /* STEP 1: Phone Number Input Form */
-            <div className="space-y-5 sm:space-y-6">
+            <div className="space-y-4 sm:space-y-5">
               
               {/* Heading & Subtitle */}
-              <div className="space-y-1.5 text-left">
+              <div className="space-y-1 text-left">
                 <h1 className="text-xl sm:text-[22px] font-black text-[#0B2238] tracking-tight">
                   Login with Mobile OTP
                 </h1>
@@ -213,7 +213,7 @@ export default function AuthPage() {
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSendOtp} className="space-y-4 sm:space-y-5">
+              <form onSubmit={handleSendOtp} className="space-y-4">
                 
                 {/* Mobile Number Input Container matching Reference */}
                 <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
@@ -256,10 +256,10 @@ export default function AuthPage() {
             </div>
           ) : (
             /* STEP 2: 4-Digit OTP Verification Form */
-            <div className="space-y-5 sm:space-y-6">
+            <div className="space-y-4 sm:space-y-5">
               
               {/* Heading & Subtitle */}
-              <div className="space-y-1.5 text-left">
+              <div className="space-y-1 text-left">
                 <h1 className="text-xl sm:text-[22px] font-black text-[#0B2238] tracking-tight">
                   Verify Mobile OTP
                 </h1>
@@ -269,10 +269,10 @@ export default function AuthPage() {
               </div>
 
               {/* Form */}
-              <form onSubmit={handleVerifyOtp} className="space-y-5">
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
                 
                 {/* 4 Digit Boxes */}
-                <div className="flex items-center justify-between gap-3 max-w-[280px] mx-auto py-2">
+                <div className="flex items-center justify-between gap-3 max-w-[280px] mx-auto py-1">
                   {otp.map((digit, idx) => (
                     <input
                       key={idx}
@@ -290,7 +290,7 @@ export default function AuthPage() {
                 </div>
 
                 {/* Resend Link */}
-                <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                <div className="flex items-center justify-between text-xs text-slate-500">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
@@ -327,7 +327,7 @@ export default function AuthPage() {
           <LandscapeIllustration />
 
           {/* Bottom Security Trust Badge matching Reference */}
-          <div className="flex items-center justify-center gap-1.5 pb-4 pt-2 text-xs font-bold text-[#007A64] select-none">
+          <div className="flex items-center justify-center gap-1.5 pb-4 pt-1.5 text-xs font-bold text-[#007A64] select-none">
             <ShieldCheck className="w-4 h-4 text-[#007A64]" />
             <span>Your data is safe with us</span>
           </div>

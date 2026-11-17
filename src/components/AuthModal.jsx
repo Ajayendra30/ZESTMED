@@ -28,7 +28,7 @@ function ZestmedLogo() {
 
 function LandscapeIllustration() {
   return (
-    <div className="w-full pointer-events-none select-none mt-auto pt-4">
+    <div className="w-full pointer-events-none select-none mt-6">
       <svg viewBox="0 0 360 85" fill="none" className="w-full h-auto" preserveAspectRatio="none">
         <path d="M0,85 L0,48 Q90,20 180,45 T360,35 L360,85 Z" fill="#E8F8FA" />
         <path d="M0,85 L0,60 Q120,38 240,58 T360,48 L360,85 Z" fill="#D9F2F6" />
@@ -139,7 +139,7 @@ export default function AuthModal() {
       onClick={handleClose}
     >
       <div 
-        className="bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-[400px] min-h-[580px] max-h-[92vh] flex flex-col justify-between overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-[400px] max-h-[92vh] flex flex-col overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Row with Back / Close Button */}
@@ -168,7 +168,7 @@ export default function AuthModal() {
         </div>
 
         {/* Main Content Area */}
-        <div className="px-6 sm:px-7 pt-1 flex-1 flex flex-col justify-between">
+        <div className="px-6 sm:px-7 pt-1 flex flex-col">
           
           {/* Brand Logo */}
           <div className="flex justify-center mb-6">
