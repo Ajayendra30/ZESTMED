@@ -195,7 +195,7 @@ export default function WellnessPackagesPage() {
           style={{ backgroundImage: "url('/wellness-hero-bg.jpg')" }}
         />
 
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-9 lg:pt-10 pb-7 sm:pb-9 lg:pb-10">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-3 sm:pt-4 lg:pt-4 pb-6 sm:pb-8 lg:pb-9">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-8">
             
             {/* Left Column: Heading, Subtitle & Action CTAs */}
