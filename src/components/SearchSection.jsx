@@ -48,7 +48,7 @@ export default function SearchSection({
   const getPlaceholder = () => {
     switch (activeTab) {
       case 'tests':
-        return 'Search diagnostic tests (CBC, Thyroid, Liver, HbA1c, etc.) with single-day reports...';
+        return 'Search diagnostic tests (CBC, Thyroid, Liver, HbA1c, etc.)...';
       case 'doctor':
         return 'Search doctors by specialty in Guwahati (Cardiologist, Physician, Ortho, etc.)...';
       case 'physio':
@@ -56,7 +56,7 @@ export default function SearchSection({
       case 'surgery':
         return 'Search daycare surgery packages (Cataract, Gallbladder, Hernia, Laser Piles)...';
       case 'packages':
-        return 'Search wellness health packages with same-day reports...';
+        return 'Search wellness health packages...';
       case 'medicines':
         return 'Search genuine medicines & healthcare products in Guwahati...';
       default:
@@ -82,8 +82,6 @@ export default function SearchSection({
           >
             <FlaskConical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>1. Book Lab Test</span>
-            <span className={`text-[10px] px-1 rounded font-bold ${activeTab === 'tests' ? 'bg-amber-400 text-slate-900' : 'bg-teal-50 text-[#008F83]'}`}>
-              Single Day </span>
           </button>
 
           {/* 2. Book Doctor */}

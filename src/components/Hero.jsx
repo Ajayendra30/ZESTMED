@@ -57,10 +57,6 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             
             {/* Tag Badges Row */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-emerald-300 shadow-xs text-xs font-bold text-emerald-800 backdrop-blur-xs">
-                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span>Single-Day Reports Guaranteed</span>
-              </div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#008F83]/10 border border-[#008F83]/30 text-xs font-bold text-[#008F83]">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span>Exclusively Guwahati</span>
@@ -71,12 +67,12 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[38px] xl:text-[44px] 2xl:text-[48px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
               Book Lab Tests, Consult <br />
               Doctors & Order Medicines <br />
-              <span className="text-[#008F83]">Test Reports in a Single Day</span>
+              <span className="text-[#008F83]">Healthcare Hub in Guwahati</span>
             </h1>
 
             {/* Subheading */}
             <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-xl font-medium leading-relaxed">
-              Guwahati's unified healthcare destination for fast diagnostics with single-day reports, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
+              Guwahati's unified healthcare destination for fast diagnostics, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
             </p>
 
             {/* CTAs - #1 Lab Tests is Primary Button */}

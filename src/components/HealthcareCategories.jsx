@@ -16,7 +16,7 @@ export default function HealthcareCategories({
     {
       id: 'lab-tests',
       title: 'Lab & Diagnostic Tests',
-      sub: 'Single-Day Reports ',
+      sub: 'Home Sample Collection',
       badge: '#1 First Order',
       badgeColor: 'bg-amber-100 text-amber-800',
       iconBg: 'bg-teal-50 text-[#008F83]',
@@ -97,7 +97,7 @@ export default function HealthcareCategories({
               </span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Diagnostics in 1st order with single-day reports, top doctors, physiotherapy, surgeries, medicines & free senior citizen transport.
+              Diagnostics in 1st order, top doctors, physiotherapy, surgeries, medicines & free senior citizen transport.
             </p>
           </div>
         </div>

@@ -111,8 +111,6 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                 <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
                   Health Checkup Packages
                 </h3>
-                <span className="text-[10px] font-bold bg-[#008F83] text-white px-2 py-0.5 rounded-full">
-                  Single-Day Reports </span>
               </div>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
                 Comprehensive packages delivered in 12-24 hours across Guwahati.

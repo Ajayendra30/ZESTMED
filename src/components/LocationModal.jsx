@@ -54,7 +54,7 @@ export default function LocationModal() {
                   Exclusively Guwahati
                 </span>
               </div>
-              <p className="text-xs text-muted">Single-day reports & free 10km senior citizen transport across all Guwahati hubs</p>
+              <p className="text-xs text-muted">Free 10km senior citizen transport across all Guwahati hubs</p>
             </div>
           </div>
           <button
@@ -163,7 +163,7 @@ export default function LocationModal() {
         {/* Footer */}
         <div className="px-6 py-3 bg-slate-50 border-t border-border flex items-center justify-between text-xs text-muted">
           <span>Active Hub: <strong className="text-dark">{currentLocation.city} ({currentLocation.pincode})</strong></span>
-          <span className="text-[#008F83] font-semibold">Single-Day Reports </span>
+          <span className="text-[#008F83] font-semibold">Verified Guwahati Hub</span>
         </div>
       </div>
     </div>
