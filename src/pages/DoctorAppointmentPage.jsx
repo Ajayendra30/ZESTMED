@@ -460,8 +460,8 @@ export default function DoctorAppointmentPage() {
                 >
                   <div className="flex items-start gap-3.5 sm:gap-4">
                     
-                    {/* Doctor Avatar - Uses provided image */}
-                    <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-900 relative">
+                    {/* Doctor Avatar - Uses provided image with light grey background */}
+                    <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
                       <img
                         src={doc.avatar}
                         alt={doc.name}
@@ -1001,7 +1001,7 @@ export default function DoctorAppointmentPage() {
                 {/* Doctor Selection Pill */}
                 <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shrink-0">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                       <img 
                         src={bookingDoctor?.avatar || '/doctor-amit-sharma.jpg'} 
                         alt={bookingDoctor?.name}

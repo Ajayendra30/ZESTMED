@@ -289,7 +289,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                     </button>
 
                     {/* Diagnostic Test Image */}
-                    <div className="w-full h-24 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center mb-2.5">
+                    <div className="w-full h-24 rounded-xl overflow-hidden bg-[#F1F5F9] flex items-center justify-center mb-2.5">
                       <img
                         src={test.image}
                         alt={test.name}
