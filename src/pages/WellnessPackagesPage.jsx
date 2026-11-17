@@ -241,13 +241,31 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Center Column: Family Image with Glowing Shield */}
-            <div className="flex-1 w-full flex items-center justify-center relative select-none pointer-events-none z-10 min-w-0">
-              <img
-                src="/packages-hero-family.png"
-                alt="Preventive Health Checkup Packages Family Protection"
-                className="max-h-[240px] sm:max-h-[280px] md:max-h-[300px] lg:max-h-[320px] xl:max-h-[340px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none transition-all duration-300"
-              />
+            {/* Center Column: Combined Hero Visuals (New Provided Image alongside Existing Images) */}
+            <div className="flex-1 w-full flex items-center justify-center relative select-none z-10 min-w-0">
+              <div className="relative flex items-center justify-center max-w-full">
+                
+                {/* Provided New Hero Image with Family and Glowing Shield */}
+                <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-teal-200/80 bg-white/40 backdrop-blur-xs group">
+                  <img
+                    src="/wellness-hero-family.jpg"
+                    alt="Preventive Health Checkup Family Care"
+                    className="max-h-[220px] sm:max-h-[260px] md:max-h-[280px] lg:max-h-[310px] xl:max-h-[330px] w-auto max-w-full object-cover object-center drop-shadow-sm select-none transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                  {/* Subtle inner protective ring */}
+                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/50 pointer-events-none" />
+                </div>
+
+                {/* Existing Hero Image - Positioned alongside seamlessly */}
+                <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-4 lg:-right-6 z-20 pointer-events-none select-none">
+                  <img
+                    src="/packages-hero-family.png"
+                    alt="Preventive Health Checkup Packages Family Protection"
+                    className="max-h-[70px] sm:max-h-[90px] md:max-h-[105px] lg:max-h-[120px] w-auto object-contain drop-shadow-xl"
+                  />
+                </div>
+
+              </div>
             </div>
 
             {/* Right Column: 4 Feature Checkmark Cards */}
