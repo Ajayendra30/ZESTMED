@@ -6,48 +6,16 @@ import {
   Stethoscope, Activity, Scissors, Car, Clock, ShieldCheck, MapPin 
 } from 'lucide-react';
 import heroTeamImg from '../assets/hero-team.png';
+import heroBgImg from '../assets/hero-bg.jpg';
 
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#EFFBF9] via-[#E8F8F6] to-[#DEF7F5] pt-4 sm:pt-5 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 border-b border-teal-100/60">
-      {/* 1. Subtle Floating Mint Medical Plus (+) Symbols */}
-      <div className="absolute top-6 sm:top-8 left-[48%] lg:left-[52%] opacity-35 text-teal-300 font-bold text-4xl sm:text-5xl lg:text-6xl pointer-events-none select-none">
-        +
-      </div>
-      <div className="absolute top-5 right-8 lg:right-16 opacity-20 text-teal-300 font-bold text-4xl pointer-events-none select-none">
-        +
-      </div>
-
-      {/* 2. Distinctive Organic Mint-Cyan Curved Backdrop */}
-      <div className="absolute top-0 right-0 w-[64%] sm:w-[58%] lg:w-[50%] xl:w-[46%] h-full pointer-events-none select-none overflow-hidden">
-        <svg
-          viewBox="0 0 500 400"
-          preserveAspectRatio="none"
-          className="absolute top-0 right-0 w-full h-full"
-        >
-          <defs>
-            <linearGradient id="heroOrganicGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#C4F1F7" stopOpacity="0.45" />
-              <stop offset="45%" stopColor="#A2E6F2" stopOpacity="0.75" />
-              <stop offset="100%" stopColor="#7AD4E4" stopOpacity="0.9" />
-            </linearGradient>
-            <linearGradient id="heroOrganicGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#BCEEF6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#67CCE0" stopOpacity="0.85" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M80,0 C160,45 130,135 220,185 C290,225 380,210 500,260 L500,0 Z"
-            fill="url(#heroOrganicGrad1)"
-          />
-          <path
-            d="M200,0 C260,65 240,150 330,195 C390,225 440,215 500,225 L500,0 Z"
-            fill="url(#heroOrganicGrad2)"
-            opacity="0.65"
-          />
-        </svg>
-        <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
-      </div>
+    <section className="relative overflow-hidden bg-[#EFFBF9] pt-4 sm:pt-5 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 border-b border-teal-100/60">
+      {/* Hero Background Image */}
+      <div 
+        className="absolute inset-0 w-full h-full bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none select-none"
+        style={{ backgroundImage: `url(${heroBgImg})` }}
+      />
 
       {/* Main Container */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
