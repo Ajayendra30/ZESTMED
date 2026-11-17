@@ -75,11 +75,11 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               Guwahati's unified healthcare destination for fast diagnostics, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+            {/* CTAs - 6 Service Boxes in 3x2 Grid */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1 w-full">
               <Link
                 to="/doctor-appointment"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
               >
                 <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Book Doctor</span>
@@ -87,10 +87,42 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/medicines"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
               >
                 <ShoppingCart className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Medicines</span>
+              </Link>
+
+              <Link
+                to="/diagnostics"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+              >
+                <FlaskConical className="w-4 h-4 text-[#008F83] shrink-0" />
+                <span>Lab Tests</span>
+              </Link>
+
+              <Link
+                to="/physiotherapy"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+              >
+                <Activity className="w-4 h-4 text-[#008F83] shrink-0" />
+                <span>Physiotherapy</span>
+              </Link>
+
+              <Link
+                to="/surgery-packages"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+              >
+                <Scissors className="w-4 h-4 text-[#008F83] shrink-0" />
+                <span>Surgery Packages</span>
+              </Link>
+
+              <Link
+                to="/wellness-packages"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+              >
+                <ShieldCheck className="w-4 h-4 text-[#008F83] shrink-0" />
+                <span>Wellness Packages</span>
               </Link>
             </div>
 
