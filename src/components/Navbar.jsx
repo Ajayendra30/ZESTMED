@@ -480,30 +480,6 @@ export default function Navbar({
                   );
                 }
 
-                if (link.name === 'Physiotherapy' && (routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio')) {
-                  return (
-                    <Link
-                      key={link.name}
-                      to={link.href}
-                      className="px-3.5 xl:px-4.5 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#D8F3EC] text-[#007A64] border border-[#A7F3D0] shadow-2xs whitespace-nowrap"
-                    >
-                      <span>{link.name}</span>
-                    </Link>
-                  );
-                }
-
-                if (link.name === 'Doctor Appointment' && (routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors')) {
-                  return (
-                    <Link
-                      key={link.name}
-                      to={link.href}
-                      className="px-3.5 xl:px-4.5 py-1.5 text-xs xl:text-sm font-bold rounded-full bg-[#007A64] text-white shadow-2xs whitespace-nowrap"
-                    >
-                      <span>{link.name}</span>
-                    </Link>
-                  );
-                }
-
                 if (link.isModal) {
                   return (
                     <button
@@ -521,6 +497,10 @@ export default function Navbar({
                   ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
                   : link.name === 'Surgery Packages'
                   ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
+                  : link.name === 'Physiotherapy'
+                  ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
+                  : link.name === 'Doctor Appointment'
+                  ? routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors' || routerLocation.pathname === '/doctor' || routerLocation.pathname === '/book-doctor'
                   : routerLocation.pathname === link.href;
 
                 return (
@@ -712,6 +692,10 @@ export default function Navbar({
                   ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
                   : link.name === 'Surgery Packages'
                   ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
+                  : link.name === 'Physiotherapy'
+                  ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
+                  : link.name === 'Doctor Appointment'
+                  ? routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors' || routerLocation.pathname === '/doctor' || routerLocation.pathname === '/book-doctor'
                   : routerLocation.pathname === link.href;
 
                 return (
