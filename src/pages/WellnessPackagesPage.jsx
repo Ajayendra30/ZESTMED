@@ -199,7 +199,7 @@ export default function WellnessPackagesPage() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-8">
             
             {/* Left Column: Heading, Subtitle & Action CTAs */}
-            <div className="w-full lg:w-[360px] xl:w-[410px] shrink-0 space-y-3 sm:space-y-3.5 text-left">
+            <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3 sm:space-y-3.5 text-left">
               
               {/* Wellness Packages Pill Badge */}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
@@ -218,12 +218,12 @@ export default function WellnessPackagesPage() {
                 Stay ahead of health problems with our comprehensive wellness packages.
               </p>
 
-              {/* Buttons */}
-              <div className="flex flex-wrap items-center gap-2.5 pt-1.5">
+              {/* Buttons - Horizontally Aligned in a Single Row */}
+              <div className="flex items-center gap-2.5 pt-1.5 flex-nowrap">
                 <button
                   type="button"
                   onClick={() => scrollToSection('wellness-packages-grid')}
-                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
                   <span>Book a Package</span>
@@ -233,7 +233,7 @@ export default function WellnessPackagesPage() {
                 <button
                   type="button"
                   onClick={() => scrollToSection('why-choose-section')}
-                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
                 >
                   <Info className="w-4 h-4 shrink-0 text-[#007A64]" />
                   <span>Compare Packages</span>
