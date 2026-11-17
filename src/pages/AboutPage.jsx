@@ -186,7 +186,7 @@ export default function AboutPage() {
               <div>
                 <h4 className="text-sm sm:text-base font-bold text-[#0B1728] leading-snug">Health Packages</h4>
                 <p className="text-[11px] sm:text-xs text-slate-500 leading-snug mt-0.5">
-                  Comprehensive checkups for you and your family.
+                  Comprehensive preventive checkups for individual health.
                 </p>
               </div>
             </div>

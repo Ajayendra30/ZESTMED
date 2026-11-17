@@ -295,7 +295,7 @@ export default function HealthPackagesPage() {
               Health Checkup <span className="text-[#008F83]">Packages</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-xl">
-              Comprehensive health checkup packages for you and your family at affordable prices.
+              Comprehensive health checkup packages for complete individual health at affordable prices.
             </p>
 
             {/* 4 Trust Badges in a Horizontal Row */}
@@ -331,11 +331,11 @@ export default function HealthPackagesPage() {
           </div>
         </div>
 
-        {/* Desktop Right Imagery: Prominently sized family with shield resting along the bottom baseline */}
+        {/* Desktop Right Imagery: Prominently sized shield resting along the bottom baseline */}
         <div className="hidden lg:flex absolute bottom-0 right-0 h-full w-[56%] xl:w-[52%] 2xl:w-[48%] pointer-events-none z-10 items-end justify-end overflow-hidden pr-2 sm:pr-4 lg:pr-8 xl:pr-12">
           <img
             src="/packages-hero-family.png"
-            alt="Health Packages Protection Family"
+            alt="Health Packages Protection"
             className="h-auto max-h-[300px] lg:max-h-[320px] xl:max-h-[345px] 2xl:max-h-[365px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
           />
         </div>
@@ -344,7 +344,7 @@ export default function HealthPackagesPage() {
         <div className="lg:hidden relative z-10 px-4 sm:px-6 pb-2 flex justify-end">
           <img
             src="/packages-hero-family.png"
-            alt="Health Packages Protection Family"
+            alt="Health Packages Protection"
             className="w-full max-w-lg h-auto max-h-[250px] object-contain object-right-bottom drop-shadow-md select-none ml-auto"
           />
         </div>

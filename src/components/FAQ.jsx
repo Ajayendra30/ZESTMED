@@ -31,8 +31,8 @@ export default function FAQ() {
       a: 'Yes, 100% genuine. All medicines and medical supplies are sourced directly from licensed pharmaceutical distributors and manufacturers with strict batch numbers and expiry checks.'
     },
     {
-      q: 'Can I book tests for my family members?',
-      a: 'Yes! You can add family members to your ZESTMED account and book lab tests, home collections, or health packages for any member with separate individual health records.'
+      q: 'How does personal health record tracking work?',
+      a: 'ZESTMED is designed exclusively for individual patients. All your diagnostic test reports, doctor prescriptions, and medical history are securely consolidated in your personal health portal with instant PDF download access.'
     }
   ];
 

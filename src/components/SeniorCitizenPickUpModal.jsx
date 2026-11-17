@@ -218,7 +218,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Emergency / Family Contact</label>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Emergency Contact</label>
                   <input
                     type="tel"
                     value={formData.emergencyPhone}

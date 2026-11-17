@@ -50,13 +50,11 @@ import {
   initialPatientOrders,
   initialPatientLabBookings,
   initialPatientPrescriptions,
-  initialFamilyMembers,
   initialAssamAddresses
 } from '../mock-data/patientData';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import { downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 import OrderInvoiceModal from '../components/OrderInvoiceModal';
-import AddFamilyMemberModal from '../components/AddFamilyMemberModal';
 import AddAddressModal from '../components/AddAddressModal';
 import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
@@ -81,7 +79,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [selectedReportBooking, setSelectedReportBooking] = useState(null);
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState(null);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
-  const [isAddFamilyModalOpen, setIsAddFamilyModalOpen] = useState(false);
   const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
   const [isPrescriptionUploadModalOpen, setIsPrescriptionUploadModalOpen] = useState(false);
 
@@ -110,15 +107,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       return saved ? JSON.parse(saved) : initialPatientLabBookings;
     } catch {
       return initialPatientLabBookings;
-    }
-  });
-
-  const [familyMembers, setFamilyMembers] = useState(() => {
-    try {
-      const saved = localStorage.getItem('zestmed_family_members');
-      return saved ? JSON.parse(saved) : initialFamilyMembers;
-    } catch {
-      return initialFamilyMembers;
     }
   });
 
@@ -197,11 +185,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b))
     );
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
-  };
-
-  const handleDeleteFamilyMember = (memberId) => {
-    setFamilyMembers((prev) => prev.filter((m) => m.id !== memberId));
-    addToast('Family member removed from records.', 'info');
   };
 
   const handleDeleteAddress = (addressId) => {
@@ -400,7 +383,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               </div>
               <div className="flex items-center gap-2.5 text-xs text-slate-700 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Doctor Prescriptions & Family Health History</span>
+                <span>Doctor Prescriptions & Personal Health History</span>
               </div>
             </div>
 
@@ -609,24 +592,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Reports</span>
             </button>
 
-            {/* Family Members */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveMenu('family');
-                setIsSidebarOpen(false);
-                addToast('Viewing Family Health Beneficiaries', 'info');
-              }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'family'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span>Family Members</span>
-            </button>
-
             {/* My Profile */}
             <button
               type="button"
@@ -815,18 +780,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <p className="text-[11px] text-slate-400 font-mono">UHID: {patientUHID}</p>
                     <p className="text-[11px] text-teal-600 font-medium mt-0.5">{profileForm.city || 'Dispur, Guwahati (Assam)'}</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsProfileOpen(false);
-                      setIsAddFamilyModalOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 text-left"
-                  >
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span>Manage Family Members</span>
-                  </button>
-                  <div className="border-t border-slate-100 my-1" />
                   <Link
                     to="/"
                     onClick={() => setIsProfileOpen(false)}
@@ -1096,17 +1049,20 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </span>
                 </button>
 
-                {/* 4. Add Family Member */}
+                {/* 4. View My Reports */}
                 <button
                   type="button"
-                  onClick={() => setIsAddFamilyModalOpen(true)}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
+                  onClick={() => {
+                    setActiveMenu('reports');
+                    addToast('Viewing Diagnostic Reports', 'info');
+                  }}
+                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
                 >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Users className="w-5 h-5 stroke-[2]" />
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <FileText className="w-5 h-5 stroke-[2]" />
                   </div>
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
-                    Add Family Member
+                    View My Reports
                   </span>
                 </button>
               </div>
@@ -1896,94 +1852,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
           {/* ======================================================== */}
-          {/* 4. FAMILY MEMBERS VIEW                                   */}
-          {/* ======================================================== */}
-          {activeMenu === 'family' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Users className="w-6 h-6 text-[#14B8A6]" />
-                    <span>Family Members & Beneficiaries</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Manage profiles, book lab tests, and track health vitals for your loved ones.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddFamilyModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Family Member</span>
-                </button>
-              </div>
-
-              {/* Members Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {familyMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 font-black text-base flex items-center justify-center shrink-0">
-                            {member.name.charAt(0)}
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-bold text-slate-900">{member.name}</h3>
-                            <span className="inline-block bg-teal-50 text-[#14B8A6] text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5">
-                              {member.relationship || 'Family'}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg">
-                          {member.bloodGroup || 'O+'}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-50 p-3 rounded-xl text-slate-600">
-                        <div>
-                          <span className="text-slate-400 block text-[10px]">Age / Gender</span>
-                          <span className="font-bold text-slate-800">{member.age || '34'} yrs • {member.gender || 'Male'}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block text-[10px]">Contact</span>
-                          <span className="font-bold text-slate-800 truncate block">{member.phone || '+91 92791 25091'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          addToast(`Booking lab test for ${member.name}...`, 'info');
-                          navigate('/diagnostics');
-                        }}
-                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
-                      >
-                        Book Test
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteFamilyMember(member.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
-                        title="Remove member"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ======================================================== */}
           {/* 5. MY PROFILE VIEW                                       */}
           {/* ======================================================== */}
           {activeMenu === 'profile' && (
@@ -2243,19 +2111,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           isOpen={!!selectedInvoiceOrder}
           order={selectedInvoiceOrder}
           onClose={() => setSelectedInvoiceOrder(null)}
-        />
-      )}
-
-      {/* Add Family Member Modal */}
-      {isAddFamilyModalOpen && (
-        <AddFamilyMemberModal
-          isOpen={isAddFamilyModalOpen}
-          onClose={() => setIsAddFamilyModalOpen(false)}
-          onAddMember={(newMember) => {
-            setFamilyMembers((prev) => [newMember, ...prev]);
-            addToast(`Family member ${newMember.name} added successfully!`, 'success');
-            setIsAddFamilyModalOpen(false);
-          }}
         />
       )}
 

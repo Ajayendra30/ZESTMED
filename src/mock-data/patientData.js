@@ -1,5 +1,5 @@
 // src/mock-data/patientData.js
-// Mock patient health records, pharmacy orders, diagnostic reports, and family profiles
+// Mock patient health records, pharmacy orders, and diagnostic reports
 // Exclusively tailored for ZESTMED Health Private Limited (Assam Operational Hub)
 
 export const initialPatientProfile = {
@@ -342,53 +342,6 @@ export const initialPatientPrescriptions = [
   }
 ];
 
-export const initialFamilyMembers = [
-  {
-    id: 'fam-1',
-    name: 'Rahul Verma',
-    relation: 'Self',
-    age: 34,
-    gender: 'Male',
-    bloodGroup: 'B+',
-    allergies: 'None reported',
-    conditions: 'Mild Hypertension (controlled)',
-    isPrimary: true
-  },
-  {
-    id: 'fam-2',
-    name: 'Priya Verma',
-    relation: 'Spouse',
-    age: 32,
-    gender: 'Female',
-    bloodGroup: 'O+',
-    allergies: 'Penicillin (Allergic rash)',
-    conditions: 'None',
-    isPrimary: false
-  },
-  {
-    id: 'fam-3',
-    name: 'Biren Verma',
-    relation: 'Father',
-    age: 64,
-    gender: 'Male',
-    bloodGroup: 'A+',
-    allergies: 'Sulfa Drugs',
-    conditions: 'Type 2 Diabetes, Mild Osteoarthritis',
-    isPrimary: false
-  },
-  {
-    id: 'fam-4',
-    name: 'Meena Verma',
-    relation: 'Mother',
-    age: 60,
-    gender: 'Female',
-    bloodGroup: 'B+',
-    allergies: 'None reported',
-    conditions: 'Primary Hypothyroidism',
-    isPrimary: false
-  }
-];
-
 export const initialAssamAddresses = [
   {
     id: 'addr-1',
@@ -416,7 +369,7 @@ export const initialAssamAddresses = [
   },
   {
     id: 'addr-3',
-    label: 'Family Residence (Panbazar)',
+    label: 'Primary Residence (Panbazar)',
     recipientName: 'Biren Verma',
     phone: '+91 92791 25091',
     street: 'House No. 12, MC Road, Near Dighalipukhuri, Panbazar',

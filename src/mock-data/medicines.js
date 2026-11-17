@@ -145,7 +145,7 @@ export const MOCK_MEDICINES = [
     description: 'Clinical-grade automatic blood pressure monitor with dual-user memory, arrhythmia detection, and large backlit LCD screen.',
     dosage: 'Sit relaxed for 5 minutes prior to measurement. Wrap cuff comfortably around upper arm.',
     composition: 'Includes Device, 22-42cm Cuff, 4 AA Batteries & Travel Pouch',
-    uses: ['Hypertension Monitoring', 'Pulse Rate Tracking', 'Irregular Heartbeat Alert', 'Family Health Tracking'],
+    uses: ['Hypertension Monitoring', 'Pulse Rate Tracking', 'Irregular Heartbeat Alert', 'Individual Health Tracking'],
     safetyAdvice: {
       alcohol: 'Measure BP before consuming heavy meals or caffeine.',
       pregnancy: 'Ideal for home monitoring of gestational blood pressure.',

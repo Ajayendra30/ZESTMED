@@ -25,7 +25,7 @@ export default function PopularServices() {
     },
     {
       title: 'Health Packages',
-      description: 'Comprehensive checkups for you and your family.',
+      description: 'Comprehensive preventive checkups for individual health.',
       image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=700&q=80',
       alt: 'Stethoscope with red heart and clinical chart',
       buttonText: 'Explore Packages',
