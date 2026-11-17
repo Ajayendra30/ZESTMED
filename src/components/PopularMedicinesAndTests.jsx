@@ -260,7 +260,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
                 </h3>
               </div>
               <Link
-                to="/labtests"
+                to="/diagnostics"
                 className="text-xs sm:text-sm font-bold text-[#008F83] hover:text-[#007a70] flex items-center gap-1 group transition"
               >
                 <span>View All</span>

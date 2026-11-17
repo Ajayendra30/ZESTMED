@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Routes, Route, useNavigate, Link, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { LocationProvider } from './context/LocationContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -91,7 +91,23 @@ function AppContent() {
   // 2. DEDICATED LAB PANEL: http://localhost:5173/lab
   // Completely separate panel with its own layout, cold-chain, components & functions
   // =========================================================================
-  if (location.pathname.startsWith('/lab') || activeSubdomain === 'lab') {
+  const isLabExecutivePath =
+    location.pathname === '/lab' ||
+    location.pathname.startsWith('/lab/') ||
+    location.pathname === '/lab-dashboard' ||
+    location.pathname.startsWith('/lab-dashboard/');
+
+  const isConsumerDiagnosticPath =
+    location.pathname === '/diagnostics' ||
+    location.pathname.startsWith('/diagnostics/') ||
+    location.pathname === '/lab-tests' ||
+    location.pathname.startsWith('/lab-tests/') ||
+    location.pathname === '/labtests' ||
+    location.pathname.startsWith('/labtests/') ||
+    location.pathname === '/lab-test' ||
+    location.pathname.startsWith('/lab-test/');
+
+  if (!isConsumerDiagnosticPath && (isLabExecutivePath || activeSubdomain === 'lab')) {
     return (
       <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
         <Routes>
@@ -166,9 +182,10 @@ function AppContent() {
               />
             }
           />
+          <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
+          <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
           <Route path="/labtests" element={<DiagnosticPortalPage />} />
-          <Route path="/diagnostics" element={<Navigate to="/labtests" replace />} />
-          <Route path="/lab-tests" element={<Navigate to="/labtests" replace />} />
+          <Route path="/lab-test" element={<DiagnosticPortalPage />} />
           <Route path="/surgery-packages" element={<SurgeryPackagesPage />} />
           <Route path="/surgeries" element={<SurgeryPackagesPage />} />
           <Route path="/packages" element={<SurgeryPackagesPage />} />

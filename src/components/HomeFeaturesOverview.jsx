@@ -247,7 +247,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
               </p>
               <div className="pt-2">
                 <Link
-                  to="/labtests"
+                  to="/diagnostics"
                   className="inline-flex items-center gap-2 bg-white hover:bg-teal-50 text-[#00545D] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black shadow-md transition-all duration-200 group"
                 >
                   <span>Book a Test Now</span>

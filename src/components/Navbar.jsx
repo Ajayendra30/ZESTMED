@@ -97,7 +97,7 @@ export default function Navbar({
   const primaryNavLinks = [
     { name: 'Home', href: '/', isRoute: true },
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
-    { name: 'Lab Tests', href: '/labtests', isRoute: true, hasDropdown: true, isLab: true },
+    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
     { name: 'Surgery Packages', href: '/surgery-packages', isRoute: true },
     { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
@@ -177,8 +177,7 @@ export default function Navbar({
             <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 lg:ml-3.5 xl:ml-5 2xl:ml-6">
               {primaryNavLinks.map((link) => {
                 const isActive = routerLocation.pathname === link.href || 
-                  (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen)) ||
-                  (link.href === '/labtests' && (routerLocation.pathname.startsWith('/labtests') || routerLocation.pathname.startsWith('/diagnostics') || labTestsMenuOpen));
+                  (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen));
 
                 if (link.isMega) {
                   return (
@@ -419,14 +418,22 @@ export default function Navbar({
                     >
                       <Link
                         to={link.href}
+                        onClick={() => setLabTestsMenuOpen(false)}
                         className={`px-1.5 xl:px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
-                          routerLocation.pathname === link.href || labTestsMenuOpen
+                          routerLocation.pathname === link.href ||
+                          routerLocation.pathname === '/lab-tests' ||
+                          routerLocation.pathname === '/labtests' ||
+                          routerLocation.pathname === '/lab-test' ||
+                          labTestsMenuOpen
                             ? 'text-[#008F83] font-bold'
                             : 'text-slate-700 hover:text-[#008F83]'
                         }`}
                       >
                         <span>{link.name}</span>
-                        {routerLocation.pathname === link.href && (
+                        {(routerLocation.pathname === link.href ||
+                          routerLocation.pathname === '/lab-tests' ||
+                          routerLocation.pathname === '/labtests' ||
+                          routerLocation.pathname === '/lab-test') && (
                           <span className="absolute bottom-0 left-1.5 right-1.5 xl:left-2 xl:right-2 h-[3px] bg-[#008F83] rounded-full" />
                         )}
                       </Link>
@@ -441,7 +448,7 @@ export default function Navbar({
                             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Services</span>
                           </div>
                           <Link
-                            to="/labtests"
+                            to="/diagnostics"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-teal-50 hover:text-[#008F83] transition"
                           >
@@ -449,7 +456,7 @@ export default function Navbar({
                             <span>All Diagnostic Tests</span>
                           </Link>
                           <Link
-                            to="/labtests?cat=routine"
+                            to="/diagnostics?cat=routine"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
@@ -457,7 +464,7 @@ export default function Navbar({
                             <span>Complete Blood Count</span>
                           </Link>
                           <Link
-                            to="/labtests?cat=thyroid"
+                            to="/diagnostics?cat=thyroid"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
@@ -465,7 +472,7 @@ export default function Navbar({
                             <span>Thyroid Profile</span>
                           </Link>
                           <Link
-                            to="/labtests?cat=liver"
+                            to="/diagnostics?cat=liver"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
@@ -511,6 +518,8 @@ export default function Navbar({
                   ? routerLocation.pathname === '/about' || routerLocation.pathname === '/about-us'
                   : link.name === 'Contact'
                   ? routerLocation.pathname === '/contact' || routerLocation.pathname === '/contact-us'
+                  : link.name === 'Lab Tests'
+                  ? routerLocation.pathname === '/diagnostics' || routerLocation.pathname === '/lab-tests' || routerLocation.pathname === '/labtests' || routerLocation.pathname === '/lab-test'
                   : routerLocation.pathname === link.href;
 
                 return (
@@ -729,6 +738,8 @@ export default function Navbar({
                   ? routerLocation.pathname === '/about' || routerLocation.pathname === '/about-us'
                   : link.name === 'Contact'
                   ? routerLocation.pathname === '/contact' || routerLocation.pathname === '/contact-us'
+                  : link.name === 'Lab Tests'
+                  ? routerLocation.pathname === '/diagnostics' || routerLocation.pathname === '/lab-tests' || routerLocation.pathname === '/labtests' || routerLocation.pathname === '/lab-test'
                   : routerLocation.pathname === link.href;
 
                 return (

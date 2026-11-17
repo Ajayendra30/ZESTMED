@@ -1,8 +1,4 @@
 {
-  "redirects": [
-    { "source": "/diagnostics", "destination": "/labtests", "permanent": true },
-    { "source": "/lab-tests", "destination": "/labtests", "permanent": true }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",

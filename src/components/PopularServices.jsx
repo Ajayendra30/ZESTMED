@@ -20,7 +20,7 @@ export default function PopularServices() {
       image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=80',
       alt: 'Laboratory blood test tubes',
       buttonText: 'Book a Test',
-      link: '/labtests',
+      link: '/diagnostics',
       icon: FlaskConical
     },
     {

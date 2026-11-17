@@ -92,7 +92,7 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/labtests" className="hover:text-white transition">Lab Tests</Link>
+                <Link to="/diagnostics" className="hover:text-white transition">Lab Tests</Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
@@ -125,11 +125,11 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/labtests" className="hover:text-white transition">Book Lab Tests</Link>
+                <Link to="/diagnostics" className="hover:text-white transition">Book Lab Tests</Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/labtests" className="hover:text-white transition">Home Sample Collection</Link>
+                <Link to="/diagnostics" className="hover:text-white transition">Home Sample Collection</Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>

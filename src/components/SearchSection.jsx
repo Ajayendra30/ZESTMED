@@ -36,7 +36,7 @@ export default function SearchSection({
     } else if (lower.includes('package') || lower.includes('checkup') || lower.includes('wellness')) {
       navigate(`/packages?search=${encodeURIComponent(query)}`);
     } else {
-      navigate(`/labtests?search=${encodeURIComponent(query)}`);
+      navigate(`/diagnostics?search=${encodeURIComponent(query)}`);
     }
   };
 
