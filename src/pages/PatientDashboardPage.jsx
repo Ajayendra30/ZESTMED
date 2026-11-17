@@ -498,7 +498,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               type="button"
               onClick={() => {
                 setIsSidebarOpen(false);
-                navigate('/diagnostics');
+                navigate('/labtests');
               }}
               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
             >
@@ -1006,7 +1006,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 {/* 1. Book Lab Test */}
                 <button
                   type="button"
-                  onClick={() => navigate('/diagnostics')}
+                  onClick={() => navigate('/labtests')}
                   className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
                 >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -1349,7 +1349,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => navigate('/diagnostics')}
+                  onClick={() => navigate('/labtests')}
                   className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />
@@ -1750,7 +1750,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => navigate('/diagnostics')}
+                  onClick={() => navigate('/labtests')}
                   className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
                 >
                   <Plus className="w-4 h-4" />

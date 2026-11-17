@@ -20,7 +20,7 @@ export default function HealthcareCategories({
       badge: '#1 First Order',
       badgeColor: 'bg-amber-100 text-amber-800',
       iconBg: 'bg-teal-50 text-[#008F83]',
-      link: '/diagnostics',
+      link: '/labtests',
       icon: <FlaskConical className="w-7 h-7 text-[#008F83]" />
     },
     {

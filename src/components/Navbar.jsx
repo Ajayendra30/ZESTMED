@@ -97,7 +97,7 @@ export default function Navbar({
   const primaryNavLinks = [
     { name: 'Home', href: '/', isRoute: true },
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
-    { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
+    { name: 'Lab Tests', href: '/labtests', isRoute: true, hasDropdown: true, isLab: true },
     { name: 'Surgery Packages', href: '/surgery-packages', isRoute: true },
     { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
@@ -177,7 +177,8 @@ export default function Navbar({
             <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 lg:ml-3.5 xl:ml-5 2xl:ml-6">
               {primaryNavLinks.map((link) => {
                 const isActive = routerLocation.pathname === link.href || 
-                  (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen));
+                  (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen)) ||
+                  (link.href === '/labtests' && (routerLocation.pathname.startsWith('/labtests') || routerLocation.pathname.startsWith('/diagnostics') || labTestsMenuOpen));
 
                 if (link.isMega) {
                   return (
@@ -440,7 +441,7 @@ export default function Navbar({
                             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Services</span>
                           </div>
                           <Link
-                            to="/diagnostics"
+                            to="/labtests"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-teal-50 hover:text-[#008F83] transition"
                           >
@@ -448,7 +449,7 @@ export default function Navbar({
                             <span>All Diagnostic Tests</span>
                           </Link>
                           <Link
-                            to="/diagnostics?cat=routine"
+                            to="/labtests?cat=routine"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
@@ -456,7 +457,7 @@ export default function Navbar({
                             <span>Complete Blood Count</span>
                           </Link>
                           <Link
-                            to="/diagnostics?cat=thyroid"
+                            to="/labtests?cat=thyroid"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >
@@ -464,7 +465,7 @@ export default function Navbar({
                             <span>Thyroid Profile</span>
                           </Link>
                           <Link
-                            to="/diagnostics?cat=liver"
+                            to="/labtests?cat=liver"
                             onClick={() => setLabTestsMenuOpen(false)}
                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
                           >

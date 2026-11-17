@@ -62,7 +62,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               </Link>
 
               <Link
-                to="/diagnostics"
+                to="/labtests"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <FlaskConical className="w-4 h-4 text-[#008F83] shrink-0" />

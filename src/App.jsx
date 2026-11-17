@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, Link, useLocation, Navigate } from 'react-router-dom';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { LocationProvider } from './context/LocationContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -166,8 +166,9 @@ function AppContent() {
               />
             }
           />
-          <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
-          <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
+          <Route path="/labtests" element={<DiagnosticPortalPage />} />
+          <Route path="/diagnostics" element={<Navigate to="/labtests" replace />} />
+          <Route path="/lab-tests" element={<Navigate to="/labtests" replace />} />
           <Route path="/surgery-packages" element={<SurgeryPackagesPage />} />
           <Route path="/surgeries" element={<SurgeryPackagesPage />} />
           <Route path="/packages" element={<SurgeryPackagesPage />} />

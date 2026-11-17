@@ -55,7 +55,7 @@ export default function WhyChooseUs() {
               </p>
               <div className="pt-3">
                 <Link
-                  to="/diagnostics"
+                  to="/labtests"
                   className="inline-flex items-center gap-2.5 bg-white hover:bg-teal-50 text-[#00545D] px-7 py-3.5 rounded-2xl text-sm sm:text-base font-bold shadow-sm transition"
                 >
                   <span>Book a Test Now</span>

@@ -140,7 +140,7 @@ export default function HealthPackages({ onSelectPackage }) {
         {/* View All Packages Action */}
         <div className="mt-10 text-center">
           <Link
-            to="/diagnostics"
+            to="/labtests"
             className="btn-secondary text-xs sm:text-sm py-2.5 px-6 font-bold rounded-xl inline-flex items-center gap-2 shadow-xs hover:border-primary/50"
           >
             <span>Compare All Preventive Packages in Diagnostic Portal</span>

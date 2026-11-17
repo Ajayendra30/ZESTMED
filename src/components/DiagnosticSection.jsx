@@ -183,7 +183,7 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
           </button>
 
           <Link
-            to="/diagnostics"
+            to="/labtests"
             className="btn-primary text-xs sm:text-sm py-2.5 px-6 font-semibold rounded-xl inline-flex items-center gap-2 shadow-xs"
           >
             <span>Open Complete Diagnostic Portal (16+ Tests & Packages)</span>
