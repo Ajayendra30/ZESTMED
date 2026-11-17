@@ -75,20 +75,8 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               Guwahati's unified healthcare destination for fast diagnostics, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
             </p>
 
-            {/* CTAs - #1 Lab Tests is Primary Button */}
+            {/* CTAs */}
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
-              <Link
-                to="/diagnostics"
-                className="bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition hover:shadow-md group whitespace-nowrap"
-              >
-                <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                <span>Book a Lab Test (1st)</span>
-                <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 py-0.5 rounded font-black">
-                  Fastest
-                </span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-
               <Link
                 to="/doctor-appointment"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
