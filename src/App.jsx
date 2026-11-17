@@ -19,6 +19,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
 import WellnessPackagesPage from './pages/WellnessPackagesPage';
+import SurgeryPackagesPage from './pages/SurgeryPackagesPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
 import PhysiotherapyPage from './pages/PhysiotherapyPage';
 import AboutPage from './pages/AboutPage';
@@ -167,7 +168,10 @@ function AppContent() {
           />
           <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
           <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
-          <Route path="/packages" element={<HealthPackagesPage />} />
+          <Route path="/surgery-packages" element={<SurgeryPackagesPage />} />
+          <Route path="/surgeries" element={<SurgeryPackagesPage />} />
+          <Route path="/packages" element={<SurgeryPackagesPage />} />
+          <Route path="/health-packages" element={<HealthPackagesPage />} />
           <Route path="/wellness-packages" element={<WellnessPackagesPage />} />
           <Route path="/wellness" element={<WellnessPackagesPage />} />
           <Route path="/doctor-appointment" element={<DoctorAppointmentPage />} />
@@ -177,22 +181,6 @@ function AppContent() {
           <Route path="/physiotherapy" element={<PhysiotherapyPage />} />
           <Route path="/physio" element={<PhysiotherapyPage />} />
           <Route path="/physiotherapist" element={<PhysiotherapyPage />} />
-          <Route 
-            path="/surgeries" 
-            element={
-              <Home 
-                searchInputRef={searchInputRef}
-                isDoctorModalOpen={isDoctorModalOpen}
-                setIsDoctorModalOpen={setIsDoctorModalOpen}
-                isPhysioModalOpen={isPhysioModalOpen}
-                setIsPhysioModalOpen={setIsPhysioModalOpen}
-                isSurgeryModalOpen={true}
-                setIsSurgeryModalOpen={setIsSurgeryModalOpen}
-                isSeniorPickupOpen={isSeniorPickupOpen}
-                setIsSeniorPickupOpen={setIsSeniorPickupOpen}
-              />
-            } 
-          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<AuthPage />} />

@@ -50,7 +50,7 @@ export default function HealthcareCategories({
       badge: 'Cashless TPA',
       badgeColor: 'bg-purple-50 text-purple-700',
       iconBg: 'bg-purple-50 text-purple-600',
-      onClick: onOpenSurgeryModal,
+      link: '/surgery-packages',
       icon: <Scissors className="w-7 h-7 text-purple-600" />
     },
     {

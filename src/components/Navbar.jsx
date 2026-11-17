@@ -81,14 +81,13 @@ export default function Navbar({
     { name: 'Home', href: '/', isRoute: true },
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
     { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
-    { name: 'Health Packages', href: '/packages', isRoute: true },
+    { name: 'Surgery Packages', href: '/surgery-packages', isRoute: true },
     { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
   ];
 
   const secondaryNavLinks = [
-    { name: 'Surgery Packages', onClick: onOpenSurgeryModal, isModal: true },
     { name: 'Senior Care (10km Free)', onClick: onOpenSeniorPickup, isModal: true },
     { name: 'About Us', href: '/about', isRoute: true },
     { name: 'Contact', href: '/contact', isRoute: true },
@@ -519,9 +518,9 @@ export default function Navbar({
                 }
 
                 const isCurrentActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || (routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness'))
-                  : link.name === 'Health Packages'
-                  ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
+                  : link.name === 'Surgery Packages'
+                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
                   : routerLocation.pathname === link.href;
 
                 return (
@@ -710,9 +709,9 @@ export default function Navbar({
                 }
 
                 const isMobileActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || (routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness'))
-                  : link.name === 'Health Packages'
-                  ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
+                  : link.name === 'Surgery Packages'
+                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
                   : routerLocation.pathname === link.href;
 
                 return (
