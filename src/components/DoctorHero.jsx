@@ -38,7 +38,7 @@ export default function DoctorHero({
       <div className="relative z-10 w-full px-3.5 sm:px-6 lg:px-6 xl:px-8 2xl:px-10 pt-2 sm:pt-2.5 lg:pt-3 pb-3 sm:pb-4 lg:pb-0 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-5 lg:gap-3 xl:gap-4">
         
         {/* Left Column: Heading, Subtitle & Action Buttons */}
-        <div className="w-full lg:w-[360px] xl:w-[400px] 2xl:w-[430px] shrink-0 space-y-2 sm:space-y-2.5 relative z-20 text-left self-center lg:self-center lg:pb-3 xl:pb-4">
+        <div className="w-full lg:w-[420px] xl:w-[450px] 2xl:w-[480px] shrink-0 space-y-2 sm:space-y-2.5 relative z-20 text-left self-center lg:self-center lg:pb-3 xl:pb-4">
           
           {/* Doctor Appointment Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#E0F3ED] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
@@ -59,14 +59,14 @@ export default function DoctorHero({
             multiple specialties, online or at the clinic.
           </p>
 
-          {/* Action Buttons - Side by side in a single horizontal line */}
-          <div className="flex flex-row items-center gap-2 sm:gap-2.5 pt-1 flex-nowrap overflow-x-auto scrollbar-none">
+          {/* Action Buttons - Side by side in a single horizontal line without cut-off */}
+          <div className="flex flex-row items-center gap-2 sm:gap-2.5 pt-1 flex-nowrap">
             <button
               type="button"
               onClick={() => onBookAppointment && onBookAppointment(null, 'Clinic Visit')}
-              className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-[13px] md:text-sm px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+              className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-xs md:text-[13px] xl:text-sm px-3 sm:px-3.5 xl:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
             >
-              <Calendar className="w-4 h-4 shrink-0" />
+              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>Book an Appointment</span>
               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             </button>
@@ -74,9 +74,9 @@ export default function DoctorHero({
             <button
               type="button"
               onClick={() => onOnlineConsultation && onOnlineConsultation(null, 'Online Consultation')}
-              className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-[13px] md:text-sm px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+              className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-xs md:text-[13px] xl:text-sm px-3 sm:px-3.5 xl:px-4 py-2 sm:py-2.5 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
             >
-              <Video className="w-4 h-4 shrink-0 text-[#007A64]" />
+              <Video className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-[#007A64]" />
               <span>Online Consultation</span>
             </button>
           </div>
