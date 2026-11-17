@@ -187,11 +187,13 @@ export default function WellnessPackagesPage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION matching exact Reference Image                            */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#EBF9F5] via-[#EFFBF8] to-[#E3F6F2]">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#EBF9F5]">
         
-        {/* Subtle Decorative Ambient Glows */}
-        <div className="absolute -top-16 -left-16 w-[380px] h-[380px] bg-[#D4F4EC]/60 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 right-[10%] w-[320px] h-[320px] bg-[#CEF0E8]/50 rounded-full blur-3xl pointer-events-none" />
+        {/* Hero Background Image - Covers entire section properly while maintaining original aspect ratio */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none select-none"
+          style={{ backgroundImage: "url('/wellness-hero-bg.jpg')" }}
+        />
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-9 lg:pt-10 pb-7 sm:pb-9 lg:pb-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-8">
