@@ -18,6 +18,7 @@ import LabDashboardPage from './pages/LabDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
+import WellnessPackagesPage from './pages/WellnessPackagesPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
 import PhysiotherapyPage from './pages/PhysiotherapyPage';
 import AboutPage from './pages/AboutPage';
@@ -167,6 +168,8 @@ function AppContent() {
           <Route path="/diagnostics" element={<DiagnosticPortalPage />} />
           <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
           <Route path="/packages" element={<HealthPackagesPage />} />
+          <Route path="/wellness-packages" element={<WellnessPackagesPage />} />
+          <Route path="/wellness" element={<WellnessPackagesPage />} />
           <Route path="/doctor-appointment" element={<DoctorAppointmentPage />} />
           <Route path="/doctors" element={<DoctorAppointmentPage />} />
           <Route path="/doctor" element={<DoctorAppointmentPage />} />

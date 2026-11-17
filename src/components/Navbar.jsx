@@ -82,7 +82,7 @@ export default function Navbar({
     { name: 'Medicines', href: '/medicines', isRoute: true, hasDropdown: true, isMega: true },
     { name: 'Lab Tests', href: '/diagnostics', isRoute: true, hasDropdown: true, isLab: true },
     { name: 'Health Packages', href: '/packages', isRoute: true },
-    { name: 'Wellness Packages', href: '/packages?type=wellness', isRoute: true },
+    { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
   ];
@@ -519,7 +519,7 @@ export default function Navbar({
                 }
 
                 const isCurrentActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness')
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || (routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness'))
                   : link.name === 'Health Packages'
                   ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
                   : routerLocation.pathname === link.href;
@@ -710,7 +710,7 @@ export default function Navbar({
                 }
 
                 const isMobileActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness')
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || (routerLocation.pathname === '/packages' && routerLocation.search.includes('wellness'))
                   : link.name === 'Health Packages'
                   ? routerLocation.pathname === '/packages' && !routerLocation.search.includes('wellness')
                   : routerLocation.pathname === link.href;

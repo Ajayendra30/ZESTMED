@@ -60,7 +60,7 @@ export default function HealthcareCategories({
       badge: '12-24h Reports',
       badgeColor: 'bg-rose-50 text-rose-700',
       iconBg: 'bg-rose-50 text-rose-600',
-      link: '/packages',
+      link: '/wellness-packages',
       icon: <Layers className="w-7 h-7 text-rose-600" />
     },
     {
