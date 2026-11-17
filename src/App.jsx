@@ -46,7 +46,7 @@ function AppContent() {
   // It is only available after login/registration, redirecting to the Patient Dashboard.
   const handleOpenPrescriptionRequest = () => {
     if (!user) {
-      addToast('Please login or register to upload your doctor\'s prescription', 'info');
+      addToast('Please login to upload your doctor\'s prescription', 'info');
       openAuth('login');
     } else {
       navigate('/patient-dashboard?open=prescription');

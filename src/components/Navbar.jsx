@@ -549,7 +549,7 @@ export default function Navbar({
               })}
             </nav>
 
-            {/* Right Actions: Search, Cart, Login/Register (Always 100% visible) */}
+            {/* Right Actions: Search, Cart, Login (Always 100% visible) */}
             <div className="flex items-center gap-2 sm:gap-3 xl:gap-3.5 shrink-0 ml-auto z-20">
               <button
                 type="button"
@@ -578,7 +578,7 @@ export default function Navbar({
                 </div>
               </button>
 
-              {/* Login / Register Button */}
+              {/* Login Button */}
               {isLoggedIn ? (
                 <div className="relative shrink-0">
                   <button
@@ -638,10 +638,10 @@ export default function Navbar({
                 <Link
                   to="/login"
                   className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4.5 py-2 sm:py-2.5 rounded-xl bg-[#008F83] hover:bg-[#007a70] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition whitespace-nowrap shrink-0"
-                  title="Login or Register"
+                  title="Login"
                 >
                   <User className="w-4 h-4 shrink-0" />
-                  <span>Login / Register</span>
+                  <span>Login</span>
                 </Link>
               )}
 
@@ -686,7 +686,7 @@ export default function Navbar({
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-4 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0"
                 >
-                  Login / Register
+                  Login
                 </Link>
               </div>
             )}
