@@ -154,7 +154,7 @@ export default function Navbar({
 
       {/* Main Sticky Navbar - Full Width with Responsive Max Constraint */}
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-300 font-sans ${
+        className={`sticky top-0 z-50 w-full transition-all duration-300 font-sans ${
           isScrolled
             ? 'bg-white/95 backdrop-blur-md shadow-card border-b border-border'
             : 'bg-white border-b border-border'
@@ -575,57 +575,71 @@ export default function Navbar({
               {/* Login / User Profile Dropdown Button */}
               {isLoggedIn ? (
                 <div className="relative shrink-0" ref={userMenuRef}>
+                  {/* Profile Box - No Text inside the box */}
                   <button
                     type="button"
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-full border border-slate-200 hover:border-[#008F83] bg-white transition text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap shrink-0 shadow-2xs hover:shadow-xs cursor-pointer group"
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-full border border-slate-200 hover:border-[#008F83] bg-white transition shrink-0 shadow-2xs hover:shadow-xs cursor-pointer group"
                     title={displayName}
                     aria-label="User Account Menu"
                   >
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#008F83] text-white flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                       {displayInitial}
                     </div>
-                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 hidden sm:inline-block" />
-                    <span className="hidden 2xl:inline-block max-w-[95px] truncate text-xs font-semibold text-slate-800 mr-1">{displayName}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${userDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
 
+                  {/* Clearly Visible Dropdown Box with 3 Required Options */}
                   {userDropdownOpen && (
                     <div 
-                      className="absolute right-0 mt-2 w-72 max-w-[calc(100vw-24px)] bg-white rounded-3xl shadow-xl border border-slate-200 py-2.5 z-50 animate-scale-up"
-                      onMouseLeave={() => setUserDropdownOpen(false)}
+                      className="absolute right-0 top-full mt-2 w-64 sm:w-72 max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-2 z-[100] animate-scale-up"
                     >
-                      <div className="px-5 py-2.5 border-b border-slate-100">
+                      {/* User Info Header */}
+                      <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/70 rounded-t-2xl">
                         <p className="text-sm font-bold text-slate-900 truncate">{displayName}</p>
-                        <p className="text-xs text-slate-500 truncate">{user?.email || user?.contact || ''}</p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{user?.email || user?.contact || ''}</p>
                       </div>
-                      <Link
-                        to="/patient-dashboard"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-800 hover:bg-slate-50 font-semibold"
-                      >
-                        <LayoutDashboard className="w-4 h-4 text-[#008F83]" />
-                        <span>Patient Dashboard</span>
-                      </Link>
-                      <Link
-                        to="/login"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 px-5 py-2 text-xs text-slate-700 hover:bg-slate-50 font-medium"
-                      >
-                        <User className="w-4 h-4 text-[#008F83]" />
-                        <span>Switch Account / Login Page</span>
-                      </Link>
-                      <div className="border-t border-slate-100 my-1" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setUserDropdownOpen(false);
-                          logout();
-                        }}
-                        className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-rose-600 hover:bg-rose-50 text-left font-semibold cursor-pointer"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Log Out</span>
-                      </button>
+
+                      {/* 3 Required Dropdown Options */}
+                      <div className="p-1.5 space-y-0.5">
+                        {/* 1. Patient Dashboard */}
+                        <Link
+                          to="/patient-dashboard"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3.5 py-2.5 text-sm text-slate-800 hover:text-[#008F83] hover:bg-teal-50/70 rounded-xl transition font-medium group cursor-pointer"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-[#008F83] shrink-0" />
+                          <span className="font-semibold text-slate-800 group-hover:text-[#008F83]">Patient Dashboard</span>
+                        </Link>
+
+                        {/* 2. Switch Account */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            openAuth('login');
+                          }}
+                          className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm text-slate-800 hover:text-[#008F83] hover:bg-teal-50/70 rounded-xl transition font-medium group text-left cursor-pointer"
+                        >
+                          <User className="w-4 h-4 text-[#008F83] shrink-0" />
+                          <span className="font-semibold text-slate-800 group-hover:text-[#008F83]">Switch Account</span>
+                        </button>
+
+                        <div className="border-t border-slate-100 my-1" />
+
+                        {/* 3. Logout */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            logout();
+                          }}
+                          className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm text-rose-600 hover:bg-rose-50 rounded-xl transition text-left font-semibold cursor-pointer group"
+                        >
+                          <LogOut className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span className="font-semibold text-rose-600">Logout</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
