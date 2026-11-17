@@ -10,7 +10,7 @@ import heroBgImg from '../assets/hero-bg.jpg';
 
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
-    <section className="relative overflow-hidden bg-[#EFFBF9] pt-4 sm:pt-5 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 border-b border-teal-100/60">
+    <section className="relative overflow-hidden bg-[#EFFBF9] pt-4 sm:pt-5 lg:pt-6 pb-8 sm:pb-10 lg:pb-12 xl:pb-14 border-b border-teal-100/60">
       {/* Hero Background Image */}
       <div 
         className="absolute inset-0 w-full h-full bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none select-none"
@@ -21,7 +21,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-4 items-end">
           {/* Left Column: Heading, Value Prop, CTAs */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-2.5 sm:space-y-3 text-left self-center py-1 sm:py-2 pr-0 lg:pr-4">
+          <div className="lg:col-span-5 xl:col-span-5 space-y-2.5 sm:space-y-3 text-left self-center -translate-y-2 sm:-translate-y-3 lg:-translate-y-5 xl:-translate-y-6 py-1 sm:py-2 pr-0 lg:pr-4">
             
             {/* Tag Badges Row */}
             <div className="flex flex-wrap items-center gap-2">

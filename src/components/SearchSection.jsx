@@ -41,7 +41,7 @@ export default function SearchSection({
   };
 
   return (
-    <div className="relative -mt-8 sm:-mt-10 lg:-mt-12 xl:-mt-14 z-20 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-4xl mx-auto">
+    <div className="relative -mt-5 sm:-mt-6 lg:-mt-7 xl:-mt-8 z-20 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100/90 p-3 sm:p-3.5 lg:p-4">
         {/* Search Input Bar with Search Button */}
         <form onSubmit={handleSearchSubmit} className="relative flex items-center">
