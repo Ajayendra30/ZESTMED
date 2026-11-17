@@ -10,18 +10,18 @@ import heroBgImg from '../assets/hero-bg.jpg';
 
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
-    <section className="relative overflow-hidden bg-[#EFFBF9] pt-4 sm:pt-5 lg:pt-6 pb-8 sm:pb-10 lg:pb-12 xl:pb-14 border-b border-teal-100/60">
-      {/* Hero Background Image */}
+    <section className="relative w-full min-w-full overflow-hidden bg-[#EFFBF9] pt-4 sm:pt-5 lg:pt-6 pb-8 sm:pb-10 lg:pb-12 xl:pb-14 border-b border-teal-100/60">
+      {/* Hero Background Image - Full width edge-to-edge */}
       <div 
         className="absolute inset-0 w-full h-full bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none select-none"
         style={{ backgroundImage: `url(${heroBgImg})` }}
       />
 
-      {/* Main Container */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-4 items-end">
+      {/* Main Full-Width Container */}
+      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-6 xl:gap-8 items-end w-full">
           {/* Left Column: Heading, Value Prop, CTAs */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-2.5 sm:space-y-3 text-left self-center -translate-y-2 sm:-translate-y-3 lg:-translate-y-5 xl:-translate-y-6 py-1 sm:py-2 pr-0 lg:pr-4">
+          <div className="lg:col-span-5 xl:col-span-5 space-y-2.5 sm:space-y-3 text-left self-center -translate-y-2 sm:-translate-y-3 lg:-translate-y-5 xl:-translate-y-6 py-1 sm:py-2 pr-0 lg:pr-2">
             
             {/* Tag Badges Row */}
             <div className="flex flex-wrap items-center gap-2">
@@ -129,7 +129,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               <img
                 src={heroTeamImg}
                 alt="ZESTMED Healthcare Professionals - Lab Scientist, Doctor, and Delivery Partner"
-                className="w-full max-w-[380px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-[680px] xl:max-w-[760px] 2xl:max-w-[830px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
+                className="w-full max-w-[380px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[880px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
               />
             </div>
           </div>
