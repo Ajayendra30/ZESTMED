@@ -236,9 +236,9 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
     <div className="bg-[#F8FAFC] min-h-screen font-sans pb-16">
       
       {/* =========================================================================
-          1. HERO BANNER WITH HOMEPAGE HERO STYLING & MEDICINES VISUAL
+          1. HERO BANNER WITH HOMEPAGE HERO STYLING & MEDICINES VISUAL - FULL WIDTH
           ========================================================================= */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-[#F0F9FB] via-[#E8F6F8] to-[#DEF3F6] border-b border-teal-100/60 select-none">
+      <section className="relative w-full min-w-full overflow-hidden bg-gradient-to-r from-[#F0F9FB] via-[#E8F6F8] to-[#DEF3F6] border-b border-teal-100/60 select-none">
         {/* 1. Medical Plus (+) Symbols matching Homepage Hero */}
         <div className="absolute top-6 left-[16%] opacity-20 text-teal-400 font-bold text-5xl pointer-events-none select-none">
           +
@@ -289,7 +289,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 md:pt-8 lg:pt-9 pb-7 md:pb-8 lg:pb-9 relative z-10 min-h-[250px] lg:min-h-[270px] flex items-center">
+        <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pt-7 md:pt-8 lg:pt-9 pb-7 md:pb-8 lg:pb-9 relative z-10 min-h-[250px] lg:min-h-[270px] flex items-center">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
             
             {/* Left Column */}
@@ -350,7 +350,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
       {/* =========================================================================
           2. BREADCRUMBS
           ========================================================================= */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4">
+      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-3 sm:py-4">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-semibold">
           <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
             <Home className="w-4 h-4 text-[#008F83]" />
@@ -362,10 +362,10 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
       </div>
 
       {/* =========================================================================
-          3. MAIN STORE LAYOUT (SIDEBAR + PRODUCTS GRID)
+          3. MAIN STORE LAYOUT (SIDEBAR + PRODUCTS GRID) - FULL WIDTH
           ========================================================================= */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-6 xl:gap-8 items-start w-full">
           
           {/* ================== LEFT FILTER SIDEBAR ================== */}
           <aside className="lg:col-span-3 space-y-5">

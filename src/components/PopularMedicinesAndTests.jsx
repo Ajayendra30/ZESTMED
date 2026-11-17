@@ -152,8 +152,8 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
   };
 
   return (
-    <section className="py-8 sm:py-10 bg-white">
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-6 sm:space-y-8">
+    <section className="py-8 sm:py-10 bg-white w-full min-w-full">
+      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 space-y-6 sm:space-y-8">
         
         {/* ROW 1: Popular Medicines & Popular Diagnostic Tests (Side-by-Side) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
