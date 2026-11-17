@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Hero from '../components/Hero';
 import SearchSection from '../components/SearchSection';
-import HealthcareCategories from '../components/HealthcareCategories';
 import PopularMedicinesAndTests from '../components/PopularMedicinesAndTests';
 import HomeFeaturesOverview from '../components/HomeFeaturesOverview';
 import Testimonials from '../components/Testimonials';
@@ -71,15 +70,7 @@ export default function Home({
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
-      {/* 3. Healthcare Categories Strip (Lab Tests 1st, Doctors, Physio, Surgery, Wellness, Medicines, Senior) */}
-      <HealthcareCategories
-        onOpenDoctorModal={() => setDoctorOpen(true)}
-        onOpenPhysioModal={() => setPhysioOpen(true)}
-        onOpenSurgeryModal={() => setSurgeryOpen(true)}
-        onOpenSeniorPickup={() => setSeniorOpen(true)}
-      />
-
-      {/* 4. Popular Medicines & Diagnostic Tests (Single-day report badge) */}
+      {/* 3. Popular Medicines & Diagnostic Tests */}
       <PopularMedicinesAndTests
         onSelectProduct={(product) => setSelectedProduct(product)}
         onSelectTest={(test) => setSelectedTest(test)}
