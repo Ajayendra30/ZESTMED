@@ -256,9 +256,9 @@ export default function PhysiotherapyPage() {
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
       {/* ========================================================================= */}
-      {/* 1. HERO BANNER - Full-Width Edge to Edge (Exact Crisp Background)         */}
+      {/* 1. HERO BANNER - Full-Width Edge to Edge (Exact Crisp Background & Cutout)  */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E2F4F8] min-h-[350px] sm:min-h-[380px] lg:min-h-[400px] xl:min-h-[420px] flex items-center">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E2F4F8] min-h-[360px] sm:min-h-[390px] lg:min-h-[420px] xl:min-h-[450px] flex items-stretch">
         
         {/* Full-Width Crisp Background Image - 100% Sharp, No Blur, No Overlay */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
@@ -269,10 +269,10 @@ export default function PhysiotherapyPage() {
           />
         </div>
 
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 pt-8 sm:pt-10 lg:pt-6 pb-0">
           
           {/* Left Column: Heading, Subtitle & Action Buttons */}
-          <div className="lg:col-span-7 xl:col-span-6 space-y-4">
+          <div className="w-full lg:w-[460px] xl:w-[500px] 2xl:w-[540px] shrink-0 space-y-4 self-center py-4 lg:py-8 z-20">
             
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
@@ -281,7 +281,7 @@ export default function PhysiotherapyPage() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[38px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
               Expert Physiotherapy<br />
               Care for a <span className="text-[#007A64]">Healthier,</span><br />
               <span className="text-[#007A64]">More Active Life</span>
@@ -315,19 +315,17 @@ export default function PhysiotherapyPage() {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Open Area */}
-          <div className="lg:col-span-5 xl:col-span-6 flex justify-center lg:justify-end">
-            {/* On mobile / small screens, clean responsive card showcasing the clinic visual */}
-            <div className="block lg:hidden w-full max-w-[460px] rounded-2xl overflow-hidden shadow-sm border border-[#CDEFE6] bg-white">
-              <img
-                src="/physio-hero-bg.jpg"
-                alt="ZESTMED Physiotherapy Clinic"
-                className="w-full h-auto object-cover object-right max-h-[260px] select-none"
-              />
-            </div>
-            {/* On desktop, keep open space so the crisp background panorama shines through without obstruction */}
-            <div className="hidden lg:block w-full min-h-[340px] pointer-events-none" />
+          {/* Right Column: Transparent Cutout of Physiotherapist & Patient placed prominently on the right */}
+          <div className="w-full lg:flex-1 flex justify-center lg:justify-center xl:justify-center items-end self-end pointer-events-none select-none z-20 -mb-[1px]">
+            <img
+              src="/physio-hero-therapist.png"
+              alt="Physiotherapist treating patient"
+              className="h-[270px] sm:h-[320px] md:h-[360px] lg:h-[390px] xl:h-[430px] 2xl:h-[460px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
+            />
           </div>
+
+          {/* Right spacer for 2xl / ultra-wide screens to keep clinic table and spine shelf visible on right */}
+          <div className="hidden 2xl:block w-[140px] shrink-0 pointer-events-none" />
 
         </div>
       </section>
