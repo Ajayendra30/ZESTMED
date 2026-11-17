@@ -135,20 +135,20 @@ export default function AuthModal() {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity select-none font-sans"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity select-none font-sans"
       onClick={handleClose}
     >
       <div 
-        className="bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-[400px] max-h-[92vh] flex flex-col overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-[420px] max-h-[92vh] flex flex-col overflow-y-auto relative animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Row with Back / Close Button */}
-        <div className="pt-5 px-6 flex items-center justify-between shrink-0">
+        <div className="pt-4 sm:pt-5 px-5 sm:px-6 flex items-center justify-between shrink-0">
           {step === 2 ? (
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="p-1.5 -ml-1.5 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+              className="p-2 -ml-2 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
               aria-label="Back"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -160,8 +160,8 @@ export default function AuthModal() {
           <button
             type="button"
             onClick={handleClose}
-            className="p-1.5 -mr-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
-            aria-label="Close"
+            className="p-2 -mr-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>

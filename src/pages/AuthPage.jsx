@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { 
   ArrowLeft, Smartphone, ShieldCheck, ChevronDown, 
-  RotateCcw, CheckCircle2 
+  RotateCcw, CheckCircle2, X 
 } from 'lucide-react';
 
 function ZestmedLogo() {
@@ -134,8 +134,24 @@ export default function AuthPage() {
   // If already logged in, show quick dashboard access
   if (user) {
     return (
-      <div className="min-h-[calc(100vh-80px)] bg-[#F8FAFC] flex items-center justify-center p-4 font-sans select-none">
-        <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl border border-slate-100 p-8 text-center space-y-6">
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity font-sans select-none"
+        onClick={() => navigate('/')}
+      >
+        <div 
+          className="w-full max-w-[420px] max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 text-center space-y-6 animate-scale-up overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-end -mt-3 -mr-3">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
           <ZestmedLogo />
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-slate-900">Already Logged In</h2>
@@ -146,7 +162,7 @@ export default function AuthPage() {
           <div className="space-y-3 pt-2">
             <button
               onClick={() => navigate('/patient-dashboard')}
-              className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition"
+              className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition cursor-pointer"
             >
               Go to Patient Dashboard
             </button>
@@ -155,7 +171,7 @@ export default function AuthPage() {
                 logout();
                 addToast('Logged out successfully', 'info');
               }}
-              className="w-full py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition"
+              className="w-full py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition cursor-pointer"
             >
               Sign Out
             </button>
@@ -166,28 +182,38 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#F8FAFC] flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans select-none">
-      
-      {/* Mobile Frame Container matching Reference Mockup */}
-      <div className="w-full max-w-[400px] bg-white rounded-[28px] sm:rounded-[32px] shadow-xl border border-slate-100 flex flex-col relative overflow-hidden transition-all">
-        
-        {/* Top Header Row with Back Button */}
-        <div className="pt-5 sm:pt-6 px-5 sm:px-6 flex items-center justify-between shrink-0">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity font-sans select-none"
+      onClick={() => navigate('/')}
+    >
+      {/* Mobile Frame Container matching Reference Mockup & Modal Standard */}
+      <div 
+        className="w-full max-w-[420px] bg-white rounded-3xl shadow-2xl border border-slate-100 max-h-[92vh] flex flex-col relative overflow-y-auto animate-scale-up"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top Header Row with Back / Close Button */}
+        <div className="pt-4 sm:pt-5 px-5 sm:px-6 flex items-center justify-between shrink-0">
+          {step === 2 ? (
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="p-2 -ml-2 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95"
+              aria-label="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          ) : (
+            <div className="w-5 h-5" />
+          )}
+
           <button
             type="button"
-            onClick={() => {
-              if (step === 2) {
-                setStep(1);
-              } else {
-                navigate(-1);
-              }
-            }}
-            className="p-1.5 -ml-1.5 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95"
-            aria-label="Back"
+            onClick={() => navigate('/')}
+            className="p-2 -mr-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+            aria-label="Close modal"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <X className="w-5 h-5" />
           </button>
-          <div className="w-5 h-5" />
         </div>
 
         {/* Main Content Area */}

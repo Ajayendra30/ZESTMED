@@ -612,18 +612,15 @@ export default function Navbar({
                   )}
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  className={`p-2 sm:p-2.5 rounded-full transition shrink-0 flex items-center justify-center hover:bg-slate-100 ${
-                    routerLocation.pathname === '/login'
-                      ? 'text-[#008F83]'
-                      : 'text-slate-700 hover:text-[#008F83]'
-                  }`}
+                <button
+                  type="button"
+                  onClick={() => openAuth('login')}
+                  className="p-2 sm:p-2.5 rounded-full transition shrink-0 flex items-center justify-center hover:bg-slate-100 text-slate-700 hover:text-[#008F83] cursor-pointer"
                   title="Login"
                   aria-label="Login"
                 >
                   <User className="w-5 h-5 shrink-0" />
-                </Link>
+                </button>
               )}
 
             </div>
@@ -662,13 +659,16 @@ export default function Navbar({
                   <p className="font-bold text-slate-900 text-sm">Welcome to ZESTMED</p>
                   <p className="text-xs text-slate-500 mt-0.5">Sign in for orders & reports</p>
                 </div>
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuth('login');
+                  }}
+                  className="px-4 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs font-bold rounded-xl shadow-xs transition shrink-0 cursor-pointer"
                 >
                   Login
-                </Link>
+                </button>
               </div>
             )}
 
