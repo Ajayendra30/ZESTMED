@@ -85,12 +85,12 @@ export default function Navbar({
     { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
+    { name: 'About', href: '/about', isRoute: true },
+    { name: 'Contact', href: '/contact', isRoute: true },
   ];
 
   const secondaryNavLinks = [
     { name: 'Senior Care (10km Free)', onClick: onOpenSeniorPickup, isModal: true },
-    { name: 'About Us', href: '/about', isRoute: true },
-    { name: 'Contact', href: '/contact', isRoute: true },
   ];
 
   const allNavLinks = [...primaryNavLinks, ...secondaryNavLinks];
@@ -143,8 +143,8 @@ export default function Navbar({
             : 'bg-white border-b border-border'
         }`}
       >
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-3 lg:gap-3 xl:gap-6">
+        <div className="w-full px-4 sm:px-6 lg:px-4 xl:px-8 2xl:px-14 relative">
+          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-3 lg:gap-2 xl:gap-5">
             
             {/* Left: Brand Logo & Navigation (Hamburger alongside it) */}
             <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
@@ -169,7 +169,7 @@ export default function Navbar({
             </div>
 
             {/* Center Navigation Links with Mega Menu */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2.5">
               {primaryNavLinks.map((link) => {
                 const isActive = routerLocation.pathname === link.href || 
                   (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen));
@@ -183,7 +183,7 @@ export default function Navbar({
                     >
                       <Link
                         to={link.href}
-                        className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
+                        className={`px-1.5 xl:px-2.5 2xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
                           isActive
                             ? 'text-[#008F83] font-bold'
                             : 'text-slate-700 hover:text-[#008F83]'
@@ -191,7 +191,7 @@ export default function Navbar({
                       >
                         <span>{link.name}</span>
                         {isActive && (
-                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                          <span className="absolute bottom-0 left-1.5 right-1.5 xl:left-2 xl:right-2 h-[3px] bg-[#008F83] rounded-full" />
                         )}
                       </Link>
 
@@ -413,7 +413,7 @@ export default function Navbar({
                     >
                       <Link
                         to={link.href}
-                        className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
+                        className={`px-1.5 xl:px-2.5 2xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1 whitespace-nowrap relative ${
                           routerLocation.pathname === link.href || labTestsMenuOpen
                             ? 'text-[#008F83] font-bold'
                             : 'text-slate-700 hover:text-[#008F83]'
@@ -421,7 +421,7 @@ export default function Navbar({
                       >
                         <span>{link.name}</span>
                         {routerLocation.pathname === link.href && (
-                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                          <span className="absolute bottom-0 left-1.5 right-1.5 xl:left-2 xl:right-2 h-[3px] bg-[#008F83] rounded-full" />
                         )}
                       </Link>
 
@@ -501,13 +501,17 @@ export default function Navbar({
                   ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
                   : link.name === 'Doctor Appointment'
                   ? routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors' || routerLocation.pathname === '/doctor' || routerLocation.pathname === '/book-doctor'
+                  : link.name === 'About'
+                  ? routerLocation.pathname === '/about' || routerLocation.pathname === '/about-us'
+                  : link.name === 'Contact'
+                  ? routerLocation.pathname === '/contact' || routerLocation.pathname === '/contact-us'
                   : routerLocation.pathname === link.href;
 
                 return (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className={`px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
+                    className={`px-1.5 xl:px-2.5 2xl:px-3.5 py-2 text-xs xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
                       isCurrentActive
                         ? 'text-[#008F83] font-bold'
                         : 'text-slate-700 hover:text-[#008F83]'
@@ -515,7 +519,7 @@ export default function Navbar({
                   >
                     <span>{link.name}</span>
                     {isCurrentActive && (
-                      <span className="absolute bottom-0 left-2.5 right-2.5 h-[3px] bg-[#008F83] rounded-full" />
+                      <span className="absolute bottom-0 left-1.5 right-1.5 xl:left-2 xl:right-2 h-[3px] bg-[#008F83] rounded-full" />
                     )}
                   </Link>
                 );
@@ -696,6 +700,10 @@ export default function Navbar({
                   ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
                   : link.name === 'Doctor Appointment'
                   ? routerLocation.pathname === '/doctor-appointment' || routerLocation.pathname === '/doctors' || routerLocation.pathname === '/doctor' || routerLocation.pathname === '/book-doctor'
+                  : link.name === 'About'
+                  ? routerLocation.pathname === '/about' || routerLocation.pathname === '/about-us'
+                  : link.name === 'Contact'
+                  ? routerLocation.pathname === '/contact' || routerLocation.pathname === '/contact-us'
                   : routerLocation.pathname === link.href;
 
                 return (

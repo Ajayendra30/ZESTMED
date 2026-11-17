@@ -96,15 +96,19 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/packages" className="hover:text-white transition">Health Packages</Link>
+                <Link to="/surgery-packages" className="hover:text-white transition">Surgery Packages</Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/about" className="hover:text-white transition">About Us</Link>
+                <Link to="/wellness-packages" className="hover:text-white transition">Wellness Packages</Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/contact" className="hover:text-white transition">Contact Us</Link>
+                <Link to="/about" className="hover:text-white transition">About</Link>
+              </li>
+              <li className="flex items-center gap-1.5">
+                <span className="text-[#C0D8DC]/70">•</span>
+                <Link to="/contact" className="hover:text-white transition">Contact</Link>
               </li>
             </ul>
           </div>
