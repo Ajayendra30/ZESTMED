@@ -162,19 +162,17 @@ export default function SurgeryPackagesPage() {
   return (
     <div className="min-h-screen bg-[#F8FBFA] font-sans text-slate-800 pb-16 antialiased selection:bg-[#007A64] selection:text-white">
       
-      {/* Main Responsive Container */}
-      <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7 space-y-9 sm:space-y-12">
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION - Full Width Edge-to-Edge                                  */}
+      {/* ========================================================================= */}
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#E6FAF5] via-[#DCF6EF] to-[#D0F2E8]">
+        
+        {/* Subtle Ambient Decorative Circles */}
+        <div className="absolute -top-16 -left-16 w-64 h-64 bg-teal-200/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 right-1/3 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none" />
 
-        {/* ========================================================================= */}
-        {/* 1. HERO SECTION matching Reference Layout                                  */}
-        {/* ========================================================================= */}
-        <section className="rounded-3xl bg-gradient-to-r from-[#E6FAF5] via-[#DCF6EF] to-[#D0F2E8] border border-teal-200/70 p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-xs">
-          
-          {/* Subtle Ambient Decorative Circles */}
-          <div className="absolute -top-16 -left-16 w-64 h-64 bg-teal-200/40 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 right-1/3 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10 w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Content Column */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
@@ -231,7 +229,11 @@ export default function SurgeryPackagesPage() {
             </div>
 
           </div>
-        </section>
+        </div>
+      </section>
+
+      {/* Main Responsive Container for subsequent sections */}
+      <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 space-y-9 sm:space-y-12">
 
         {/* ========================================================================= */}
         {/* 2. VALUE PROPOSITION STRIP (4 Key Pillars)                                */}
