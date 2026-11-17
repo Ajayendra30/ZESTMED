@@ -130,24 +130,12 @@ export default function Navbar({
             >
               🚗 Free Senior Citizen Pick-up & Drop within 10km (Guwahati)
             </button>
-            <span className="hidden lg:inline text-slate-500">|</span>
-            <span className="hidden lg:inline font-bold text-white whitespace-nowrap text-xs md:text-sm bg-teal-800/60 px-2 py-0.5 rounded-full border border-teal-600/40">
-              📍 Serving Exclusively Guwahati, Assam
-            </span>
           </div>
 
-          {/* Top Bar Right: Location Dropdown */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            <button
-              type="button"
-              onClick={openLocationModal}
-              className="flex items-center gap-1.5 sm:gap-2 text-slate-200 hover:text-white font-semibold transition shrink-0 text-xs sm:text-sm cursor-pointer"
-              title="Select Delivery City"
-            >
-              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#14B8A6] shrink-0" />
-              <span className="truncate max-w-[110px] sm:max-w-none">{currentLocation?.city || 'Guwahati'}</span>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" />
-            </button>
+          <div className="hidden lg:flex items-center shrink-0">
+            <span className="font-bold text-white whitespace-nowrap text-xs md:text-sm bg-teal-800/60 px-2.5 py-0.5 rounded-full border border-teal-600/40">
+              📍 Serving Exclusively Guwahati, Assam
+            </span>
           </div>
         </div>
       </div>
