@@ -219,11 +219,11 @@ export default function WellnessPackagesPage() {
               </p>
 
               {/* Buttons - Horizontally Aligned in a Single Row */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 pt-1.5">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 pt-1.5">
                 <button
                   type="button"
                   onClick={() => scrollToSection('wellness-packages-grid')}
-                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
+                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4.5 sm:px-5.5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
                   <span>Book a Package</span>
@@ -233,7 +233,7 @@ export default function WellnessPackagesPage() {
                 <button
                   type="button"
                   onClick={() => scrollToSection('why-choose-section')}
-                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
+                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4.5 sm:px-5.5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
                 >
                   <Info className="w-4 h-4 shrink-0 text-[#007A64]" />
                   <span>Compare Packages</span>
@@ -251,7 +251,7 @@ export default function WellnessPackagesPage() {
             </div>
 
             {/* Right Column: 4 Feature Checkmark Cards */}
-            <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 flex flex-col gap-2.5 sm:gap-3 z-20 self-center">
+            <div className="w-full lg:w-[280px] xl:w-[300px] shrink-0 flex flex-col gap-2.5 sm:gap-3 z-20 self-center">
               {[
                 'Early Disease Detection',
                 'Comprehensive Health Screening',
@@ -263,7 +263,7 @@ export default function WellnessPackagesPage() {
                   className="bg-white rounded-full px-4 py-2 sm:py-2.5 shadow-md border border-slate-100 flex items-center gap-2.5 text-xs sm:text-[13px] font-extrabold text-[#0B1B2B] hover:border-teal-200 transition"
                 >
                   <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#007A64] shrink-0 fill-[#E0F5EE]" />
-                  <span className="truncate">{feat}</span>
+                  <span className="whitespace-nowrap sm:whitespace-normal">{feat}</span>
                 </div>
               ))}
             </div>

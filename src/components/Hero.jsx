@@ -76,10 +76,10 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             </p>
 
             {/* CTAs - 6 Service Boxes in 3x2 Grid */}
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-1 w-full">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 w-full">
               <Link
                 to="/doctor-appointment"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Book Doctor</span>
@@ -87,7 +87,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/medicines"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <ShoppingCart className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Medicines</span>
@@ -95,7 +95,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/diagnostics"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <FlaskConical className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Lab Tests</span>
@@ -103,7 +103,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/physiotherapy"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <Activity className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Physiotherapy</span>
@@ -111,7 +111,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/surgery-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <Scissors className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Surgery Packages</span>
@@ -119,7 +119,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/wellness-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-1 sm:px-3.5 py-2 sm:py-3 rounded-xl font-bold text-[11px] sm:text-xs md:text-sm leading-tight flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 shadow-xs transition hover:shadow-sm text-center"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
               >
                 <ShieldCheck className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Wellness Packages</span>
@@ -129,26 +129,28 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             {/* Senior Citizen Free Pick-up & Drop Feature Callout Banner */}
             <div 
               onClick={onOpenSeniorPickup}
-              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 sm:gap-3 hover:border-[#008F83] transition group"
+              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 hover:border-[#008F83] transition group shadow-xs hover:shadow-sm"
             >
-              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Car className="w-4 h-4" />
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Car className="w-5 h-5" />
                 </div>
-                <div className="text-xs min-w-0">
-                  <div className="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
-                    <span className="truncate">Within 10km Radius Free Pick-up & Drop</span>
-                    <span className="text-[10px] font-black bg-[#008F83] text-white px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-slate-900 text-xs sm:text-sm md:text-base leading-snug">
+                      Within 10km Radius Free Pick-up & Drop
+                    </span>
+                    <span className="text-[11px] sm:text-xs font-black bg-[#008F83] text-white px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0 shadow-2xs">
                       For Senior Citizen
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-600 mt-0.5 truncate sm:whitespace-normal">
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
                     Sanitized AC cab across Guwahati for diagnostics & clinics
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1 shrink-0">
-                Book Cab <ArrowRight className="w-3.5 h-3.5" />
+              <span className="text-xs sm:text-sm font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                Book Cab <ArrowRight className="w-4 h-4" />
               </span>
             </div>
           </div>

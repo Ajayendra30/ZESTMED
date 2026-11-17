@@ -60,23 +60,23 @@ export default function DoctorHero({
           </p>
 
           {/* Action Buttons - Side by side in a single horizontal line on desktop, wrapping cleanly on small mobile */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5 pt-1">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 pt-1">
             <button
               type="button"
               onClick={() => onBookAppointment && onBookAppointment(null, 'Clinic Visit')}
-              className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-xs md:text-[13px] xl:text-sm px-3 sm:px-3.5 xl:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+              className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95 min-h-[44px]"
             >
-              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+              <Calendar className="w-4 h-4 shrink-0" />
               <span>Book an Appointment</span>
-              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
 
             <button
               type="button"
               onClick={() => onOnlineConsultation && onOnlineConsultation(null, 'Online Consultation')}
-              className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-xs md:text-[13px] xl:text-sm px-3 sm:px-3.5 xl:px-4 py-2 sm:py-2.5 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+              className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer active:scale-95 min-h-[44px]"
             >
-              <Video className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-[#007A64]" />
+              <Video className="w-4 h-4 shrink-0 text-[#007A64]" />
               <span>Online Consultation</span>
             </button>
           </div>

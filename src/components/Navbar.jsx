@@ -115,25 +115,25 @@ export default function Navbar({
   return (
     <>
       {/* Top Announcement Bar - Full Width with Responsive Gutters */}
-      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans overflow-hidden">
-        <div className="w-full flex items-center justify-between gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 overflow-hidden text-slate-200 min-w-0">
-            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-[11px] sm:text-xs md:text-sm text-teal-300 truncate">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-              <span className="truncate">Reports Delivered in a Single Day (12-24 Hrs)</span>
+      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2.5 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
+        <div className="w-full flex items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 text-slate-200 min-w-0">
+            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-xs sm:text-sm text-teal-300">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
             <button
               type="button"
               onClick={onOpenSeniorPickup}
-              className="hidden sm:inline-flex items-center gap-1 font-medium whitespace-nowrap text-xs md:text-sm text-emerald-300 hover:text-emerald-200 hover:underline cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 font-medium whitespace-nowrap text-xs sm:text-sm text-emerald-300 hover:text-emerald-200 hover:underline cursor-pointer"
             >
               🚗 Free Senior Citizen Pick-up & Drop within 10km (Guwahati)
             </button>
           </div>
 
           <div className="hidden lg:flex items-center shrink-0">
-            <span className="font-bold text-white whitespace-nowrap text-xs md:text-sm bg-teal-800/60 px-2.5 py-0.5 rounded-full border border-teal-600/40">
+            <span className="font-bold text-white whitespace-nowrap text-xs sm:text-sm bg-teal-800/70 px-3.5 py-1 rounded-full border border-teal-600/40 shadow-xs">
               📍 Serving Exclusively Guwahati, Assam
             </span>
           </div>
