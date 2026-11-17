@@ -219,7 +219,7 @@ export default function WellnessPackagesPage() {
               </p>
 
               {/* Buttons - Horizontally Aligned in a Single Row */}
-              <div className="flex items-center gap-2.5 pt-1.5 flex-nowrap">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 pt-1.5">
                 <button
                   type="button"
                   onClick={() => scrollToSection('wellness-packages-grid')}
@@ -276,7 +276,7 @@ export default function WellnessPackagesPage() {
       {/* 2. VALUE PROPOSITION STRIP (5 items) matching Reference                   */}
       {/* ========================================================================= */}
       <section className="bg-white border-b border-slate-200/80 shadow-2xs py-4 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4 sm:divide-x divide-slate-100">
           
           {/* 1. Preventive Care */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">

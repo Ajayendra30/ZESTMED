@@ -44,17 +44,17 @@ export default function FAQ() {
     <section className="py-14 sm:py-20 bg-white border-b border-slate-100">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
             Frequently Asked <span className="text-[#008F83]">Questions (FAQs)</span>
           </h2>
           <a
             href="#faq"
             onClick={(e) => e.preventDefault()}
-            className="text-sm sm:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition"
+            className="text-xs sm:text-sm md:text-base font-bold text-[#008F83] hover:underline flex items-center gap-1.5 transition self-start sm:self-auto"
           >
             <span>View All FAQs</span>
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
         </div>
 

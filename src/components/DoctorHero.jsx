@@ -59,8 +59,8 @@ export default function DoctorHero({
             multiple specialties, online or at the clinic.
           </p>
 
-          {/* Action Buttons - Side by side in a single horizontal line without cut-off */}
-          <div className="flex flex-row items-center gap-2 sm:gap-2.5 pt-1 flex-nowrap">
+          {/* Action Buttons - Side by side in a single horizontal line on desktop, wrapping cleanly on small mobile */}
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5 pt-1">
             <button
               type="button"
               onClick={() => onBookAppointment && onBookAppointment(null, 'Clinic Visit')}
@@ -87,7 +87,7 @@ export default function DoctorHero({
           <img
             src="/doctor-hero-doctors.jpg"
             alt="ZESTMED Verified Specialist Doctors"
-            className="h-[250px] sm:h-[285px] md:h-[315px] lg:h-[325px] xl:h-[355px] 2xl:h-[380px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
+            className="h-[210px] sm:h-[285px] md:h-[315px] lg:h-[325px] xl:h-[355px] 2xl:h-[380px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
           />
         </div>
 

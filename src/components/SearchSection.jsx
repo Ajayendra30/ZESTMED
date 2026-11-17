@@ -52,11 +52,11 @@ export default function SearchSection({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search diagnostic tests, doctors, medicines, or health packages..."
-            className="w-full pl-10 sm:pl-12 pr-24 sm:pr-28 py-3 sm:py-3.5 text-xs sm:text-sm lg:text-base text-slate-800 placeholder:text-slate-400 placeholder:truncate rounded-xl sm:rounded-2xl border border-slate-200 focus:outline-none focus:border-[#008F83] transition bg-white"
+            className="w-full pl-9 sm:pl-12 pr-20 sm:pr-28 py-2.5 sm:py-3.5 text-xs sm:text-sm lg:text-base text-slate-800 placeholder:text-slate-400 placeholder:truncate rounded-xl sm:rounded-2xl border border-slate-200 focus:outline-none focus:border-[#008F83] transition bg-white"
           />
           <button
             type="submit"
-            className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-[#008F83] hover:bg-[#007a70] text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer active:scale-95"
+            className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-[#008F83] hover:bg-[#007a70] text-white px-3.5 sm:px-6 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer active:scale-95 shrink-0"
           >
             Search
           </button>

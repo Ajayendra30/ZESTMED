@@ -41,9 +41,9 @@ export default function Testimonials() {
     <section className="py-14 sm:py-20 bg-white border-b border-slate-100">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Header with Title and Left/Right Buttons */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between gap-3 mb-8 sm:mb-10">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
               What Our <span className="text-[#008F83]">Customers Say?</span>
             </h2>
           </div>

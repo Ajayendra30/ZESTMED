@@ -121,7 +121,7 @@ export default function ContactPage() {
         {/* Main Content & Imagery Container */}
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10 min-h-[230px] sm:min-h-[250px] lg:min-h-[270px] flex items-center">
           {/* Left Column: Breadcrumbs, Title & Subtitle */}
-          <div className="relative z-20 max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[500px] py-6 sm:py-7 lg:py-8 space-y-1.5">
+          <div className="relative z-20 w-full max-w-full sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[500px] py-6 sm:py-7 lg:py-8 space-y-1.5">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold mb-1.5">
               <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
