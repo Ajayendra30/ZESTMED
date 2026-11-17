@@ -223,7 +223,7 @@ export default function WellnessPackagesPage() {
                 <button
                   type="button"
                   onClick={() => scrollToSection('wellness-packages-grid')}
-                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4.5 sm:px-5.5 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
+                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
                   <span>Book a Package</span>
@@ -233,7 +233,7 @@ export default function WellnessPackagesPage() {
                 <button
                   type="button"
                   onClick={() => scrollToSection('why-choose-section')}
-                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-4.5 sm:px-5.5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
+                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
                 >
                   <Info className="w-4 h-4 shrink-0 text-[#007A64]" />
                   <span>Compare Packages</span>
@@ -263,7 +263,7 @@ export default function WellnessPackagesPage() {
                   className="bg-white rounded-full px-4 py-2 sm:py-2.5 shadow-md border border-slate-100 flex items-center gap-2.5 text-xs sm:text-[13px] font-extrabold text-[#0B1B2B] hover:border-teal-200 transition"
                 >
                   <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#007A64] shrink-0 fill-[#E0F5EE]" />
-                  <span className="whitespace-nowrap sm:whitespace-normal">{feat}</span>
+                  <span className="leading-tight">{feat}</span>
                 </div>
               ))}
             </div>
@@ -366,7 +366,7 @@ export default function WellnessPackagesPage() {
               return (
                 <div
                   key={pkg.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-4.5 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group"
                 >
                   <div className="space-y-3">
                     
