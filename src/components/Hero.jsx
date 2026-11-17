@@ -116,10 +116,10 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                   <Car className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                  <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <div className="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
                     <span>Within 10km Radius Free Pick-up & Drop</span>
-                    <span className="text-[10px] font-black bg-[#008F83] text-white px-1.5 py-0.2 rounded-full">
-                      Free for 60+
+                    <span className="text-[10px] font-black bg-[#008F83] text-white px-2 py-0.5 rounded-full whitespace-nowrap">
+                      For Senior Citizen
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-600 mt-0.5">
