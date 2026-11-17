@@ -767,45 +767,55 @@ export default function DiagnosticPortalPage() {
                 BOTTOM PROMOTIONAL BAR: HOME SAMPLE COLLECTION (Directly below Popular Lab Tests)
                 ========================================================================= */}
             <div className="pt-3">
-              <div className="bg-[#EAF7F5] border border-teal-100/90 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col xl:flex-row items-center justify-between gap-4 sm:gap-5">
+              <div className="bg-[#EAF7F5] border border-teal-100/90 rounded-2xl p-4 sm:p-5 xl:py-4 xl:px-4 2xl:px-5 shadow-xs flex flex-col xl:flex-row items-center justify-between gap-4 sm:gap-4 xl:gap-3.5">
                 
                 {/* Left Title with Green Home Icon */}
-                <div className="flex items-center gap-3.5 shrink-0 w-full xl:w-auto">
+                <div className="flex items-center gap-3 shrink-0 w-full xl:w-auto">
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-teal-50 border border-teal-200/80 flex items-center justify-center text-[#008F83] shrink-0 shadow-2xs">
                     <Home className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">
                       Home Sample Collection
                     </h4>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    <p className="text-xs text-slate-500 font-medium mt-0.5 max-w-[240px] xl:max-w-[200px] 2xl:max-w-none leading-snug">
                       Book your test and get sample collection at your doorstep.
                     </p>
                   </div>
                 </div>
 
                 {/* Center 4 Features */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4 flex-1 min-w-0 w-full text-center py-2.5 xl:py-0 border-y xl:border-y-0 xl:border-x border-teal-200/60 xl:px-4 2xl:px-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-3 flex-1 min-w-0 w-full text-center py-2.5 xl:py-1 border-y xl:border-y-0 xl:border-x border-teal-200/60 xl:px-3 2xl:px-4">
                   <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">Easy Booking</span>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                      <div>Easy</div>
+                      <div>Booking</div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
                     <ScooterSvg className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">Trained Phlebotomist</span>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                      <div>Trained</div>
+                      <div>Phlebotomist</div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
                     <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">Safe &amp; Hygienic</span>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                      <div>Safe &amp;</div>
+                      <div>Hygienic</div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
                     <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-bold text-emerald-800 leading-tight text-center">
-                      Reports in a Single Day<br />(12-24 Hrs)
-                    </span>
+                    <div className="text-[10px] sm:text-[11px] font-bold text-emerald-800 leading-tight text-center">
+                      <div className="whitespace-nowrap">Single Day Reports</div>
+                      <div className="text-[10px] font-semibold text-teal-700 whitespace-nowrap">(12–24 Hrs)</div>
+                    </div>
                   </div>
                 </div>
 
@@ -817,7 +827,7 @@ export default function DiagnosticPortalPage() {
                       window.scrollTo({ top: 300, behavior: 'smooth' });
                       addToast('Choose from our popular tests above to book!', 'info');
                     }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs cursor-pointer whitespace-nowrap shrink-0"
+                    className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <span>Book a Lab Test Now</span>
                     <ArrowRight className="w-4 h-4" />
