@@ -186,7 +186,7 @@ export default function Navbar({
             </div>
 
             {/* Center Navigation Links with Mega Menu */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 lg:ml-3.5 xl:ml-5 2xl:ml-6">
               {primaryNavLinks.map((link) => {
                 const isActive = routerLocation.pathname === link.href || 
                   (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen));
