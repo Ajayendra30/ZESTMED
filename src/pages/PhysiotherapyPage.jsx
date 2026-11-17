@@ -260,13 +260,18 @@ export default function PhysiotherapyPage() {
       {/* ========================================================================= */}
       <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E2F4F8] min-h-[360px] sm:min-h-[390px] lg:min-h-[420px] xl:min-h-[450px] flex items-stretch">
         
-        {/* Full-Width Crisp Background Image - 100% Sharp, No Blur, No Overlay */}
+        {/* Full-Width Background Image with Smooth, Subtle Ambient Light Aura */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
           <img
             src="/physio-hero-bg.jpg"
             alt="ZESTMED Physiotherapy Clinic Background"
             className="w-full h-full object-cover object-[right_bottom]"
           />
+          {/* Smooth, subtle ambient blur effects matching medical theme without blurring the imagery */}
+          <div className="absolute -top-24 left-[10%] w-[380px] h-[380px] bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 right-[15%] w-[420px] h-[420px] bg-sky-200/25 rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle soft gradient on the left behind text for enhanced readability and natural visual depth */}
+          <div className="absolute inset-y-0 left-0 w-full sm:w-[50%] lg:w-[44%] bg-gradient-to-r from-[#E2F4F8]/75 via-[#E2F4F8]/35 to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 pt-8 sm:pt-10 lg:pt-6 pb-0">
