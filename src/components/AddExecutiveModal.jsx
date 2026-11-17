@@ -11,7 +11,6 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
     zone: 'Dispur & GS Road Hub',
     status: 'Available',
     temp: '3.8°C',
-    shift: 'Morning (06:00 AM - 02:00 PM)',
     certification: 'NABL Certified Phlebotomist'
   });
 
@@ -37,7 +36,6 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
       temp: formData.temp || '3.8°C',
       tasksToday: 0,
       rating: '5.0 ★',
-      shift: formData.shift,
       certification: formData.certification
     };
 
@@ -52,7 +50,6 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
       zone: 'Dispur & GS Road Hub',
       status: 'Available',
       temp: '3.8°C',
-      shift: 'Morning (06:00 AM - 02:00 PM)',
       certification: 'NABL Certified Phlebotomist'
     });
   };
@@ -133,19 +130,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-slate-700 font-bold mb-1">Shift Schedule</label>
-              <select
-                value={formData.shift}
-                onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 bg-white"
-              >
-                <option value="Morning (06:00 AM - 02:00 PM)">Morning (06:00 AM - 02:00 PM)</option>
-                <option value="General (09:00 AM - 05:00 PM)">General (09:00 AM - 05:00 PM)</option>
-                <option value="Evening (02:00 PM - 10:00 PM)">Evening (02:00 PM - 10:00 PM)</option>
-              </select>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-bold mb-1">Initial Status</label>
               <select
@@ -158,9 +143,6 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
                 <option value="Active">Active</option>
               </select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-bold mb-1">Cold Box Telemetry</label>
               <input
@@ -171,15 +153,16 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-mono text-teal-700 font-bold"
               />
             </div>
-            <div>
-              <label className="block text-slate-700 font-bold mb-1">Certification</label>
-              <input
-                type="text"
-                value={formData.certification}
-                onChange={(e) => setFormData({ ...formData, certification: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
-              />
-            </div>
+          </div>
+
+          <div>
+            <label className="block text-slate-700 font-bold mb-1">Certification</label>
+            <input
+              type="text"
+              value={formData.certification}
+              onChange={(e) => setFormData({ ...formData, certification: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800"
+            />
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-teal-50 rounded-xl border border-teal-100 text-[11px] text-teal-800">

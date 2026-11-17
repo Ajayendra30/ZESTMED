@@ -1402,7 +1402,7 @@ export default function AdminDashboardPage() {
                     <span>Lab Executives & Phlebotomists Roster</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Live shift tracking, cold-chain temperature telemetry & home sample collection dispatch.
+                    Live status tracking, cold-chain temperature telemetry & home sample collection dispatch.
                   </p>
                 </div>
                 <button
