@@ -187,13 +187,11 @@ export default function WellnessPackagesPage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION matching exact Reference Image                            */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#EBF9F5]">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#EBF9F5] via-[#EFFBF8] to-[#E3F6F2]">
         
-        {/* Hero Background Image - Covers entire section with original aspect ratio */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none select-none"
-          style={{ backgroundImage: "url('/wellness-hero-bg.jpg')" }}
-        />
+        {/* Subtle Decorative Ambient Glows */}
+        <div className="absolute -top-16 -left-16 w-[380px] h-[380px] bg-[#D4F4EC]/60 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 right-[10%] w-[320px] h-[320px] bg-[#CEF0E8]/50 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-9 lg:pt-10 pb-7 sm:pb-9 lg:pb-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-8">
@@ -241,31 +239,13 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Center Column: Combined Hero Visuals (New Provided Image alongside Existing Images) */}
-            <div className="flex-1 w-full flex items-center justify-center relative select-none z-10 min-w-0">
-              <div className="relative flex items-center justify-center max-w-full">
-                
-                {/* Provided New Hero Image with Family and Glowing Shield */}
-                <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-teal-200/80 bg-white/40 backdrop-blur-xs group">
-                  <img
-                    src="/wellness-hero-family.jpg"
-                    alt="Preventive Health Checkup Family Care"
-                    className="max-h-[220px] sm:max-h-[260px] md:max-h-[280px] lg:max-h-[310px] xl:max-h-[330px] w-auto max-w-full object-cover object-center drop-shadow-sm select-none transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                  {/* Subtle inner protective ring */}
-                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/50 pointer-events-none" />
-                </div>
-
-                {/* Existing Hero Image - Positioned alongside seamlessly */}
-                <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-4 lg:-right-6 z-20 pointer-events-none select-none">
-                  <img
-                    src="/packages-hero-family.png"
-                    alt="Preventive Health Checkup Packages Family Protection"
-                    className="max-h-[70px] sm:max-h-[90px] md:max-h-[105px] lg:max-h-[120px] w-auto object-contain drop-shadow-xl"
-                  />
-                </div>
-
-              </div>
+            {/* Center Column: Family Image with Glowing Shield (Single Image) */}
+            <div className="flex-1 w-full flex items-center justify-center relative select-none pointer-events-none z-10 min-w-0">
+              <img
+                src="/wellness-hero-family.png"
+                alt="Preventive Health Checkup Packages Family Protection"
+                className="max-h-[250px] sm:max-h-[290px] md:max-h-[310px] lg:max-h-[330px] xl:max-h-[360px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none transition-all duration-300"
+              />
             </div>
 
             {/* Right Column: 4 Feature Checkmark Cards */}
