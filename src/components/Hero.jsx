@@ -124,12 +124,12 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
           </div>
 
           {/* Right Column: Prominent Healthcare Professionals Graphic matching Reference Image */}
-          <div className="lg:col-span-7 xl:col-span-7 relative flex justify-center lg:justify-end items-end self-end -mb-6 sm:-mb-8 lg:-mb-10 overflow-visible">
+          <div className="lg:col-span-7 xl:col-span-7 relative flex justify-center lg:justify-end items-end self-center -translate-y-3 sm:-translate-y-4 lg:-translate-y-6 xl:-translate-y-8 mb-6 sm:mb-8 lg:mb-6 xl:mb-8 overflow-visible">
             <div className="w-full flex justify-center lg:justify-end items-end">
               <img
                 src={heroTeamImg}
                 alt="ZESTMED Healthcare Professionals - Lab Scientist, Doctor, and Delivery Partner"
-                className="w-full max-w-[340px] sm:max-w-[440px] md:max-w-[500px] lg:max-w-[560px] xl:max-w-[620px] 2xl:max-w-[680px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
+                className="w-full max-w-[340px] sm:max-w-[440px] md:max-w-[520px] lg:max-w-[580px] xl:max-w-[660px] 2xl:max-w-[720px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
               />
             </div>
           </div>
