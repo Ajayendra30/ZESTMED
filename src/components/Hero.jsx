@@ -9,12 +9,12 @@ import heroTeamImg from '../assets/hero-team.png';
 
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#EFFBF9] via-[#E8F8F6] to-[#DEF7F5] pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20 border-b border-teal-100/60">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#EFFBF9] via-[#E8F8F6] to-[#DEF7F5] pt-4 sm:pt-5 lg:pt-6 pb-6 sm:pb-8 lg:pb-10 border-b border-teal-100/60">
       {/* 1. Subtle Floating Mint Medical Plus (+) Symbols */}
-      <div className="absolute top-8 sm:top-10 left-[48%] lg:left-[52%] opacity-35 text-teal-300 font-bold text-5xl sm:text-6xl lg:text-7xl pointer-events-none select-none">
+      <div className="absolute top-6 sm:top-8 left-[48%] lg:left-[52%] opacity-35 text-teal-300 font-bold text-4xl sm:text-5xl lg:text-6xl pointer-events-none select-none">
         +
       </div>
-      <div className="absolute top-6 right-8 lg:right-16 opacity-20 text-teal-300 font-bold text-5xl pointer-events-none select-none">
+      <div className="absolute top-5 right-8 lg:right-16 opacity-20 text-teal-300 font-bold text-4xl pointer-events-none select-none">
         +
       </div>
 
@@ -51,35 +51,35 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
       {/* Main Container */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-end">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-4 items-end">
           {/* Left Column: Heading, Value Prop, CTAs */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-4 sm:space-y-4.5 text-left self-center py-2 sm:py-4 lg:py-6 pr-0 lg:pr-4">
+          <div className="lg:col-span-5 xl:col-span-5 space-y-2.5 sm:space-y-3 text-left self-center py-1 sm:py-2 pr-0 lg:pr-4">
             
             {/* Tag Badges Row */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#008F83]/10 border border-[#008F83]/30 text-xs font-bold text-[#008F83]">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#008F83]/10 border border-[#008F83]/30 text-xs font-bold text-[#008F83]">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span>Exclusively Guwahati</span>
               </div>
             </div>
 
             {/* Main Headline - Lab Tests FIRST */}
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[38px] xl:text-[44px] 2xl:text-[48px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
+            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-[30px] xl:text-[34px] 2xl:text-[38px] font-black text-[#0B2238] tracking-tight leading-[1.15]">
               Book Lab Tests, Consult <br className="hidden sm:inline" />
               Doctors & Order Medicines <br className="hidden sm:inline" />
               <span className="text-[#008F83]">Healthcare Hub in Guwahati</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-xl font-medium leading-relaxed">
+            <p className="text-xs sm:text-[13px] md:text-sm text-slate-600 max-w-xl font-medium leading-relaxed">
               Guwahati's unified healthcare destination for fast diagnostics, top specialist doctors, home physiotherapy, day-care surgeries & genuine medicine delivery.
             </p>
 
             {/* CTAs - 6 Service Boxes in 3x2 Grid */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 w-full">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-0.5 w-full">
               <Link
                 to="/doctor-appointment"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Book Doctor</span>
@@ -87,7 +87,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/medicines"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <ShoppingCart className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Medicines</span>
@@ -95,7 +95,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/diagnostics"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <FlaskConical className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Lab Tests</span>
@@ -103,7 +103,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/physiotherapy"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <Activity className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Physiotherapy</span>
@@ -111,7 +111,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/surgery-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <Scissors className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Surgery Packages</span>
@@ -119,7 +119,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/wellness-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3.5 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-sm text-center min-h-[56px] sm:min-h-[58px]"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-[13px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 shadow-xs transition hover:shadow-sm text-center min-h-[44px] sm:min-h-[46px]"
               >
                 <ShieldCheck className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Wellness Packages</span>
@@ -129,39 +129,39 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             {/* Senior Citizen Free Pick-up & Drop Feature Callout Banner */}
             <div 
               onClick={onOpenSeniorPickup}
-              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 hover:border-[#008F83] transition group shadow-xs hover:shadow-sm"
+              className="cursor-pointer bg-gradient-to-r from-teal-500/15 via-emerald-500/10 to-teal-500/15 border border-[#008F83]/30 rounded-xl sm:rounded-2xl p-2.5 sm:py-2.5 sm:px-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 hover:border-[#008F83] transition group shadow-xs hover:shadow-sm"
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-10 h-10 rounded-2xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Car className="w-5 h-5" />
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#008F83] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Car className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-slate-900 text-xs sm:text-sm md:text-base leading-snug">
+                    <span className="font-bold text-slate-900 text-xs sm:text-[13px] md:text-sm leading-snug">
                       Within 10km Radius Free Pick-up & Drop
                     </span>
-                    <span className="text-[11px] sm:text-xs font-black bg-[#008F83] text-white px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0 shadow-2xs">
+                    <span className="text-[10px] sm:text-[11px] font-black bg-[#008F83] text-white px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 shadow-2xs">
                       For Senior Citizen
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5 leading-snug">
                     Sanitized AC cab across Guwahati for diagnostics & clinics
                   </p>
                 </div>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                Book Cab <ArrowRight className="w-4 h-4" />
+              <span className="text-xs sm:text-[13px] font-bold text-[#008F83] group-hover:underline whitespace-nowrap flex items-center gap-1 shrink-0 self-end sm:self-center">
+                Book Cab <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
           </div>
 
           {/* Right Column: Prominent Healthcare Professionals Graphic matching Reference Image */}
-          <div className="lg:col-span-7 xl:col-span-7 relative flex justify-center lg:justify-end items-end self-end -mb-8 sm:-mb-12 lg:-mb-14 overflow-visible">
+          <div className="lg:col-span-7 xl:col-span-7 relative flex justify-center lg:justify-end items-end self-end -mb-6 sm:-mb-8 lg:-mb-10 overflow-visible">
             <div className="w-full flex justify-center lg:justify-end items-end">
               <img
                 src={heroTeamImg}
                 alt="ZESTMED Healthcare Professionals - Lab Scientist, Doctor, and Delivery Partner"
-                className="w-full max-w-[460px] sm:max-w-[580px] md:max-w-[660px] lg:max-w-[740px] xl:max-w-[840px] 2xl:max-w-[900px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
+                className="w-full max-w-[340px] sm:max-w-[440px] md:max-w-[500px] lg:max-w-[560px] xl:max-w-[620px] 2xl:max-w-[680px] h-auto object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
               />
             </div>
           </div>
