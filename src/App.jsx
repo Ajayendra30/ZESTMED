@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { LocationProvider } from './context/LocationContext';
@@ -35,6 +35,11 @@ function AppContent() {
   const { addToast } = useToast();
   const activeSubdomain = getActiveSubdomain();
   const searchInputRef = useRef(null);
+
+  // Automatically scroll to top on page navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Global Interactive Modals for New Core Services
   const [isDoctorModalOpen, setIsDoctorModalOpen] = useState(false);

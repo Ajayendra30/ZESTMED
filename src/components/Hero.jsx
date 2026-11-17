@@ -89,14 +89,13 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 
-              <button
-                type="button"
-                onClick={onOpenDoctorModal}
+              <Link
+                to="/doctor-appointment"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 px-4 sm:px-5 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition hover:shadow-sm whitespace-nowrap"
               >
                 <Stethoscope className="w-4 h-4 text-[#008F83] shrink-0" />
                 <span>Book Doctor</span>
-              </button>
+              </Link>
 
               <Link
                 to="/medicines"

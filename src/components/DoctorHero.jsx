@@ -95,11 +95,9 @@ export default function DoctorHero({
         <div className="w-full lg:w-[290px] xl:w-[315px] 2xl:w-[330px] shrink-0 flex justify-center lg:justify-end relative z-20 self-center lg:self-end lg:mb-2.5 xl:mb-3">
           <div className="w-full max-w-[330px] bg-white rounded-[22px] shadow-xl border border-slate-100 p-4 sm:p-4.5 space-y-2.5">
             
-            {/* Card Title */}
+            {/* Card Title matching Reference */}
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-7 h-7 rounded-full bg-teal-50 flex items-center justify-center text-[#007A64]">
-                <Search className="w-4 h-4 text-[#007A64] stroke-[2.4]" />
-              </div>
+              <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#007A64] stroke-[2.5]" />
               <h3 className="text-base sm:text-lg font-black text-[#0F1E36] tracking-tight">
                 Find a Doctor
               </h3>
@@ -116,7 +114,7 @@ export default function DoctorHero({
                     <select
                       value={selectedSpecialty}
                       onChange={(e) => setSelectedSpecialty(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
                     >
                       <option value="">Select Speciality</option>
                       {specialties.filter(s => s !== 'All Specialties').map((spec) => (
@@ -124,6 +122,7 @@ export default function DoctorHero({
                       ))}
                     </select>
                   </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 pointer-events-none" />
                 </div>
               </div>
 
@@ -135,7 +134,7 @@ export default function DoctorHero({
                     <select
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
                     >
                       <option value="">Select Location</option>
                       <option value="Guwahati - GS Road Hub">Guwahati - GS Road Hub</option>
@@ -146,6 +145,7 @@ export default function DoctorHero({
                       <option value="Ulubari Child & Family Care">Ulubari Child & Family Care</option>
                     </select>
                   </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 pointer-events-none" />
                 </div>
               </div>
 
@@ -157,7 +157,7 @@ export default function DoctorHero({
                     <select
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate"
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
                     >
                       <option value="">Preferred Date</option>
                       <option value="Today">Today ({new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })})</option>
@@ -166,6 +166,7 @@ export default function DoctorHero({
                       <option value="Next Week">Next Week</option>
                     </select>
                   </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 pointer-events-none" />
                 </div>
               </div>
 
