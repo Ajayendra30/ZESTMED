@@ -1,42 +1,80 @@
 // src/pages/AuthPage.jsx
-// Dedicated full-page Login & Register experience for ZESTMED Healthcare
+// Dedicated full-page Login experience matching the mobile mockup reference design
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { 
-  Smartphone, User, ShieldCheck, ArrowRight, ArrowLeft, 
-  CheckCircle2, Clock, Car, MapPin, Sparkles, RefreshCw, ChevronDown 
+  ArrowLeft, Smartphone, ShieldCheck, ChevronDown, 
+  RotateCcw, CheckCircle2 
 } from 'lucide-react';
 
-export default function AuthPage({ defaultMode = 'login' }) {
+function ZestmedLogo() {
+  return (
+    <div className="flex items-center justify-center gap-2.5 select-none">
+      <svg className="w-10 h-10 shrink-0 drop-shadow-xs" viewBox="0 0 36 36" fill="none">
+        {/* Green Cross Body */}
+        <rect x="11" y="2" width="14" height="32" rx="4" fill="#007A64" />
+        <rect x="2" y="11" width="32" height="14" rx="4" fill="#007A64" />
+        {/* Inner white dynamic emblem */}
+        <path
+          d="M18 10C16.5 13 14 15 11 16.5C14 18 16.5 20 18 24C19.5 20 22 18 25 16.5C22 15 19.5 13 18 10Z"
+          fill="white"
+        />
+        <circle cx="18" cy="17" r="2.2" fill="#007A64" />
+      </svg>
+      <span className="text-2xl sm:text-[26px] font-black text-[#0B2238] tracking-tight">Zestmed</span>
+    </div>
+  );
+}
+
+function LandscapeIllustration() {
+  return (
+    <div className="w-full pointer-events-none select-none mt-auto pt-4 sm:pt-6">
+      <svg viewBox="0 0 360 85" fill="none" className="w-full h-auto" preserveAspectRatio="none">
+        {/* Back Hill */}
+        <path d="M0,85 L0,48 Q90,20 180,45 T360,35 L360,85 Z" fill="#E8F8FA" />
+        {/* Mid Hill */}
+        <path d="M0,85 L0,60 Q120,38 240,58 T360,48 L360,85 Z" fill="#D9F2F6" />
+        {/* Trees */}
+        <g fill="#BCE7EE" opacity="0.9">
+          <circle cx="50" cy="40" r="11" />
+          <rect x="48.5" y="49" width="3" height="12" rx="1" fill="#9FDCE6" />
+          
+          <circle cx="170" cy="34" r="14" />
+          <rect x="168" y="45" width="4" height="15" rx="1" fill="#9FDCE6" />
+          
+          <circle cx="295" cy="40" r="12" />
+          <rect x="293.5" y="49" width="3" height="12" rx="1" fill="#9FDCE6" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+export default function AuthPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, loginWithPhoneOtp, loginWithGoogle, logout } = useAuth();
   const { addToast } = useToast();
 
-  const [authMode, setAuthMode] = useState(defaultMode); // 'login' or 'register'
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [step, setStep] = useState(1); // 1: Input, 2: OTP
+  const [step, setStep] = useState(1); // 1: Phone input, 2: OTP verification
   const [otp, setOtp] = useState(['', '', '', '']);
-  const [isResending, setIsResending] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(30);
 
+  // Countdown timer for OTP resend
   useEffect(() => {
-    if (location.pathname === '/register') {
-      setAuthMode('register');
-    } else if (location.pathname === '/login') {
-      setAuthMode('login');
+    let timer;
+    if (step === 2 && resendCountdown > 0) {
+      timer = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
     }
-  }, [location.pathname]);
+    return () => clearInterval(timer);
+  }, [step, resendCountdown]);
 
-  const handlePhoneSubmit = (e) => {
+  const handleSendOtp = (e) => {
     e.preventDefault();
-    if (authMode === 'register' && !fullName.trim()) {
-      addToast('Please enter your full name', 'error');
-      return;
-    }
     const clean = phoneNumber.replace(/\D/g, '');
     if (clean.length !== 10) {
       addToast('Please enter a valid 10-digit mobile number', 'error');
@@ -44,7 +82,8 @@ export default function AuthPage({ defaultMode = 'login' }) {
     }
     setStep(2);
     setOtp(['', '', '', '']);
-    addToast('Demo OTP sent to your mobile: 1234', 'info');
+    setResendCountdown(30);
+    addToast('Demo OTP sent: 1234', 'info');
   };
 
   const handleOtpChange = (index, value) => {
@@ -53,17 +92,17 @@ export default function AuthPage({ defaultMode = 'login' }) {
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
-    // Auto-focus next input box
+    // Auto-advance to next input box
     if (value && index < 3) {
-      const nextInput = document.getElementById(`auth-otp-${index + 1}`);
-      if (nextInput) nextInput.focus();
+      const next = document.getElementById(`auth-otp-${index + 1}`);
+      if (next) next.focus();
     }
   };
 
   const handleOtpKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`auth-otp-${index - 1}`);
-      if (prevInput) prevInput.focus();
+      const prev = document.getElementById(`auth-otp-${index - 1}`);
+      if (prev) prev.focus();
     }
   };
 
@@ -74,285 +113,246 @@ export default function AuthPage({ defaultMode = 'login' }) {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    loginWithPhoneOtp(phoneNumber, fullName.trim() || 'Verified Patient');
-    addToast('Authentication verified successfully!', 'success');
+    loginWithPhoneOtp(phoneNumber, 'Verified Patient');
+    addToast('Logged in successfully!', 'success');
     navigate('/patient-dashboard');
   };
 
   const handleGoogleSignIn = () => {
     loginWithGoogle();
-    addToast('Signed in with Google successfully!', 'success');
+    addToast('Logged in with Google successfully!', 'success');
     navigate('/patient-dashboard');
   };
 
   const handleResendOtp = () => {
-    setIsResending(true);
-    setTimeout(() => {
-      setIsResending(false);
-      setResendCountdown(30);
-      addToast('New OTP sent: 1234', 'info');
-    }, 800);
+    if (resendCountdown > 0) return;
+    setResendCountdown(30);
+    setOtp(['', '', '', '']);
+    addToast('New OTP sent to +91 ' + phoneNumber + ': 1234', 'info');
   };
 
-  return (
-    <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#EFFBF9] via-[#F4FBF9] to-white flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans">
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
-        
-        {/* Left Promotional Banner (Guwahati healthcare benefits) */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-[#0B2238] via-[#093539] to-[#008F83] p-8 text-white flex flex-col justify-between relative overflow-hidden">
-          {/* Ambient circles */}
-          <div className="absolute -top-16 -left-16 w-48 h-48 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
-
-          <div className="relative z-10 space-y-6">
-            <Link to="/" className="inline-block">
-              <div className="bg-white/95 px-3 py-1.5 rounded-xl inline-flex items-center shadow-sm">
-                <img
-                  src="/logo.png"
-                  alt="Zestmed Diagnostics"
-                  className="h-8 w-auto object-contain"
-                />
-              </div>
-            </Link>
-
-            <div>
-              <span className="text-[11px] font-black uppercase tracking-widest text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded-md border border-teal-500/30">
-                Guwahati Exclusive
-              </span>
-              <h2 className="text-2xl font-black mt-2 leading-tight">
-                Your Health, Our Priority.
-              </h2>
-              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-                Access single-day diagnostic reports, specialist doctors, home physiotherapy & genuine medicine delivery across Guwahati.
-              </p>
-            </div>
-
-            {/* Benefit Bullets */}
-            <div className="space-y-3 pt-2 text-xs">
-              <div className="flex items-start gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-teal-500/30 flex items-center justify-center text-teal-300 shrink-0 mt-0.5">
-                  <Clock className="w-3.5 h-3.5" />
-                </div>
-                <span><strong>Single-Day Reports:</strong> All lab test reports delivered within 12-24 hours guaranteed.</span>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-emerald-500/30 flex items-center justify-center text-emerald-300 shrink-0 mt-0.5">
-                  <Car className="w-3.5 h-3.5" />
-                </div>
-                <span><strong>Free Senior Citizen Transport:</strong> Dedicated AC cab within 10km radius in Guwahati.</span>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-sky-500/30 flex items-center justify-center text-sky-300 shrink-0 mt-0.5">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </div>
-                <span><strong>Guwahati Central Lab:</strong> NABL accredited pathologists and verified doctors.</span>
-              </div>
-            </div>
+  // If already logged in, show quick dashboard access
+  if (user) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] bg-[#F8FAFC] flex items-center justify-center p-4 font-sans select-none">
+        <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl border border-slate-100 p-8 text-center space-y-6">
+          <ZestmedLogo />
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-slate-900">Already Logged In</h2>
+            <p className="text-sm text-slate-500">
+              You are currently signed in as <strong className="text-slate-800">{user.name}</strong> ({user.phone || user.contact})
+            </p>
           </div>
-
-          <div className="relative z-10 pt-6 text-[11px] text-slate-400 border-t border-white/10 flex items-center justify-between">
-            <span>Zestmed Health Portal</span>
-            <span>Assam 781001</span>
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={() => navigate('/patient-dashboard')}
+              className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition"
+            >
+              Go to Patient Dashboard
+            </button>
+            <button
+              onClick={() => {
+                logout();
+                addToast('Logged out successfully', 'info');
+              }}
+              className="w-full py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Right Form Card */}
-        <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between">
-          <div>
-            {/* Top Back & Header */}
-            <div className="flex items-center justify-between mb-6">
-              <Link
-                to="/"
-                className="text-xs font-bold text-slate-500 hover:text-[#008F83] flex items-center gap-1 transition"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Home</span>
-              </Link>
+  return (
+    <div className="min-h-[calc(100vh-80px)] bg-[#F8FAFC] flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans select-none">
+      
+      {/* Mobile Frame Container matching Reference Mockup */}
+      <div className="w-full max-w-[410px] bg-white rounded-[28px] sm:rounded-[32px] shadow-xl border border-slate-100 flex flex-col min-h-[600px] sm:min-h-[640px] relative overflow-hidden transition-all">
+        
+        {/* Top Header Row with Back Button */}
+        <div className="pt-5 sm:pt-6 px-5 sm:px-6 flex items-center justify-between shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              if (step === 2) {
+                setStep(1);
+              } else {
+                navigate(-1);
+              }
+            }}
+            className="p-1.5 -ml-1.5 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer active:scale-95"
+            aria-label="Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="w-5 h-5" />
+        </div>
 
-              {user && (
-                <div className="text-right">
-                  <span className="text-[11px] text-slate-400 block">Logged in as</span>
-                  <span className="text-xs font-bold text-slate-800">{user.name}</span>
-                </div>
-              )}
-            </div>
+        {/* Main Content Area */}
+        <div className="px-6 sm:px-7 pt-2 pb-0 flex-1 flex flex-col justify-between">
+          
+          {/* Top Brand Logo */}
+          <div className="flex justify-center mb-6 sm:mb-7">
+            <ZestmedLogo />
+          </div>
 
-            {/* Toggle Tabs: Login vs Register */}
-            <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 max-w-[280px] mx-auto select-none shadow-inner">
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMode('login');
-                  setStep(1);
-                }}
-                className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
-                  authMode === 'login'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                Sign In (Login)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMode('register');
-                  setStep(1);
-                }}
-                className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
-                  authMode === 'register'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                New Account (Register)
-              </button>
-            </div>
+          {step === 1 ? (
+            /* STEP 1: Phone Number Input Form */
+            <div className="space-y-5 sm:space-y-6">
+              
+              {/* Heading & Subtitle */}
+              <div className="space-y-1.5 text-left">
+                <h1 className="text-xl sm:text-[22px] font-black text-[#0B2238] tracking-tight">
+                  Login with Mobile OTP
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+                  Enter your mobile number to receive a one-time password (OTP).
+                </p>
+              </div>
 
-            {/* Heading */}
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                {authMode === 'login' ? 'Welcome Back to ZESTMED' : 'Create Your Patient Account'}
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                {step === 1
-                  ? authMode === 'login'
-                    ? 'Enter your mobile number to receive a 4-digit verification code.'
-                    : 'Register your mobile number to view test reports, book doctors & track orders.'
-                  : `Enter the 4-digit OTP sent to +91 ${phoneNumber}`}
-              </p>
-            </div>
-
-            {/* Form Step 1: Mobile & Name */}
-            {step === 1 ? (
-              <form onSubmit={handlePhoneSubmit} className="space-y-4 max-w-sm mx-auto">
-                {authMode === 'register' && (
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 mb-1 block">Full Name *</label>
-                    <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
-                      <User className="w-4 h-4 text-[#008F83] shrink-0 mr-2.5" />
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="e.g. Rahul Verma"
-                        className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent"
-                      />
-                    </div>
+              {/* Form */}
+              <form onSubmit={handleSendOtp} className="space-y-4 sm:space-y-5">
+                
+                {/* Mobile Number Input Container matching Reference */}
+                <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
+                  
+                  {/* SIM/Phone Icon in Mint Badge */}
+                  <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
+                    <Smartphone className="w-4 h-4" />
                   </div>
-                )}
 
-                <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Mobile Number *</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/15 transition bg-white px-3 py-2.5">
-                    <div className="flex items-center gap-1 pr-3 border-r border-slate-200 shrink-0 text-slate-800 font-bold text-xs sm:text-sm">
-                      <Smartphone className="w-4 h-4 text-[#008F83]" />
-                      <span>+91</span>
-                    </div>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      required
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                      placeholder="10-digit mobile number"
-                      className="w-full pl-3 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent tracking-wide"
-                    />
+                  {/* +91 Country Code with Chevron */}
+                  <div className="flex items-center gap-1 pl-2.5 pr-2 shrink-0">
+                    <span className="text-xs sm:text-sm font-bold text-slate-800">+91</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">
-                    We will send an instant SMS OTP for instant login.
-                  </span>
+
+                  {/* Vertical Divider */}
+                  <div className="h-5 w-px bg-slate-200 shrink-0 mr-3" />
+
+                  {/* Native Input */}
+                  <input
+                    type="tel"
+                    maxLength={10}
+                    required
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                    placeholder="Mobile Number"
+                    className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent"
+                    autoFocus
+                  />
                 </div>
 
+                {/* Primary CTA: Send OTP Button */}
                 <button
                   type="submit"
-                  disabled={phoneNumber.length !== 10 || (authMode === 'register' && !fullName.trim())}
-                  className="w-full py-3 bg-[#008F83] hover:bg-[#007A70] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-[0.98] cursor-pointer text-center"
                 >
-                  <span>{authMode === 'login' ? 'Send OTP & Sign In' : 'Send OTP & Register'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                {/* Divider */}
-                <div className="flex items-center justify-center my-4 gap-3">
-                  <div className="flex-1 h-[1px] bg-slate-200" />
-                  <span className="text-xs text-slate-400">or</span>
-                  <div className="flex-1 h-[1px] bg-slate-200" />
-                </div>
-
-                {/* Google Sign In Button */}
-                <button
-                  type="button"
-                  onClick={handleGoogleSignIn}
-                  className="w-full py-2.5 px-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition flex items-center justify-center gap-3 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs"
-                >
-                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>Continue with Google</span>
+                  Send OTP
                 </button>
               </form>
-            ) : (
-              /* Form Step 2: OTP Entry */
-              <form onSubmit={handleVerifyOtp} className="space-y-5 max-w-sm mx-auto">
-                <div className="bg-teal-50 border border-teal-200/80 rounded-2xl p-3.5 text-center text-xs text-teal-900">
-                  <span>Enter demo verification code: <strong className="font-mono text-sm font-bold text-[#008F83]">1234</strong></span>
-                </div>
 
-                <div className="flex justify-center gap-3">
-                  {otp.map((digit, i) => (
+              {/* Or Divider */}
+              <div className="relative flex items-center justify-center my-4 sm:my-5">
+                <div className="w-full border-t border-slate-200/80" />
+                <span className="bg-white px-3 text-xs text-slate-400 font-semibold absolute">or</span>
+              </div>
+
+              {/* Continue with Google */}
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full py-3 sm:py-3.5 rounded-2xl border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-2xs hover:shadow-xs transition active:scale-[0.98] cursor-pointer bg-white"
+              >
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>Continue with Google</span>
+              </button>
+            </div>
+          ) : (
+            /* STEP 2: 4-Digit OTP Verification Form */
+            <div className="space-y-5 sm:space-y-6">
+              
+              {/* Heading & Subtitle */}
+              <div className="space-y-1.5 text-left">
+                <h1 className="text-xl sm:text-[22px] font-black text-[#0B2238] tracking-tight">
+                  Verify Mobile OTP
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+                  Enter the 4-digit verification code sent to <strong className="text-slate-800">+91 {phoneNumber}</strong>
+                </p>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleVerifyOtp} className="space-y-5">
+                
+                {/* 4 Digit Boxes */}
+                <div className="flex items-center justify-between gap-3 max-w-[280px] mx-auto py-2">
+                  {otp.map((digit, idx) => (
                     <input
-                      key={i}
-                      id={`auth-otp-${i}`}
+                      key={idx}
+                      id={`auth-otp-${idx}`}
                       type="text"
+                      inputMode="numeric"
                       maxLength={1}
                       value={digit}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="w-12 h-14 text-center text-xl font-black rounded-xl border border-slate-300 focus:border-[#008F83] focus:ring-2 focus:ring-[#008F83]/20 outline-none"
+                      onChange={(e) => handleOtpChange(idx, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                      className="w-12 h-14 sm:w-13 sm:h-14 text-center text-xl font-black text-slate-900 rounded-2xl border border-slate-200 focus:border-[#007A64] focus:ring-2 focus:ring-[#007A64]/15 outline-none transition bg-white shadow-2xs"
+                      autoFocus={idx === 0}
                     />
                   ))}
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={otp.join('').length < 4}
-                  className="w-full py-3 bg-[#008F83] hover:bg-[#007A70] text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50"
-                >
-                  Verify & Enter Dashboard
-                </button>
-
-                <div className="flex items-center justify-between text-xs pt-1">
+                {/* Resend Link */}
+                <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-slate-500 hover:text-slate-800 font-semibold"
+                    className="font-bold text-slate-600 hover:text-[#007A64] transition"
                   >
-                    ← Change Number
+                    Change Number
                   </button>
-
                   <button
                     type="button"
                     onClick={handleResendOtp}
-                    className="text-[#008F83] hover:underline font-bold"
+                    disabled={resendCountdown > 0}
+                    className={`font-bold transition ${
+                      resendCountdown > 0
+                        ? 'text-slate-400 cursor-not-allowed'
+                        : 'text-[#007A64] hover:underline cursor-pointer'
+                    }`}
                   >
-                    Resend Code
+                    {resendCountdown > 0 ? `Resend OTP in ${resendCountdown}s` : 'Resend OTP'}
                   </button>
                 </div>
+
+                {/* Verify Button */}
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-[0.98] cursor-pointer text-center"
+                >
+                  Verify & Proceed
+                </button>
               </form>
-            )}
+            </div>
+          )}
+
+          {/* Bottom Landscape Illustration */}
+          <LandscapeIllustration />
+
+          {/* Bottom Security Trust Badge matching Reference */}
+          <div className="flex items-center justify-center gap-1.5 pb-4 pt-2 text-xs font-bold text-[#007A64] select-none">
+            <ShieldCheck className="w-4 h-4 text-[#007A64]" />
+            <span>Your data is safe with us</span>
           </div>
 
-          {/* Footer note */}
-          <div className="pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
-            <span>By proceeding, you agree to Zestmed's Terms of Service & Privacy Policy in Guwahati, Assam.</span>
-          </div>
         </div>
       </div>
     </div>

@@ -187,8 +187,8 @@ function AppContent() {
           />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<AuthPage defaultMode="login" />} />
-          <Route path="/register" element={<AuthPage defaultMode="register" />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route
             path="*"
