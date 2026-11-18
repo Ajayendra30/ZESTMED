@@ -380,3 +380,60 @@ export const initialAssamAddresses = [
     isDefault: false
   }
 ];
+
+export const initialPatientAppointments = [
+  {
+    id: 'ZM-DOC-50124',
+    bookingId: 'ZM-DOC-50124',
+    type: 'Doctor Appointment',
+    category: 'doctor',
+    title: 'Dr. Amit Sharma, MD',
+    doctor: 'Dr. Amit Sharma, MD',
+    doctorName: 'Dr. Amit Sharma, MD',
+    doctorSpecialty: 'Cardiologist & General Physician',
+    specialty: 'Cardiologist & General Physician',
+    doctorDegree: 'MBBS, MD (Medicine), DM (Cardiology)',
+    doctorHospital: 'Zestmed Polyclinic Hub, GS Road, Dispur',
+    hospital: 'Zestmed Polyclinic Hub, GS Road, Dispur',
+    date: '18 Nov 2026',
+    time: '04:30 PM',
+    slot: '18 Nov 2026, 04:30 PM',
+    mode: 'Clinic Visit',
+    fee: 600,
+    price: 600,
+    patientName: 'Rahul Verma (Self)',
+    patientPhone: '+91 92791 25091',
+    patientAge: '34',
+    patientGender: 'Male',
+    symptoms: 'Routine Cardiovascular & Blood Pressure Review',
+    status: 'Confirmed',
+    createdAt: '2026-11-16T10:00:00.000Z'
+  },
+  {
+    id: 'ZM-PHY-78901',
+    bookingId: 'ZM-PHY-78901',
+    type: 'Physiotherapy',
+    category: 'physiotherapy',
+    title: 'Dr. Arindam Borah, MPT (Ortho)',
+    doctor: 'Dr. Arindam Borah, MPT (Ortho)',
+    doctorName: 'Dr. Arindam Borah, MPT (Ortho)',
+    doctorSpecialty: 'Post-Surgery & Spine Rehab',
+    specialty: 'Post-Surgery & Spine Rehab',
+    doctorDegree: 'BPT, MPT, Certified Clinical Physiotherapist',
+    doctorHospital: 'Zestmed Physiotherapy Center, Guwahati',
+    hospital: 'Zestmed Physiotherapy Center, Guwahati',
+    date: '20 Nov 2026',
+    time: '11:00 AM - 12:00 PM',
+    slot: '20 Nov 2026, 11:00 AM',
+    mode: 'Home Visit',
+    fee: 850,
+    price: 850,
+    patientName: 'Rahul Verma (Self)',
+    patientPhone: '+91 92791 25091',
+    patientAge: '34',
+    patientGender: 'Male',
+    symptoms: 'Cervical Spine Mobility & Posture Strengthening',
+    status: 'Confirmed',
+    createdAt: '2026-11-16T11:30:00.000Z'
+  }
+];

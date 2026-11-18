@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
+import { useAuth } from '../context/AuthContext';
 import { 
   X, Calendar, Clock, MapPin, User, CheckCircle2, 
   FlaskConical, ShieldCheck, ArrowRight, ArrowLeft, 
@@ -9,6 +11,8 @@ import {
 } from 'lucide-react';
 
 export default function DiagnosticBookingModal({ item, type = 'diagnostic', onClose }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
@@ -18,19 +22,28 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
   const [bookingRef, setBookingRef] = useState('');
 
   // Form State
-  const [patientName, setPatientName] = useState('');
-  const [patientAge, setPatientAge] = useState('');
-  const [patientGender, setPatientGender] = useState('Male');
-  const [contactNumber, setContactNumber] = useState('');
+  const [patientName, setPatientName] = useState(user?.name || '');
+  const [patientAge, setPatientAge] = useState(user?.age || '');
+  const [patientGender, setPatientGender] = useState(user?.gender || 'Male');
+  const [contactNumber, setContactNumber] = useState(user?.contact || user?.phone || '');
   const [district, setDistrict] = useState(currentLocation.city || 'Guwahati');
   const [pincode, setPincode] = useState(currentLocation.pincode || '781001');
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState(user?.address || '');
   const [selectedDate, setSelectedDate] = useState(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   });
   const [selectedSlot, setSelectedSlot] = useState('07:00 AM - 08:00 AM (Fasting)');
+
+  useEffect(() => {
+    if (user) {
+      if (!patientName && user.name) setPatientName(user.name);
+      if (!contactNumber && (user.contact || user.phone)) setContactNumber(user.contact || user.phone);
+      if (!patientAge && user.age) setPatientAge(user.age);
+      if (!address && user.address) setAddress(user.address);
+    }
+  }, [user]);
 
   if (!item) return null;
 
@@ -70,6 +83,42 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       setIsSubmitting(false);
       setStep(4);
 
+      const newLabBooking = {
+        id: generatedRef,
+        bookingId: generatedRef,
+        type: 'Diagnostic Lab Test',
+        category: item.category || 'Diagnostic Test',
+        testName: item.name,
+        testCode: item.testCode || `DX-${Math.floor(100 + Math.random() * 900)}`,
+        bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        collectionDate: `${selectedDate}, ${selectedSlot.split(' ')[0]} ${selectedSlot.split(' ')[1] || 'AM'}`,
+        date: selectedDate,
+        time: selectedSlot,
+        patientName: `${patientName || user?.name || 'Self'} (${patientGender}, ${patientAge ? patientAge + 'y' : 'Adult'})`,
+        status: 'Confirmed',
+        specimen: item.specimen || 'Blood / Serum Sample (NABL Barcoded)',
+        collectionAddress: `${address || 'GS Road'}, ${district}, Assam - ${pincode}`,
+        phlebotomist: {
+          name: 'Bikash Das',
+          id: 'ZM-PHL-AS-14',
+          phone: '+91 92791 25091',
+          vaccinated: true
+        },
+        reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
+        price: item.price || 499,
+        parametersSummary: `${item.name} - Home Sample Collection Booked`,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to save lab booking to localStorage', err);
+      }
+
       // Also add to cart state as booked service
       addItem(
         {
@@ -82,7 +131,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
         type
       );
 
-      addToast(`Diagnostic Appointment Reserved in ${district}! (Demo)`, 'success');
+      addToast(`Diagnostic Appointment Reserved in ${district}!`, 'success');
     }, 1000);
   };
 
@@ -387,13 +436,25 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                 <div>• You will receive SMS live arrival tracking 30 minutes before arrival.</div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleClose}
-                className="w-full btn-primary py-2.5 text-xs font-semibold"
-              >
-                Close & View In Cart
-              </button>
+              <div className="flex gap-2.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleClose();
+                    navigate('/patient-dashboard');
+                  }}
+                  className="flex-1 py-2.5 px-3 bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] rounded-xl text-xs font-bold transition shadow-2xs cursor-pointer"
+                >
+                  View in Dashboard
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="flex-1 btn-primary py-2.5 text-xs font-semibold rounded-xl cursor-pointer"
+                >
+                  Close & View In Cart
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -172,6 +172,7 @@ export default function WellnessPackagesPage() {
   const handleBookNow = (pkg) => {
     addItem(pkg, 'package');
     addToast(`${pkg.name} added to your cart!`, 'success');
+    openCart();
   };
 
   const scrollToSection = (id) => {

@@ -1,6 +1,6 @@
 // src/pages/PatientDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Patient / User Dashboard specification pixel-for-pixel
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import { saveRegisteredPatient } from '../utils/patientRegistry';
@@ -26,6 +26,9 @@ import {
   Zap,
   Pill,
   Heart,
+  Activity,
+  Stethoscope,
+  Scissors,
   Check,
   CheckCircle2,
   ArrowRight,
@@ -50,6 +53,7 @@ import {
   initialPatientProfile,
   initialPatientOrders,
   initialPatientLabBookings,
+  initialPatientAppointments,
   initialPatientPrescriptions,
   initialAssamAddresses
 } from '../mock-data/patientData';
@@ -111,6 +115,40 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
   });
 
+  const [appointments, setAppointments] = useState(() => {
+    try {
+      const saved = localStorage.getItem('patient_appointments');
+      return saved ? JSON.parse(saved) : initialPatientAppointments;
+    } catch {
+      return initialPatientAppointments;
+    }
+  });
+
+  // Real-time synchronization across app actions
+  useEffect(() => {
+    const handleSyncStorage = () => {
+      try {
+        const savedOrders = localStorage.getItem('zestmed_patient_orders');
+        if (savedOrders) setOrders(JSON.parse(savedOrders));
+
+        const savedLab = localStorage.getItem('zestmed_patient_lab_bookings');
+        if (savedLab) setLabBookings(JSON.parse(savedLab));
+
+        const savedAppts = localStorage.getItem('patient_appointments');
+        if (savedAppts) setAppointments(JSON.parse(savedAppts));
+      } catch (err) {
+        console.error('Storage sync error', err);
+      }
+    };
+
+    window.addEventListener('storage', handleSyncStorage);
+    window.addEventListener('zestmed_booking_updated', handleSyncStorage);
+    return () => {
+      window.removeEventListener('storage', handleSyncStorage);
+      window.removeEventListener('zestmed_booking_updated', handleSyncStorage);
+    };
+  }, []);
+
   const [addresses, setAddresses] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_saved_addresses');
@@ -159,6 +197,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   ];
 
   const [bookingFilter, setBookingFilter] = useState('all');
+  const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all');
   const [orderFilter, setOrderFilter] = useState('all');
   const [profileForm, setProfileForm] = useState(() => {
     let saved = null;
@@ -199,11 +238,125 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [user]);
 
   const handleCancelBooking = (bookingId) => {
-    setLabBookings((prev) =>
-      prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b))
-    );
+    setLabBookings((prev) => {
+      const updated = prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b));
+      try {
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+
+    setAppointments((prev) => {
+      const updated = prev.map((a) => (a.id === bookingId || a.bookingId === bookingId ? { ...a, status: 'Cancelled' } : a));
+      try {
+        localStorage.setItem('patient_appointments', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
   };
+
+  // Harmonized combined bookings across all 6 patient actions
+  const combinedBookings = useMemo(() => {
+    const labs = labBookings.map((b) => {
+      const isWellness = (b.category || '').toLowerCase().includes('wellness') || (b.type || '').toLowerCase().includes('wellness');
+      return {
+        ...b,
+        id: b.id || b.bookingId,
+        bookingId: b.bookingId || b.id,
+        itemType: isWellness ? 'wellness' : 'lab',
+        displayType: isWellness ? 'Wellness Package' : 'Diagnostic Lab Test',
+        title: b.testName || b.name || 'Diagnostic Test',
+        date: b.date || b.bookedDate || 'Nov 18, 2026',
+        time: b.time || '10:00 AM',
+        mode: b.collectionAddress ? 'Home Collection' : (b.mode || 'Home Collection'),
+        location: b.collectionAddress || 'Guwahati Hub',
+        provider: b.labExecutive || b.phlebotomist?.name || 'Bikash Das (Phlebotomist)',
+        price: b.price || 499,
+        status: b.status || 'Confirmed'
+      };
+    });
+
+    const appts = appointments.map((a) => {
+      const cat = (a.category || a.type || '').toLowerCase();
+      let itemType = 'doctor';
+      let displayType = 'Doctor Appointment';
+      if (cat.includes('physio')) {
+        itemType = 'physiotherapy';
+        displayType = 'Physiotherapy Session';
+      } else if (cat.includes('surg')) {
+        itemType = 'surgery';
+        displayType = 'Surgery Consultation';
+      } else if (cat.includes('well')) {
+        itemType = 'wellness';
+        displayType = 'Wellness Package';
+      }
+
+      return {
+        ...a,
+        id: a.id || a.bookingId,
+        bookingId: a.bookingId || a.id,
+        itemType,
+        displayType,
+        title: a.title || a.doctorName || a.doctor || a.surgeryName || 'Doctor Consultation',
+        date: a.date || 'Today',
+        time: a.time || a.slot || '10:00 AM',
+        mode: a.mode || (itemType === 'physiotherapy' ? 'Home Visit' : 'Clinic Visit'),
+        location: a.doctorHospital || a.hospital || 'Zestmed Polyclinic Hub, Guwahati',
+        provider: a.doctorName || a.doctor || a.careManager || 'Specialist Physician',
+        price: a.fee || a.price || 600,
+        status: a.status || 'Confirmed'
+      };
+    });
+
+    return [...appts, ...labs];
+  }, [labBookings, appointments]);
+
+  const filteredBookings = useMemo(() => {
+    return combinedBookings.filter((b) => {
+      // Category filter
+      if (serviceCategoryFilter !== 'all') {
+        if (serviceCategoryFilter === 'lab' && b.itemType !== 'lab') return false;
+        if (serviceCategoryFilter === 'doctor' && b.itemType !== 'doctor') return false;
+        if (serviceCategoryFilter === 'physiotherapy' && b.itemType !== 'physiotherapy') return false;
+        if (serviceCategoryFilter === 'wellness' && b.itemType !== 'wellness') return false;
+        if (serviceCategoryFilter === 'surgery' && b.itemType !== 'surgery') return false;
+      }
+
+      // Status filter
+      if (bookingFilter === 'confirmed') {
+        return (b.status || '').toLowerCase().includes('confirm') || (b.status || '').toLowerCase().includes('schedule');
+      }
+      if (bookingFilter === 'report-ready') {
+        return (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('publish');
+      }
+      if (bookingFilter === 'completed') {
+        return (b.status || '').toLowerCase().includes('complete');
+      }
+      if (bookingFilter === 'cancelled') {
+        return (b.status || '').toLowerCase().includes('cancel');
+      }
+
+      return true;
+    });
+  }, [combinedBookings, serviceCategoryFilter, bookingFilter]);
+
+  const upcomingCount = useMemo(() => {
+    return combinedBookings.filter(
+      (b) => !(b.status || '').toLowerCase().includes('cancel') && !(b.status || '').toLowerCase().includes('complete')
+    ).length;
+  }, [combinedBookings]);
+
+  const upcomingList = useMemo(() => {
+    return combinedBookings
+      .filter((b) => !(b.status || '').toLowerCase().includes('cancel') && !(b.status || '').toLowerCase().includes('complete'))
+      .slice(0, 3);
+  }, [combinedBookings]);
 
   const handleDeleteAddress = (addressId) => {
     setAddresses((prev) => {
@@ -863,7 +1016,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Total Bookings
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {labBookings.length}
+                  {combinedBookings.length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                   <span>View All →</span>
@@ -877,14 +1030,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
-                <TestTubeIcon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
               </div>
               <div>
                 <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
                   Upcoming
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  2
+                  {upcomingCount}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                   <span>Scheduled →</span>
@@ -961,53 +1114,67 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </button>
               </div>
 
-              {/* 2 Appointments Matching Image */}
+              {/* Dynamically Rendered Patient Appointments */}
               <div className="space-y-3 pt-1">
-                {/* Appointment 1 */}
-                <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2">
-                  <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                    {/* Mint date box */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E8F8F5] border border-emerald-100 text-[#00A884] flex flex-col items-center justify-center shrink-0">
-                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">Nov</span>
-                      <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">15</span>
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
-                        Complete Blood Count (CBC)
-                      </h4>
-                      <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">
-                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">10:00 AM - Home Collection</span>
-                      </div>
-                    </div>
-                  </div>
-                  <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
-                    Confirmed
-                  </span>
-                </div>
+                {upcomingList.length > 0 ? (
+                  upcomingList.map((item, idx) => {
+                    const isBlue = item.itemType === 'doctor' || item.itemType === 'surgery' || idx % 2 === 1;
+                    const dateParts = String(item.date || 'Nov 18').replace(/,/g, '').split(' ');
+                    const monthText = dateParts.find(p => isNaN(p) && p.length >= 3) || 'Nov';
+                    const dayText = dateParts.find(p => !isNaN(p)) || String(15 + idx * 3);
 
-                {/* Appointment 2 */}
-                <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2">
-                  <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                    {/* Blue date box */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#EFF6FF] border border-blue-100 text-[#2563EB] flex flex-col items-center justify-center shrink-0">
-                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">Nov</span>
-                      <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">20</span>
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
-                        Thyroid Profile (T3, T4, TSH)
-                      </h4>
-                      <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">
-                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">11:30 AM - Lab Visit</span>
+                    return (
+                      <div
+                        key={item.id || item.bookingId || idx}
+                        onClick={() => setActiveMenu('bookings')}
+                        className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2 cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                          {/* Date box */}
+                          <div
+                            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl border flex flex-col items-center justify-center shrink-0 ${
+                              isBlue
+                                ? 'bg-[#EFF6FF] border-blue-100 text-[#2563EB]'
+                                : 'bg-[#E8F8F5] border-emerald-100 text-[#00A884]'
+                            }`}
+                          >
+                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">
+                              {monthText.slice(0, 3)}
+                            </span>
+                            <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">
+                              {dayText}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate group-hover:text-[#14B8A6] transition">
+                              {item.title}
+                            </h4>
+                            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">
+                              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate">
+                                {item.time} • {item.mode || item.displayType}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <span
+                          className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0 ${
+                            isBlue
+                              ? 'bg-blue-50 text-blue-600 border border-blue-200/80'
+                              : 'bg-emerald-50 text-emerald-600 border border-emerald-200/80'
+                          }`}
+                        >
+                          {item.status || 'Confirmed'}
+                        </span>
                       </div>
-                    </div>
+                    );
+                  })
+                ) : (
+                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <p className="font-semibold text-slate-700">No upcoming appointments scheduled</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Book a doctor, lab test, physiotherapy, or wellness checkup anytime.</p>
                   </div>
-                  <span className="bg-blue-50 text-blue-600 border border-blue-200/80 text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0">
-                    Scheduled
-                  </span>
-                </div>
+                )}
               </div>
             </div>
 
@@ -1352,45 +1519,89 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
           {/* ======================================================== */}
-          {/* 1. MY LAB BOOKINGS VIEW                                  */}
+          {/* 1. MY BOOKINGS & CONSULTATIONS VIEW                      */}
           {/* ======================================================== */}
           {activeMenu === 'bookings' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
-                    <span>My Diagnostic & Lab Bookings</span>
+                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
+                    <span>My Bookings & Consultations</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage all your home sample collections and lab visits across Assam.
+                    Manage all your doctor appointments, physiotherapy sessions, lab tests, wellness packages, and surgery evaluations across Assam.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => navigate('/diagnostics')}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Book New Lab Test</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/diagnostics')}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Book Lab Test</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/doctor-appointment')}
+                    className="bg-[#0F1E36] hover:bg-[#1a335a] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Stethoscope className="w-3.5 h-3.5" />
+                    <span>Book Doctor</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/physiotherapy')}
+                    className="bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>Book Physio</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Status Filter Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {/* Service Category Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {[
-                  { id: 'all', label: 'All Bookings' },
-                  { id: 'confirmed', label: 'Confirmed' },
-                  { id: 'report-ready', label: 'Report Ready' },
-                  { id: 'completed', label: 'Completed' }
+                  { id: 'all', label: `All Bookings (${combinedBookings.length})` },
+                  { id: 'lab', label: `Lab Tests (${combinedBookings.filter(b => b.itemType === 'lab').length})` },
+                  { id: 'doctor', label: `Doctor Consultations (${combinedBookings.filter(b => b.itemType === 'doctor').length})` },
+                  { id: 'physiotherapy', label: `Physiotherapy (${combinedBookings.filter(b => b.itemType === 'physiotherapy').length})` },
+                  { id: 'wellness', label: `Wellness Packages (${combinedBookings.filter(b => b.itemType === 'wellness').length})` },
+                  { id: 'surgery', label: `Surgery Packages (${combinedBookings.filter(b => b.itemType === 'surgery').length})` }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setServiceCategoryFilter(cat.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
+                      serviceCategoryFilter === cat.id
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Secondary Status Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                <span className="text-slate-400 font-semibold text-[11px] uppercase tracking-wider mr-1">Status:</span>
+                {[
+                  { id: 'all', label: 'All Status' },
+                  { id: 'confirmed', label: 'Confirmed / Scheduled' },
+                  { id: 'report-ready', label: 'Report Ready / Completed' },
+                  { id: 'cancelled', label: 'Cancelled' }
                 ].map((f) => (
                   <button
                     key={f.id}
                     type="button"
                     onClick={() => setBookingFilter(f.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer ${
                       bookingFilter === f.id
-                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        ? 'bg-slate-800 text-white'
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1401,104 +1612,194 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
               {/* Bookings List */}
               <div className="space-y-3.5">
-                {labBookings
-                  .filter((b) => {
-                    if (bookingFilter === 'all') return true;
-                    if (bookingFilter === 'confirmed')
-                      return (b.status || '').toLowerCase().includes('confirm') || (b.status || '').toLowerCase().includes('schedule');
-                    if (bookingFilter === 'report-ready')
-                      return (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('ready');
-                    if (bookingFilter === 'completed')
-                      return (b.status || '').toLowerCase().includes('complete');
-                    return true;
+                {filteredBookings.length > 0 ? (
+                  filteredBookings.map((b) => {
+                    const isDoctor = b.itemType === 'doctor';
+                    const isPhysio = b.itemType === 'physiotherapy';
+                    const isSurgery = b.itemType === 'surgery';
+                    const isWellness = b.itemType === 'wellness';
+
+                    const iconColor = isDoctor
+                      ? 'bg-blue-50 text-blue-600'
+                      : isPhysio
+                      ? 'bg-emerald-50 text-emerald-600'
+                      : isSurgery
+                      ? 'bg-amber-50 text-amber-600'
+                      : isWellness
+                      ? 'bg-teal-50 text-teal-600'
+                      : 'bg-teal-50 text-teal-600';
+
+                    const IconComponent = isDoctor
+                      ? Stethoscope
+                      : isPhysio
+                      ? Activity
+                      : isSurgery
+                      ? Scissors
+                      : isWellness
+                      ? Package
+                      : FlaskConical;
+
+                    return (
+                      <div
+                        key={b.id || b.bookingId}
+                        className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconColor}`}>
+                              <IconComponent className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-bold text-slate-900">{b.title}</h3>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                                  {b.displayType}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-400 font-mono mt-0.5">
+                                ID: {b.bookingId || b.id} • Patient: {b.patientName || 'Self'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                                (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('publish')
+                                  ? 'bg-purple-50 text-purple-600 border border-purple-200'
+                                  : (b.status || '').toLowerCase().includes('confirm')
+                                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                  : (b.status || '').toLowerCase().includes('cancel')
+                                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                                  : 'bg-blue-50 text-blue-600 border border-blue-200'
+                              }`}
+                            >
+                              {b.status || 'Confirmed'}
+                            </span>
+                            <span className="text-sm font-black text-slate-900 ml-1">
+                              ₹{Number(b.price || b.fee || 499).toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                          <div className="flex flex-wrap items-center gap-4">
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-4 h-4 text-slate-400" />
+                              <span>{b.date} • {b.time}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Home className="w-4 h-4 text-teal-500" />
+                              <span className="font-medium">{b.mode || 'Home Collection'}</span>
+                            </div>
+                            {b.location && (
+                              <div className="flex items-center gap-1.5 text-slate-500">
+                                <MapPin className="w-4 h-4 text-slate-400" />
+                                <span className="truncate max-w-xs">{b.location}</span>
+                              </div>
+                            )}
+                            {b.provider && (
+                              <div className="flex items-center gap-1.5 text-slate-500">
+                                <User className="w-4 h-4 text-slate-400" />
+                                <span>{isDoctor ? 'Doctor' : isPhysio ? 'Therapist' : isSurgery ? 'Lead Surgeon' : 'Specialist'}: <strong className="text-slate-700">{b.provider}</strong></span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {(b.status || '').toLowerCase().includes('report') && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenReportModal(b.testName || b.title, b.date)}
+                                className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                              >
+                                <FileCheck className="w-3.5 h-3.5" />
+                                <span>View Report</span>
+                              </button>
+                            )}
+
+                            {isDoctor ? (
+                              <button
+                                type="button"
+                                onClick={() => addToast(`Connecting to Polyclinic Desk: +91 92791 25091 (Guwahati)`, 'info')}
+                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Call Clinic
+                              </button>
+                            ) : isPhysio ? (
+                              <button
+                                type="button"
+                                onClick={() => addToast(`Physiotherapy Desk: +91 92791 25091 (Assam Care Lead)`, 'info')}
+                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Contact Therapist
+                              </button>
+                            ) : isSurgery ? (
+                              <button
+                                type="button"
+                                onClick={() => addToast(`Surgery Care Coordinator: +91 94351 09876`, 'info')}
+                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Contact Care Lead
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => addToast(`Phlebotomist ${b.provider || 'Bikash Das'} active on route (Guwahati).`, 'info')}
+                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Track Phlebotomist
+                              </button>
+                            )}
+
+                            {!(b.status || '').toLowerCase().includes('cancel') && (
+                              <button
+                                type="button"
+                                onClick={() => handleCancelBooking(b.id || b.bookingId)}
+                                className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Cancel
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
                   })
-                  .map((b) => (
-                    <div
-                      key={b.id || b.bookingId}
-                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
-                            <FlaskConical className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-bold text-slate-900">{b.testName}</h3>
-                            <div className="text-xs text-slate-400 font-mono mt-0.5">
-                              ID: {b.bookingId || b.id} • Patient: {b.patientName || 'Self'}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                              (b.status || '').toLowerCase().includes('report')
-                                ? 'bg-purple-50 text-purple-600 border border-purple-200'
-                                : (b.status || '').toLowerCase().includes('confirm')
-                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                : (b.status || '').toLowerCase().includes('cancel')
-                                ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                                : 'bg-blue-50 text-blue-600 border border-blue-200'
-                            }`}
-                          >
-                            {b.status || 'Confirmed'}
-                          </span>
-                          <span className="text-sm font-black text-slate-900 ml-1">
-                            ₹{b.price || 499}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
-                        <div className="flex flex-wrap items-center gap-4">
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4 text-slate-400" />
-                            <span>{b.date} • {b.time || '10:00 AM'}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Home className="w-4 h-4 text-teal-500" />
-                            <span className="font-medium">{b.type || 'Home Collection'}</span>
-                          </div>
-                          {b.labExecutive && (
-                            <div className="flex items-center gap-1.5 text-slate-500">
-                              <User className="w-4 h-4 text-slate-400" />
-                              <span>Phlebotomist: <strong className="text-slate-700">{b.labExecutive}</strong></span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          {(b.status || '').toLowerCase().includes('report') && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenReportModal(b.testName, b.date)}
-                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
-                            >
-                              <FileCheck className="w-3.5 h-3.5" />
-                              <span>View Report</span>
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => addToast(`Phlebotomist ${b.labExecutive || 'Bikash Das'} is active (Cold-Chain Box CCB-04).`, 'info')}
-                            className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition"
-                          >
-                            Track Phlebotomist
-                          </button>
-                          {!(b.status || '').toLowerCase().includes('cancel') && (
-                            <button
-                              type="button"
-                              onClick={() => handleCancelBooking(b.id || b.bookingId)}
-                              className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition"
-                            >
-                              Cancel
-                            </button>
-                          )}
-                        </div>
-                      </div>
+                ) : (
+                  <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm text-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
+                      <Calendar className="w-6 h-6" />
                     </div>
-                  ))}
+                    <h3 className="text-sm font-bold text-slate-800">No Bookings Found</h3>
+                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                      You do not have any bookings matching this category. Book top doctors, lab tests, physiotherapy, or wellness packages with 1 click.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => navigate('/diagnostics')}
+                        className="px-3.5 py-1.5 bg-[#14B8A6] text-white rounded-xl text-xs font-bold hover:bg-[#0d9488] transition cursor-pointer"
+                      >
+                        Book Lab Test
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/doctor-appointment')}
+                        className="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition cursor-pointer"
+                      >
+                        Book Doctor
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/physiotherapy')}
+                        className="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
+                      >
+                        Book Physio
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

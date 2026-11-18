@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   X, Scissors, ShieldCheck, CheckCircle2, MapPin, Clock, Calendar, 
   CreditCard, Car, Check, ArrowRight, Heart, Sparkles, Building2, 
@@ -7,17 +8,20 @@ import {
 import { MOCK_SURGERY_PACKAGES, SURGERY_CATEGORIES } from '../mock-data/surgeryPackagesData';
 import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
 
   const [selectedCategory, setSelectedCategory] = useState('All Surgeries');
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [patientForm, setPatientForm] = useState({
-    name: '',
-    phone: '',
-    age: '',
+    name: user?.name || '',
+    phone: user?.contact || user?.phone || '',
+    age: user?.age || '',
     insuranceType: 'TPA Cashless Mediclaim',
     hasSeniorCitizen: true,
     preferredHospital: 'Dispur / GS Road Partner Hospital, Guwahati',
@@ -25,6 +29,17 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
   });
   const [bookingConfirmed, setBookingConfirmed] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setPatientForm((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        phone: prev.phone || user.contact || user.phone || '',
+        age: prev.age || user.age || ''
+      }));
+    }
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -53,6 +68,44 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
     setTimeout(() => {
       setIsSubmitting(false);
       const bookingRef = `ZM-SURG-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newBooking = {
+        id: bookingRef,
+        bookingId: bookingRef,
+        type: 'Surgery Package',
+        category: 'surgery',
+        title: selectedPackage.title,
+        surgeryName: selectedPackage.title,
+        doctor: 'Dr. Anupam Sarma (Surgery Care Lead)',
+        doctorName: 'Dr. Anupam Sarma (Surgery Care Lead)',
+        doctorSpecialty: selectedPackage.category || 'General & Laparoscopic Surgery',
+        specialty: selectedPackage.category || 'General & Laparoscopic Surgery',
+        doctorHospital: patientForm.preferredHospital || 'Dispur / GS Road Partner Hospital, Guwahati',
+        hospital: patientForm.preferredHospital || 'Dispur / GS Road Partner Hospital, Guwahati',
+        date: 'Within 48 Hours (Pre-Op Call)',
+        time: '10:00 AM',
+        slot: 'Pre-Op Consultation Scheduled',
+        mode: 'Hospital Consultation & Pre-Op',
+        fee: selectedPackage.packagePrice || 35000,
+        price: selectedPackage.packagePrice || 35000,
+        patientName: patientForm.name,
+        patientPhone: patientForm.phone,
+        patientAge: patientForm.age,
+        symptoms: `${selectedPackage.title} - ${patientForm.insuranceType}`,
+        status: 'Confirmed',
+        careManager: 'Dr. Anupam Sarma (Surgery Care Lead)',
+        carePhone: '+91 94351 09876',
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to save surgery booking', err);
+      }
+
       setBookingConfirmed({
         bookingRef,
         pkg: selectedPackage,
@@ -186,8 +239,18 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
+                  onClick={() => {
+                    handleReset();
+                    navigate('/patient-dashboard');
+                  }}
+                  className="flex-1 bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-xs cursor-pointer"
+                >
+                  View in Dashboard
+                </button>
+                <button
+                  type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="flex-1 bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-sm cursor-pointer"
                 >
                   Done
                 </button>

@@ -190,6 +190,16 @@ export default function PhysiotherapyPage() {
     selectedService: 'Back & Neck Pain Therapy',
   });
 
+  useEffect(() => {
+    if (user?.name && user.name !== 'Verified Patient') {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: user.name,
+        mobileNumber: user.contact || user.phone || prev.mobileNumber
+      }));
+    }
+  }, [user]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
@@ -224,14 +234,22 @@ export default function PhysiotherapyPage() {
       const newBooking = {
         id: apptId,
         bookingId: apptId,
+        type: 'Physiotherapy',
+        category: 'physiotherapy',
+        title: 'Dr. Arindam Borah, MPT (Ortho)',
         doctor: 'Dr. Arindam Borah, MPT (Ortho)',
+        doctorName: 'Dr. Arindam Borah, MPT (Ortho)',
         doctorSpecialty: formData.selectedService,
+        specialty: formData.selectedService,
         doctorDegree: 'BPT, MPT, Certified Clinical Physiotherapist',
         doctorHospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
+        hospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
         date: formData.preferredDate,
         time: formData.preferredTime,
+        slot: `${formData.preferredDate}, ${formData.preferredTime}`,
         mode: 'Home & Clinic Session',
         fee: 850,
+        price: 850,
         patientName: formData.fullName,
         patientPhone: formData.mobileNumber,
         symptoms: `${formData.selectedService} - Specialized rehabilitation session`,
@@ -243,6 +261,8 @@ export default function PhysiotherapyPage() {
       try {
         const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
       } catch (err) {
         console.error('Failed to save booking to storage', err);
       }

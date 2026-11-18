@@ -176,6 +176,18 @@ export default function DoctorAppointmentPage() {
     freeSeniorCab: false
   });
 
+  useEffect(() => {
+    if (user?.name && user.name !== 'Verified Patient') {
+      setPatientForm((prev) => ({
+        ...prev,
+        name: user.name,
+        phone: user.contact || user.phone || prev.phone,
+        age: user.age || prev.age,
+        gender: user.gender || prev.gender
+      }));
+    }
+  }, [user]);
+
   // Filtered doctors list based on user search or specialty pills
   const displayedDoctors = useMemo(() => {
     let list = MOCK_DOCTORS;
@@ -240,14 +252,21 @@ export default function DoctorAppointmentPage() {
       const newBooking = {
         id: apptId,
         bookingId: apptId,
+        type: 'Doctor Appointment',
+        category: 'doctor',
+        title: bookingDoctor?.name || 'Dr. Amit Sharma',
         doctor: bookingDoctor?.name || 'Dr. Amit Sharma',
+        doctorName: bookingDoctor?.name || 'Dr. Amit Sharma',
         doctorSpecialty: bookingDoctor?.specialty || 'General Physician',
+        specialty: bookingDoctor?.specialty || 'General Physician',
         doctorDegree: bookingDoctor?.degree || 'MBBS, MD',
         doctorHospital: bookingDoctor?.hospital || 'Zestmed Polyclinic Hub',
+        hospital: bookingDoctor?.hospital || 'Zestmed Polyclinic Hub',
         date: appointmentSlotDate === 'Today' ? 'Today, ' + new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : appointmentSlotDate,
         time: appointmentTimeSlot,
         mode: consultationMode,
         fee: bookingDoctor?.fee || 600,
+        price: bookingDoctor?.fee || 600,
         patientName: patientForm.name,
         patientPhone: patientForm.phone,
         patientAge: patientForm.age,
@@ -262,6 +281,8 @@ export default function DoctorAppointmentPage() {
       try {
         const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
       } catch (err) {
         console.error('Failed to sync appointment with storage', err);
       }

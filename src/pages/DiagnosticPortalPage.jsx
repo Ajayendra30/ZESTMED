@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import DiagnosticBookingModal from '../components/DiagnosticBookingModal';
 import { 
   Search, ShieldCheck, Clock, Award, Home,
   Star, ChevronDown, SlidersHorizontal, Filter,
@@ -221,6 +222,7 @@ export default function DiagnosticPortalPage() {
   const [selectedDiscounts, setSelectedDiscounts] = useState([]);
   const [sortBy, setSortBy] = useState('Popularity');
   const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
+  const [bookingTestItem, setBookingTestItem] = useState(null);
 
   const toggleSidebarCategory = (catId) => {
     setSelectedSidebarCategories((prev) =>
@@ -235,15 +237,7 @@ export default function DiagnosticPortalPage() {
   };
 
   const handleBookTest = (test) => {
-    addItem({
-      id: test.id,
-      name: test.name,
-      price: test.price,
-      mrp: test.mrp,
-      type: 'test',
-      quantity: 1
-    });
-    addToast(`${test.name} booked! Added to cart.`, 'success');
+    setBookingTestItem(test);
   };
 
   const filteredTests = useMemo(() => {
@@ -824,8 +818,7 @@ export default function DiagnosticPortalPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      window.scrollTo({ top: 300, behavior: 'smooth' });
-                      addToast('Choose from our popular tests above to book!', 'info');
+                      setBookingTestItem(LAB_TESTS_DATA[0]);
                     }}
                     className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs cursor-pointer whitespace-nowrap shrink-0"
                   >
@@ -841,6 +834,15 @@ export default function DiagnosticPortalPage() {
 
         </div>
       </div>
+
+      {/* Interactive Lab Test Booking Modal */}
+      {bookingTestItem && (
+        <DiagnosticBookingModal
+          item={bookingTestItem}
+          type="diagnostic"
+          onClose={() => setBookingTestItem(null)}
+        />
+      )}
 
     </div>
   );

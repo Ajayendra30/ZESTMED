@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   X, Activity, Star, Calendar, Clock, MapPin, Home, 
   CheckCircle2, ShieldCheck, User, Phone, Check, 
@@ -7,8 +8,11 @@ import {
 import { MOCK_PHYSIOTHERAPISTS, PHYSIO_CONDITIONS } from '../mock-data/physioData';
 import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
 
@@ -18,14 +22,25 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
   const [sessionDate, setSessionDate] = useState(new Date().toISOString().split('T')[0]);
   const [sessionSlot, setSessionSlot] = useState('10:00 AM - 11:00 AM');
   const [patientDetails, setPatientDetails] = useState({
-    name: '',
-    phone: '',
-    age: '',
+    name: user?.name || '',
+    phone: user?.contact || user?.phone || '',
+    age: user?.age || '',
     address: `${currentLocation?.city || 'Dispur'}, Guwahati`,
     conditionNotes: ''
   });
   const [bookingConfirmed, setBookingConfirmed] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setPatientDetails((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        phone: prev.phone || user.contact || user.phone || '',
+        age: prev.age || user.age || ''
+      }));
+    }
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -55,6 +70,42 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
     setTimeout(() => {
       setIsSubmitting(false);
       const bookingRef = `ZM-PT-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newBooking = {
+        id: bookingRef,
+        bookingId: bookingRef,
+        type: 'Physiotherapy',
+        category: 'physiotherapy',
+        title: selectedPhysio.name,
+        doctor: selectedPhysio.name,
+        doctorName: selectedPhysio.name,
+        doctorSpecialty: selectedPhysio.specialty,
+        specialty: selectedPhysio.specialty,
+        doctorDegree: selectedPhysio.degree,
+        doctorHospital: 'Zestmed Physiotherapy Center, Guwahati',
+        hospital: 'Zestmed Physiotherapy Center, Guwahati',
+        date: sessionDate,
+        time: sessionSlot,
+        slot: `${sessionDate}, ${sessionSlot}`,
+        mode: serviceType,
+        fee: selectedPhysio.sessionFee,
+        price: selectedPhysio.sessionFee,
+        patientName: patientDetails.name,
+        patientPhone: patientDetails.phone,
+        patientAge: patientDetails.age,
+        symptoms: patientDetails.conditionNotes || `${selectedPhysio.specialty} Session`,
+        status: 'Confirmed',
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to save booking to storage', err);
+      }
+
       setBookingConfirmed({
         bookingRef,
         physio: selectedPhysio,
@@ -171,8 +222,18 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
+                  onClick={() => {
+                    handleReset();
+                    navigate('/patient-dashboard');
+                  }}
+                  className="flex-1 bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-xs cursor-pointer"
+                >
+                  View in Dashboard
+                </button>
+                <button
+                  type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="flex-1 bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-sm cursor-pointer"
                 >
                   Done
                 </button>

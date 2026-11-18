@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +17,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
   } = useCart();
   const { addToast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutComplete, setCheckoutComplete] = useState(false);
   const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
@@ -36,6 +38,92 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     setLastPayment(paymentData);
     setIsRazorpayOpen(false);
     setCheckoutComplete(true);
+
+    // 1. Process Medicine Orders
+    const medicineItems = cartItems.filter(i => i.type !== 'test' && i.type !== 'package');
+    if (medicineItems.length > 0) {
+      const orderMedTotal = medicineItems.reduce((acc, curr) => acc + (curr.price * (curr.quantity || 1)), 0);
+      const newOrder = {
+        id: `ZM-ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        status: 'Confirmed',
+        hub: 'Dispur Express Delivery Hub, Guwahati',
+        deliveryAddress: user?.address || 'Flat 4B, Brahmaputra Enclave, GS Road, Dispur, Guwahati - 781005',
+        paymentMethod: `Razorpay (${paymentData?.method || 'UPI'} - Verified)`,
+        paymentId: paymentData?.paymentId,
+        orderId: paymentData?.orderId,
+        totalAmount: orderMedTotal + (orderMedTotal > 499 ? 0 : 49),
+        mrpTotal: medicineItems.reduce((acc, curr) => acc + ((curr.mrp || curr.price * 1.25) * (curr.quantity || 1)), 0),
+        savings: Math.round(medicineItems.reduce((acc, curr) => acc + (((curr.mrp || curr.price * 1.25) - curr.price) * (curr.quantity || 1)), 0)),
+        deliveryFee: orderMedTotal > 499 ? 0 : 49,
+        trackingSteps: [
+          { title: 'Order Placed & Confirmed', time: 'Just now', completed: true, current: true },
+          { title: 'Verified by Registered Pharmacist (Guwahati)', time: 'Expected in 15 mins', completed: false },
+          { title: 'Cold-pack Packaging & Dispatched', time: 'Expected in 45 mins', completed: false },
+          { title: 'Out for Delivery (Assam Hub)', time: 'Expected in 2 hours', completed: false },
+          { title: 'Delivered at Doorstep', time: 'Guaranteed Express Delivery', completed: false }
+        ],
+        items: medicineItems.map(item => ({
+          id: item.id,
+          name: item.name,
+          manufacturer: item.manufacturer || 'Zestmed Certified Pharma',
+          dosage: item.dosage || 'Standard Pack',
+          quantity: item.quantity || 1,
+          price: item.price,
+          mrp: item.mrp || Math.round(item.price * 1.25)
+        }))
+      };
+
+      try {
+        const existingOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
+        localStorage.setItem('zestmed_patient_orders', JSON.stringify([newOrder, ...existingOrders]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to save order to localStorage', err);
+      }
+    }
+
+    // 2. Process Diagnostic Tests or Wellness Packages
+    const diagnosticOrPackageItems = cartItems.filter(i => i.type === 'test' || i.type === 'package');
+    if (diagnosticOrPackageItems.length > 0) {
+      try {
+        const existingBookings = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+        const newBookings = diagnosticOrPackageItems.map(item => ({
+          id: `ZM-${item.type === 'package' ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+          bookingId: `ZM-${item.type === 'package' ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+          type: item.type === 'package' ? 'Wellness Package' : 'Diagnostic Lab Test',
+          testName: item.name,
+          testCode: item.type === 'package' ? 'WEL-PKG' : (item.testCode || 'DX-781'),
+          category: item.type === 'package' ? 'Wellness Package' : (item.category || 'Diagnostic Test'),
+          bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+          collectionDate: 'Tomorrow, 07:30 AM',
+          date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+          time: '07:30 AM - Home Collection',
+          patientName: `${user?.name || 'Rahul Verma'} (Self)`,
+          status: 'Confirmed',
+          specimen: item.type === 'package' ? 'Blood & Serum Sample (Fasting)' : (item.specimen || 'Blood / Serum Sample (NABL Barcoded)'),
+          collectionAddress: user?.address || 'Flat 4B, Brahmaputra Enclave, GS Road, Dispur, Guwahati - 781005',
+          phlebotomist: {
+            name: 'Bikash Das',
+            id: 'ZM-PHL-AS-14',
+            phone: '+91 92791 25091',
+            vaccinated: true
+          },
+          reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
+          price: item.price,
+          parametersSummary: item.includes || `${item.name} - Sample Collection Booked`,
+          createdAt: new Date().toISOString()
+        }));
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...existingBookings]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to save lab booking to localStorage', err);
+      }
+    }
+
     clearCart();
     addToast(`Order Confirmed via Razorpay! Payment ID: ${paymentData.paymentId}`, 'success');
   };
@@ -99,12 +187,25 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
                 <div>• Single-Day Report Delivery: Guaranteed within 12-24 Hours</div>
                 <div>• Location: Guwahati, Assam (Assam GST Invoice Issued)</div>
               </div>
-              <button
-                onClick={resetCheckout}
-                className="mt-6 bg-[#008F83] hover:bg-[#007a70] text-white font-bold w-full py-3 text-sm rounded-xl transition shadow-sm active:scale-[0.98]"
-              >
-                Continue Browsing
-              </button>
+              <div className="flex flex-col gap-2.5 w-full mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetCheckout();
+                    navigate('/patient-dashboard');
+                  }}
+                  className="bg-[#008F83] hover:bg-[#007a70] text-white font-bold w-full py-3 text-xs sm:text-sm rounded-xl transition shadow-sm active:scale-[0.98] cursor-pointer"
+                >
+                  View in Patient Dashboard
+                </button>
+                <button
+                  type="button"
+                  onClick={resetCheckout}
+                  className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold w-full py-2.5 text-xs sm:text-sm rounded-xl transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                >
+                  Continue Browsing
+                </button>
+              </div>
             </div>
           ) : cartItems.length === 0 ? (
             /* Empty Cart */

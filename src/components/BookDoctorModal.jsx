@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   X, Stethoscope, Star, Calendar, Clock, MapPin, 
   Video, CheckCircle2, ShieldCheck, User, Phone, 
@@ -6,8 +7,11 @@ import {
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
   const [searchDoctor, setSearchDoctor] = useState('');
@@ -15,13 +19,24 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
   const [consultMode, setConsultMode] = useState('Clinic Visit');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [patientDetails, setPatientDetails] = useState({
-    name: '',
-    phone: '',
-    age: '',
+    name: user?.name || '',
+    phone: user?.contact || user?.phone || '',
+    age: user?.age || '',
     symptoms: ''
   });
   const [bookingConfirmed, setBookingConfirmed] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setPatientDetails((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        phone: prev.phone || user.contact || user.phone || '',
+        age: prev.age || user.age || ''
+      }));
+    }
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -55,6 +70,42 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
     setTimeout(() => {
       setIsSubmitting(false);
       const apptId = `ZM-DOC-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newBooking = {
+        id: apptId,
+        bookingId: apptId,
+        type: 'Doctor Appointment',
+        category: 'doctor',
+        title: selectedDoctor.name,
+        doctor: selectedDoctor.name,
+        doctorName: selectedDoctor.name,
+        doctorSpecialty: selectedDoctor.specialty,
+        specialty: selectedDoctor.specialty,
+        doctorDegree: selectedDoctor.qualification || 'MBBS, MD',
+        doctorHospital: selectedDoctor.hospital,
+        hospital: selectedDoctor.hospital,
+        date: selectedSlot ? selectedSlot.split(',')[0] : 'Today',
+        time: selectedSlot || '10:00 AM',
+        slot: selectedSlot,
+        mode: consultMode,
+        fee: selectedDoctor.fee,
+        price: selectedDoctor.fee,
+        patientName: patientDetails.name,
+        patientPhone: patientDetails.phone,
+        patientAge: patientDetails.age,
+        symptoms: patientDetails.symptoms || 'General Doctor Consultation',
+        status: 'Confirmed',
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (err) {
+        console.error('Failed to sync appointment with storage', err);
+      }
+
       setBookingConfirmed({
         apptId,
         doctor: selectedDoctor,
@@ -184,8 +235,18 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
+                  onClick={() => {
+                    handleReset();
+                    navigate('/patient-dashboard');
+                  }}
+                  className="flex-1 bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-xs cursor-pointer"
+                >
+                  View in Dashboard
+                </button>
+                <button
+                  type="button"
                   onClick={handleReset}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                  className="flex-1 bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-xs sm:text-sm rounded-xl transition shadow-sm cursor-pointer"
                 >
                   Done
                 </button>
