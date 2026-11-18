@@ -59,18 +59,43 @@ export default function AuthPage() {
   const { addToast } = useToast();
 
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(() => {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ')) {
+      return user.name;
+    }
+    try {
+      const saved = localStorage.getItem('zestmed_patient_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ')) {
+          return parsed.name;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return '';
+  });
   const [step, setStep] = useState(1); // 1: Phone input, 2: OTP verification
   const [otp, setOtp] = useState(['', '', '', '']);
   const [resendCountdown, setResendCountdown] = useState(30);
   const [detectedPatient, setDetectedPatient] = useState(null);
 
   useEffect(() => {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ')) {
+      setFullName(user.name);
+      if (user.contact || user.phone) {
+        setPhoneNumber(normalizePhone(user.contact || user.phone));
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
     const clean = normalizePhone(phoneNumber);
     if (clean.length === 10) {
       const found = getRegisteredPatient(clean);
       setDetectedPatient(found);
-      if (found?.name && found.name !== 'Verified Patient') {
+      if (found?.name && found.name !== 'Verified Patient' && !found.name.startsWith('Patient ')) {
         setFullName(found.name);
       }
     } else {
@@ -99,7 +124,7 @@ export default function AuthPage() {
     setStep(2);
     setOtp(['', '', '', '']);
     setResendCountdown(30);
-    const resolvedName = (fullName.trim() || detectedPatient?.name || '').trim();
+    const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || 'Deepjyoti Kalita').trim();
     if (resolvedName && resolvedName !== 'Verified Patient') {
       addToast(`OTP sent for ${resolvedName}: 1234`, 'info');
     } else {
@@ -134,7 +159,7 @@ export default function AuthPage() {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    const resolvedName = (fullName.trim() || detectedPatient?.name || '').trim();
+    const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || 'Deepjyoti Kalita').trim();
     loginWithPhoneOtp(phoneNumber, resolvedName);
     navigate('/patient-dashboard');
   };
@@ -296,34 +321,30 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                {/* Registered Patient Automatic Detection Banner */}
-                {detectedPatient?.name ? (
-                  <div className="flex items-center gap-2 p-2.5 bg-teal-50 border border-teal-200/80 rounded-2xl text-xs text-teal-800 animate-fadeIn">
-                    <CheckCircle2 className="w-4 h-4 text-[#007A64] shrink-0" />
-                    <span className="text-slate-700">
-                      Registered Patient: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong>
-                    </span>
-                  </div>
-                ) : (
-                  /* If phone is not in directory, allow entering registered name */
-                  <div className="space-y-1 text-left">
-                    <label className="block text-xs font-bold text-slate-700">
-                      Patient Full Name
-                    </label>
-                    <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
-                      <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
-                        <User className="w-4 h-4" />
-                      </div>
-                      <input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Enter your name (e.g. Tinku)"
-                        className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-3"
-                      />
+                {/* Patient Full Name Input */}
+                <div className="space-y-1 text-left">
+                  <label className="block text-xs font-bold text-slate-700">
+                    Patient Full Name
+                  </label>
+                  <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
+                      <User className="w-4 h-4" />
                     </div>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-3"
+                    />
                   </div>
-                )}
+                  {detectedPatient?.name && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#007A64] font-semibold mt-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                      <span>Registered Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
+                    </div>
+                  )}
+                </div>
 
                 {/* Primary CTA: Send OTP Button */}
                 <button

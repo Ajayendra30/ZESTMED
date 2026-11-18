@@ -251,7 +251,7 @@ export default function AdminDashboardPage() {
     { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', bookingsCount: 3, ordersCount: 1, status: 'Active' },
     { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', bookingsCount: 6, ordersCount: 4, status: 'Active' },
     { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Guwahati (Khanapara)', bookingsCount: 2, ordersCount: 0, status: 'Active' },
-    { id: 'ZM-PAT-106', name: 'Tinku Kalita', phone: '+91 98640 12345', city: 'Guwahati (Panbazar)', bookingsCount: 1, ordersCount: 1, status: 'Active' }
+    { id: 'ZM-PAT-106', name: 'Deepjyoti Kalita', phone: '+91 98640 12345', city: 'Guwahati (Panbazar)', bookingsCount: 1, ordersCount: 1, status: 'Active' }
   ];
   const [patientsList, setPatientsList] = useState(() => {
     try {

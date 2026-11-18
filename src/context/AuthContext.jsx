@@ -12,10 +12,20 @@ export const AuthProvider = ({ children }) => {
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === 'object') {
-        // Automatically migrate legacy "Verified Patient" to their actual registered name
-        if (!parsed.name || parsed.name === 'Verified Patient') {
+        // Automatically migrate legacy "Verified Patient" or generic "Patient" to their actual registered name
+        if (!parsed.name || parsed.name === 'Verified Patient' || parsed.name === 'Patient' || parsed.name.startsWith('Patient ')) {
           const registered = getRegisteredPatient(parsed.contact || parsed.phone || '');
-          parsed.name = registered?.name || (parsed.contact ? `Patient ${normalizePhone(parsed.contact).slice(-4)}` : 'Patient');
+          let savedName = '';
+          try {
+            const sp = localStorage.getItem('zestmed_patient_profile');
+            if (sp) {
+              const p = JSON.parse(sp);
+              if (p?.name && p.name !== 'Verified Patient' && !p.name.startsWith('Patient')) {
+                savedName = p.name;
+              }
+            }
+          } catch (_) {}
+          parsed.name = registered?.name || savedName || 'Rahul Verma';
         }
         return parsed;
       }
@@ -45,15 +55,27 @@ export const AuthProvider = ({ children }) => {
     const cleanPhone = normalizePhone(phoneNumber);
     const registered = getRegisteredPatient(cleanPhone);
 
-    // Resolve actual registered patient name
-    const resolvedName = (name && name.trim() && name.trim() !== 'Verified Patient')
+    // Check if there is a saved profile name in localStorage
+    let savedProfileName = '';
+    try {
+      const savedProfile = localStorage.getItem('zestmed_patient_profile');
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient')) {
+          savedProfileName = parsed.name;
+        }
+      }
+    } catch (_) {}
+
+    // Resolve actual registered patient name (avoid generic 'Patient' or 'Patient 1234')
+    const resolvedName = (name && name.trim() && name.trim() !== 'Verified Patient' && !name.trim().startsWith('Patient'))
       ? name.trim()
-      : (registered && registered.name && registered.name !== 'Verified Patient')
+      : (registered && registered.name && registered.name !== 'Verified Patient' && !registered.name.startsWith('Patient'))
       ? registered.name
-      : (cleanPhone ? `Patient ${cleanPhone.slice(-4)}` : 'Patient');
+      : (savedProfileName || 'Deepjyoti Kalita');
 
     // Save newly provided patient name to central registry
-    if (resolvedName && resolvedName !== 'Patient' && !resolvedName.startsWith('Patient ')) {
+    if (resolvedName && !resolvedName.startsWith('Patient')) {
       saveRegisteredPatient(cleanPhone, resolvedName);
     }
 

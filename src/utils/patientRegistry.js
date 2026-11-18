@@ -59,10 +59,9 @@ export const DEFAULT_REGISTERED_PATIENTS = [
   },
   {
     id: 'ZM-PAT-106',
-    name: 'Tinku Kalita',
+    name: 'Deepjyoti Kalita',
     phone: '9864012345',
-    aliases: ['9876500000', '9876543211', '9999999999', '9123456789', '9864000001', '9864000000'],
-    email: 'tinku.kalita@gmail.com',
+    email: 'deepjyoti.kalita@gmail.com',
     city: 'Guwahati (Panbazar)',
     age: 28,
     gender: 'Male',
