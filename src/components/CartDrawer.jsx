@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import { placeMedicineOrder, bookLabTest } from '../services/supabaseService';
 import { 
   X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, 
   FileText, ArrowRight, CheckCircle2, AlertTriangle, Truck, Clock, Lock
@@ -80,6 +81,9 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         localStorage.setItem('zestmed_patient_orders', JSON.stringify([newOrder, ...existingOrders]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save order to Supabase PostgreSQL database
+        placeMedicineOrder(newOrder).catch((err) => console.warn('Supabase medicine order error:', err));
       } catch (err) {
         console.error('Failed to save order to localStorage', err);
       }
@@ -119,6 +123,11 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...existingBookings]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save bookings to Supabase PostgreSQL database
+        newBookings.forEach((b) => {
+          bookLabTest(b).catch((err) => console.warn('Supabase lab booking error:', err));
+        });
       } catch (err) {
         console.error('Failed to save lab booking to localStorage', err);
       }

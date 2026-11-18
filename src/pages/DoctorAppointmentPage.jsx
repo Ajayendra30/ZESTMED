@@ -10,6 +10,7 @@ import {
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import { bookDoctorAppointment } from '../services/supabaseService';
 import DoctorHero from '../components/DoctorHero';
 
 // =========================================================================
@@ -283,6 +284,9 @@ export default function DoctorAppointmentPage() {
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save to Supabase PostgreSQL database
+        bookDoctorAppointment(newBooking).catch((err) => console.warn('Supabase doctor booking error:', err));
       } catch (err) {
         console.error('Failed to sync appointment with storage', err);
       }

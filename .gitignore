@@ -19,3 +19,12 @@ pnpm-debug.log*
 .DS_Store
 .idea
 .vscode
+
+# SQLite & Legacy DBs
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env.local
+

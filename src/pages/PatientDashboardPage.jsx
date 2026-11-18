@@ -4,6 +4,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import { saveRegisteredPatient } from '../utils/patientRegistry';
+import { 
+  updateDoctorAppointmentStatus, 
+  updateLabBookingStatus, 
+  updateOrderStatus 
+} from '../services/supabaseService';
 import {
   Home,
   FlaskConical,
@@ -257,6 +262,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       }
       return updated;
     });
+
+    // Sync cancellation to Supabase PostgreSQL
+    updateDoctorAppointmentStatus(bookingId, 'Cancelled').catch(() => {});
+    updateLabBookingStatus(bookingId, 'Cancelled').catch(() => {});
 
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
   };

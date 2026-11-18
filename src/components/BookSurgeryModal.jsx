@@ -9,6 +9,7 @@ import { MOCK_SURGERY_PACKAGES, SURGERY_CATEGORIES } from '../mock-data/surgeryP
 import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
+import { bookSurgery } from '../services/supabaseService';
 
 export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -102,6 +103,9 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save to Supabase PostgreSQL database
+        bookSurgery(newBooking).catch((err) => console.warn('Supabase surgery booking error:', err));
       } catch (err) {
         console.error('Failed to save surgery booking', err);
       }

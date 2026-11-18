@@ -9,6 +9,7 @@ import { MOCK_PHYSIOTHERAPISTS, PHYSIO_CONDITIONS } from '../mock-data/physioDat
 import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
+import { bookPhysiotherapy } from '../services/supabaseService';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -102,6 +103,9 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save to Supabase PostgreSQL database
+        bookPhysiotherapy(newBooking).catch((err) => console.warn('Supabase physio booking error:', err));
       } catch (err) {
         console.error('Failed to save booking to storage', err);
       }

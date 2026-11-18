@@ -1,5 +1,6 @@
 // src/utils/patientRegistry.js
-// Central Registered Patients Directory for ZESTMED
+// Central Registered Patients Directory for ZESTMED with Supabase PostgreSQL Sync
+import { savePatientProfile } from '../services/supabaseService';
 
 export const DEFAULT_REGISTERED_PATIENTS = [
   {
@@ -175,6 +176,21 @@ export function saveRegisteredPatient(phone, name, extraData = {}) {
       });
     }
     localStorage.setItem('zestmed_admin_patients', JSON.stringify(adminPatients));
+
+    // 3. Persist patient profile to Supabase PostgreSQL in background
+    try {
+      savePatientProfile({
+        phone: cleanPhone,
+        name: patientRecord.name,
+        email: patientRecord.email,
+        age: patientRecord.age,
+        gender: patientRecord.gender,
+        blood_group: patientRecord.bloodGroup,
+        city: patientRecord.city
+      });
+    } catch (dbErr) {
+      console.warn('Background Supabase profile sync warning:', dbErr);
+    }
 
     return patientRecord;
   } catch (e) {

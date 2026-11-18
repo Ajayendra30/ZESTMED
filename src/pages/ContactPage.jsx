@@ -21,6 +21,7 @@ import {
   Minus
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { submitInquiry } from '../services/supabaseService';
 
 export default function ContactPage() {
   const { addToast } = useToast();
@@ -49,6 +50,7 @@ export default function ContactPage() {
     }
 
     setIsSubmitting(true);
+    submitInquiry(formData).catch(() => {});
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);

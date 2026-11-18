@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
+import { bookLabTest } from '../services/supabaseService';
 import { 
   X, Calendar, Clock, MapPin, User, CheckCircle2, 
   FlaskConical, ShieldCheck, ArrowRight, ArrowLeft, 
@@ -115,6 +116,9 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
         localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save to Supabase PostgreSQL database
+        bookLabTest(newLabBooking).catch((err) => console.warn('Supabase lab booking error:', err));
       } catch (err) {
         console.error('Failed to save lab booking to localStorage', err);
       }

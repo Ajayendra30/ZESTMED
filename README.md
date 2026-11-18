@@ -69,19 +69,33 @@ The platform provides an intuitive user experience with a clean medical design, 
 - `LocationContext` – Location and PIN code management
 - `ToastContext` – Application notifications and feedback
 
-### Current Architecture
+### Database & Backend Architecture
 
-**Frontend-only implementation.**
+**Supabase PostgreSQL Database Integration.**
 
-The current version uses local demo data and browser LocalStorage for interactive functionality.
+The project is configured with a production-grade Supabase PostgreSQL database architecture:
 
-- No backend API integration
-- No production database connection
-- No live payment gateway
-- No real SMS or OTP authentication
-- No live laboratory or pharmacy integrations
-
-Backend and production integrations are planned for the next development stage.
+- **Database Engine:** Supabase PostgreSQL
+- **Client Library:** `@supabase/supabase-js`
+- **Client Configuration:** `src/lib/supabaseClient.js`
+- **Data Service Layer:** `src/services/supabaseService.js`
+- **PostgreSQL Schema:** `supabase/schema.sql` (also available as `supabase_schema.sql` in workspace root)
+- **Supported PostgreSQL Tables:**
+  - `profiles` – Patient and administrator user accounts with phone, full name, email, age, gender, blood group, address
+  - `roles` & `user_roles` – Access control roles (`PATIENT`, `LAB_EXECUTIVE`, `ADMIN`)
+  - `addresses` – Patient delivery and sample collection addresses
+  - `medicines` & `medicine_categories` – Complete pharmacy catalog
+  - `orders` & `order_items` – Medicine orders placed by patients
+  - `diagnostic_tests` & `health_packages` – NABL-accredited diagnostic tests and health packages
+  - `test_bookings` – Home collection lab test bookings
+  - `doctor_appointments` – Doctor consultation appointments
+  - `physiotherapy_bookings` – Physiotherapy session bookings
+  - `surgery_bookings` – Surgery package bookings
+  - `wellness_bookings` – Preventive health and wellness package bookings
+  - `lab_executives` – Phlebotomists and field diagnostic team
+  - `inquiries` – Contact and customer support messages
+- **Row Level Security (RLS):** Fully enabled across all tables with appropriate access policies
+- **Resilient Fallback:** Graceful synchronization with local caching to maintain complete responsiveness and zero runtime disruption during development or offline preview.
 
 ---
 

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, UserPlus, Phone, MapPin, Activity, Thermometer, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { addLabExecutive } from '../services/supabaseService';
 
 export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecutive }) {
   const { addToast } = useToast();
@@ -40,6 +41,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
     };
 
     onAddExecutive(newExecutive);
+    addLabExecutive(newExecutive).catch(() => {});
     addToast(`Phlebotomist ${newExecutive.name} (${newExecutive.id}) onboarded successfully!`, 'success');
     onClose();
 

@@ -4,6 +4,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
+  updateDoctorAppointmentStatus,
+  updatePhysioStatus,
+  updateSurgeryStatus,
+  updateWellnessStatus,
+  updateLabBookingStatus,
+  updateOrderStatus
+} from '../services/supabaseService';
+import {
   Menu,
   Search,
   Bell,
@@ -687,6 +695,8 @@ export default function AdminDashboardPage() {
             if (it.status === 'Confirmed') next = 'In Progress';
             else if (it.status === 'In Progress') next = 'Completed';
             else if (it.status === 'Completed') next = 'Confirmed';
+            const nextStatus = next;
+            updateDoctorAppointmentStatus(id, nextStatus).catch(() => {});
             return { ...it, status: next };
           }
           return it;
@@ -708,6 +718,8 @@ export default function AdminDashboardPage() {
             else if (it.status === 'Session Scheduled') next = 'In Progress';
             else if (it.status === 'In Progress') next = 'Completed';
             else if (it.status === 'Completed') next = 'Confirmed';
+            const nextStatus = next;
+            updatePhysioStatus(id, nextStatus).catch(() => {});
             return { ...it, status: next };
           }
           return it;
@@ -730,6 +742,8 @@ export default function AdminDashboardPage() {
             else if (it.status === 'Hospital Admitted') next = 'Surgery Completed';
             else if (it.status === 'Surgery Completed') next = 'Discharged';
             else if (it.status === 'Discharged') next = 'Confirmed';
+            const nextStatus = next;
+            updateSurgeryStatus(id, nextStatus).catch(() => {});
             return { ...it, status: next };
           }
           return it;
@@ -752,6 +766,8 @@ export default function AdminDashboardPage() {
             else if (it.status === 'In Process') next = 'Report Ready';
             else if (it.status === 'Report Ready') next = 'Report Published';
             else if (it.status === 'Report Published') next = 'Confirmed';
+            const nextStatus = next;
+            updateLabBookingStatus(id, nextStatus).catch(() => {});
             return { ...it, status: next };
           }
           return it;
@@ -774,6 +790,8 @@ export default function AdminDashboardPage() {
             else if (it.status === 'Dispatched') next = 'Out for Delivery';
             else if (it.status === 'Out for Delivery') next = 'Delivered';
             else if (it.status === 'Delivered') next = 'Processing';
+            const nextStatus = next;
+            updateOrderStatus(id, nextStatus).catch(() => {});
             return { ...it, status: next };
           }
           return it;
@@ -792,6 +810,7 @@ export default function AdminDashboardPage() {
   const handleCancelBookingOrOrder = (item) => {
     const id = item.id;
     if (item.type === 'order') {
+      updateOrderStatus(id, 'Cancelled').catch(() => {});
       setOrdersList((prev) => {
         const updated = prev.map((o) => (o.id === id || o.orderId === id ? { ...o, status: 'Cancelled' } : o));
         try {
@@ -802,6 +821,7 @@ export default function AdminDashboardPage() {
         return updated;
       });
     } else if (item.type === 'lab' || item.type === 'wellness') {
+      updateLabBookingStatus(id, 'Cancelled').catch(() => {});
       setLabBookingsList((prev) => {
         const updated = prev.map((b) => (b.id === id || b.bookingId === id ? { ...b, status: 'Cancelled' } : b));
         try {
@@ -812,6 +832,10 @@ export default function AdminDashboardPage() {
         return updated;
       });
     } else {
+      if (item.type === 'physio') updatePhysioStatus(id, 'Cancelled').catch(() => {});
+      else if (item.type === 'surgery') updateSurgeryStatus(id, 'Cancelled').catch(() => {});
+      else updateDoctorAppointmentStatus(id, 'Cancelled').catch(() => {});
+
       setAppointmentsList((prev) => {
         const updated = prev.map((a) => (a.id === id || a.bookingId === id ? { ...a, status: 'Cancelled' } : a));
         try {

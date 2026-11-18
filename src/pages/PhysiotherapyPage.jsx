@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import { bookPhysiotherapy } from '../services/supabaseService';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -263,6 +264,9 @@ export default function PhysiotherapyPage() {
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Save to Supabase PostgreSQL database
+        bookPhysiotherapy(newBooking).catch((err) => console.warn('Supabase physio booking error:', err));
       } catch (err) {
         console.error('Failed to save booking to storage', err);
       }
