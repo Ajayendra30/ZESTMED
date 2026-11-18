@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, UserPlus, Phone, Mail, MapPin, Heart, ShieldCheck, Calendar, Activity } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { saveRegisteredPatient } from '../utils/patientRegistry';
 
 export default function RegisterPatientModal({ isOpen = true, onClose, onRegisterPatient }) {
   const { addToast } = useToast();
@@ -47,6 +48,7 @@ export default function RegisterPatientModal({ isOpen = true, onClose, onRegiste
       registeredAt: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     };
 
+    saveRegisteredPatient(newPatient.phone, newPatient.name, newPatient);
     onRegisterPatient(newPatient);
     addToast(`Patient registered! UHID: ${newPatient.id} (${newPatient.name})`, 'success');
     onClose();

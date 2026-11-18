@@ -16,7 +16,7 @@ export const initialPatientProfile = {
     phone: '+91 92791 25091'
   },
   memberSince: 'October 2024',
-  verificationStatus: 'Verified Assam Patient',
+  verificationStatus: 'Active Assam Patient',
   vitals: {
     bloodPressure: { value: '118/78', unit: 'mmHg', status: 'Optimal', recordedAt: '10 Nov 2026' },
     fastingBloodSugar: { value: '94', unit: 'mg/dL', status: 'Normal', recordedAt: '08 Nov 2026' },

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
+import { getRegisteredPatient, saveRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
 const AuthContext = createContext(null);
 
@@ -11,8 +12,10 @@ export const AuthProvider = ({ children }) => {
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === 'object') {
-        if (!parsed.name) {
-          parsed.name = parsed.email || parsed.contact || 'Patient';
+        // Automatically migrate legacy "Verified Patient" to their actual registered name
+        if (!parsed.name || parsed.name === 'Verified Patient') {
+          const registered = getRegisteredPatient(parsed.contact || parsed.phone || '');
+          parsed.name = registered?.name || (parsed.contact ? `Patient ${normalizePhone(parsed.contact).slice(-4)}` : 'Patient');
         }
         return parsed;
       }
@@ -39,16 +42,34 @@ export const AuthProvider = ({ children }) => {
 
   // Login via Mobile Phone OTP
   const loginWithPhoneOtp = (phoneNumber, name = '') => {
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    const userName = name.trim() || 'Verified Patient';
+    const cleanPhone = normalizePhone(phoneNumber);
+    const registered = getRegisteredPatient(cleanPhone);
+
+    // Resolve actual registered patient name
+    const resolvedName = (name && name.trim() && name.trim() !== 'Verified Patient')
+      ? name.trim()
+      : (registered && registered.name && registered.name !== 'Verified Patient')
+      ? registered.name
+      : (cleanPhone ? `Patient ${cleanPhone.slice(-4)}` : 'Patient');
+
+    // Save newly provided patient name to central registry
+    if (resolvedName && resolvedName !== 'Patient' && !resolvedName.startsWith('Patient ')) {
+      saveRegisteredPatient(cleanPhone, resolvedName);
+    }
+
     const userObj = {
-      id: `usr_${Date.now().toString(36)}`,
-      name: userName,
+      id: registered?.id || `usr_${Date.now().toString(36)}`,
+      name: resolvedName,
       contact: `+91 ${cleanPhone}`,
-      email: `${cleanPhone}@patient.zestmed.com`,
+      phone: `+91 ${cleanPhone}`,
+      email: registered?.email || `${cleanPhone}@patient.zestmed.com`,
       role: 'Patient',
       authMethod: 'phone_otp',
-      memberSince: 'Nov 2026',
+      memberSince: registered?.registeredAt || 'Nov 2026',
+      age: registered?.age || 32,
+      gender: registered?.gender || 'Male',
+      bloodGroup: registered?.bloodGroup || 'B+',
+      city: registered?.city || 'Guwahati, Assam'
     };
     setUser(userObj);
     setIsAuthModalOpen(false);

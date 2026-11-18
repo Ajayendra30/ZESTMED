@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
+import { saveRegisteredPatient } from '../utils/patientRegistry';
 import {
   Home,
   FlaskConical,
@@ -167,8 +168,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     } catch (e) {
       console.error(e);
     }
+    const currentName = (user?.name && user.name !== 'Verified Patient') 
+      ? user.name 
+      : (saved?.name && saved.name !== 'Verified Patient') 
+      ? saved.name 
+      : 'Rahul Verma';
     return {
-      name: user?.name || saved?.name || 'Rahul Verma',
+      name: currentName,
       uhid: user?.uhid || saved?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284'),
       email: user?.email || saved?.email || 'rahul.verma@gmail.com',
       phone: user?.contact || user?.phone || saved?.phone || '+91 92791 25091',
@@ -179,6 +185,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       city: user?.city || saved?.city || 'Guwahati, Assam'
     };
   });
+
+  useEffect(() => {
+    if (user?.name && user.name !== 'Verified Patient') {
+      setProfileForm((prev) => ({
+        ...prev,
+        name: user.name,
+        phone: user.contact || user.phone || prev.phone,
+        email: user.email || prev.email,
+        uhid: user.uhid || prev.uhid
+      }));
+    }
+  }, [user]);
 
   const handleCancelBooking = (bookingId) => {
     setLabBookings((prev) =>
@@ -234,6 +252,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
 
     try {
+      saveRegisteredPatient(updatedProfile.phone, updatedProfile.name, updatedProfile);
       localStorage.setItem('zestmed_patient_profile', JSON.stringify(updatedProfile));
     } catch (err) {
       console.error(err);

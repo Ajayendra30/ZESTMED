@@ -26,7 +26,7 @@ export default function Navbar({
   const routerLocation = useRouterLocation();
   const navigate = useNavigate();
 
-  const displayName = user?.name || user?.email || user?.contact || 'Patient';
+  const displayName = (user?.name && user.name !== 'Verified Patient') ? user.name : (user?.contact ? `Patient ${user.contact.slice(-4)}` : 'Patient');
   const displayInitial = (displayName.charAt(0) || 'P').toUpperCase();
 
   const [isScrolled, setIsScrolled] = useState(false);

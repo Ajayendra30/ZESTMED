@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { 
-  X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown 
+  X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown, User, CheckCircle2 
 } from 'lucide-react';
+import { getRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
 function ZestmedLogo() {
   return (
@@ -51,9 +52,24 @@ export default function AuthModal() {
   const { addToast } = useToast();
 
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [fullName, setFullName] = useState('');
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(['', '', '', '']);
   const [resendCountdown, setResendCountdown] = useState(30);
+  const [detectedPatient, setDetectedPatient] = useState(null);
+
+  useEffect(() => {
+    const clean = normalizePhone(phoneNumber);
+    if (clean.length === 10) {
+      const found = getRegisteredPatient(clean);
+      setDetectedPatient(found);
+      if (found?.name && found.name !== 'Verified Patient') {
+        setFullName(found.name);
+      }
+    } else {
+      setDetectedPatient(null);
+    }
+  }, [phoneNumber]);
 
   useEffect(() => {
     let timer;
@@ -69,7 +85,7 @@ export default function AuthModal() {
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    const clean = phoneNumber.replace(/\D/g, '');
+    const clean = normalizePhone(phoneNumber);
     if (clean.length !== 10) {
       addToast('Please enter a valid 10-digit mobile number', 'error');
       return;
@@ -77,7 +93,12 @@ export default function AuthModal() {
     setStep(2);
     setOtp(['', '', '', '']);
     setResendCountdown(30);
-    addToast('Demo OTP sent: 1234', 'info');
+    const resolvedName = (fullName.trim() || detectedPatient?.name || '').trim();
+    if (resolvedName && resolvedName !== 'Verified Patient') {
+      addToast(`OTP sent for ${resolvedName}: 1234`, 'info');
+    } else {
+      addToast('Demo OTP sent: 1234', 'info');
+    }
   };
 
   const handleOtpChange = (index, value) => {
@@ -106,15 +127,14 @@ export default function AuthModal() {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    loginWithPhoneOtp(phoneNumber, 'Verified Patient');
-    addToast('Logged in successfully!', 'success');
+    const resolvedName = (fullName.trim() || detectedPatient?.name || '').trim();
+    loginWithPhoneOtp(phoneNumber, resolvedName);
     handleClose();
     navigate('/patient-dashboard');
   };
 
   const handleGoogleSignIn = () => {
     loginWithGoogle();
-    addToast('Logged in with Google successfully!', 'success');
     handleClose();
     navigate('/patient-dashboard');
   };
@@ -129,6 +149,8 @@ export default function AuthModal() {
   const handleClose = () => {
     setStep(1);
     setPhoneNumber('');
+    setFullName('');
+    setDetectedPatient(null);
     setOtp(['', '', '', '']);
     closeAuth();
   };
@@ -187,27 +209,61 @@ export default function AuthModal() {
                 </p>
               </div>
 
-              <form onSubmit={handleSendOtp} className="space-y-4">
-                <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
-                  <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
-                    <Smartphone className="w-4 h-4" />
+              <form onSubmit={handleSendOtp} className="space-y-3.5">
+                <div className="space-y-1 text-left">
+                  <label className="block text-xs font-bold text-slate-700">
+                    Mobile Number *
+                  </label>
+                  <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
+                      <Smartphone className="w-4 h-4" />
+                    </div>
+                    <div className="flex items-center gap-1 pl-2.5 pr-2 shrink-0">
+                      <span className="text-xs sm:text-sm font-bold text-slate-800">+91</span>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                    </div>
+                    <div className="h-5 w-px bg-slate-200 shrink-0 mr-3" />
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      required
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                      placeholder="Enter 10-digit mobile number"
+                      className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent"
+                      autoFocus
+                    />
                   </div>
-                  <div className="flex items-center gap-1 pl-2.5 pr-2 shrink-0">
-                    <span className="text-xs sm:text-sm font-bold text-slate-800">+91</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                  </div>
-                  <div className="h-5 w-px bg-slate-200 shrink-0 mr-3" />
-                  <input
-                    type="tel"
-                    maxLength={10}
-                    required
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="Mobile Number"
-                    className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent"
-                    autoFocus
-                  />
                 </div>
+
+                {/* Registered Patient Automatic Detection Banner */}
+                {detectedPatient?.name ? (
+                  <div className="flex items-center gap-2 p-2.5 bg-teal-50 border border-teal-200/80 rounded-2xl text-xs text-teal-800 animate-fadeIn">
+                    <CheckCircle2 className="w-4 h-4 text-[#007A64] shrink-0" />
+                    <span className="text-slate-700">
+                      Registered Patient: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong>
+                    </span>
+                  </div>
+                ) : (
+                  /* If phone is not in directory, allow entering registered name */
+                  <div className="space-y-1 text-left">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Patient Full Name
+                    </label>
+                    <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
+                      <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Enter your name (e.g. Tinku)"
+                        className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-3"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <button
                   type="submit"
@@ -226,6 +282,11 @@ export default function AuthModal() {
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Enter the 4-digit code sent to <strong className="text-slate-800">+91 {phoneNumber}</strong>
+                  {(fullName.trim() || detectedPatient?.name) && (
+                    <span className="block text-[#007A64] font-semibold mt-1">
+                      Patient: <strong className="text-slate-900 font-bold">{fullName.trim() || detectedPatient?.name}</strong>
+                    </span>
+                  )}
                 </p>
               </div>
 

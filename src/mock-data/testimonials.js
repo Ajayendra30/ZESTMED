@@ -2,7 +2,7 @@ export const MOCK_TESTIMONIALS = [
   {
     id: 'testi-1',
     name: 'Priya Sharma',
-    role: 'Verified Patient (Assam)',
+    role: 'Patient (Assam)',
     city: 'Guwahati, Assam',
     rating: 5,
     comment: 'The home sample collection in Guwahati was punctual and very gentle. The phlebotomist arrived right on schedule with sealed sterile needles, and digital reports were available in my portal the very same evening.',
@@ -12,7 +12,7 @@ export const MOCK_TESTIMONIALS = [
   {
     id: 'testi-2',
     name: 'Rajesh K. Mehta',
-    role: 'Verified Patient (Assam)',
+    role: 'Patient (Assam)',
     city: 'Dibrugarh, Assam',
     rating: 5,
     comment: 'Ordering my father\'s monthly diabetic medications through ZESTMED across Upper Assam is effortless. Clean packaging, genuine batch numbers, and prompt doorstep delivery with continuous SMS updates.',
@@ -32,7 +32,7 @@ export const MOCK_TESTIMONIALS = [
   {
     id: 'testi-4',
     name: 'Vikramjit Saikia',
-    role: 'Verified Patient (Assam)',
+    role: 'Patient (Assam)',
     city: 'Silchar, Assam',
     rating: 5,
     comment: 'Super fast prescription upload process! I snapped a photo of my doctor\'s note in Silchar, and within 15 minutes their pharmacy pharmacist verified the dosage and sent a ready checkout cart.',
