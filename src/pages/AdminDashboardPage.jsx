@@ -1,6 +1,6 @@
 // src/pages/AdminDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Admin Dashboard specification pixel-for-pixel
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
@@ -47,13 +47,18 @@ import {
   Sliders,
   UploadCloud,
   Lock,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Stethoscope,
+  Scissors,
+  Heart,
+  Filter
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adminData';
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
-import { initialPatientOrders } from '../mock-data/patientData';
+import { initialPatientOrders, initialPatientLabBookings, initialPatientAppointments } from '../mock-data/patientData';
+import { getRegisteredPatient, DEFAULT_REGISTERED_PATIENTS, normalizePhone } from '../utils/patientRegistry';
 import AddDiagnosticTestModal from '../components/AddDiagnosticTestModal';
 import RegisterPatientModal from '../components/RegisterPatientModal';
 import EditPatientModal from '../components/EditPatientModal';
@@ -64,7 +69,9 @@ import EditExecutiveModal from '../components/EditExecutiveModal';
 import DeleteExecutiveModal from '../components/DeleteExecutiveModal';
 import UploadInventoryModal from '../components/UploadInventoryModal';
 import UploadPackagesModal from '../components/UploadPackagesModal';
-import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf } from '../utils/pdfGenerator';
+import DigitalLabReportModal from '../components/DigitalLabReportModal';
+import OrderInvoiceModal from '../components/OrderInvoiceModal';
+import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf, downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -181,87 +188,235 @@ export default function AdminDashboardPage() {
     }
   ]);
 
-  // Exact Data from User Reference Image
-  const kpiMetrics = [
-    {
-      title: 'Total Patients',
-      value: '4,892',
-      trend: '↑ +12.4%',
-      icon: Users,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-500',
-      targetMenu: 'users-patients'
-    },
-    {
-      title: 'Lab Bookings',
-      value: '1,236',
-      trend: '↑ +18.7%',
-      icon: Calendar,
-      bgColor: 'bg-purple-50',
-      iconColor: 'text-purple-600',
-      targetMenu: 'lab-bookings'
-    },
-    {
-      title: 'Medicine Orders',
-      value: '2,168',
-      trend: '↑ +14.2%',
-      icon: ShoppingCart,
-      bgColor: 'bg-emerald-50',
-      iconColor: 'text-emerald-500',
-      targetMenu: 'orders'
-    },
-    {
-      title: 'Diagnostic Tests',
-      value: '56',
-      trend: '↑ +9.8%',
-      icon: FlaskConical,
-      bgColor: 'bg-rose-50',
-      iconColor: 'text-rose-500',
-      targetMenu: 'diagnostic-tests'
-    },
-    {
-      title: 'Total Revenue',
-      value: '₹12,48,320',
-      trend: '↑ +20.6%',
-      icon: Coins,
-      bgColor: 'bg-amber-50',
-      iconColor: 'text-amber-500',
-      targetMenu: 'analytics'
-    }
-  ];
 
   // Interactive Management States
+  const [isClinicalExpanded, setIsClinicalExpanded] = useState(true);
+  const [isDiagnosticsExpanded, setIsDiagnosticsExpanded] = useState(true);
+  const [activityCategoryFilter, setActivityCategoryFilter] = useState('all');
+  const [viewingDetailItem, setViewingDetailItem] = useState(null);
+  const [viewingOrderModal, setViewingOrderModal] = useState(null);
+  const [viewingReportBooking, setViewingReportBooking] = useState(null);
+
   const [adminMedicines, setAdminMedicines] = useState(initialInventoryMedicines);
-  const [adminBookings, setAdminBookings] = useState([
-    { id: '#LB10234', patient: 'Rajesh Kumar', phone: '+91 98765 43210', test: 'Complete Blood Count', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 349, slot: '09:00 AM' },
-    { id: '#LB10233', patient: 'Priya Sharma', phone: '+91 94350 12345', test: 'Thyroid Profile', type: 'Lab Visit', executive: 'Rohit Sharma', status: 'Sample Collected', statusBg: 'bg-blue-50 text-blue-600 border border-blue-200/60', amount: 599, slot: '10:30 AM' },
-    { id: '#LB10232', patient: 'Amit Verma', phone: '+91 97060 98765', test: 'Diabetes Package', type: 'Home Collection', executive: 'Manab Barua', status: 'In Process', statusBg: 'bg-amber-50 text-amber-600 border border-amber-200/60', amount: 899, slot: '11:00 AM' },
-    { id: '#LB10231', patient: 'Sneha Singh', phone: '+91 91270 54321', test: 'Full Body Checkup', type: 'Lab Visit', executive: 'Dr. N. Bora', status: 'Report Ready', statusBg: 'bg-purple-50 text-purple-600 border border-purple-200/60', amount: 1499, slot: '12:15 PM' },
-    { id: '#LB10230', patient: 'Vikram Das', phone: '+91 99540 67890', test: 'Lipid Profile', type: 'Home Collection', executive: 'Bikash Das', status: 'Confirmed', statusBg: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60', amount: 499, slot: '02:00 PM' }
-  ]);
-  const [adminOrders, setAdminOrders] = useState([
-    { id: '#ORD5487', customer: 'Rajesh Kumar', items: 'Paracetamol 500 mg x 2, Vitamin C x 1', total: 340, payment: 'UPI Paid', status: 'Delivered', address: 'Dispur, Guwahati' },
-    { id: '#ORD5462', customer: 'Priya Sharma', items: 'Vitamin D3 600 IU x 1, Calcium x 1', total: 620, payment: 'Prepaid UPI', status: 'Out for Delivery', address: 'Ulubari, Guwahati' },
-    { id: '#ORD5420', customer: 'Amit Verma', items: 'Omeprazole 20 mg x 3, Antacid Gel x 1', total: 415, payment: 'COD', status: 'Processing', address: 'Jalukbari, Guwahati' },
-    { id: '#ORD5415', customer: 'Bipul Shekhar', items: 'Metformin 500mg SR x 4', total: 180, payment: 'UPI Paid', status: 'Dispatched', address: 'Khanapara, Guwahati' }
-  ]);
-  const initialPatients = [
-    { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', bookingsCount: 8, ordersCount: 5, status: 'Active' },
-    { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', bookingsCount: 4, ordersCount: 2, status: 'Active' },
-    { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', bookingsCount: 3, ordersCount: 1, status: 'Active' },
-    { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', bookingsCount: 6, ordersCount: 4, status: 'Active' },
-    { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Guwahati (Khanapara)', bookingsCount: 2, ordersCount: 0, status: 'Active' },
-    { id: 'ZM-PAT-106', name: 'Deepjyoti Kalita', phone: '+91 98640 12345', city: 'Guwahati (Panbazar)', bookingsCount: 1, ordersCount: 1, status: 'Active' }
-  ];
-  const [patientsList, setPatientsList] = useState(() => {
+
+  // 1. Clinical Appointments (Doctor Consultations, Physiotherapy, Surgery Packages)
+  const [appointmentsList, setAppointmentsList] = useState(() => {
     try {
-      const saved = localStorage.getItem('zestmed_admin_patients');
-      if (saved) return JSON.parse(saved);
-    } catch (e) {
-      console.error(e);
+      const saved = localStorage.getItem('patient_appointments');
+      return saved ? JSON.parse(saved) : initialPatientAppointments;
+    } catch {
+      return initialPatientAppointments;
     }
-    return initialPatients;
   });
+
+  // 2. Diagnostic Lab Bookings & Wellness Packages
+  const [labBookingsList, setLabBookingsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_patient_lab_bookings');
+      return saved ? JSON.parse(saved) : initialPatientLabBookings;
+    } catch {
+      return initialPatientLabBookings;
+    }
+  });
+
+  // 3. Customer Medicine Orders
+  const [ordersList, setOrdersList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_patient_orders');
+      return saved ? JSON.parse(saved) : initialPatientOrders;
+    } catch {
+      return initialPatientOrders;
+    }
+  });
+
+  // Helper to compile and compute unified patients directory with live booking/order counts
+  const computeMergedPatients = (appts, labs, ords) => {
+    const patientMap = new Map();
+
+    const basePatients = [
+      { id: 'ZM-PAT-101', name: 'Rahul Verma', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', status: 'Active' },
+      { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', status: 'Active' },
+      { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', status: 'Active' },
+      { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', status: 'Active' },
+      { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Guwahati (Khanapara)', status: 'Active' },
+      { id: 'ZM-PAT-106', name: 'Deepjyoti Kalita', phone: '+91 98640 12345', city: 'Guwahati (Panbazar)', status: 'Active' }
+    ];
+
+    basePatients.forEach((p) => {
+      const clean = normalizePhone(p.phone);
+      patientMap.set(clean || p.id, { ...p, cleanPhone: clean });
+    });
+
+    DEFAULT_REGISTERED_PATIENTS.forEach((p) => {
+      const clean = normalizePhone(p.phone);
+      if (clean && !patientMap.has(clean)) {
+        patientMap.set(clean, {
+          id: p.id,
+          name: p.name,
+          phone: `+91 ${clean}`,
+          cleanPhone: clean,
+          city: p.city || 'Guwahati, Assam',
+          status: 'Active'
+        });
+      }
+    });
+
+    try {
+      const savedAdmin = localStorage.getItem('zestmed_admin_patients');
+      if (savedAdmin) {
+        const parsed = JSON.parse(savedAdmin);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((p) => {
+            const clean = normalizePhone(p.phone);
+            if (clean) {
+              const prev = patientMap.get(clean) || {};
+              patientMap.set(clean, { ...prev, ...p, cleanPhone: clean });
+            }
+          });
+        }
+      }
+    } catch (_) {}
+
+    try {
+      const savedReg = localStorage.getItem('zestmed_patient_registry');
+      if (savedReg) {
+        const parsed = JSON.parse(savedReg);
+        Object.entries(parsed).forEach(([ph, data]) => {
+          const clean = normalizePhone(ph);
+          if (clean && data?.name && data.name !== 'Verified Patient' && !data.name.startsWith('Patient ')) {
+            const prev = patientMap.get(clean) || {};
+            patientMap.set(clean, {
+              ...prev,
+              id: data.id || prev.id || `ZM-PAT-${clean.slice(-4)}`,
+              name: data.name,
+              phone: `+91 ${clean}`,
+              cleanPhone: clean,
+              city: data.city || prev.city || 'Guwahati, Assam',
+              status: 'Active'
+            });
+          }
+        });
+      }
+    } catch (_) {}
+
+    // Extract patients from bookings and orders
+    appts.forEach((a) => {
+      const clean = normalizePhone(a.patientPhone || a.phone);
+      const name = a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '').trim() : '';
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+        if (!patientMap.has(clean)) {
+          patientMap.set(clean, {
+            id: `ZM-PAT-${clean.slice(-4)}`,
+            name,
+            phone: `+91 ${clean}`,
+            cleanPhone: clean,
+            city: a.hospital || a.city || 'Guwahati, Assam',
+            status: 'Active'
+          });
+        }
+      }
+    });
+
+    labs.forEach((b) => {
+      const clean = normalizePhone(b.patientPhone || b.phone || b.phlebotomist?.phone);
+      const name = b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '').trim() : '';
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+        if (!patientMap.has(clean)) {
+          patientMap.set(clean, {
+            id: `ZM-PAT-${clean.slice(-4)}`,
+            name,
+            phone: `+91 ${clean}`,
+            cleanPhone: clean,
+            city: b.collectionAddress?.split(',')[0] || 'Guwahati, Assam',
+            status: 'Active'
+          });
+        }
+      }
+    });
+
+    ords.forEach((o) => {
+      const clean = normalizePhone(o.phone || o.customerPhone);
+      const name = o.customer || o.patientName;
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+        if (!patientMap.has(clean)) {
+          patientMap.set(clean, {
+            id: `ZM-PAT-${clean.slice(-4)}`,
+            name,
+            phone: `+91 ${clean}`,
+            cleanPhone: clean,
+            city: o.deliveryAddress?.split(',')[0] || 'Guwahati, Assam',
+            status: 'Active'
+          });
+        }
+      }
+    });
+
+    return Array.from(patientMap.values()).map((p) => {
+      const pClean = p.cleanPhone;
+      const pName = (p.name || '').toLowerCase().trim();
+
+      const matchedAppts = appts.filter((a) => {
+        const aClean = normalizePhone(a.patientPhone || a.phone);
+        const aName = (a.patientName || '').toLowerCase();
+        return (pClean && aClean === pClean) || (pName && aName.includes(pName));
+      }).length;
+
+      const matchedLabs = labs.filter((b) => {
+        const bClean = normalizePhone(b.patientPhone || b.phone);
+        const bName = (b.patientName || '').toLowerCase();
+        return (pClean && bClean === pClean) || (pName && bName.includes(pName));
+      }).length;
+
+      const matchedOrders = ords.filter((o) => {
+        const oClean = normalizePhone(o.phone || o.customerPhone);
+        const oName = (o.customer || o.patientName || '').toLowerCase();
+        return (pClean && oClean === pClean) || (pName && oName.includes(pName));
+      }).length;
+
+      return {
+        ...p,
+        bookingsCount: matchedAppts + matchedLabs,
+        ordersCount: matchedOrders
+      };
+    });
+  };
+
+  const [patientsList, setPatientsList] = useState(() => {
+    const rawAppts = (() => { try { const s = localStorage.getItem('patient_appointments'); return s ? JSON.parse(s) : initialPatientAppointments; } catch { return initialPatientAppointments; } })();
+    const rawLabs = (() => { try { const s = localStorage.getItem('zestmed_patient_lab_bookings'); return s ? JSON.parse(s) : initialPatientLabBookings; } catch { return initialPatientLabBookings; } })();
+    const rawOrds = (() => { try { const s = localStorage.getItem('zestmed_patient_orders'); return s ? JSON.parse(s) : initialPatientOrders; } catch { return initialPatientOrders; } })();
+    return computeMergedPatients(rawAppts, rawLabs, rawOrds);
+  });
+
+  // Real-time synchronization across patient/user activities
+  useEffect(() => {
+    const handleSync = () => {
+      try {
+        const sAppts = localStorage.getItem('patient_appointments');
+        const nextAppts = sAppts ? JSON.parse(sAppts) : appointmentsList;
+        if (sAppts) setAppointmentsList(nextAppts);
+
+        const sLabs = localStorage.getItem('zestmed_patient_lab_bookings');
+        const nextLabs = sLabs ? JSON.parse(sLabs) : labBookingsList;
+        if (sLabs) setLabBookingsList(nextLabs);
+
+        const sOrds = localStorage.getItem('zestmed_patient_orders');
+        const nextOrds = sOrds ? JSON.parse(sOrds) : ordersList;
+        if (sOrds) setOrdersList(nextOrds);
+
+        setPatientsList(computeMergedPatients(nextAppts, nextLabs, nextOrds));
+      } catch (err) {
+        console.error('Admin sync error:', err);
+      }
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('zestmed_booking_updated', handleSync);
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('zestmed_booking_updated', handleSync);
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -270,6 +425,502 @@ export default function AdminDashboardPage() {
       console.error(e);
     }
   }, [patientsList]);
+
+  // Derived categorized service lists
+  const doctorAppointments = useMemo(() => {
+    return appointmentsList.filter(
+      (a) =>
+        a.category === 'doctor' ||
+        a.type === 'Doctor Consultation' ||
+        a.type === 'Doctor Appointment' ||
+        (!a.category && !a.type?.toLowerCase().includes('physio') && !a.type?.toLowerCase().includes('surg'))
+    );
+  }, [appointmentsList]);
+
+  const physioAppointments = useMemo(() => {
+    return appointmentsList.filter(
+      (a) =>
+        a.category === 'physiotherapy' ||
+        a.type === 'Physiotherapy' ||
+        a.specialty?.toLowerCase().includes('physio') ||
+        a.doctorSpecialty?.toLowerCase().includes('physio') ||
+        a.title?.toLowerCase().includes('physio')
+    );
+  }, [appointmentsList]);
+
+  const surgeryBookings = useMemo(() => {
+    return appointmentsList.filter(
+      (a) =>
+        a.category === 'surgery' ||
+        a.type === 'Surgery Package' ||
+        Boolean(a.surgeryName) ||
+        a.title?.toLowerCase().includes('surgery') ||
+        a.title?.toLowerCase().includes('removal') ||
+        a.title?.toLowerCase().includes('replacement') ||
+        a.title?.toLowerCase().includes('repair')
+    );
+  }, [appointmentsList]);
+
+  const wellnessBookings = useMemo(() => {
+    return labBookingsList.filter(
+      (b) =>
+        b.type === 'Wellness Package' ||
+        b.category?.toLowerCase().includes('package') ||
+        b.testCode === 'WEL-PKG' ||
+        b.testCode?.includes('PKG') ||
+        b.testName?.toLowerCase().includes('package') ||
+        b.testName?.toLowerCase().includes('checkup')
+    );
+  }, [labBookingsList]);
+
+  const diagnosticLabBookings = useMemo(() => {
+    return labBookingsList.filter(
+      (b) =>
+        !(
+          b.type === 'Wellness Package' ||
+          b.category?.toLowerCase().includes('package') ||
+          b.testCode === 'WEL-PKG' ||
+          b.testCode?.includes('PKG') ||
+          b.testName?.toLowerCase().includes('package') ||
+          b.testName?.toLowerCase().includes('checkup')
+        )
+    );
+  }, [labBookingsList]);
+
+  const medicineOrders = useMemo(() => {
+    return ordersList;
+  }, [ordersList]);
+
+  // Backward-compatible aliases
+  const adminBookings = diagnosticLabBookings;
+  const adminOrders = medicineOrders;
+
+  // Revenue calculation from all confirmed platform transactions
+  const totalRevenueNumber = useMemo(() => {
+    const sumOrders = medicineOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount) || 0), 0);
+    const sumLabs = labBookingsList.reduce((acc, b) => acc + (Number(b.price) || 0), 0);
+    const sumAppts = appointmentsList.reduce((acc, a) => acc + (Number(a.fee || a.price) || 0), 0);
+    return 1248320 + sumOrders + sumLabs + sumAppts;
+  }, [medicineOrders, labBookingsList, appointmentsList]);
+
+  // Exact KPI Metrics with live counts
+  const kpiMetrics = [
+    {
+      title: 'Total Patients',
+      value: `${patientsList.length > 6 ? 4892 + (patientsList.length - 6) : 4892}`,
+      trend: '↑ +12.4%',
+      icon: Users,
+      bgColor: 'bg-blue-50',
+      iconColor: 'text-blue-500',
+      targetMenu: 'users-patients'
+    },
+    {
+      title: 'Clinical Appointments',
+      value: `${doctorAppointments.length + physioAppointments.length + surgeryBookings.length + 840}`,
+      trend: '↑ +16.2%',
+      icon: Stethoscope,
+      bgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+      targetMenu: 'appointments-doctor'
+    },
+    {
+      title: 'Lab & Wellness',
+      value: `${diagnosticLabBookings.length + wellnessBookings.length + 1230}`,
+      trend: '↑ +18.7%',
+      icon: Calendar,
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      targetMenu: 'lab-bookings'
+    },
+    {
+      title: 'Medicine Orders',
+      value: `${medicineOrders.length + 2164}`,
+      trend: '↑ +14.2%',
+      icon: ShoppingCart,
+      bgColor: 'bg-amber-50',
+      iconColor: 'text-amber-500',
+      targetMenu: 'orders'
+    },
+    {
+      title: 'Total Revenue',
+      value: `₹${totalRevenueNumber.toLocaleString('en-IN')}`,
+      trend: '↑ +20.6%',
+      icon: Coins,
+      bgColor: 'bg-rose-50',
+      iconColor: 'text-rose-500',
+      targetMenu: 'analytics'
+    }
+  ];
+
+  // Unified activity items from all 6 service categories
+  const allActivities = useMemo(() => {
+    const list = [];
+
+    doctorAppointments.forEach((a) => {
+      list.push({
+        id: a.id || a.bookingId,
+        serviceType: 'Doctor Consultation',
+        category: 'doctor',
+        badgeClass: 'bg-blue-50 text-blue-700 border-blue-200',
+        icon: Stethoscope,
+        patientName: a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient',
+        patientPhone: a.patientPhone || a.phone || '',
+        itemTitle: a.doctor || a.doctorName || a.title || 'Doctor Consultation',
+        itemSubtitle: `${a.specialty || a.doctorSpecialty || 'General Medicine'} • ${a.hospital || a.doctorHospital || 'Guwahati Hub'}`,
+        schedule: `${a.date || ''} ${a.time || a.slot || ''}`.trim(),
+        amount: a.fee || a.price || 600,
+        status: a.status || 'Confirmed',
+        raw: a,
+        type: 'doctor'
+      });
+    });
+
+    physioAppointments.forEach((a) => {
+      list.push({
+        id: a.id || a.bookingId,
+        serviceType: 'Physiotherapy',
+        category: 'physio',
+        badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
+        icon: Activity,
+        patientName: a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient',
+        patientPhone: a.patientPhone || a.phone || '',
+        itemTitle: a.doctor || a.doctorName || a.title || 'Physiotherapy Session',
+        itemSubtitle: `${a.specialty || a.doctorSpecialty || 'Rehabilitation'} • ${a.mode || 'Home Visit'}`,
+        schedule: `${a.date || ''} ${a.time || a.slot || ''}`.trim(),
+        amount: a.fee || a.price || 850,
+        status: a.status || 'Confirmed',
+        raw: a,
+        type: 'physio'
+      });
+    });
+
+    surgeryBookings.forEach((a) => {
+      list.push({
+        id: a.id || a.bookingId,
+        serviceType: 'Surgery Package',
+        category: 'surgery',
+        badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        icon: Scissors,
+        patientName: a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient',
+        patientPhone: a.patientPhone || a.phone || '',
+        itemTitle: a.title || a.surgeryName || 'Surgery Consultation',
+        itemSubtitle: `${a.specialty || 'General Surgery'} • ${a.hospital || 'Partner Hospital'}`,
+        schedule: `${a.date || ''} ${a.time || a.slot || ''}`.trim(),
+        amount: a.fee || a.price || 35000,
+        status: a.status || 'Confirmed',
+        raw: a,
+        type: 'surgery'
+      });
+    });
+
+    wellnessBookings.forEach((b) => {
+      list.push({
+        id: b.id || b.bookingId,
+        serviceType: 'Wellness Package',
+        category: 'wellness',
+        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        icon: Heart,
+        patientName: b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '') : 'Patient',
+        patientPhone: b.patientPhone || b.phone || b.phlebotomist?.phone || '',
+        itemTitle: b.testName || 'Wellness Health Package',
+        itemSubtitle: b.collectionAddress || 'Guwahati Home Collection',
+        schedule: `${b.collectionDate || b.date || ''} ${b.time || ''}`.trim(),
+        amount: b.price || 1899,
+        status: b.status || 'Confirmed',
+        raw: b,
+        type: 'wellness'
+      });
+    });
+
+    diagnosticLabBookings.forEach((b) => {
+      list.push({
+        id: b.id || b.bookingId,
+        serviceType: 'Diagnostic Lab Test',
+        category: 'lab',
+        badgeClass: 'bg-teal-50 text-teal-700 border-teal-200',
+        icon: FlaskConical,
+        patientName: b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '') : 'Patient',
+        patientPhone: b.patientPhone || b.phone || b.phlebotomist?.phone || '',
+        itemTitle: b.testName || 'Lab Test',
+        itemSubtitle: `${b.type || 'Home Collection'} • ${b.specimen || 'Blood Sample'}`,
+        schedule: `${b.collectionDate || b.date || ''} ${b.time || ''}`.trim(),
+        amount: b.price || 499,
+        status: b.status || 'Confirmed',
+        raw: b,
+        type: 'lab'
+      });
+    });
+
+    medicineOrders.forEach((o) => {
+      const itemsText = Array.isArray(o.items)
+        ? o.items.map((it) => `${it.name} x ${it.quantity}`).join(', ')
+        : o.items || 'Prescription Medicines';
+      list.push({
+        id: o.id || o.orderId,
+        serviceType: 'Medicine Order',
+        category: 'order',
+        badgeClass: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        icon: Package,
+        patientName: o.customer || o.patientName || 'Patient',
+        patientPhone: o.phone || '',
+        itemTitle: itemsText,
+        itemSubtitle: o.deliveryAddress || o.hub || 'Dispur Express Delivery Hub',
+        schedule: `${o.date || ''} ${o.time || ''}`.trim(),
+        amount: o.total || o.totalAmount || 480,
+        status: o.status || 'Processing',
+        raw: o,
+        type: 'order'
+      });
+    });
+
+    return list;
+  }, [doctorAppointments, physioAppointments, surgeryBookings, wellnessBookings, diagnosticLabBookings, medicineOrders]);
+
+  // Action Handlers
+  const handleAdvanceStatus = (item) => {
+    const id = item.id;
+    if (item.type === 'doctor') {
+      setAppointmentsList((prev) => {
+        const updated = prev.map((it) => {
+          if (it.id === id || it.bookingId === id) {
+            let next = 'In Progress';
+            if (it.status === 'Confirmed') next = 'In Progress';
+            else if (it.status === 'In Progress') next = 'Completed';
+            else if (it.status === 'Completed') next = 'Confirmed';
+            return { ...it, status: next };
+          }
+          return it;
+        });
+        try {
+          localStorage.setItem('patient_appointments', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+      addToast(`Doctor appointment status updated`, 'success');
+    } else if (item.type === 'physio') {
+      setAppointmentsList((prev) => {
+        const updated = prev.map((it) => {
+          if (it.id === id || it.bookingId === id) {
+            let next = 'In Progress';
+            if (it.status === 'Confirmed') next = 'Session Scheduled';
+            else if (it.status === 'Session Scheduled') next = 'In Progress';
+            else if (it.status === 'In Progress') next = 'Completed';
+            else if (it.status === 'Completed') next = 'Confirmed';
+            return { ...it, status: next };
+          }
+          return it;
+        });
+        try {
+          localStorage.setItem('patient_appointments', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+      addToast(`Physiotherapy session status updated`, 'success');
+    } else if (item.type === 'surgery') {
+      setAppointmentsList((prev) => {
+        const updated = prev.map((it) => {
+          if (it.id === id || it.bookingId === id) {
+            let next = 'Pre-Op Scheduled';
+            if (it.status === 'Confirmed') next = 'Pre-Op Scheduled';
+            else if (it.status === 'Pre-Op Scheduled') next = 'Hospital Admitted';
+            else if (it.status === 'Hospital Admitted') next = 'Surgery Completed';
+            else if (it.status === 'Surgery Completed') next = 'Discharged';
+            else if (it.status === 'Discharged') next = 'Confirmed';
+            return { ...it, status: next };
+          }
+          return it;
+        });
+        try {
+          localStorage.setItem('patient_appointments', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+      addToast(`Surgery package status updated`, 'success');
+    } else if (item.type === 'wellness' || item.type === 'lab') {
+      setLabBookingsList((prev) => {
+        const updated = prev.map((it) => {
+          if (it.id === id || it.bookingId === id) {
+            let next = 'Sample Collected';
+            if (it.status === 'Confirmed') next = 'Sample Collected';
+            else if (it.status === 'Sample Collected') next = 'In Process';
+            else if (it.status === 'In Process') next = 'Report Ready';
+            else if (it.status === 'Report Ready') next = 'Report Published';
+            else if (it.status === 'Report Published') next = 'Confirmed';
+            return { ...it, status: next };
+          }
+          return it;
+        });
+        try {
+          localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+      addToast(`Diagnostic booking status updated`, 'success');
+    } else if (item.type === 'order') {
+      setOrdersList((prev) => {
+        const updated = prev.map((it) => {
+          if (it.id === id || it.orderId === id) {
+            let next = 'Verified';
+            if (it.status === 'Processing') next = 'Verified';
+            else if (it.status === 'Verified') next = 'Dispatched';
+            else if (it.status === 'Dispatched') next = 'Out for Delivery';
+            else if (it.status === 'Out for Delivery') next = 'Delivered';
+            else if (it.status === 'Delivered') next = 'Processing';
+            return { ...it, status: next };
+          }
+          return it;
+        });
+        try {
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+      addToast(`Pharmacy order status updated`, 'success');
+    }
+  };
+
+  const handleCancelBookingOrOrder = (item) => {
+    const id = item.id;
+    if (item.type === 'order') {
+      setOrdersList((prev) => {
+        const updated = prev.map((o) => (o.id === id || o.orderId === id ? { ...o, status: 'Cancelled' } : o));
+        try {
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+    } else if (item.type === 'lab' || item.type === 'wellness') {
+      setLabBookingsList((prev) => {
+        const updated = prev.map((b) => (b.id === id || b.bookingId === id ? { ...b, status: 'Cancelled' } : b));
+        try {
+          localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+    } else {
+      setAppointmentsList((prev) => {
+        const updated = prev.map((a) => (a.id === id || a.bookingId === id ? { ...a, status: 'Cancelled' } : a));
+        try {
+          localStorage.setItem('patient_appointments', JSON.stringify(updated));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (e) {}
+        return updated;
+      });
+    }
+    addToast(`Item ${id} marked as Cancelled`, 'info');
+  };
+
+  const handleAssignPhlebotomist = (bookingId, execName) => {
+    setLabBookingsList((prev) => {
+      const updated = prev.map((b) => {
+        if (b.id === bookingId || b.bookingId === bookingId) {
+          return {
+            ...b,
+            phlebotomist: {
+              ...(b.phlebotomist || {}),
+              name: execName,
+              phone: '+91 92791 25091'
+            }
+          };
+        }
+        return b;
+      });
+      try {
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (e) {}
+      return updated;
+    });
+    addToast(`Phlebotomist ${execName} assigned`, 'success');
+  };
+
+  const handleDownloadSlip = (item) => {
+    const raw = item.raw || item;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      addToast('Pop-up blocked. Please allow pop-ups to print slips.', 'error');
+      return;
+    }
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>ZESTMED Healthcare Slip - ${item.id || raw.id || 'Slip'}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #0F172A; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007A64; padding-bottom: 16px; margin-bottom: 24px; }
+            .logo { font-size: 24px; font-weight: 900; color: #007A64; }
+            .card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+            .label { color: #64748B; font-weight: 600; }
+            .val { font-weight: 700; color: #0F172A; }
+            .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: #E6F7F2; color: #007A64; font-weight: 800; font-size: 12px; }
+            .footer { margin-top: 32px; font-size: 11px; color: #94A3B8; text-align: center; border-top: 1px solid #E2E8F0; padding-top: 16px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div class="logo">ZESTMED HEALTHCARE</div>
+              <div style="font-size: 12px; color: #64748B;">Central Hub: GS Road, Dispur, Guwahati - 781005</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 16px; font-weight: 800; color: #0F172A;">Official Healthcare Slip</div>
+              <div style="font-size: 12px; color: #64748B;">Ref: ${item.id || raw.id || 'ZM-SLIP'}</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row"><span class="label">Service Category</span><span class="val badge">${item.serviceType || raw.type || raw.category || 'Clinical'}</span></div>
+            <div class="row"><span class="label">Patient Name</span><span class="val">${item.patientName || raw.patientName || raw.customer || 'Patient'}</span></div>
+            <div class="row"><span class="label">Contact Mobile</span><span class="val">${item.patientPhone || raw.patientPhone || raw.phone || '+91 92791 25091'}</span></div>
+            <div class="row"><span class="label">Specialist / Doctor / Test</span><span class="val">${item.itemTitle || raw.doctor || raw.testName || raw.title || 'Consultation'}</span></div>
+            <div class="row"><span class="label">Facility / Hospital</span><span class="val">${raw.hospital || raw.doctorHospital || raw.collectionAddress || 'Zestmed Hub Guwahati'}</span></div>
+            <div class="row"><span class="label">Schedule Slot</span><span class="val">${item.schedule || raw.date || ''}</span></div>
+            <div class="row"><span class="label">Clinical Notes</span><span class="val">${raw.symptoms || raw.parametersSummary || 'Follow-up consultation'}</span></div>
+            <div class="row" style="margin-top: 16px; border-top: 1px dashed #CBD5E1; padding-top: 12px;">
+              <span class="label" style="font-size: 16px;">Total Fee / Package Price</span>
+              <span class="val" style="font-size: 18px; color: #007A64;">₹${item.amount || raw.fee || raw.price || raw.total || 0}</span>
+            </div>
+            <div class="row"><span class="label">Status</span><span class="val" style="color: #059669;">${item.status || raw.status || 'Confirmed'}</span></div>
+          </div>
+          <div class="footer">
+            Computer generated document issued by ZESTMED Health Private Limited, Guwahati, Assam.<br/>
+            24x7 Helpline: +91 92791 25091 • support@zestmed.in
+          </div>
+          <script>window.onload = function() { window.print(); };</script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
+  const handleViewDetails = (item) => {
+    const raw = item.raw || item;
+    if (item.type === 'order' || item.category === 'order') {
+      setViewingOrderModal(raw);
+    } else if (item.type === 'lab' || item.type === 'wellness' || item.category === 'lab' || item.category === 'wellness') {
+      setViewingReportBooking(raw);
+    } else {
+      setViewingDetailItem(item);
+    }
+  };
   const initialExecutives = [
     { id: 'ZM-EXEC-01', name: 'Bikash Das', phone: '+91 92791 25091', zone: 'Dispur & GS Road Hub', tasksToday: 5, temp: '3.8°C', rating: '4.9 ★', status: 'On Route' },
     { id: 'ZM-EXEC-02', name: 'Manab Jyoti Barua', phone: '+91 98765 00001', zone: 'Ulubari & Paltan Bazar', tasksToday: 4, temp: '4.0°C', rating: '4.8 ★', status: 'Active' },
@@ -453,11 +1104,16 @@ export default function AdminDashboardPage() {
                 <Users className="w-4 h-4" />
                 <span>Users</span>
               </div>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  isUsersExpanded ? 'rotate-180' : ''
-                }`}
-              />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+                  {patientsList.length}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isUsersExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
             </button>
 
             {isUsersExpanded && (
@@ -469,12 +1125,15 @@ export default function AdminDashboardPage() {
                     setIsSidebarOpen(false);
                     addToast('Filtered view: Registered Assam Patients', 'info');
                   }}
-                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
                     activeMenu === 'users-patients' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                  <span>Patients</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Patients</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{patientsList.length}</span>
                 </button>
                 <button
                   type="button"
@@ -483,12 +1142,15 @@ export default function AdminDashboardPage() {
                     setIsSidebarOpen(false);
                     addToast('Filtered view: On-Duty Lab Executives & Phlebotomists', 'info');
                   }}
-                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
                     activeMenu === 'users-executives' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                  <span>Lab Executives</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Lab Executives</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{executivesList.length}</span>
                 </button>
                 <button
                   type="button"
@@ -497,43 +1159,234 @@ export default function AdminDashboardPage() {
                     setIsSidebarOpen(false);
                     addToast('Super Admin Role Overview', 'info');
                   }}
-                  className={`w-full text-left py-1 text-xs transition flex items-center gap-2 ${
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
                     activeMenu === 'users-admins' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                  <span>Admins</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Admins</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{adminsList.length}</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* Medicines Dropdown */}
+          {/* Clinical Services Dropdown */}
           <div>
             <button
               type="button"
-              onClick={() => {
-                setIsMedicinesExpanded(!isMedicinesExpanded);
-                setActiveMenu('medicines');
-              }}
+              onClick={() => setIsClinicalExpanded(!isClinicalExpanded)}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'medicines' || activeMenu === 'medicines-all' || activeMenu === 'medicines-categories' || activeMenu === 'medicines-add'
+                activeMenu === 'appointments-doctor' || activeMenu === 'appointments-physio' || activeMenu === 'bookings-surgery'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Stethoscope className="w-4 h-4" />
+                <span>Clinical Services</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+                  {doctorAppointments.length + physioAppointments.length + surgeryBookings.length}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isClinicalExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
+            </button>
+
+            {isClinicalExpanded && (
+              <div className="pl-9 pr-2 py-1 space-y-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('appointments-doctor');
+                    setIsSidebarOpen(false);
+                    addToast('Doctor Consultations & Appointments', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'appointments-doctor' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Doctor Appointments</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{doctorAppointments.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('appointments-physio');
+                    setIsSidebarOpen(false);
+                    addToast('Physiotherapy & Rehab Bookings', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'appointments-physio' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Physiotherapy</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{physioAppointments.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('bookings-surgery');
+                    setIsSidebarOpen(false);
+                    addToast('Surgery Package Bookings', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'bookings-surgery' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Surgery Packages</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{surgeryBookings.length}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Diagnostics & Wellness Dropdown */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsDiagnosticsExpanded(!isDiagnosticsExpanded)}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'lab-bookings' || activeMenu === 'bookings-wellness' || activeMenu === 'diagnostic-tests'
+                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <FlaskConical className="w-4 h-4" />
+                <span>Diagnostics & Wellness</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+                  {diagnosticLabBookings.length + wellnessBookings.length}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isDiagnosticsExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
+            </button>
+
+            {isDiagnosticsExpanded && (
+              <div className="pl-9 pr-2 py-1 space-y-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('lab-bookings');
+                    setIsSidebarOpen(false);
+                    addToast('Diagnostic Lab Test Bookings', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'lab-bookings' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Lab Tests</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{diagnosticLabBookings.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('bookings-wellness');
+                    setIsSidebarOpen(false);
+                    addToast('Preventive Wellness Packages', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'bookings-wellness' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Wellness Packages</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{wellnessBookings.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('diagnostic-tests');
+                    setIsSidebarOpen(false);
+                    addToast('Diagnostic Tests Catalog', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'diagnostic-tests' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Test Catalog</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{testsList.length}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Medicines & Orders Dropdown */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsMedicinesExpanded(!isMedicinesExpanded)}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+                activeMenu === 'orders' || activeMenu === 'medicines' || activeMenu === 'medicines-all' || activeMenu === 'medicines-categories' || activeMenu === 'medicines-add'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
               <div className="flex items-center gap-3">
                 <Pill className="w-4 h-4" />
-                <span>Medicines</span>
+                <span>Medicines & Pharmacy</span>
               </div>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  isMedicinesExpanded ? 'rotate-180' : ''
-                }`}
-              />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+                  {medicineOrders.length}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    isMedicinesExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
             </button>
+
             {isMedicinesExpanded && (
               <div className="pl-9 pr-2 py-1 space-y-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('orders');
+                    setIsSidebarOpen(false);
+                    addToast('Customer Medicine Orders', 'info');
+                  }}
+                  className={`w-full text-left py-1 text-xs transition flex items-center justify-between ${
+                    activeMenu === 'orders' ? 'text-[#14B8A6] font-bold' : 'text-[#88A0B8] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                    <span>Medicine Orders</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">{medicineOrders.length}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -579,60 +1432,6 @@ export default function AdminDashboardPage() {
               </div>
             )}
           </div>
-
-          {/* Diagnostic Tests */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveMenu('diagnostic-tests');
-              setIsSidebarOpen(false);
-              addToast('Diagnostic Tests Catalog', 'info');
-            }}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-              activeMenu === 'diagnostic-tests'
-                ? 'bg-[#14B8A6] text-white shadow-sm'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <FlaskConical className="w-4 h-4" />
-            <span>Diagnostic Tests</span>
-          </button>
-
-          {/* Lab Bookings */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveMenu('lab-bookings');
-              setIsSidebarOpen(false);
-              addToast('Opening Lab Bookings Central Schedule', 'info');
-            }}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-              activeMenu === 'lab-bookings'
-                ? 'bg-[#14B8A6] text-white shadow-sm'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Lab Bookings</span>
-          </button>
-
-          {/* Orders */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveMenu('orders');
-              setIsSidebarOpen(false);
-              addToast('All Customer Medicine Orders', 'info');
-            }}
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-              activeMenu === 'orders'
-                ? 'bg-[#14B8A6] text-white shadow-sm'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Package className="w-4 h-4" />
-            <span>Orders</span>
-          </button>
 
           {/* Prescriptions */}
           <button
@@ -1187,64 +1986,155 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* ======================================================== */}
-          {/* 6. BOTTOM SECTION: RECENT BOOKINGS + LOW STOCK MEDICINES */}
+          {/* 6. BOTTOM SECTION: ALL SERVICES FEED + LOW STOCK         */}
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Card: Recent Bookings (Width ~65%) */}
+            {/* Left Card: Live Unified Feed of All Services (Width ~65%) */}
             <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#14B8A6]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Recent Bookings
-                  </h3>
+                  <Activity className="w-5 h-5 text-[#14B8A6]" />
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      All Services & Live Activities Overview
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-medium">
+                      Real-time bookings across Doctor Consultations, Physiotherapy, Surgeries, Wellness, Lab Tests & Orders
+                    </p>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveMenu('lab-bookings')}
-                  className="text-xs font-semibold text-primary hover:underline"
-                >
-                  View All
-                </button>
               </div>
 
-              {/* Recent Bookings Table */}
+              {/* Service Category Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                {[
+                  { id: 'all', label: 'All Activities', count: allActivities.length },
+                  { id: 'doctor', label: 'Doctor', count: doctorAppointments.length },
+                  { id: 'physio', label: 'Physiotherapy', count: physioAppointments.length },
+                  { id: 'surgery', label: 'Surgery', count: surgeryBookings.length },
+                  { id: 'wellness', label: 'Wellness', count: wellnessBookings.length },
+                  { id: 'lab', label: 'Lab Tests', count: diagnosticLabBookings.length },
+                  { id: 'order', label: 'Medicine Orders', count: medicineOrders.length }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActivityCategoryFilter(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
+                      activityCategoryFilter === tab.id
+                        ? 'bg-[#14B8A6] text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      activityCategoryFilter === tab.id ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Activities Table */}
               <div className="overflow-x-auto -mx-2 sm:mx-0">
-                <table className="w-full min-w-[540px] text-left border-collapse text-xs">
+                <table className="w-full min-w-[620px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="text-slate-500 font-bold border-b border-slate-100 pb-2.5">
-                      <th className="py-2.5 px-2 sm:px-0 font-bold">Booking ID</th>
-                      <th className="py-2.5 px-2 sm:px-0 font-bold">Patient</th>
-                      <th className="py-2.5 px-2 sm:px-0 font-bold">Test / Package</th>
-                      <th className="py-2.5 px-2 sm:px-0 font-bold">Type</th>
-                      <th className="py-2.5 px-2 sm:px-0 font-bold text-center">Status</th>
+                      <th className="py-2.5 px-3 font-bold">Service Category</th>
+                      <th className="py-2.5 px-3 font-bold">ID / Ref</th>
+                      <th className="py-2.5 px-3 font-bold">Patient</th>
+                      <th className="py-2.5 px-3 font-bold">Service / Item Details</th>
+                      <th className="py-2.5 px-3 font-bold">Schedule / Date</th>
+                      <th className="py-2.5 px-3 font-bold">Amount</th>
+                      <th className="py-2.5 px-3 font-bold text-center">Status</th>
+                      <th className="py-2.5 px-3 font-bold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {adminBookings.slice(0, 4).map((b) => (
-                      <tr key={b.id} className="hover:bg-slate-50/50 transition">
-                        <td className="py-3 px-2 sm:px-0 font-semibold text-slate-800">
-                          {b.id}
-                        </td>
-                        <td className="py-3 px-2 sm:px-0">
-                          <div className="flex items-center gap-1.5 font-medium text-slate-800">
-                            <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="truncate">{b.patient}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-2 sm:px-0 text-slate-700">
-                          {b.test}
-                        </td>
-                        <td className="py-3 px-2 sm:px-0 text-slate-600">
-                          {b.type}
-                        </td>
-                        <td className="py-3 px-2 sm:px-0 text-center">
-                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${b.statusBg}`}>
-                            {b.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {allActivities
+                      .filter((item) => {
+                        if (activityCategoryFilter !== 'all' && item.category !== activityCategoryFilter) return false;
+                        if (searchQuery.trim()) {
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (item.id || '').toLowerCase().includes(q) ||
+                            (item.patientName || '').toLowerCase().includes(q) ||
+                            (item.itemTitle || '').toLowerCase().includes(q)
+                          );
+                        }
+                        return true;
+                      })
+                      .slice(0, 8)
+                      .map((item) => {
+                        const IconComp = item.icon || Activity;
+                        return (
+                          <tr key={item.id} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3 px-3">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border ${item.badgeClass}`}>
+                                <IconComp className="w-3.5 h-3.5 shrink-0" />
+                                <span>{item.serviceType}</span>
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 font-mono font-semibold text-slate-800">
+                              {item.id}
+                            </td>
+                            <td className="py-3 px-3 font-semibold text-slate-800">
+                              <div>{item.patientName}</div>
+                              {item.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{item.patientPhone}</span>}
+                            </td>
+                            <td className="py-3 px-3 text-slate-700 max-w-[200px]">
+                              <div className="font-semibold text-slate-900 truncate">{item.itemTitle}</div>
+                              <div className="text-[10px] text-slate-400 truncate">{item.itemSubtitle}</div>
+                            </td>
+                            <td className="py-3 px-3 text-slate-600 font-mono text-[11px]">
+                              {item.schedule || 'Scheduled'}
+                            </td>
+                            <td className="py-3 px-3 font-bold text-slate-900 font-mono">
+                              ₹{item.amount}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                item.status === 'Confirmed' || item.status === 'Delivered' || item.status === 'Report Published' || item.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : item.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-blue-50 text-blue-700 border border-blue-200'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus(item)}
+                                  className="px-2 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-[11px] font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails(item)}
+                                  className="p-1 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Full Details"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip(item)}
+                                  className="p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Download / Print Slip"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
@@ -1523,8 +2413,534 @@ export default function AdminDashboardPage() {
           )}
 
           {/* ======================================================== */}
-          {/* MEDICINES: ALL PRODUCTS                                  */}
+          {/* CLINICAL SERVICES: DOCTOR APPOINTMENTS                   */}
           {/* ======================================================== */}
+          {activeMenu === 'appointments-doctor' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Stethoscope className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Doctor Consultations & Polyclinic Appointments</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage outpatient consultations, clinic visits, video consults & senior citizen pickup appointments across Guwahati Polyclinic.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-teal-50 border border-teal-200 text-teal-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {doctorAppointments.length}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Appointment ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Doctor & Specialty</th>
+                        <th className="py-3 px-4 font-bold">Clinic / Facility</th>
+                        <th className="py-3 px-4 font-bold">Date & Time</th>
+                        <th className="py-3 px-4 font-bold">Mode</th>
+                        <th className="py-3 px-4 font-bold">Fee</th>
+                        <th className="py-3 px-4 font-bold">Symptoms / Reason</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {doctorAppointments
+                        .filter((a) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (a.id || '').toLowerCase().includes(q) ||
+                            (a.bookingId || '').toLowerCase().includes(q) ||
+                            (a.patientName || '').toLowerCase().includes(q) ||
+                            (a.doctor || a.doctorName || '').toLowerCase().includes(q) ||
+                            (a.specialty || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((a) => (
+                          <tr key={a.id || a.bookingId} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{a.id || a.bookingId}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-800">
+                              <div>{a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                              {a.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{a.patientPhone}</span>}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <div className="font-bold text-slate-900">{a.doctor || a.doctorName || 'Dr. Amit Sharma, MD'}</div>
+                              <div className="text-[10px] text-teal-700 font-medium">{a.specialty || a.doctorSpecialty || 'General Physician'}</div>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-700">{a.hospital || a.doctorHospital || 'Zestmed Polyclinic Hub, Dispur'}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">
+                              <div>{a.date}</div>
+                              <div className="text-[10px] text-slate-400">{a.time || a.slot}</div>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span className="inline-block px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">
+                                {a.mode || 'Clinic Visit'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{a.fee || a.price || 600}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">{a.symptoms || 'General Consultation'}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                a.status === 'Confirmed' || a.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : a.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-blue-50 text-blue-700 border border-blue-200'
+                              }`}>
+                                {a.status || 'Confirmed'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus({ ...a, id: a.id || a.bookingId, type: 'doctor' })}
+                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails({ ...a, id: a.id || a.bookingId, type: 'doctor', serviceType: 'Doctor Consultation', raw: a })}
+                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip({ ...a, type: 'Doctor Consultation' })}
+                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Print Slip"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                                {a.status !== 'Cancelled' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBookingOrOrder({ id: a.id || a.bookingId, type: 'doctor' })}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* CLINICAL SERVICES: PHYSIOTHERAPY BOOKINGS                */}
+          {/* ======================================================== */}
+          {activeMenu === 'appointments-physio' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Activity className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Physiotherapy & Rehabilitation Bookings</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Doorstep and clinical physical therapy sessions across Guwahati & Assam.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-purple-50 border border-purple-200 text-purple-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {physioAppointments.length}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Booking ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Physiotherapist & Degree</th>
+                        <th className="py-3 px-4 font-bold">Rehabilitation Area</th>
+                        <th className="py-3 px-4 font-bold">Date & Slot</th>
+                        <th className="py-3 px-4 font-bold">Mode</th>
+                        <th className="py-3 px-4 font-bold">Session Fee</th>
+                        <th className="py-3 px-4 font-bold">Condition / Symptoms</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {physioAppointments
+                        .filter((a) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (a.id || '').toLowerCase().includes(q) ||
+                            (a.bookingId || '').toLowerCase().includes(q) ||
+                            (a.patientName || '').toLowerCase().includes(q) ||
+                            (a.doctor || a.doctorName || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((a) => (
+                          <tr key={a.id || a.bookingId} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{a.id || a.bookingId}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-800">
+                              <div>{a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                              {a.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{a.patientPhone}</span>}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <div className="font-bold text-slate-900">{a.doctor || a.doctorName || 'Dr. Arindam Borah, MPT'}</div>
+                              <div className="text-[10px] text-purple-700 font-medium">{a.doctorDegree || 'MPT (Ortho), Certified Physio'}</div>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-700">{a.specialty || a.doctorSpecialty || 'Post-Surgery & Spine Rehab'}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">
+                              <div>{a.date}</div>
+                              <div className="text-[10px] text-slate-400">{a.time || a.slot}</div>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span className="inline-block px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                                {a.mode || 'Home Visit'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{a.fee || a.price || 850}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">{a.symptoms || 'Joint Mobility Rehab'}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                a.status === 'Confirmed' || a.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : a.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-purple-50 text-purple-700 border border-purple-200'
+                              }`}>
+                                {a.status || 'Confirmed'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus({ ...a, id: a.id || a.bookingId, type: 'physio' })}
+                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails({ ...a, id: a.id || a.bookingId, type: 'physio', serviceType: 'Physiotherapy', raw: a })}
+                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip({ ...a, type: 'Physiotherapy' })}
+                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Print Slip"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                                {a.status !== 'Cancelled' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBookingOrOrder({ id: a.id || a.bookingId, type: 'physio' })}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* CLINICAL SERVICES: SURGERY PACKAGE BOOKINGS              */}
+          {/* ======================================================== */}
+          {activeMenu === 'bookings-surgery' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Scissors className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Surgery Care Packages & Inpatient Consultations</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    End-to-end surgical treatment packages with NABH partner hospitals and cashless insurance facilitation.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {surgeryBookings.length}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Booking ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Surgery Package</th>
+                        <th className="py-3 px-4 font-bold">Partner Hospital</th>
+                        <th className="py-3 px-4 font-bold">Care Manager / Surgeon</th>
+                        <th className="py-3 px-4 font-bold">Pre-Op Slot</th>
+                        <th className="py-3 px-4 font-bold">Package Cost</th>
+                        <th className="py-3 px-4 font-bold">Insurance / Case</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {surgeryBookings
+                        .filter((a) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (a.id || '').toLowerCase().includes(q) ||
+                            (a.bookingId || '').toLowerCase().includes(q) ||
+                            (a.patientName || '').toLowerCase().includes(q) ||
+                            (a.title || a.surgeryName || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((a) => (
+                          <tr key={a.id || a.bookingId} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{a.id || a.bookingId}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-800">
+                              <div>{a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                              {a.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{a.patientPhone}</span>}
+                            </td>
+                            <td className="py-3.5 px-4 font-bold text-slate-900">{a.title || a.surgeryName || 'Surgical Care Package'}</td>
+                            <td className="py-3.5 px-4 text-slate-700">{a.hospital || a.doctorHospital || 'Dispur Partner Hospital, Guwahati'}</td>
+                            <td className="py-3.5 px-4 text-slate-800 font-medium">{a.careManager || a.doctor || 'Dr. Anupam Sarma (Surgery Lead)'}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">
+                              <div>{a.date || 'Within 48 Hours'}</div>
+                              <div className="text-[10px] text-slate-400">{a.time || a.slot || 'Pre-Op'}</div>
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{Number(a.fee || a.price || 35000).toLocaleString('en-IN')}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-[160px] truncate">{a.symptoms || 'Cashless TPA / Ayushman Bharat'}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                a.status === 'Confirmed' || a.status === 'Surgery Completed' || a.status === 'Discharged'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : a.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                              }`}>
+                                {a.status || 'Confirmed'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus({ ...a, id: a.id || a.bookingId, type: 'surgery' })}
+                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails({ ...a, id: a.id || a.bookingId, type: 'surgery', serviceType: 'Surgery Package', raw: a })}
+                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Case Dossier"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip({ ...a, type: 'Surgery Package' })}
+                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Download Slip"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                                {a.status !== 'Cancelled' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBookingOrOrder({ id: a.id || a.bookingId, type: 'surgery' })}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* DIAGNOSTICS & WELLNESS: WELLNESS PACKAGES                */}
+          {/* ======================================================== */}
+          {activeMenu === 'bookings-wellness' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Heart className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Preventive Wellness & Health Checkup Packages</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Comprehensive full body screenings, executive wellness, and senior citizen checkup packages across Assam.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {wellnessBookings.length}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                      <tr>
+                        <th className="py-3 px-4 font-bold">Booking ID</th>
+                        <th className="py-3 px-4 font-bold">Patient</th>
+                        <th className="py-3 px-4 font-bold">Package Name & Code</th>
+                        <th className="py-3 px-4 font-bold">Doorstep Collection Address</th>
+                        <th className="py-3 px-4 font-bold">Field Phlebotomist</th>
+                        <th className="py-3 px-4 font-bold">Schedule Slot</th>
+                        <th className="py-3 px-4 font-bold">Price</th>
+                        <th className="py-3 px-4 font-bold text-center">Status</th>
+                        <th className="py-3 px-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {wellnessBookings
+                        .filter((b) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (b.id || '').toLowerCase().includes(q) ||
+                            (b.bookingId || '').toLowerCase().includes(q) ||
+                            (b.patientName || '').toLowerCase().includes(q) ||
+                            (b.testName || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((b) => (
+                          <tr key={b.id || b.bookingId} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{b.id || b.bookingId}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-800">
+                              <div>{b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                              {b.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{b.patientPhone}</span>}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <div className="font-bold text-slate-900">{b.testName || 'Comprehensive Health Package'}</div>
+                              <span className="text-[10px] font-mono text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded font-bold">
+                                {b.testCode || 'WEL-PKG'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-[200px] truncate">{b.collectionAddress || 'Guwahati Home Collection'}</td>
+                            <td className="py-3.5 px-4">
+                              <select
+                                value={b.phlebotomist?.name || 'Bikash Das'}
+                                onChange={(e) => handleAssignPhlebotomist(b.id || b.bookingId, e.target.value)}
+                                className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold text-teal-800 outline-none cursor-pointer"
+                              >
+                                {executivesList.map((ex) => (
+                                  <option key={ex.id} value={ex.name}>
+                                    {ex.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">
+                              <div>{b.collectionDate || b.date}</div>
+                              <div className="text-[10px] text-slate-400">{b.time || '07:30 AM'}</div>
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{b.price || 1899}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                b.status === 'Confirmed' || b.status === 'Report Published'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : b.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-teal-50 text-teal-700 border border-teal-200'
+                              }`}>
+                                {b.status || 'Confirmed'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus({ ...b, id: b.id || b.bookingId, type: 'wellness' })}
+                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails({ ...b, id: b.id || b.bookingId, type: 'wellness', raw: b })}
+                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Report / Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip({ ...b, type: 'Wellness Package' })}
+                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Download Slip"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                                {b.status !== 'Cancelled' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBookingOrOrder({ id: b.id || b.bookingId, type: 'wellness' })}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
           {(activeMenu === 'medicines' || activeMenu === 'medicines-all') && (
             <div className="space-y-4 sm:space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
@@ -1896,12 +3312,17 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Calendar className="w-6 h-6 text-[#14B8A6]" />
+                    <FlaskConical className="w-6 h-6 text-[#14B8A6]" />
                     <span>Central Diagnostic & Home Collection Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage appointments, assign field phlebotomists, and monitor sample statuses.
+                    Manage appointments, assign field phlebotomists, and monitor sample statuses across Assam.
                   </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-teal-50 border border-teal-200 text-teal-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {diagnosticLabBookings.length}
+                  </div>
                 </div>
               </div>
 
@@ -1912,52 +3333,113 @@ export default function AdminDashboardPage() {
                       <tr>
                         <th className="py-3 px-4 font-bold">Booking ID</th>
                         <th className="py-3 px-4 font-bold">Patient</th>
-                        <th className="py-3 px-4 font-bold">Test</th>
-                        <th className="py-3 px-4 font-bold">Type</th>
-                        <th className="py-3 px-4 font-bold">Executive</th>
+                        <th className="py-3 px-4 font-bold">Test Name & Code</th>
+                        <th className="py-3 px-4 font-bold">Collection Type</th>
+                        <th className="py-3 px-4 font-bold">Field Phlebotomist</th>
+                        <th className="py-3 px-4 font-bold">Specimen</th>
                         <th className="py-3 px-4 font-bold">Slot</th>
+                        <th className="py-3 px-4 font-bold">Amount</th>
                         <th className="py-3 px-4 font-bold text-center">Status</th>
                         <th className="py-3 px-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {adminBookings.map((b) => (
-                        <tr key={b.id} className="hover:bg-slate-50/50 transition">
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{b.id}</td>
-                          <td className="py-3.5 px-4 font-semibold text-slate-800">{b.patient}</td>
-                          <td className="py-3.5 px-4 text-slate-700">{b.test}</td>
-                          <td className="py-3.5 px-4 text-slate-600">{b.type}</td>
-                          <td className="py-3.5 px-4 font-medium text-teal-700">{b.executive || 'Unassigned'}</td>
-                          <td className="py-3.5 px-4 text-slate-500 font-mono">{b.slot}</td>
-                          <td className="py-3.5 px-4 text-center">
-                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${b.statusBg}`}>
-                              {b.status}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const nextStatus =
-                                  b.status === 'Confirmed'
-                                    ? 'Sample Collected'
-                                    : b.status === 'Sample Collected'
-                                    ? 'In Process'
-                                    : b.status === 'In Process'
-                                    ? 'Report Ready'
-                                    : 'Confirmed';
-                                setAdminBookings((prev) =>
-                                  prev.map((it) => (it.id === b.id ? { ...it, status: nextStatus } : it))
-                                );
-                                addToast(`Booking ${b.id} advanced to ${nextStatus}`, 'success');
-                              }}
-                              className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
-                            >
-                              Advance Status
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {diagnosticLabBookings
+                        .filter((b) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (b.id || '').toLowerCase().includes(q) ||
+                            (b.bookingId || '').toLowerCase().includes(q) ||
+                            (b.patientName || '').toLowerCase().includes(q) ||
+                            (b.testName || '').toLowerCase().includes(q) ||
+                            (b.phlebotomist?.name || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((b) => (
+                          <tr key={b.id || b.bookingId} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{b.id || b.bookingId}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-800">
+                              <div>{b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                              {b.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{b.patientPhone}</span>}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <div className="font-bold text-slate-900">{b.testName}</div>
+                              <span className="text-[10px] font-mono text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded font-bold">
+                                {b.testCode || 'DX-LAB'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-600">{b.type || 'Home Collection'}</td>
+                            <td className="py-3.5 px-4">
+                              <select
+                                value={b.phlebotomist?.name || 'Bikash Das'}
+                                onChange={(e) => handleAssignPhlebotomist(b.id || b.bookingId, e.target.value)}
+                                className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold text-teal-800 outline-none cursor-pointer"
+                              >
+                                {executivesList.map((ex) => (
+                                  <option key={ex.id} value={ex.name}>
+                                    {ex.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-500">{b.specimen || 'Blood Sample'}</td>
+                            <td className="py-3.5 px-4 text-slate-500 font-mono">
+                              <div>{b.collectionDate || b.date}</div>
+                              <div className="text-[10px] text-slate-400">{b.time || '08:00 AM'}</div>
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{b.price || 350}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                b.status === 'Confirmed' || b.status === 'Report Published' || b.status === 'Report Ready'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : b.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                  : 'bg-blue-50 text-blue-700 border border-blue-200'
+                              }`}>
+                                {b.status || 'Confirmed'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleAdvanceStatus({ ...b, id: b.id || b.bookingId, type: 'lab' })}
+                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                  title="Advance Status"
+                                >
+                                  Advance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewDetails({ ...b, id: b.id || b.bookingId, type: 'lab', raw: b })}
+                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                  title="View Report"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadSlip({ ...b, type: 'Diagnostic Lab Test' })}
+                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                  title="Download Slip"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                                {b.status !== 'Cancelled' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCancelBookingOrOrder({ id: b.id || b.bookingId, type: 'lab' })}
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                    title="Cancel"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -1970,14 +3452,21 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {activeMenu === 'orders' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Package className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Customer Pharmacy Orders & Deliveries</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Express doorstep deliveries across Assam hubs with cold-chain verification.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Package className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Customer Pharmacy Orders & Deliveries</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Express doorstep deliveries across Assam hubs with cold-chain verification.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-indigo-50 border border-indigo-200 text-indigo-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Total: {medicineOrders.length}
+                  </div>
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -1987,53 +3476,103 @@ export default function AdminDashboardPage() {
                       <tr>
                         <th className="py-3 px-4 font-bold">Order ID</th>
                         <th className="py-3 px-4 font-bold">Customer</th>
-                        <th className="py-3 px-4 font-bold">Items</th>
+                        <th className="py-3 px-4 font-bold">Delivery Address</th>
+                        <th className="py-3 px-4 font-bold">Items & Quantities</th>
+                        <th className="py-3 px-4 font-bold">Payment Method</th>
                         <th className="py-3 px-4 font-bold">Total</th>
-                        <th className="py-3 px-4 font-bold">Payment</th>
                         <th className="py-3 px-4 font-bold text-center">Status</th>
                         <th className="py-3 px-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {adminOrders.map((o) => (
-                        <tr key={o.id} className="hover:bg-slate-50/50 transition">
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{o.id}</td>
-                          <td className="py-3.5 px-4 font-semibold text-slate-800">
-                            <div>{o.customer}</div>
-                            <span className="text-[10px] text-slate-400">{o.address}</span>
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-700 max-w-xs truncate">{o.items}</td>
-                          <td className="py-3.5 px-4 font-black text-slate-900">₹{o.total}</td>
-                          <td className="py-3.5 px-4 text-slate-600">{o.payment}</td>
-                          <td className="py-3.5 px-4 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
-                              {o.status}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const nextStatus =
-                                  o.status === 'Processing'
-                                    ? 'Dispatched'
-                                    : o.status === 'Dispatched'
-                                    ? 'Out for Delivery'
-                                    : o.status === 'Out for Delivery'
-                                    ? 'Delivered'
-                                    : 'Processing';
-                                setAdminOrders((prev) =>
-                                  prev.map((it) => (it.id === o.id ? { ...it, status: nextStatus } : it))
-                                );
-                                addToast(`Order ${o.id} updated to ${nextStatus}`, 'success');
-                              }}
-                              className="px-2.5 py-1 bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white rounded-lg text-xs font-bold transition mr-2"
-                            >
-                              Update Status
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {medicineOrders
+                        .filter((o) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (o.id || '').toLowerCase().includes(q) ||
+                            (o.orderId || '').toLowerCase().includes(q) ||
+                            (o.customer || o.patientName || '').toLowerCase().includes(q) ||
+                            (o.deliveryAddress || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((o) => {
+                          const itemsSummary = Array.isArray(o.items)
+                            ? o.items.map((it) => `${it.name} x ${it.quantity}`).join(', ')
+                            : o.items || 'Prescription Medicines';
+                          return (
+                            <tr key={o.id || o.orderId} className="hover:bg-slate-50/50 transition">
+                              <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{o.id || o.orderId}</td>
+                              <td className="py-3.5 px-4 font-semibold text-slate-800">
+                                <div>{o.customer || o.patientName || 'Customer'}</div>
+                                {o.phone && <span className="text-[10px] text-slate-400 font-mono">{o.phone}</span>}
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-600 max-w-[200px] truncate">
+                                {o.deliveryAddress || o.address || 'Dispur, Guwahati'}
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-800 max-w-xs truncate font-medium">
+                                {itemsSummary}
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-600 font-medium">
+                                <span className="inline-block px-2 py-0.5 rounded-lg text-[10px] bg-slate-100 text-slate-700 font-mono">
+                                  {o.paymentMethod || o.payment || 'UPI Paid'}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-4 font-black text-slate-900 font-mono">
+                                ₹{o.total || o.totalAmount || 0}
+                              </td>
+                              <td className="py-3.5 px-4 text-center">
+                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                  o.status === 'Delivered'
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : o.status === 'Cancelled'
+                                    ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                    : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                }`}>
+                                  {o.status || 'Processing'}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-4 text-right">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAdvanceStatus({ ...o, id: o.id || o.orderId, type: 'order' })}
+                                    className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                    title="Advance Order Status"
+                                  >
+                                    Update
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setViewingOrderModal(o)}
+                                    className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                    title="View Invoice & Items"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => downloadOrderInvoicePdf(o)}
+                                    className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                    title="Download Assam GST Invoice"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </button>
+                                  {o.status !== 'Cancelled' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCancelBookingOrOrder({ id: o.id || o.orderId, type: 'order' })}
+                                      className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                      title="Cancel"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
@@ -2660,6 +4199,123 @@ export default function AdminDashboardPage() {
             addToast(`${importedRows.length} diagnostic packages added to active catalog!`, 'success');
           }}
         />
+      )}
+
+      {/* Order Invoice & Items Details Modal */}
+      {viewingOrderModal && (
+        <OrderInvoiceModal
+          isOpen={!!viewingOrderModal}
+          onClose={() => setViewingOrderModal(null)}
+          order={viewingOrderModal}
+        />
+      )}
+
+      {/* Digital Lab Report Modal */}
+      {viewingReportBooking && (
+        <DigitalLabReportModal
+          isOpen={!!viewingReportBooking}
+          onClose={() => setViewingReportBooking(null)}
+          booking={viewingReportBooking}
+        />
+      )}
+
+      {/* Admin Consultation & Service Case Detail Modal */}
+      {viewingDetailItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setViewingDetailItem(null)}
+          />
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 my-8 animate-scale-up">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 bg-[#0F1E36] text-white">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold">
+                  {viewingDetailItem.icon ? <viewingDetailItem.icon className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">{viewingDetailItem.serviceType || 'Service Details'}</h3>
+                  <p className="text-[11px] text-teal-400 font-mono">Ref ID: {viewingDetailItem.id}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewingDetailItem(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-4 text-xs">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">{viewingDetailItem.patientName}</h4>
+                  <p className="text-slate-500 font-mono text-[11px] mt-0.5">{viewingDetailItem.patientPhone || 'Guwahati, Assam'}</p>
+                </div>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                  viewingDetailItem.status === 'Confirmed' || viewingDetailItem.status === 'Completed' || viewingDetailItem.status === 'Report Published'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  {viewingDetailItem.status || 'Confirmed'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-slate-200 text-slate-700">
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Service / Speciality</span>
+                  <span className="font-semibold text-slate-900">{viewingDetailItem.itemTitle}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Facility / Hospital</span>
+                  <span className="font-semibold text-slate-900">{viewingDetailItem.itemSubtitle || 'Guwahati Central Hub'}</span>
+                </div>
+                <div className="pt-2 border-t border-slate-100">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Scheduled Slot</span>
+                  <span className="font-mono text-slate-800">{viewingDetailItem.schedule || 'Scheduled'}</span>
+                </div>
+                <div className="pt-2 border-t border-slate-100">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Total Amount</span>
+                  <span className="font-black text-teal-700 text-sm font-mono">₹{viewingDetailItem.amount}</span>
+                </div>
+              </div>
+
+              {viewingDetailItem.raw?.symptoms && (
+                <div className="bg-teal-50/50 p-3.5 rounded-2xl border border-teal-100 text-slate-700">
+                  <span className="text-[10px] text-teal-800 uppercase font-bold block mb-0.5">Clinical Notes / Symptoms</span>
+                  <p className="text-slate-800 font-medium">{viewingDetailItem.raw.symptoms}</p>
+                </div>
+              )}
+
+              {/* Status Update Control */}
+              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-500 font-semibold">Change Status:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleAdvanceStatus(viewingDetailItem);
+                      setViewingDetailItem(null);
+                    }}
+                    className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl font-bold transition shadow-2xs cursor-pointer"
+                  >
+                    Advance Status
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDownloadSlip(viewingDetailItem)}
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Print Slip</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
