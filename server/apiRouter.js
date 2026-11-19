@@ -41,49 +41,75 @@ export const verifyAuthHeader = (authHeader) => {
   return null;
 };
 
-export const handleApiRequest = async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = url.pathname;
-  const method = req.method.toUpperCase();
-
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Auth-Token');
-
-  if (method === 'OPTIONS') {
-    res.statusCode = 204;
-    res.end();
-    return true;
-  }
-
-  // Public Health check
-  if (pathname === '/api/health') {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ status: 'ok', service: 'ZESTMED Backend API', timestamp: new Date().toISOString() }));
-    return true;
-  }
-
-  // Only handle /api/ routes
-  if (!pathname.startsWith('/api/')) {
-    return false;
-  }
-
-  // Read request body for POST/PUT
-  let body = {};
-  if (method === 'POST' || method === 'PUT') {
-    try {
-      const buffers = [];
-      for await (const chunk of req) {
-        buffers.push(chunk);
-      }
-      const raw = Buffer.concat(buffers).toString('utf8');
-      if (raw) body = JSON.parse(raw);
-    } catch (e) {
-      body = {};
+export const readRequestBody = (req) => {
+  return new Promise((resolve) => {
+    if (req.body && typeof req.body === 'object') {
+      return resolve(req.body);
     }
-  }
+    const chunks = [];
+    req.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      try {
+        const raw = Buffer.concat(chunks).toString('utf8');
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch {
+        resolve({});
+      }
+    });
+    req.on('error', () => resolve({}));
+    // If request already finished emitting before listener attached
+    if (req.complete || req.readableEnded) {
+      if (chunks.length > 0) {
+        try {
+          const raw = Buffer.concat(chunks).toString('utf8');
+          resolve(raw ? JSON.parse(raw) : {});
+        } catch {
+          resolve({});
+        }
+      } else {
+        resolve({});
+      }
+    }
+  });
+};
+
+export const handleApiRequest = async (req, res) => {
+  try {
+    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+    const pathname = url.pathname;
+    const method = req.method.toUpperCase();
+
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Auth-Token');
+
+    if (method === 'OPTIONS') {
+      res.statusCode = 204;
+      res.end();
+      return true;
+    }
+
+    // Public Health check
+    if (pathname === '/api/health') {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ status: 'ok', service: 'ZESTMED Backend API', timestamp: new Date().toISOString() }));
+      return true;
+    }
+
+    // Only handle /api/ routes
+    if (!pathname.startsWith('/api/')) {
+      return false;
+    }
+
+    // Read request body for POST/PUT safely
+    let body = {};
+    if (method === 'POST' || method === 'PUT') {
+      body = await readRequestBody(req);
+    }
 
   // ------------------------------------------------------------------------
   // AUTHENTICATION GUARD
@@ -350,4 +376,17 @@ export const handleApiRequest = async (req, res) => {
   res.statusCode = 404;
   res.end(JSON.stringify({ success: false, error: 'NOT_FOUND', message: 'API route not found' }));
   return true;
+  } catch (globalErr) {
+    console.error('[API Router Uncaught Error]:', globalErr);
+    if (!res.headersSent) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({
+        success: false,
+        error: 'INTERNAL_SERVER_ERROR',
+        message: globalErr.message || 'An unexpected server error occurred.'
+      }));
+    }
+    return true;
+  }
 };
