@@ -313,7 +313,7 @@ export default function PhysiotherapyPage() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[48px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[46px] font-black text-[#0F172A] leading-[1.26] tracking-tight">
               Expert Physiotherapy<br />
               Care for a <span className="text-[#007A64]">Healthier,</span><br />
               <span className="text-[#007A64]">More Active Life</span>
