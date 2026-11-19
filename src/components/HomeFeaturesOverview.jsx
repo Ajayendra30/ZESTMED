@@ -100,26 +100,26 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
         {/* =========================================================================
             ROW 1: HEALTH CHECKUP PACKAGES HORIZONTAL STRIP
             ========================================================================= */}
-        <div className="bg-[#EDFBF9] border border-[#C6F1E9] rounded-3xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs">
+        <div className="bg-[#EDFBF9] border border-[#C6F1E9] rounded-3xl p-5 sm:p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6 shadow-sm">
           {/* Left Title Block */}
-          <div className="flex items-center gap-3 shrink-0 lg:max-w-xs">
-            <div className="w-11 h-11 rounded-2xl bg-white text-[#008F83] border border-teal-200 flex items-center justify-center shadow-xs shrink-0">
-              <HeartPulse className="w-6 h-6 text-[#008F83]" />
+          <div className="flex items-center gap-4 sm:gap-5 shrink-0 lg:max-w-sm">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#008F83] border-2 border-teal-200 flex items-center justify-center shadow-xs shrink-0">
+              <HeartPulse className="w-8 h-8 sm:w-9 sm:h-9 text-[#008F83]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 leading-tight">
                   Health Checkup Packages
                 </h3>
               </div>
-              <p className="text-xs text-slate-600 font-medium mt-0.5">
+              <p className="text-sm sm:text-base text-slate-600 font-medium mt-1 leading-relaxed">
                 Comprehensive packages delivered in 12-24 hours across Guwahati.
               </p>
             </div>
           </div>
 
           {/* Right 5 Package Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 flex-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 flex-1">
             {checkupPackages.map((pkg, idx) => (
               <div
                 key={pkg.id}
@@ -130,23 +130,23 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                     onSelectPackage(pkg);
                   }
                 }}
-                className={`bg-white rounded-2xl border border-slate-200/80 p-3 text-center flex flex-col justify-center items-center hover:shadow-md hover:border-[#008F83]/50 transition cursor-pointer group ${
+                className={`bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 min-h-[120px] sm:min-h-[135px] text-center flex flex-col justify-center items-center hover:shadow-lg hover:border-[#008F83]/60 transition cursor-pointer group ${
                   idx === checkupPackages.length - 1 ? 'col-span-2 sm:col-span-1' : ''
                 }`}
               >
                 {pkg.hasFreeCab && (
-                  <span className="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full mb-1">
+                  <span className="text-[11px] sm:text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full mb-1.5">
                     Free 10km Cab 🚗
                   </span>
                 )}
-                <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug min-h-[32px] flex items-center justify-center text-center">
+                <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug min-h-[44px] flex items-center justify-center text-center">
                   {pkg.name}
                 </h4>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="font-black text-xs sm:text-sm text-slate-900">
+                <div className="flex items-baseline gap-2 mt-1.5">
+                  <span className="font-black text-base sm:text-lg text-slate-900">
                     ₹{pkg.price}
                   </span>
-                  <span className="line-through text-[11px] text-slate-400 font-medium">
+                  <span className="line-through text-xs sm:text-sm text-slate-400 font-medium">
                     ₹{pkg.mrp}
                   </span>
                 </div>
