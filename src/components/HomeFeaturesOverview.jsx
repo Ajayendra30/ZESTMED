@@ -66,22 +66,22 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
       title: 'Search & Choose Medicines or Tests',
       icon: (
         <div className="relative">
-          <Laptop className="w-5 h-5 text-[#008F83]" />
-          <Search className="w-3 h-3 text-[#008F83] absolute -bottom-1 -right-1" />
+          <Laptop className="w-7 h-7 sm:w-8 sm:h-8 text-[#008F83]" />
+          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83] absolute -bottom-1 -right-1" />
         </div>
       )
     },
     {
       title: 'Book / Order Online',
-      icon: <Calendar className="w-5 h-5 text-[#008F83]" />
+      icon: <Calendar className="w-7 h-7 sm:w-8 sm:h-8 text-[#008F83]" />
     },
     {
       title: 'Home Sample Collection or Lab Visit',
-      icon: <Home className="w-5 h-5 text-[#008F83]" />
+      icon: <Home className="w-7 h-7 sm:w-8 sm:h-8 text-[#008F83]" />
     },
     {
       title: 'Get Reports Online',
-      icon: <FileText className="w-5 h-5 text-[#008F83]" />
+      icon: <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-[#008F83]" />
     }
   ];
 
@@ -158,28 +158,28 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
         {/* =========================================================================
             ROW 2: HOW IT WORKS? SECTION
             ========================================================================= */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 lg:p-7 shadow-xs">
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-7 lg:p-8 xl:p-9 shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
             {/* Left Header */}
-            <div className="lg:w-1/4 shrink-0 text-left">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+            <div className="lg:w-[22%] xl:w-[20%] shrink-0 text-left">
+              <h2 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-900 tracking-tight leading-tight">
                 How <span className="text-[#008F83]">It Works?</span>
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-500 mt-1.5 font-medium leading-relaxed">
                 Get healthcare services in just a few simple steps.
               </p>
             </div>
 
             {/* Right 4 Steps with Connecting Arrows */}
-            <div className="lg:w-3/4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 flex-1">
+            <div className="lg:w-[78%] xl:w-[80%] flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 xl:gap-4 flex-1">
               {steps.map((st, idx) => (
                 <React.Fragment key={idx}>
                   {/* Step Card */}
-                  <div className="w-full sm:flex-1 bg-white rounded-2xl p-4 border border-slate-200/70 shadow-xs hover:shadow-md hover:border-teal-200 transition text-center flex flex-col items-center justify-center min-h-[110px] sm:min-h-[120px]">
-                    <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center mb-2 shadow-2xs">
+                  <div className="w-full sm:flex-1 bg-white rounded-2xl p-4 sm:p-5 lg:p-5 xl:p-6 border border-slate-200/80 shadow-xs hover:shadow-lg hover:border-teal-300 transition text-center flex flex-col items-center justify-center min-h-[145px] sm:min-h-[160px] xl:min-h-[175px]">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center mb-3 shadow-2xs shrink-0">
                       {st.icon}
                     </div>
-                    <h3 className="text-xs sm:text-[13px] font-bold text-slate-800 leading-snug">
+                    <h3 className="text-xs sm:text-sm lg:text-[14px] xl:text-[15px] font-bold text-slate-900 leading-snug text-center min-h-[36px] sm:min-h-[42px] flex items-center justify-center">
                       {st.title}
                     </h3>
                   </div>
@@ -187,7 +187,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                   {/* Arrow Indicator */}
                   {idx < steps.length - 1 && (
                     <div className="hidden sm:flex items-center justify-center text-[#008F83] shrink-0">
-                      <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      <ArrowRight className="w-5 h-5 xl:w-6 xl:h-6 stroke-[2.5]" />
                     </div>
                   )}
                 </React.Fragment>
