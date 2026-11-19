@@ -329,8 +329,8 @@ export default function DoctorAppointmentPage() {
             
             {/* Feature 1 */}
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-6 h-6 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <ShieldCheck className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
               <div>
                 <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Verified Doctors</p>
@@ -340,8 +340,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Feature 2 */}
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <CalendarCheck className="w-6 h-6 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <CalendarCheck className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
               <div>
                 <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Easy Booking</p>
@@ -351,8 +351,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Feature 3 */}
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <Video className="w-6 h-6 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <Video className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
               <div>
                 <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Online Consultation</p>
@@ -362,8 +362,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Feature 4 */}
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <Clock className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
               <div>
                 <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Flexible Slots</p>
@@ -373,8 +373,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Feature 5 */}
             <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <CreditCard className="w-6 h-6 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <CreditCard className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
               <div>
                 <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Secure & Easy Payment</p>
@@ -579,8 +579,8 @@ export default function DoctorAppointmentPage() {
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   1
                 </div>
-                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <Search className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
+                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                  <Search className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Search Doctor
@@ -595,8 +595,8 @@ export default function DoctorAppointmentPage() {
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   2
                 </div>
-                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <Calendar className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
+                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                  <Calendar className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Select Date & Time
@@ -611,8 +611,8 @@ export default function DoctorAppointmentPage() {
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   3
                 </div>
-                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <UserCheck className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
+                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                  <UserCheck className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Book Appointment
@@ -627,8 +627,8 @@ export default function DoctorAppointmentPage() {
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   4
                 </div>
-                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
+                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                  <CheckCircle2 className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Get Confirmation
@@ -701,8 +701,8 @@ export default function DoctorAppointmentPage() {
             
             {/* Card 1 */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Verified Specialists</h4>
@@ -712,8 +712,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Card 2 */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Video className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+                <Video className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Online & On-site Consultation</h4>
@@ -723,8 +723,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Card 3 */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <CalendarCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
+              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+                <CalendarCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Quick & Easy Booking</h4>
@@ -734,8 +734,8 @@ export default function DoctorAppointmentPage() {
 
             {/* Card 4 */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <span className="text-2xl font-black text-[#007A64]">₹</span>
+              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+                <span className="text-3xl font-black text-[#007A64]">₹</span>
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Secure Payments</h4>
@@ -927,8 +927,8 @@ export default function DoctorAppointmentPage() {
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50/70 to-white sticky top-0 z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#007A64] text-white flex items-center justify-center shadow-xs shrink-0">
-                  <Stethoscope className="w-5 h-5" />
+                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                  <Stethoscope className="w-6 h-6 text-[#007A64]" />
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-black text-[#0F1E36]">
