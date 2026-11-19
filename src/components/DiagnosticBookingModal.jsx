@@ -14,7 +14,7 @@ import {
 
 export default function DiagnosticBookingModal({ item, type = 'diagnostic', onClose }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
@@ -82,7 +82,8 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to complete your lab test booking',
+        openAuth,
+        toastMessage: 'Please login to complete your lab test booking',
         addToast
       });
       return;

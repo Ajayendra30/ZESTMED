@@ -137,7 +137,7 @@ const CATEGORY_PILLS = [
 export default function HealthPackagesPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -179,7 +179,8 @@ export default function HealthPackagesPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a health package',
+        openAuth,
+        toastMessage: 'Please login to book a health package',
         pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'package' },
         addToast
       });

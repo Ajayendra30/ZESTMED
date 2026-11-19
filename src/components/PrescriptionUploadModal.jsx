@@ -10,7 +10,7 @@ import {
 
 export default function PrescriptionUploadModal({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const [selectedFile, setSelectedFile] = useState(null);
   const [patientNote, setPatientNote] = useState('');
@@ -46,7 +46,8 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to upload your doctor prescription',
+        openAuth,
+        toastMessage: 'Please login to upload your doctor prescription',
         addToast
       });
       return;

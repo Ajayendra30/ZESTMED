@@ -53,21 +53,13 @@ export const CartProvider = ({ children }) => {
         }));
       } catch (_) {}
 
-      addToast('Please login or register to add items to your cart', 'info');
+      addToast('Please login to add items to your cart', 'info');
 
-      // Calculate return URL
-      let returnUrl = '/';
-      if (typeof window !== 'undefined' && window.location) {
-        returnUrl = window.location.pathname + window.location.search;
-      }
-      if (returnUrl.startsWith('/login') || returnUrl.startsWith('/auth') || returnUrl.startsWith('/register')) {
-        returnUrl = '/';
-      }
-
-      if (options.navigate) {
-        options.navigate(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
-      } else if (typeof window !== 'undefined') {
-        window.location.href = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+      // Open Login Modal on the same page without navigating away
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('zestmed:open-auth', {
+          detail: { mode: 'login' }
+        }));
       }
       return false;
     }

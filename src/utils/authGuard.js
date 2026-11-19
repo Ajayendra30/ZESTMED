@@ -45,37 +45,37 @@ export const getAuthToken = () => {
 /**
  * Enforces authentication. If unauthenticated:
  * 1. Saves pending action to sessionStorage to resume post-login
- * 2. Redirects to /login with returnUrl query param
- * 3. Shows toast alert
- * @returns {boolean} true if authenticated, false if redirected to login
+ * 2. Displays the Login option (AuthModal) directly on the same page
+ * 3. Shows toast alert without any "or register" option
+ * 4. Ensures the user is never redirected away to the homepage
+ * @returns {boolean} true if authenticated, false if login is required
  */
 export const enforceAuth = ({
   user = null,
   navigate = null,
   location = null,
-  toastMessage = 'Please login or register to continue with this service',
+  openAuth = null,
+  toastMessage = 'Please login to continue with this service',
   pendingAction = null,
-  addToast = null
+  addToast = null,
+  openInModal = true
 }) => {
   const activeUser = user || getAuthenticatedUser();
   if (activeUser) {
     return true;
   }
 
-  // Save pending action to resume post-login
-  if (pendingAction) {
-    try {
-      sessionStorage.setItem('zestmed_pending_action', JSON.stringify(pendingAction));
-    } catch (err) {
-      console.warn('[AuthGuard] Failed to save pending action:', err);
-    }
-  }
+  // Ensure message only shows "login" and never "or register"
+  const cleanToastMessage = (toastMessage || 'Please login to continue with this service')
+    .replace(/\s+or\s+register\s+/gi, ' ')
+    .replace(/\s+or\s+register/gi, '')
+    .replace(/\s+or\s+registration/gi, '');
 
   if (addToast) {
-    addToast(toastMessage, 'info');
+    addToast(cleanToastMessage, 'info');
   }
 
-  // Calculate return URL
+  // Determine current return URL to ensure user always stays on/returns to this same page
   let returnUrl = '/';
   if (location?.pathname) {
     returnUrl = `${location.pathname}${location.search || ''}`;
@@ -88,8 +88,33 @@ export const enforceAuth = ({
     returnUrl = '/';
   }
 
-  const loginTarget = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+  // Save pending action to resume post-login
+  if (pendingAction) {
+    try {
+      sessionStorage.setItem('zestmed_pending_action', JSON.stringify({
+        ...pendingAction,
+        returnUrl
+      }));
+    } catch (err) {
+      console.warn('[AuthGuard] Failed to save pending action:', err);
+    }
+  }
 
+  // Open the Login option right on the SAME page where the user clicked Book Now.
+  // Never redirect the user to the homepage or away from the service page.
+  if (openInModal) {
+    if (typeof openAuth === 'function') {
+      openAuth('login');
+    } else if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('zestmed:open-auth', {
+        detail: { mode: 'login', returnUrl, pendingAction }
+      }));
+    }
+    return false;
+  }
+
+  // Fallback if modal is explicitly disabled
+  const loginTarget = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
   if (navigate) {
     navigate(loginTarget, { state: { returnUrl, pendingAction } });
   } else if (typeof window !== 'undefined') {

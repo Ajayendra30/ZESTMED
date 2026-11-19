@@ -199,15 +199,25 @@ export default function AuthPage() {
     addToast('New OTP sent to +91 ' + phoneNumber + ': 1234', 'info');
   };
 
+  // Dismiss handler - returns to the referring service page instead of dumping user to homepage
+  const rawReturnParam = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || location.state?.returnUrl;
+  const handleDismiss = () => {
+    if (rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth')) {
+      navigate(rawReturnParam, { replace: true });
+    } else {
+      navigate(-1);
+    }
+  };
+
   // If already logged in, show quick return or dashboard access
   if (user) {
-    const rawReturn = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || location.state?.returnUrl;
+    const rawReturn = rawReturnParam;
     const hasReturnUrl = rawReturn && !rawReturn.startsWith('/login') && !rawReturn.startsWith('/auth');
 
     return (
       <div 
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity font-sans select-none"
-        onClick={() => navigate('/')}
+        onClick={handleDismiss}
       >
         <div 
           className="w-full max-w-[420px] max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 text-center space-y-6 animate-scale-up overflow-y-auto"
@@ -216,7 +226,7 @@ export default function AuthPage() {
           <div className="flex justify-end -mt-3 -mr-3">
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={handleDismiss}
               className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
               aria-label="Close modal"
             >
@@ -264,7 +274,7 @@ export default function AuthPage() {
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity font-sans select-none"
-      onClick={() => navigate('/')}
+      onClick={handleDismiss}
     >
       {/* Mobile Frame Container matching Reference Mockup & Modal Standard */}
       <div 
@@ -288,7 +298,7 @@ export default function AuthPage() {
 
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={handleDismiss}
             className="p-2 -mr-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
             aria-label="Close modal"
           >
@@ -376,7 +386,7 @@ export default function AuthPage() {
                   {detectedPatient?.name && (
                     <div className="flex items-center gap-1.5 text-[11px] text-[#007A64] font-semibold mt-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
-                      <span>Registered Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
+                      <span>Verified Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
                     </div>
                   )}
                 </div>

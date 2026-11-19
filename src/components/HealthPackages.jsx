@@ -13,7 +13,7 @@ import {
 export default function HealthPackages({ onSelectPackage }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const { addItem, cartItems } = useCart();
 
@@ -136,7 +136,8 @@ export default function HealthPackages({ onSelectPackage }) {
                             user,
                             navigate,
                             location,
-                            toastMessage: 'Please login or register to book a health package',
+                            openAuth,
+                            toastMessage: 'Please login to book a health package',
                             pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
                             addToast
                           });

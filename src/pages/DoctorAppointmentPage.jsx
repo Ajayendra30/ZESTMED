@@ -148,7 +148,7 @@ const SPECIALTY_LIST = [
 
 export default function DoctorAppointmentPage() {
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -230,9 +230,9 @@ export default function DoctorAppointmentPage() {
     return list;
   }, [doctorsList, activeSpecialtyFilter, showAllDoctors]);
 
-  // Auto-open doctor booking when returning from login
+  // Auto-open doctor booking when user logs in on the same page
   useEffect(() => {
-    if (user && location.state?.autoOpenBooking) {
+    if (user) {
       try {
         const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
         if (pendingRaw) {
@@ -257,7 +257,8 @@ export default function DoctorAppointmentPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a doctor appointment',
+        openAuth,
+        toastMessage: 'Please login to book a doctor appointment',
         pendingAction: { type: 'book_doctor', doctor: docToBook, mode },
         addToast
       });
@@ -298,7 +299,8 @@ export default function DoctorAppointmentPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to confirm your doctor appointment',
+        openAuth,
+        toastMessage: 'Please login to confirm your doctor appointment',
         addToast
       });
       return;

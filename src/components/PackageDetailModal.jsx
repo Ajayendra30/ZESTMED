@@ -12,7 +12,7 @@ import {
 export default function PackageDetailModal({ pkg, onClose, onScheduleCollection }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const { addItem, cartItems } = useCart();
 
@@ -27,7 +27,8 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a health package',
+        openAuth,
+        toastMessage: 'Please login to book a health package',
         pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
         addToast
       });

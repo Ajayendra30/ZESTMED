@@ -55,10 +55,24 @@ export default function SurgeryDetailPage() {
     }
   }, [user]);
 
-  // Auto-open surgery booking modal when returning from login
+  // Auto-open surgery booking modal when user logs in on this same page
   useEffect(() => {
-    if (user && location.state?.autoOpenBooking) {
-      setIsBookingModalOpen(true);
+    if (user) {
+      try {
+        const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed?.type === 'book_surgery') {
+            sessionStorage.removeItem('zestmed_pending_action');
+            setIsBookingModalOpen(true);
+            return;
+          }
+        }
+      } catch (_) {}
+
+      if (location.state?.autoOpenBooking) {
+        setIsBookingModalOpen(true);
+      }
     }
   }, [user, location.state]);
 
@@ -69,7 +83,8 @@ export default function SurgeryDetailPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book your surgery package',
+        openAuth,
+        toastMessage: 'Please login to book your surgery package',
         pendingAction: { type: 'book_surgery', surgeryId: id },
         addToast
       });
@@ -88,7 +103,8 @@ export default function SurgeryDetailPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to confirm your surgery booking',
+        openAuth,
+        toastMessage: 'Please login to confirm your surgery booking',
         addToast
       });
       return;

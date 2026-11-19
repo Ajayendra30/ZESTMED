@@ -13,7 +13,7 @@ import { enforceAuth } from '../utils/authGuard';
 
 export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
   const [searchDoctor, setSearchDoctor] = useState('');
@@ -83,7 +83,8 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to book a doctor consultation',
+        openAuth,
+        toastMessage: 'Please login to book a doctor consultation',
         addToast
       });
       return;

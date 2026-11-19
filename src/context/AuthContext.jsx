@@ -38,6 +38,20 @@ export const AuthProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
 
+  // Global listener for opening auth modal from authGuard or anywhere in the app
+  useEffect(() => {
+    const handleGlobalOpenAuth = (e) => {
+      const mode = e.detail?.mode || 'login';
+      setAuthMode(mode);
+      setIsAuthModalOpen(true);
+    };
+
+    window.addEventListener('zestmed:open-auth', handleGlobalOpenAuth);
+    return () => {
+      window.removeEventListener('zestmed:open-auth', handleGlobalOpenAuth);
+    };
+  }, []);
+
   useEffect(() => {
     try {
       if (user) {

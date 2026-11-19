@@ -15,7 +15,7 @@ import {
 export default function DiagnosticSection({ onSelectTest, onScheduleCollection }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAll, setShowAll] = useState(false);
@@ -156,7 +156,8 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
                           user,
                           navigate,
                           location,
-                          toastMessage: 'Please login or register to book a lab test',
+                          openAuth,
+                          toastMessage: 'Please login to book a lab test',
                           pendingAction: { type: 'add_to_cart', item: test, itemType: 'diagnostic' },
                           addToast
                         });

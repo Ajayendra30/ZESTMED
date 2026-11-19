@@ -157,6 +157,21 @@ export default function AuthModal() {
       console.warn('Failed restoring pending cart item:', e);
     }
 
+    // 2. Check for pending booking action in sessionStorage
+    try {
+      const pendingActionRaw = sessionStorage.getItem('zestmed_pending_action');
+      if (pendingActionRaw) {
+        const parsed = JSON.parse(pendingActionRaw);
+        if (parsed?.type === 'add_to_cart' && parsed?.item) {
+          sessionStorage.removeItem('zestmed_pending_action');
+          addItem(parsed.item, parsed.itemType || 'medicine');
+        }
+        window.dispatchEvent(new CustomEvent('zestmed:resume-action', { detail: parsed }));
+      }
+    } catch (e) {
+      console.warn('Failed restoring pending action:', e);
+    }
+
     handleClose();
   };
 
@@ -294,7 +309,7 @@ export default function AuthModal() {
                   {detectedPatient?.name && (
                     <div className="flex items-center gap-1.5 text-[11px] text-[#007A64] font-semibold mt-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
-                      <span>Registered Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
+                      <span>Verified Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
                     </div>
                   )}
                 </div>

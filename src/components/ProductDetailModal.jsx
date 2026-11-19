@@ -12,7 +12,7 @@ import {
 export default function ProductDetailModal({ product, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const { addItem, cartItems, updateQuantity } = useCart();
   const [qty, setQty] = useState(1);
@@ -28,7 +28,8 @@ export default function ProductDetailModal({ product, onClose }) {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to add medicines to your cart',
+        openAuth,
+        toastMessage: 'Please login to add medicines to your cart',
         pendingAction: { type: 'add_to_cart', item: product, itemType: 'medicine' },
         addToast
       });

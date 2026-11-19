@@ -11,7 +11,7 @@ import { enforceAuth } from '../utils/authGuard';
 
 export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultService = 'Lab Test & Diagnostics' }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { currentLocation } = useLocation();
   const { addToast } = useToast();
 
@@ -41,7 +41,8 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to book Senior Citizen Door-to-Door Cab Service',
+        openAuth,
+        toastMessage: 'Please login to book Senior Citizen Door-to-Door Cab Service',
         addToast
       });
       return;

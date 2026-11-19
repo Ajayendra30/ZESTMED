@@ -180,7 +180,7 @@ const CONDITIONS_LIST = [
 
 export default function PhysiotherapyPage() {
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -203,9 +203,9 @@ export default function PhysiotherapyPage() {
     }
   }, [user]);
 
-  // Auto-open or scroll to form when returning from login
+  // Auto-scroll to form when user completes login on the same page
   useEffect(() => {
-    if (user && location.state?.autoOpenBooking) {
+    if (user) {
       try {
         const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
         if (pendingRaw) {
@@ -216,7 +216,11 @@ export default function PhysiotherapyPage() {
               setFormData((prev) => ({ ...prev, selectedService: parsed.service }));
             }
             const formElement = document.getElementById('physio-booking-form-card');
-            if (formElement) formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (formElement) {
+              setTimeout(() => {
+                formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 250);
+            }
           }
         }
       } catch (_) {}
@@ -233,7 +237,8 @@ export default function PhysiotherapyPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a physiotherapy session',
+        openAuth,
+        toastMessage: 'Please login to book a physiotherapy session',
         pendingAction: { type: 'book_physio', service: serviceTitle || formData.selectedService },
         addToast
       });
@@ -258,7 +263,8 @@ export default function PhysiotherapyPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a physiotherapy session',
+        openAuth,
+        toastMessage: 'Please login to book a physiotherapy session',
         pendingAction: { type: 'book_physio', service: formData.selectedService },
         addToast
       });

@@ -14,7 +14,7 @@ import { enforceAuth } from '../utils/authGuard';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
 
@@ -64,7 +64,8 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to book a physiotherapy session',
+        openAuth,
+        toastMessage: 'Please login to book a physiotherapy session',
         addToast
       });
       return;

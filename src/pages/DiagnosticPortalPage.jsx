@@ -215,7 +215,7 @@ const SIDEBAR_CATEGORIES = [
 export default function DiagnosticPortalPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -229,9 +229,9 @@ export default function DiagnosticPortalPage() {
   const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
   const [bookingTestItem, setBookingTestItem] = useState(null);
 
-  // Auto-open booking modal when returning from login
+  // Auto-open booking modal when user logs in on the same page
   useEffect(() => {
-    if (user && location.state?.autoOpenBooking) {
+    if (user) {
       try {
         const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
         if (pendingRaw) {
@@ -263,7 +263,8 @@ export default function DiagnosticPortalPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a diagnostic lab test',
+        openAuth,
+        toastMessage: 'Please login to book a diagnostic lab test',
         pendingAction: { type: 'book_test', test },
         addToast
       });

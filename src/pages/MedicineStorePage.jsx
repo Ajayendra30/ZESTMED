@@ -139,7 +139,7 @@ const CATEGORIES_LIST = [
 export default function MedicineStorePage({ onOpenPrescriptionModal }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -196,7 +196,8 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to add medicines to your cart',
+        openAuth,
+        toastMessage: 'Please login to add medicines to your cart',
         pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'medicine' },
         addToast
       });

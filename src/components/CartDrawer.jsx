@@ -18,7 +18,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     subtotal, totalMRP, totalSavings, totalItemsCount 
   } = useCart();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const navigate = useNavigate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutComplete, setCheckoutComplete] = useState(false);
@@ -38,7 +38,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
       enforceAuth({
         user,
         navigate,
-        toastMessage: 'Please login or register to checkout and place your order',
+        openAuth,
+        toastMessage: 'Please login to checkout and place your order',
         addToast
       });
       return;

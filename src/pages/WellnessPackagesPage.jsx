@@ -167,7 +167,7 @@ const CATEGORIES_DATA = [
 export default function WellnessPackagesPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addItem, openCart } = useCart();
   const { addToast } = useToast();
 
@@ -179,7 +179,8 @@ export default function WellnessPackagesPage() {
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book a wellness package',
+        openAuth,
+        toastMessage: 'Please login to book a wellness package',
         pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
         addToast
       });

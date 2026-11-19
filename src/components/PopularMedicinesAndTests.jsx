@@ -13,7 +13,7 @@ import { enforceAuth } from '../utils/authGuard';
 export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest, onSelectPackage }) {
   const { addItem } = useCart();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [wishlisted, setWishlisted] = useState({});
@@ -138,7 +138,8 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to add medicines to your cart',
+        openAuth,
+        toastMessage: 'Please login to add medicines to your cart',
         pendingAction: { type: 'add_to_cart', item, itemType: 'medicine' },
         addToast
       });
@@ -160,7 +161,8 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
         user,
         navigate,
         location,
-        toastMessage: 'Please login or register to book lab tests',
+        openAuth,
+        toastMessage: 'Please login to book lab tests',
         pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'diagnostic' },
         addToast
       });

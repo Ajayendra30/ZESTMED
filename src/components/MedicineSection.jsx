@@ -15,7 +15,7 @@ import {
 export default function MedicineSection({ onSelectProduct, onOpenPrescriptionModal }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { addItem, cartItems } = useCart();
@@ -163,7 +163,8 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
                             user,
                             navigate,
                             location,
-                            toastMessage: 'Please login or register to add medicines to your cart',
+                            openAuth,
+                            toastMessage: 'Please login to add medicines to your cart',
                             pendingAction: { type: 'add_to_cart', item: product, itemType: 'medicine' },
                             addToast
                           });
