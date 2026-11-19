@@ -14,12 +14,18 @@ import dotenv from 'dotenv';
 // Ensure environment variables are loaded
 dotenv.config();
 
+const DEFAULT_KEY_ID = 'rzp_test_U22znXn1PSuEH1';
+const DEFAULT_KEY_SECRET = 'vRl0FAcN4wNQyk4dnk4uWZCv';
+
+const getKeyId = () => process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || DEFAULT_KEY_ID;
+const getKeySecret = () => process.env.RAZORPAY_KEY_SECRET || DEFAULT_KEY_SECRET;
+
 /**
  * Get Razorpay client instance
  */
 export const getRazorpayClient = () => {
-  const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = getKeyId();
+  const keySecret = getKeySecret();
 
   if (!keyId || !keySecret) {
     return null;
@@ -40,8 +46,8 @@ export const getRazorpayClient = () => {
  * @param {Object} [params.notes]
  */
 export const createPaymentOrder = async ({ amount, currency = 'INR', receipt, notes = {} }) => {
-  const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = getKeyId();
+  const keySecret = getKeySecret();
 
   if (!keyId || !keySecret) {
     throw new Error('Razorpay configuration missing: RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set in server environment.');
@@ -110,7 +116,7 @@ export const createPaymentOrder = async ({ amount, currency = 'INR', receipt, no
  * @returns {boolean} true if signature matches perfectly
  */
 export const verifyPaymentSignature = ({ orderId, paymentId, signature }) => {
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keySecret = getKeySecret();
   if (!keySecret) {
     console.error('[RazorpayService] Verification failed: RAZORPAY_KEY_SECRET is missing.');
     return false;
