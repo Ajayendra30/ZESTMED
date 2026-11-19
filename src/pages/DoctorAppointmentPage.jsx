@@ -388,11 +388,11 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 3. BROWSE BY SPECIALTY (10 Medical Specialties matching Reference)       */}
         {/* ========================================================================= */}
-        <section className="space-y-4">
+        <section className="space-y-3.5 sm:space-y-4">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
               Browse by Specialty
             </h2>
             <button
@@ -401,15 +401,15 @@ export default function DoctorAppointmentPage() {
                 setActiveSpecialtyFilter('All');
                 setShowAllDoctors(true);
               }}
-              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
             >
               <span>View All Specialties</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
-          {/* 10 Specialty Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-3.5">
+          {/* 10 Specialty Cards Grid - Compact sizing with no cut-off text */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-2.5 lg:gap-3">
             {SPECIALTY_LIST.map((spec) => {
               const IconComp = spec.icon;
               const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
@@ -424,19 +424,19 @@ export default function DoctorAppointmentPage() {
                       setActiveSpecialtyFilter(spec.name);
                     }
                   }}
-                  className={`bg-white rounded-2xl border p-4 sm:p-4.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[115px] sm:min-h-[125px] select-none ${
+                  className={`bg-white rounded-xl sm:rounded-2xl border px-1.5 py-2.5 sm:px-2 sm:py-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[92px] sm:min-h-[102px] select-none overflow-hidden ${
                     isSelected
                       ? 'border-[#007A64] ring-2 ring-[#007A64]/20 shadow-md bg-teal-50/20 scale-102'
                       : 'border-slate-200/80 hover:border-teal-200 hover:shadow-md shadow-2xs hover:scale-102'
                   }`}
                 >
-                  {/* Clean Vector Icon */}
-                  <div className="h-10 sm:h-11 w-10 sm:w-11 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-                    <IconComp className={`w-8 h-8 sm:w-8.5 sm:h-8.5 ${spec.color}`} />
+                  {/* Clean Vector Icon - Sized slightly smaller */}
+                  <div className="h-7 sm:h-8 w-7 sm:w-8 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform shrink-0">
+                    <IconComp className={`w-5.5 h-5.5 sm:w-6 sm:h-6 ${spec.color}`} />
                   </div>
 
-                  {/* Title Label */}
-                  <span className={`text-xs sm:text-sm font-bold leading-tight line-clamp-2 transition-colors ${
+                  {/* Title Label - Balanced font size & tracking so 'Gastroenterology' is never cut off */}
+                  <span className={`text-[10px] sm:text-[11px] xl:text-[11.5px] font-bold leading-tight tracking-tight transition-colors w-full px-0.5 text-center break-words hyphens-auto ${
                     isSelected ? 'text-[#007A64] font-black' : 'text-slate-800 group-hover:text-[#007A64]'
                   }`}>
                     {spec.name}
