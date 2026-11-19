@@ -360,34 +360,34 @@ export default function DiagnosticPortalPage() {
                 Book a wide range of lab tests online across Guwahati with home sample collection. All test reports delivered within a single day (12-24 Hours).
               </p>
 
-              {/* 4 Trust Badges in a Horizontal Row */}
-              <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                    <ShieldCheck className="w-4 h-4 text-[#008F83]" />
+              {/* 4 Trust Badges in a 2x2 Grid (2 columns and 2 rows) */}
+              <div className="pt-3 sm:pt-4 grid grid-cols-2 gap-x-4 sm:gap-x-8 lg:gap-x-10 gap-y-3.5 sm:gap-y-4 max-w-xl text-xs sm:text-base text-slate-800 font-bold">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
+                    <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
                   </div>
-                  <span>100% Accurate Reports</span>
+                  <span className="leading-snug">100% Accurate Reports</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                    <Home className="w-4 h-4 text-[#008F83]" />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
+                    <Home className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
                   </div>
-                  <span>Free Home Collection</span>
+                  <span className="leading-snug">Free Home Collection</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
-                    <Award className="w-4 h-4 text-[#008F83]" />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
+                    <Award className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
                   </div>
-                  <span>NABL Certified Labs</span>
+                  <span className="leading-snug">NABL Certified Labs</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-amber-500 shadow-xs">
-                    <Clock className="w-4 h-4 text-amber-500" />
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-amber-500 shadow-xs shrink-0">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
                   </div>
-                  <span className="text-teal-900 font-extrabold">Single-Day Reports</span>
+                  <span className="leading-snug text-[#005952] font-black">Single-Day Reports</span>
                 </div>
               </div>
             </div>
