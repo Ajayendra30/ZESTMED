@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function BookingDetailModal({ booking, isOpen, onClose, onCancelBooking }) {
+export default function BookingDetailModal({ booking, isOpen, onClose, onCancelBooking, onMarkUpiPaid }) {
   const { addToast } = useToast();
   const [copied, setCopied] = useState(false);
   const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
@@ -246,6 +246,23 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onCancelB
                       <strong className="text-slate-700">{booking.orderId || booking.razorpayOrderId || booking.razorpay_order_id}</strong>
                     </div>
                   )}
+                </div>
+              )}
+
+              {((booking.paymentStatus || '').toLowerCase().includes('clinic') || (booking.paymentStatus || '').toLowerCase().includes('post-session') || (booking.paymentStatus || '').toLowerCase().includes('collection')) && !isCancelled && (
+                <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-[11px] text-slate-500 font-medium">Paid via UPI / Razorpay?</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onMarkUpiPaid) onMarkUpiPaid(booking);
+                      onClose();
+                    }}
+                    className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Verify as Paid (UPI)</span>
+                  </button>
                 </div>
               )}
             </div>

@@ -79,7 +79,8 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
   };
 
   const saveCompletedBooking = async (generatedRef, paymentDetails = null) => {
-    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_ON_COLLECTION');
+    const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
+    const isPaidOnline = Boolean(paymentDetails && pid && pid !== 'PAY_ON_COLLECTION');
     const newLabBooking = {
       id: generatedRef,
       bookingId: generatedRef,
@@ -98,10 +99,10 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       userId: user?.id || null,
       userEmail: user?.email || '',
       status: 'Confirmed',
-      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay on Collection',
-      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay on Sample Collection',
-      paymentId: paymentDetails?.paymentId || '',
-      orderId: paymentDetails?.orderId || '',
+      paymentStatus: isPaidOnline ? 'Paid (UPI / Razorpay Verified)' : 'Pay on Collection',
+      paymentMethod: isPaidOnline ? (paymentDetails?.paymentMethod || 'Razorpay (UPI - Verified)') : 'Pay on Sample Collection',
+      paymentId: pid && pid !== 'PAY_ON_COLLECTION' ? pid : '',
+      orderId: paymentDetails?.orderId || paymentDetails?.razorpay_order_id || '',
       specimen: item.specimen || 'Blood / Serum Sample (NABL Barcoded)',
       collectionAddress: `${address || 'GS Road'}, ${district}, Assam - ${pincode}`,
       phlebotomist: {

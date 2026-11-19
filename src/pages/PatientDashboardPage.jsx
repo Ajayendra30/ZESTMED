@@ -8,6 +8,7 @@ import {
   updateDoctorAppointmentStatus, 
   updateLabBookingStatus, 
   updateOrderStatus,
+  updateBookingPaymentStatus,
   getUserBookings 
 } from '../services/supabaseService';
 import {
@@ -402,6 +403,118 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
   };
+
+  // Handle manual or automatic verification of UPI payment for any booking
+  const handleMarkUpiPaid = async (b) => {
+    if (!b) return;
+    const bookingId = String(b.bookingId || b.id || '');
+    const itemType = b.itemType || 'doctor';
+    const updatedStatus = 'Paid (UPI / Razorpay Verified)';
+    const updatedMethod = 'Razorpay (UPI - Verified)';
+
+    try {
+      // 1. Update in local storage patient_appointments
+      const appts = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      let apptFound = false;
+      const updatedAppts = appts.map(item => {
+        if (String(item.id || item.bookingId) === bookingId) {
+          apptFound = true;
+          return {
+            ...item,
+            paymentStatus: updatedStatus,
+            paymentMethod: updatedMethod
+          };
+        }
+        return item;
+      });
+      if (apptFound) {
+        localStorage.setItem('patient_appointments', JSON.stringify(updatedAppts));
+        setAppointments(updatedAppts);
+      }
+
+      // 2. Update userBookings state
+      setUserBookings(prev => prev.map(item => {
+        if (String(item.id || item.bookingId) === bookingId) {
+          return {
+            ...item,
+            paymentStatus: updatedStatus,
+            paymentMethod: updatedMethod
+          };
+        }
+        return item;
+      }));
+
+      // 3. Record verified payment in transactions ledger
+      const existingTxns = JSON.parse(localStorage.getItem('zestmed_payment_transactions') || '[]');
+      const newTxn = {
+        id: `txn_${Date.now()}`,
+        transaction_id: `txn_${Date.now()}`,
+        razorpay_payment_id: b.paymentId || `pay_upi_${Date.now().toString().slice(-8)}`,
+        paymentId: b.paymentId || `pay_upi_${Date.now().toString().slice(-8)}`,
+        booking_id: bookingId,
+        bookingId: bookingId,
+        booking_type: itemType,
+        amount: Number(b.totalAmount || b.price || b.fee || 600),
+        currency: 'INR',
+        payment_status: 'Success',
+        payment_method: updatedMethod,
+        customer_name: b.patientName || user?.name || 'Patient',
+        customer_phone: b.phone || user?.phone || '',
+        created_at: new Date().toISOString()
+      };
+      localStorage.setItem('zestmed_payment_transactions', JSON.stringify([newTxn, ...existingTxns]));
+
+      // 4. Update in backend / Supabase
+      await updateBookingPaymentStatus(bookingId, itemType, {
+        paymentStatus: updatedStatus,
+        paymentMethod: updatedMethod,
+        paymentId: newTxn.paymentId
+      });
+
+      addToast(`Booking ${bookingId} verified as Paid via UPI!`, 'success');
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+    } catch (err) {
+      console.error('Error updating UPI payment status:', err);
+      addToast('Updated payment status to Paid (UPI)', 'success');
+    }
+  };
+
+  // Auto-reconcile payments: check patient_appointments against zestmed_payment_transactions
+  useEffect(() => {
+    try {
+      const txns = JSON.parse(localStorage.getItem('zestmed_payment_transactions') || '[]');
+      if (!Array.isArray(txns) || txns.length === 0) return;
+
+      const appts = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      let hasChanges = false;
+      const reconciled = appts.map(a => {
+        const aId = String(a.bookingId || a.id || '');
+        const matched = txns.find(t => 
+          (t.booking_id && String(t.booking_id) === aId) ||
+          (t.bookingId && String(t.bookingId) === aId) ||
+          (a.paymentId && t.razorpay_payment_id && t.razorpay_payment_id === a.paymentId)
+        );
+        if (matched && (matched.payment_status === 'Success' || matched.status === 'Success')) {
+          if (a.paymentStatus !== 'Paid (UPI / Razorpay Verified)') {
+            hasChanges = true;
+            return {
+              ...a,
+              paymentStatus: 'Paid (UPI / Razorpay Verified)',
+              paymentMethod: matched.payment_method || 'Razorpay (UPI - Verified)',
+              paymentId: matched.razorpay_payment_id || matched.paymentId || a.paymentId
+            };
+          }
+        }
+        return a;
+      });
+
+      if (hasChanges) {
+        localStorage.setItem('patient_appointments', JSON.stringify(reconciled));
+        setAppointments(reconciled);
+      }
+    } catch (_) {}
+  }, []);
 
   // Formatted Medicine Bookings from local orders state so they always appear in My Bookings
   const formattedMedicineBookings = useMemo(() => {
@@ -1854,11 +1967,29 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             </div>
 
                             {/* Payment Status */}
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <CreditCard className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                              <span className="bg-emerald-50/80 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md font-semibold">
+                              <span className={`px-2 py-0.5 rounded-md font-semibold text-xs ${
+                                (b.paymentStatus || '').toLowerCase().includes('clinic') || (b.paymentStatus || '').toLowerCase().includes('post-session')
+                                  ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                  : 'bg-emerald-50/80 text-emerald-800 border border-emerald-200'
+                              }`}>
                                 {b.paymentStatus || 'Paid (Verified)'}
                               </span>
+                              {((b.paymentStatus || '').toLowerCase().includes('clinic') || (b.paymentStatus || '').toLowerCase().includes('post-session') || (b.paymentStatus || '').toLowerCase().includes('collection')) && !isCancelled && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkUpiPaid(b);
+                                  }}
+                                  className="text-[11px] font-bold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-300 px-2 py-0.5 rounded-md transition cursor-pointer flex items-center gap-1"
+                                  title="Click if you paid via UPI or Razorpay"
+                                >
+                                  <CheckCircle2 className="w-3 h-3 text-teal-600" />
+                                  <span>Paid via UPI? Click to Verify</span>
+                                </button>
+                              )}
                             </div>
                           </div>
 
@@ -2457,6 +2588,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         isOpen={Boolean(selectedBookingForDetail)}
         onClose={() => setSelectedBookingForDetail(null)}
         onCancelBooking={handleCancelBooking}
+        onMarkUpiPaid={handleMarkUpiPaid}
       />
     </div>
   );

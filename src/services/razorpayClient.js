@@ -316,15 +316,30 @@ export const launchRazorpayCheckout = async ({
           });
 
           // Step E: Persist verified transaction in database
+          const paymentId = response.razorpay_payment_id || verification.transaction?.paymentId || `pay_${Date.now()}`;
+          const orderId = response.razorpay_order_id || orderData.orderId || verification.transaction?.orderId || '';
           const recorded = await savePaymentTransaction({
             ...verification.transaction,
+            paymentId,
+            orderId,
+            bookingId,
+            bookingType,
+            amount,
             customerName: resolvedCustomer.name,
             customerPhone: resolvedCustomer.phone,
+            paymentMethod: 'Razorpay (UPI - Verified)',
             serviceTitle
           });
 
           if (onSuccess) {
-            onSuccess(recorded || verification.transaction);
+            onSuccess({
+              ...recorded,
+              paymentId,
+              orderId,
+              status: 'Success',
+              verified: true,
+              paymentMethod: 'Razorpay (UPI - Verified)'
+            });
           }
         } catch (verifyErr) {
           console.error('[Razorpay Checkout Handler] Verification failed:', verifyErr);

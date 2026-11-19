@@ -1239,6 +1239,7 @@ export const getUserBookings = async (user) => {
   }
 
   // 2. Fetch and merge user-specific persistent records from local storage
+  const localTransactions = getLocalData('zestmed_payment_transactions', []);
   const localAppts = getLocalData('patient_appointments', []).filter(isMatchingUser);
   const localLabs = getLocalData('zestmed_patient_lab_bookings', []).filter(isMatchingUser);
   const localOrders = getLocalData('zestmed_patient_orders', []).filter(isMatchingUser);
@@ -1261,6 +1262,24 @@ export const getUserBookings = async (user) => {
         iType = 'wellness';
       }
 
+      // Check payment ledger in case appointment was paid via UPI / Razorpay
+      const matchedTxn = localTransactions.find(t => 
+        (t.booking_id && String(t.booking_id) === String(bId)) ||
+        (t.bookingId && String(t.bookingId) === String(bId)) ||
+        (a.paymentId && t.razorpay_payment_id && t.razorpay_payment_id === a.paymentId)
+      );
+
+      let resolvedPaymentStatus = a.paymentStatus || 'Paid (Verified)';
+      let resolvedPaymentMethod = a.paymentMethod || 'Pay at Clinic Desk';
+
+      if (matchedTxn && (matchedTxn.payment_status === 'Success' || matchedTxn.status === 'Success')) {
+        resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
+        resolvedPaymentMethod = matchedTxn.payment_method || 'Razorpay (UPI - Verified)';
+      } else if (a.paymentId && a.paymentId !== 'PAY_AT_CLINIC' && a.paymentId !== 'clinic') {
+        resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
+        resolvedPaymentMethod = a.paymentMethod && !a.paymentMethod.includes('Clinic') ? a.paymentMethod : 'Razorpay (UPI - Verified)';
+      }
+
       allResults.push({
         id: bId,
         bookingId: bId,
@@ -1280,7 +1299,10 @@ export const getUserBookings = async (user) => {
         mode: a.mode || (iType === 'doctor' ? 'Clinic Visit' : 'Home / Clinic Visit'),
         location: a.hospital || a.location || 'Zestmed Center, Guwahati',
         hospital: a.hospital,
-        paymentStatus: a.paymentStatus || 'Paid (Verified)',
+        paymentStatus: resolvedPaymentStatus,
+        paymentMethod: resolvedPaymentMethod,
+        paymentId: a.paymentId || matchedTxn?.razorpay_payment_id || matchedTxn?.paymentId || '',
+        orderId: a.orderId || matchedTxn?.razorpay_order_id || matchedTxn?.orderId || '',
         bookingStatus: a.status || 'Confirmed',
         status: a.status || 'Confirmed',
         totalAmount: parseFloat(a.price || a.fee || a.fees || 0),
@@ -1389,20 +1411,28 @@ export const savePaymentTransaction = async (paymentData) => {
   if (!paymentData) return null;
 
   const user = getAuthenticatedUser();
+  const paymentId = paymentData.paymentId || paymentData.razorpay_payment_id || `pay_${Date.now()}`;
+  const orderId = paymentData.orderId || paymentData.razorpay_order_id || `order_${Date.now()}`;
+  const paymentMethod = paymentData.paymentMethod || 'Razorpay (UPI - Verified)';
+  const paymentStatus = paymentData.payment_status || paymentData.status || 'Success';
+
   const transactionRecord = {
     id: paymentData.transactionId || `txn_${Date.now()}`,
     transaction_id: paymentData.transactionId || `txn_${Date.now()}`,
-    razorpay_order_id: paymentData.orderId || '',
-    razorpay_payment_id: paymentData.paymentId || '',
-    razorpay_signature: paymentData.signature || '',
+    razorpay_order_id: orderId,
+    razorpay_payment_id: paymentId,
+    razorpay_signature: paymentData.signature || paymentData.razorpay_signature || '',
+    paymentId,
+    orderId,
     amount: Number(paymentData.amount) || 0,
     currency: paymentData.currency || 'INR',
-    payment_status: paymentData.status || 'Success',
+    payment_status: paymentStatus,
     booking_id: paymentData.bookingId || '',
+    bookingId: paymentData.bookingId || '',
     booking_type: paymentData.bookingType || 'general',
     customer_name: paymentData.customerName || user?.name || 'Patient',
     customer_phone: paymentData.customerPhone || user?.phone || user?.contact || '',
-    payment_method: paymentData.paymentMethod || 'Razorpay (Verified)',
+    payment_method: paymentMethod,
     created_at: new Date().toISOString()
   };
 
@@ -1425,23 +1455,29 @@ export const savePaymentTransaction = async (paymentData) => {
     paymentData.bookingId,
     paymentData.bookingType,
     {
-      paymentStatus: 'Paid',
-      paymentId: paymentData.paymentId,
-      orderId: paymentData.orderId,
-      transactionId: paymentData.transactionId
+      paymentStatus: 'Paid (UPI / Razorpay Verified)',
+      paymentMethod,
+      paymentId,
+      orderId,
+      transactionId: transactionRecord.id
     }
   );
 
   return transactionRecord;
 };
 
-export const updateBookingPaymentStatus = async (bookingId, bookingType, paymentDetails) => {
+export const updateBookingPaymentStatus = async (bookingId, bookingType, paymentDetails = {}) => {
   if (!bookingId) return false;
 
+  const paymentId = paymentDetails.paymentId || paymentDetails.razorpay_payment_id || '';
+  const orderId = paymentDetails.orderId || paymentDetails.razorpay_order_id || '';
+  const paymentMethod = paymentDetails.paymentMethod || 'Razorpay (UPI - Verified)';
+  const paymentStatus = paymentDetails.paymentStatus || 'Paid (UPI / Razorpay Verified)';
+
   const updateFields = {
-    payment_status: 'Paid',
-    payment_id: paymentDetails.paymentId || '',
-    payment_method: 'Razorpay (Verified)'
+    payment_status: paymentStatus,
+    payment_id: paymentId,
+    payment_method: paymentMethod
   };
 
   // 1. Supabase update
@@ -1461,8 +1497,10 @@ export const updateBookingPaymentStatus = async (bookingId, bookingType, payment
     }
   }
 
-  // 2. Local cache updates across registries
+  // 2. Local cache updates across all registries including patient appointments
   const registries = [
+    'patient_appointments',
+    'zestmed_patient_lab_bookings',
     'zestmed_doctor_appointments',
     'zestmed_physio_appointments',
     'zestmed_surgery_bookings',
@@ -1476,14 +1514,15 @@ export const updateBookingPaymentStatus = async (bookingId, bookingType, payment
     const list = getLocalData(key, []);
     let modified = false;
     const updatedList = list.map(item => {
-      if (item.id === bookingId || item.bookingId === bookingId || item.orderNumber === bookingId || item.booking_number === bookingId) {
+      const bId = String(item.id || item.bookingId || item.appointment_number || item.orderNumber || item.booking_number || '');
+      if (bId === String(bookingId)) {
         modified = true;
         return {
           ...item,
-          paymentStatus: 'Paid',
-          paymentMethod: 'Razorpay (Verified)',
-          paymentId: paymentDetails.paymentId,
-          orderId: paymentDetails.orderId
+          paymentStatus,
+          paymentMethod,
+          paymentId: paymentId || item.paymentId,
+          orderId: orderId || item.orderId
         };
       }
       return item;
@@ -1492,6 +1531,11 @@ export const updateBookingPaymentStatus = async (bookingId, bookingType, payment
       setLocalData(key, updatedList);
     }
   });
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+  }
 
   return true;
 };

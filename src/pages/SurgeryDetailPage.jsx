@@ -96,7 +96,8 @@ export default function SurgeryDetailPage() {
 
   // Save Confirmed Surgery Booking
   const saveConfirmedSurgeryBooking = async (bookingId, paymentDetails = null) => {
-    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_AT_HOSPITAL');
+    const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
+    const isPaidOnline = Boolean(paymentDetails && pid && pid !== 'PAY_AT_HOSPITAL');
     const isToken = patientForm.insuranceType.includes('Token');
     const chargedAmount = isPaidOnline ? (isToken ? 999 : surgery.startingPrice) : surgery.startingPrice;
 
@@ -136,13 +137,13 @@ export default function SurgeryDetailPage() {
       status: 'Confirmed',
       bookingStatus: 'Confirmed',
       paymentStatus: isPaidOnline 
-        ? (isToken ? 'Advance Token Paid (Razorpay Verified)' : 'Full Package Paid (Razorpay Verified)')
+        ? (isToken ? 'Advance Token Paid (UPI / Razorpay Verified)' : 'Full Package Paid (UPI / Razorpay Verified)')
         : patientForm.insuranceType === 'TPA Cashless Mediclaim' 
         ? 'TPA Cashless Assistance' 
         : 'Pay at Hospital',
-      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : patientForm.insuranceType,
-      paymentId: paymentDetails?.paymentId || '',
-      orderId: paymentDetails?.orderId || '',
+      paymentMethod: isPaidOnline ? (paymentDetails?.paymentMethod || 'Razorpay (UPI - Verified)') : patientForm.insuranceType,
+      paymentId: pid && pid !== 'PAY_AT_HOSPITAL' ? pid : '',
+      orderId: paymentDetails?.orderId || paymentDetails?.razorpay_order_id || '',
       paidAmount: isPaidOnline ? chargedAmount : 0,
       userId: user.id || null,
       userEmail: user.email || '',

@@ -79,7 +79,13 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
   };
 
   const saveDoctorAppointment = async (apptId, paymentDetails = null) => {
-    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_AT_CLINIC');
+    const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
+    const isPaidOnline = Boolean(
+      paymentDetails &&
+      pid &&
+      pid !== 'PAY_AT_CLINIC' &&
+      pid !== 'clinic'
+    );
     const newBooking = {
       id: apptId,
       bookingId: apptId,
@@ -108,10 +114,10 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
       patientAge: patientDetails.age,
       symptoms: patientDetails.symptoms || 'General Doctor Consultation',
       status: 'Confirmed',
-      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay at Clinic',
-      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay at Clinic Desk',
-      paymentId: paymentDetails?.paymentId || '',
-      orderId: paymentDetails?.orderId || '',
+      paymentStatus: isPaidOnline ? 'Paid (UPI / Razorpay Verified)' : 'Pay at Clinic',
+      paymentMethod: isPaidOnline ? (paymentDetails?.paymentMethod || 'Razorpay (UPI - Verified)') : 'Pay at Clinic Desk',
+      paymentId: pid && pid !== 'PAY_AT_CLINIC' ? pid : '',
+      orderId: paymentDetails?.orderId || paymentDetails?.razorpay_order_id || '',
       createdAt: new Date().toISOString()
     };
 

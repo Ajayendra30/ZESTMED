@@ -258,7 +258,8 @@ export default function PhysiotherapyPage() {
 
   // Save Confirmed Physio Booking
   const saveConfirmedPhysioBooking = async (apptId, paymentDetails = null) => {
-    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_POST_SESSION');
+    const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
+    const isPaidOnline = Boolean(paymentDetails && pid && pid !== 'PAY_POST_SESSION');
     const newBooking = {
       id: apptId,
       bookingId: apptId,
@@ -287,10 +288,10 @@ export default function PhysiotherapyPage() {
       userEmail: user?.email || '',
       symptoms: `${formData.selectedService} - Specialized rehabilitation session`,
       status: 'Confirmed',
-      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay Post-Session',
-      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay Post-Session (Cash/UPI)',
-      paymentId: paymentDetails?.paymentId || '',
-      orderId: paymentDetails?.orderId || '',
+      paymentStatus: isPaidOnline ? 'Paid (UPI / Razorpay Verified)' : 'Pay Post-Session',
+      paymentMethod: isPaidOnline ? (paymentDetails?.paymentMethod || 'Razorpay (UPI - Verified)') : 'Pay Post-Session (Cash/UPI)',
+      paymentId: pid && pid !== 'PAY_POST_SESSION' ? pid : '',
+      orderId: paymentDetails?.orderId || paymentDetails?.razorpay_order_id || '',
       createdAt: new Date().toISOString(),
     };
 
