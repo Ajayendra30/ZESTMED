@@ -717,78 +717,86 @@ export default function PhysiotherapyPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 6. OUR TREATMENT PROCESS (4 Horizontal Steps with Connecting Arrows)      */}
+        {/* 6. OUR TREATMENT PROCESS (4 Steps matching Surgery Process Design)        */}
         {/* ========================================================================= */}
-        <section className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 lg:p-11 shadow-2xs">
+        <section className="space-y-4">
           
-          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight mb-7 sm:mb-9">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Our Treatment Process
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4.5 relative">
             
             {/* Step 1 */}
-            <div className="flex flex-col items-start relative text-left">
-              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
-                1
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+              <div className="flex items-center justify-between mb-3.5">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+                  1
+                </span>
+                <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
-                <FileText className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                  Assessment
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                  Detailed evaluation of your condition
+                </p>
               </div>
-              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
-                Assessment
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
-                Detailed evaluation of your condition
-              </p>
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-col items-start relative text-left">
-              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
-                2
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+              <div className="flex items-center justify-between mb-3.5">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+                  2
+                </span>
+                <Target className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
-                <Target className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                  Personalized Plan
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                  A customized therapy plan for you
+                </p>
               </div>
-              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
-                Personalized Plan
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
-                A customized therapy plan for you
-              </p>
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-start relative text-left">
-              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
-                3
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+              <div className="flex items-center justify-between mb-3.5">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+                  3
+                </span>
+                <Activity className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
-                <Activity className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                  Therapy Sessions
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                  Guided sessions with expert care
+                </p>
               </div>
-              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
-                Therapy Sessions
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
-                Guided sessions with expert care
-              </p>
             </div>
 
             {/* Step 4 */}
-            <div className="flex flex-col items-start relative text-left">
-              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
-                4
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+              <div className="flex items-center justify-between mb-3.5">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+                  4
+                </span>
+                <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
-                <CheckCircle2 className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                  Progress &amp; Recovery
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                  Track improvement and get long-term support
+                </p>
               </div>
-              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
-                Progress & Recovery
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
-                Track improvement and get long-term support
-              </p>
             </div>
 
           </div>
