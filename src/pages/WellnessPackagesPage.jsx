@@ -343,64 +343,64 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 3. "Our Wellness Packages" (4 Cards Grid) matching Reference             */}
         {/* ========================================================================= */}
-        <section id="wellness-packages-grid" className="space-y-5">
+        <section id="wellness-packages-grid" className="space-y-4 sm:space-y-4.5">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#0B1B2B] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight">
               Our Wellness Packages
             </h2>
             <Link
               to="/packages"
-              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
             >
               <span>View All Packages</span>
-              <ArrowRight className="w-4.5 h-4.5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* 4 Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4.5 sm:gap-5.5">
+          {/* 4 Cards Grid with Increased Spacing & Decreased Sizing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 xl:gap-7">
             {WELLNESS_PACKAGES.map((pkg) => {
               const IconComp = pkg.icon;
 
               return (
                 <div
                   key={pkg.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group"
                 >
-                  <div className="space-y-3.5">
+                  <div className="space-y-3">
                     
                     {/* Top Header: Icon + Package Name & Subtitle */}
-                    <div className="flex items-start gap-3.5">
-                      <div className={`w-11 h-11 rounded-2xl ${pkg.iconColor} flex items-center justify-center shrink-0`}>
-                        <IconComp className="w-6 h-6 stroke-[2.2]" />
+                    <div className="flex items-start gap-3">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${pkg.iconColor} flex items-center justify-center shrink-0`}>
+                        <IconComp className="w-5 h-5 stroke-[2.2]" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-base sm:text-lg font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors">
+                        <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors">
                           {pkg.name}
                         </h3>
-                        <p className="text-xs sm:text-sm text-slate-500 font-medium leading-tight mt-1">
+                        <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight mt-0.5">
                           {pkg.subtitle}
                         </p>
                       </div>
                     </div>
 
                     {/* Middle: Checklist & Right Illustration Graphic */}
-                    <div className="flex items-center justify-between gap-3 pt-1.5 min-h-[105px]">
+                    <div className="flex items-center justify-between gap-2.5 pt-1 min-h-[85px] sm:min-h-[92px]">
                       
                       {/* Left Checklist */}
-                      <ul className="space-y-2 text-xs sm:text-sm text-slate-700 font-semibold flex-1">
+                      <ul className="space-y-1.5 text-xs text-slate-700 font-semibold flex-1">
                         {pkg.tests.map((test, idx) => (
-                          <li key={idx} className="flex items-center gap-2 leading-snug">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 fill-emerald-50" />
+                          <li key={idx} className="flex items-center gap-1.5 leading-snug">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 fill-emerald-50" />
                             <span className="truncate">{test}</span>
                           </li>
                         ))}
                       </ul>
 
                       {/* Right Illustration Asset */}
-                      <div className="w-20 h-20 sm:w-22 sm:h-22 shrink-0 flex items-center justify-center select-none pointer-events-none">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center select-none pointer-events-none">
                         <img
                           src={pkg.image}
                           alt={pkg.name}
@@ -412,19 +412,19 @@ export default function WellnessPackagesPage() {
                   </div>
 
                   {/* Bottom: Pricing & Action Button */}
-                  <div className="pt-4 mt-4 border-t border-slate-100 space-y-3">
+                  <div className="pt-3 mt-3 border-t border-slate-100 space-y-2.5">
                     
                     {/* Pricing Row */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-xs sm:text-sm text-slate-400 line-through font-semibold">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-[11px] sm:text-xs text-slate-400 line-through font-semibold">
                           ₹{pkg.mrp.toLocaleString('en-IN')}
                         </span>
-                        <span className="text-lg sm:text-xl font-black text-[#007A64]">
+                        <span className="text-base sm:text-lg font-black text-[#007A64]">
                           ₹{pkg.price.toLocaleString('en-IN')}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
+                      <span className="text-[10px] sm:text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
                         {pkg.discount}
                       </span>
                     </div>
@@ -433,10 +433,10 @@ export default function WellnessPackagesPage() {
                     <button
                       type="button"
                       onClick={() => handleBookNow(pkg)}
-                      className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base py-2.5 sm:py-3 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                      className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-black text-xs sm:text-sm py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                     >
                       <span>Book Now</span>
-                      <ArrowRight className="w-4.5 h-4.5" />
+                      <ArrowRight className="w-4 h-4" />
                     </button>
 
                   </div>
