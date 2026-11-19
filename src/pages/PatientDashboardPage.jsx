@@ -1841,29 +1841,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         ? `There are no bookings recorded under your verified account (${user.phone || user.contact || user.email || user.name || 'Current User'}). Only your own real bookings will be displayed here.`
                         : 'Please log in with your phone or email to view your booked services.'}
                     </p>
-                    <div className="flex flex-wrap justify-center gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => navigate('/diagnostics')}
-                        className="px-3.5 py-2 bg-[#14B8A6] text-white rounded-xl text-xs font-bold hover:bg-[#0d9488] transition cursor-pointer shadow-2xs"
-                      >
-                        Book Lab Test
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => navigate('/doctor-appointment')}
-                        className="px-3.5 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition cursor-pointer shadow-2xs"
-                      >
-                        Book Doctor
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => navigate('/physiotherapy')}
-                        className="px-3.5 py-2 bg-white border border-[#008F83] text-[#008F83] rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-                      >
-                        Book Physio
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
