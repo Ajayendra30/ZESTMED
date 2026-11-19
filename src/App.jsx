@@ -26,7 +26,6 @@ import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
 import BookPhysioModal from './components/BookPhysioModal';
-import BookSurgeryModal from './components/BookSurgeryModal';
 import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
 import { getActiveSubdomain } from './utils/subdomain';
 
@@ -151,7 +150,7 @@ function AppContent() {
         onSearchFocus={handleSearchFocus}
         onOpenDoctorModal={() => setIsDoctorModalOpen(true)}
         onOpenPhysioModal={() => setIsPhysioModalOpen(true)}
-        onOpenSurgeryModal={() => setIsSurgeryModalOpen(true)}
+        onOpenSurgeryModal={() => navigate('/surgery-packages')}
         onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
       />
 
@@ -231,11 +230,6 @@ function AppContent() {
       <BookPhysioModal
         isOpen={isPhysioModalOpen}
         onClose={() => setIsPhysioModalOpen(false)}
-        onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
-      />
-      <BookSurgeryModal
-        isOpen={isSurgeryModalOpen}
-        onClose={() => setIsSurgeryModalOpen(false)}
         onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
       />
       <SeniorCitizenPickUpModal

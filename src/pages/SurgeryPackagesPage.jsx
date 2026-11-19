@@ -8,7 +8,6 @@ import {
   Activity, HeartPulse, ChevronRight, Eye, PhoneCall, CheckCircle2,
   BedDouble, FileText, ArrowUpRight
 } from 'lucide-react';
-import BookSurgeryModal from '../components/BookSurgeryModal';
 import { MOCK_SURGERY_PACKAGES } from '../mock-data/surgeryPackagesData';
 
 // Custom SVG Icons for medical specialties matching reference
@@ -144,14 +143,6 @@ const SURGERY_CATEGORIES = [
 ];
 
 export default function SurgeryPackagesPage() {
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [selectedSurgeryId, setSelectedSurgeryId] = useState(null);
-
-  const handleOpenBooking = (surgeryId = null) => {
-    setSelectedSurgeryId(surgeryId);
-    setIsBookingModalOpen(true);
-  };
-
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -197,7 +188,7 @@ export default function SurgeryPackagesPage() {
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <button
                   type="button"
-                  onClick={() => handleOpenBooking()}
+                  onClick={() => scrollToSection('our-surgery-packages')}
                   className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#007A64] hover:bg-[#006853] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95"
                 >
                   <Calendar className="w-4 h-4 text-white shrink-0" />
@@ -207,7 +198,7 @@ export default function SurgeryPackagesPage() {
 
                 <button
                   type="button"
-                  onClick={() => handleOpenBooking()}
+                  onClick={() => scrollToSection('surgery-planning-cta')}
                   className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold text-sm shadow-2xs hover:shadow-xs transition-all cursor-pointer active:scale-95"
                 >
                   <Headphones className="w-4 h-4 text-[#007A64] shrink-0" />
@@ -281,7 +272,7 @@ export default function SurgeryPackagesPage() {
             </h2>
             <button
               type="button"
-              onClick={() => handleOpenBooking()}
+              onClick={() => scrollToSection('other-surgery-categories')}
               className="inline-flex items-center gap-2 text-sm sm:text-base font-bold text-[#007A64] hover:text-[#006250] hover:underline cursor-pointer group"
             >
               <span>View All Packages</span>
@@ -318,7 +309,7 @@ export default function SurgeryPackagesPage() {
                 {/* Starting Price & Action Button matching reference */}
                 <button
                   type="button"
-                  onClick={() => handleOpenBooking(pkg.mockRefId)}
+                  onClick={() => scrollToSection('surgery-planning-cta')}
                   className="mt-3.5 sm:mt-4 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl sm:rounded-2xl py-2 px-2.5 sm:px-3 flex items-center justify-between shadow-xs hover:shadow-md transition active:scale-98 cursor-pointer"
                   title={`Book ${pkg.title}`}
                 >
@@ -524,7 +515,7 @@ export default function SurgeryPackagesPage() {
               return (
                 <div
                   key={cat.id}
-                  onClick={() => handleOpenBooking()}
+                  onClick={() => scrollToSection('our-surgery-packages')}
                   className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col items-center justify-center text-center hover:border-teal-300 hover:shadow-md transition duration-200 cursor-pointer group min-h-[125px] sm:min-h-[140px]"
                 >
                   <div className="w-12 h-12 flex items-center justify-center mb-3 text-[#007A64] group-hover:scale-110 transition-transform">
@@ -542,7 +533,7 @@ export default function SurgeryPackagesPage() {
         {/* ========================================================================= */}
         {/* 8. BOTTOM CALL TO ACTION BANNER                                           */}
         {/* ========================================================================= */}
-        <section className="rounded-3xl bg-gradient-to-r from-[#006853] via-[#007A64] to-[#005B48] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden shadow-lg border border-teal-600/30">
+        <section id="surgery-planning-cta" className="rounded-3xl bg-gradient-to-r from-[#006853] via-[#007A64] to-[#005B48] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden shadow-lg border border-teal-600/30">
           
           {/* Subtle Ambient Glow */}
           <div className="absolute top-0 right-1/4 w-60 h-60 bg-teal-300/10 rounded-full blur-3xl pointer-events-none" />
@@ -563,11 +554,11 @@ export default function SurgeryPackagesPage() {
             <div className="flex items-center gap-3.5 sm:gap-5 shrink-0">
               <button
                 type="button"
-                onClick={() => handleOpenBooking()}
+                onClick={() => scrollToSection('our-surgery-packages')}
                 className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
               >
                 <Calendar className="w-5 h-5 text-[#007A64] shrink-0" />
-                <span>Book a Consultation Now</span>
+                <span>Explore Surgery Packages</span>
                 <ArrowRight className="w-5 h-5 text-[#007A64] shrink-0" />
               </button>
 
@@ -585,13 +576,6 @@ export default function SurgeryPackagesPage() {
         </section>
 
       </div>
-
-      {/* Interactive Booking Modal */}
-      <BookSurgeryModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        initialPackageId={selectedSurgeryId}
-      />
 
     </div>
   );

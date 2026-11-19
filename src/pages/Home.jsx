@@ -1,6 +1,7 @@
 // src/pages/Home.jsx
 // Complete combined ZESTMED homepage following the 11 major healthcare specifications
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import SearchSection from '../components/SearchSection';
 import PopularMedicinesAndTests from '../components/PopularMedicinesAndTests';
@@ -12,7 +13,6 @@ import TestDetailModal from '../components/TestDetailModal';
 import PackageDetailModal from '../components/PackageDetailModal';
 import BookDoctorModal from '../components/BookDoctorModal';
 import BookPhysioModal from '../components/BookPhysioModal';
-import BookSurgeryModal from '../components/BookSurgeryModal';
 import SeniorCitizenPickUpModal from '../components/SeniorCitizenPickUpModal';
 
 export default function Home({ 
@@ -26,6 +26,7 @@ export default function Home({
   isSeniorPickupOpen: externalSeniorOpen,
   setIsSeniorPickupOpen: externalSetSeniorOpen
 }) {
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedTest, setSelectedTest] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -33,7 +34,6 @@ export default function Home({
   // Local modal states fallback if not controlled externally
   const [localDoctorOpen, setLocalDoctorOpen] = useState(false);
   const [localPhysioOpen, setLocalPhysioOpen] = useState(false);
-  const [localSurgeryOpen, setLocalSurgeryOpen] = useState(false);
   const [localSeniorOpen, setLocalSeniorOpen] = useState(false);
 
   const isDoctorOpen = externalDoctorOpen !== undefined ? externalDoctorOpen : localDoctorOpen;
@@ -41,9 +41,6 @@ export default function Home({
 
   const isPhysioOpen = externalPhysioOpen !== undefined ? externalPhysioOpen : localPhysioOpen;
   const setPhysioOpen = externalSetPhysioOpen || setLocalPhysioOpen;
-
-  const isSurgeryOpen = externalSurgeryOpen !== undefined ? externalSurgeryOpen : localSurgeryOpen;
-  const setSurgeryOpen = externalSetSurgeryOpen || setLocalSurgeryOpen;
 
   const isSeniorOpen = externalSeniorOpen !== undefined ? externalSeniorOpen : localSeniorOpen;
   const setSeniorOpen = externalSetSeniorOpen || setLocalSeniorOpen;
@@ -54,7 +51,7 @@ export default function Home({
       <Hero
         onOpenDoctorModal={() => setDoctorOpen(true)}
         onOpenPhysioModal={() => setPhysioOpen(true)}
-        onOpenSurgeryModal={() => setSurgeryOpen(true)}
+        onOpenSurgeryModal={() => navigate('/surgery-packages')}
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
@@ -66,7 +63,7 @@ export default function Home({
         onSelectPackage={(pkg) => setSelectedPackage(pkg)}
         onOpenDoctorModal={() => setDoctorOpen(true)}
         onOpenPhysioModal={() => setPhysioOpen(true)}
-        onOpenSurgeryModal={() => setSurgeryOpen(true)}
+        onOpenSurgeryModal={() => navigate('/surgery-packages')}
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
@@ -118,13 +115,6 @@ export default function Home({
       <BookPhysioModal
         isOpen={isPhysioOpen}
         onClose={() => setPhysioOpen(false)}
-        onOpenSeniorPickup={() => setSeniorOpen(true)}
-      />
-
-      {/* 4. Book Surgery Package Modal */}
-      <BookSurgeryModal
-        isOpen={isSurgeryOpen}
-        onClose={() => setSurgeryOpen(false)}
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
