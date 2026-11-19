@@ -3941,7 +3941,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1">
                     <span className="font-bold text-slate-800">Razorpay API Credentials (Guwahati Central Node):</span>
                     <div className="flex flex-wrap items-center gap-3 text-slate-600 font-mono text-[11px]">
-                      <span>Key ID: <strong>{import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_51MRmQ9H4xN9uG'}</strong></span>
+                      <span>Key ID: <strong>{import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_U22znXn1PSuEH1'}</strong></span>
                       <span>•</span>
                       <span>
                         Key Secret:{' '}

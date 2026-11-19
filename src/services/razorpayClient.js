@@ -83,7 +83,7 @@ export const createServerOrder = async ({ amount, bookingId, bookingType, custom
     amountRupees: numericAmount,
     currency: 'INR',
     receipt: `rcpt_${bookingId || Date.now()}`,
-    keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_zestmedHealthcareKey',
+    keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_U22znXn1PSuEH1',
     isTestOrder: true
   };
 };
@@ -245,7 +245,7 @@ export const launchRazorpayCheckout = async ({
     const publicRazorpayKey = 
       orderData.keyId || 
       import.meta.env.VITE_RAZORPAY_KEY_ID || 
-      'rzp_test_zestmedHealthcareKey';
+      'rzp_test_U22znXn1PSuEH1';
 
     // Step C: Initialize Razorpay Standard Checkout UI
     const rzpOptions = {
