@@ -9,7 +9,8 @@ import {
   updateSurgeryStatus,
   updateWellnessStatus,
   updateLabBookingStatus,
-  updateOrderStatus
+  updateOrderStatus,
+  getPaymentTransactions
 } from '../services/supabaseService';
 import {
   Menu,
@@ -985,6 +986,51 @@ export default function AdminDashboardPage() {
     { id: 'TXN-9078', ref: '#ORD5462', customer: 'Sneha Singh', method: 'Debit Card', amount: 620, date: '11 Nov 2026, 11:30 AM', status: 'Success' },
     { id: 'TXN-9077', ref: '#LB10232', customer: 'Amit Verma', method: 'Cash on Collection', amount: 899, date: '10 Nov 2026, 04:00 PM', status: 'Success' }
   ]);
+
+  // Load verified Razorpay transactions dynamically
+  useEffect(() => {
+    async function fetchPlatformPayments() {
+      try {
+        const txns = await getPaymentTransactions();
+        if (txns && txns.length > 0) {
+          const formatted = txns.map((t) => ({
+            id: t.transaction_id || t.id,
+            ref: t.booking_id || t.order_id || `#TXN-${String(t.id).slice(-5)}`,
+            customer: t.customer_name || 'Verified Patient',
+            method: t.payment_method || 'Razorpay (Verified)',
+            amount: Number(t.amount || 0),
+            date: t.created_at
+              ? new Date(t.created_at).toLocaleString('en-IN', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              : 'Recent',
+            status: t.payment_status === 'failed' ? 'Failed' : 'Success',
+            razorpayPaymentId: t.razorpay_payment_id,
+            razorpayOrderId: t.razorpay_order_id
+          }));
+
+          setPaymentsList((prev) => {
+            const incomingIds = new Set(formatted.map((f) => f.id));
+            return [...formatted, ...prev.filter((p) => !incomingIds.has(p.id))];
+          });
+        }
+      } catch (err) {
+        console.warn('Error fetching live transactions for admin ledger:', err);
+      }
+    }
+    fetchPlatformPayments();
+
+    window.addEventListener('zestmed_booking_updated', fetchPlatformPayments);
+    window.addEventListener('storage', fetchPlatformPayments);
+    return () => {
+      window.removeEventListener('zestmed_booking_updated', fetchPlatformPayments);
+      window.removeEventListener('storage', fetchPlatformPayments);
+    };
+  }, []);
   const [newMedForm, setNewMedForm] = useState({ name: '', genericName: '', categoryName: 'General', stock: 100, price: 50, expiry: 'Dec 2027' });
 
   // Recent Bookings Table Data
@@ -3895,26 +3941,26 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1">
                     <span className="font-bold text-slate-800">Razorpay API Credentials (Guwahati Central Node):</span>
                     <div className="flex flex-wrap items-center gap-3 text-slate-600 font-mono text-[11px]">
-                      <span>Key ID: <strong>rzp_test_GuwahatiCentral2026</strong></span>
+                      <span>Key ID: <strong>{import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_51MRmQ9H4xN9uG'}</strong></span>
                       <span>•</span>
                       <span>
                         Key Secret:{' '}
-                        <strong>{showRazorpaySecret ? 'sk_live_98ab7100guw_zest' : '••••••••••••••••'}</strong>
+                        <strong className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-sans font-bold">Secured on Server (.env)</strong>
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setShowRazorpaySecret(!showRazorpaySecret)}
-                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 transition"
+                      onClick={() => addToast('Razorpay Key Secret is encrypted and managed via backend environment variables.', 'info')}
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 transition cursor-pointer"
                     >
-                      {showRazorpaySecret ? 'Hide Secret' : 'Reveal Secret'}
+                      Security Info
                     </button>
                     <button
                       type="button"
                       onClick={() => addToast('Razorpay webhook verified on https://api.zestmed.in/razorpay/webhook', 'success')}
-                      className="px-3 py-1.5 bg-[#008F83] text-white hover:bg-[#007a70] rounded-lg text-xs font-bold transition shadow-xs"
+                      className="px-3 py-1.5 bg-[#008F83] text-white hover:bg-[#007a70] rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
                     >
                       Test Webhook
                     </button>

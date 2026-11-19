@@ -4,12 +4,13 @@ import {
   Calendar, ArrowRight, Phone, User, Clock, Activity, 
   ShieldCheck, CheckCircle2, ChevronRight, Star, Heart,
   Award, Sparkles, FileText, Target, Home as HomeIcon,
-  Stethoscope, Users, X
+  Stethoscope, Users, X, CreditCard, Banknote, Lock 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -229,6 +230,7 @@ export default function PhysiotherapyPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [paymentMode, setPaymentMode] = useState('online'); // 'online' (Razorpay) or 'clinic'
 
   // Smooth scroll helper to form
   const scrollToForm = (serviceTitle = null) => {
@@ -252,6 +254,62 @@ export default function PhysiotherapyPage() {
     if (formElement) {
       formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  };
+
+  // Save Confirmed Physio Booking
+  const saveConfirmedPhysioBooking = async (apptId, paymentDetails = null) => {
+    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_POST_SESSION');
+    const newBooking = {
+      id: apptId,
+      bookingId: apptId,
+      booking_number: apptId,
+      type: 'Physiotherapy',
+      category: 'physiotherapy',
+      title: 'Dr. Arindam Borah, MPT (Ortho)',
+      doctor: 'Dr. Arindam Borah, MPT (Ortho)',
+      doctorName: 'Dr. Arindam Borah, MPT (Ortho)',
+      doctorSpecialty: formData.selectedService,
+      specialty: formData.selectedService,
+      doctorDegree: 'BPT, MPT, Certified Clinical Physiotherapist',
+      doctorHospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
+      hospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
+      date: formData.preferredDate,
+      time: formData.preferredTime,
+      slot: `${formData.preferredDate}, ${formData.preferredTime}`,
+      mode: 'Home & Clinic Session',
+      fee: 850,
+      price: 850,
+      totalAmount: 850,
+      patientName: formData.fullName,
+      patientPhone: formData.mobileNumber,
+      phone: formData.mobileNumber,
+      userId: user?.id || null,
+      userEmail: user?.email || '',
+      symptoms: `${formData.selectedService} - Specialized rehabilitation session`,
+      status: 'Confirmed',
+      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay Post-Session',
+      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay Post-Session (Cash/UPI)',
+      paymentId: paymentDetails?.paymentId || '',
+      orderId: paymentDetails?.orderId || '',
+      createdAt: new Date().toISOString(),
+    };
+
+    // Persist to localStorage so it syncs with Patient Dashboard
+    try {
+      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Save to Supabase PostgreSQL database
+      await bookPhysiotherapy(newBooking);
+    } catch (err) {
+      console.error('Failed to save booking to storage', err);
+    }
+
+    setConfirmedBooking(newBooking);
+    setIsSubmitting(false);
+    addToast(`Physiotherapy session scheduled successfully! (ID: ${apptId})`, 'success');
   };
 
   // Form Submission
@@ -280,55 +338,38 @@ export default function PhysiotherapyPage() {
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const apptId = `ZM-PHY-${Math.floor(10000 + Math.random() * 90000)}`;
-      const newBooking = {
-        id: apptId,
+    const apptId = `ZM-PHY-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    if (paymentMode === 'online') {
+      setIsSubmitting(true);
+      launchRazorpayCheckout({
+        amount: 850,
         bookingId: apptId,
-        type: 'Physiotherapy',
-        category: 'physiotherapy',
-        title: 'Dr. Arindam Borah, MPT (Ortho)',
-        doctor: 'Dr. Arindam Borah, MPT (Ortho)',
-        doctorName: 'Dr. Arindam Borah, MPT (Ortho)',
-        doctorSpecialty: formData.selectedService,
-        specialty: formData.selectedService,
-        doctorDegree: 'BPT, MPT, Certified Clinical Physiotherapist',
-        doctorHospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
-        hospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
-        date: formData.preferredDate,
-        time: formData.preferredTime,
-        slot: `${formData.preferredDate}, ${formData.preferredTime}`,
-        mode: 'Home & Clinic Session',
-        fee: 850,
-        price: 850,
-        patientName: formData.fullName,
-        patientPhone: formData.mobileNumber,
-        phone: formData.mobileNumber,
-        userId: user?.id || null,
-        userEmail: user?.email || '',
-        symptoms: `${formData.selectedService} - Specialized rehabilitation session`,
-        status: 'Confirmed',
-        createdAt: new Date().toISOString(),
-      };
-
-      // Persist to localStorage so it syncs with Patient Dashboard
-      try {
-        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
-        window.dispatchEvent(new Event('storage'));
-        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-        // Save to Supabase PostgreSQL database
-        bookPhysiotherapy(newBooking).catch((err) => console.warn('Supabase physio booking error:', err));
-      } catch (err) {
-        console.error('Failed to save booking to storage', err);
-      }
-
-      setConfirmedBooking(newBooking);
-      addToast(`Physiotherapy session scheduled successfully! (ID: ${apptId})`, 'success');
-    }, 700);
+        bookingType: 'physiotherapy',
+        serviceTitle: `Physiotherapy: ${formData.selectedService}`,
+        customer: {
+          name: formData.fullName,
+          phone: formData.mobileNumber,
+          email: user?.email || 'patient@zestmed.in'
+        },
+        onSuccess: (verifiedTxn) => {
+          saveConfirmedPhysioBooking(apptId, verifiedTxn);
+        },
+        onFailure: (err) => {
+          setIsSubmitting(false);
+          addToast(err?.message || 'Payment not completed.', 'error');
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          addToast('Payment cancelled. You can choose Pay Post-Session.', 'info');
+        }
+      });
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        saveConfirmedPhysioBooking(apptId, { paymentId: 'PAY_POST_SESSION' });
+      }, 400);
+    }
   };
 
   return (
@@ -645,6 +686,52 @@ export default function PhysiotherapyPage() {
                   </div>
                 </div>
 
+                {/* 6. Payment Method */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Payment Method
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMode('online')}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                        paymentMode === 'online'
+                          ? 'border-[#007A64] bg-teal-50/80 text-[#007A64] ring-1 ring-[#007A64]'
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-700 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-4 h-4 text-[#007A64]" />
+                        <div className="text-left">
+                          <span className="block font-bold">Pay Online (Razorpay)</span>
+                          <span className="text-[10px] text-slate-500 font-normal">UPI, Cards, NetBanking</span>
+                        </div>
+                      </div>
+                      {paymentMode === 'online' && <CheckCircle2 className="w-4 h-4 text-[#007A64]" />}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMode('clinic')}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                        paymentMode === 'clinic'
+                          ? 'border-[#007A64] bg-teal-50/80 text-[#007A64] ring-1 ring-[#007A64]'
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-700 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Banknote className="w-4 h-4 text-emerald-600" />
+                        <div className="text-left">
+                          <span className="block font-bold">Pay Post-Session</span>
+                          <span className="text-[10px] text-slate-500 font-normal">Cash / UPI during visit</span>
+                        </div>
+                      </div>
+                      {paymentMode === 'clinic' && <CheckCircle2 className="w-4 h-4 text-[#007A64]" />}
+                    </button>
+                  </div>
+                </div>
+
                 {/* Submit Action */}
                 <button
                   type="submit"
@@ -652,10 +739,15 @@ export default function PhysiotherapyPage() {
                   className="w-full mt-2.5 bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 disabled:opacity-50"
                 >
                   {isSubmitting ? (
-                    <span>Scheduling Session...</span>
+                    <span>Processing Payment...</span>
+                  ) : paymentMode === 'online' ? (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Pay ₹850 via Razorpay & Confirm</span>
+                    </>
                   ) : (
                     <>
-                      <span>Book Appointment</span>
+                      <span>Book Appointment • ₹850 Post-Session</span>
                       <ArrowRight className="w-5 h-5" />
                     </>
                   )}
@@ -1042,7 +1134,14 @@ export default function PhysiotherapyPage() {
               </div>
               <div className="flex justify-between items-center pt-1 text-sm font-extrabold text-[#0F172A]">
                 <span>Session Fee</span>
-                <span className="text-[#007A64]">₹{confirmedBooking.fee} (Pay post session)</span>
+                {confirmedBooking.paymentId ? (
+                  <div className="text-right">
+                    <span className="text-emerald-700 font-bold block">₹{confirmedBooking.fee} (Paid via Razorpay)</span>
+                    <span className="text-[10px] text-slate-500 font-mono block">Txn: {confirmedBooking.paymentId}</span>
+                  </div>
+                ) : (
+                  <span className="text-[#007A64]">₹{confirmedBooking.fee} (Pay post session)</span>
+                )}
               </div>
             </div>
 

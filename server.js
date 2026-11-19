@@ -4,7 +4,10 @@
  * Run with: node server.js
  */
 import http from 'http';
+import dotenv from 'dotenv';
 import { handleApiRequest } from './server/apiRouter.js';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 

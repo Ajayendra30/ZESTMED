@@ -225,7 +225,7 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onCancelB
             <div className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs space-y-1">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <CreditCard className="w-3.5 h-3.5 text-[#007A64]" />
-                Payment Status
+                Payment & Transaction Details
               </span>
               <p className="text-sm font-extrabold text-emerald-700 flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -234,6 +234,20 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onCancelB
               <p className="text-xs text-slate-500 font-medium">
                 Amount: ₹{Number(booking.totalAmount || booking.price || 0).toLocaleString('en-IN')}
               </p>
+              {(booking.paymentId || booking.razorpayPaymentId || booking.razorpay_payment_id) && (
+                <div className="pt-1.5 mt-1.5 border-t border-slate-100 space-y-0.5 text-[11px] font-mono">
+                  <div className="text-slate-600">
+                    <span className="text-slate-400 font-sans font-medium">Razorpay Payment ID: </span>
+                    <strong className="text-teal-700">{booking.paymentId || booking.razorpayPaymentId || booking.razorpay_payment_id}</strong>
+                  </div>
+                  {(booking.orderId || booking.razorpayOrderId || booking.razorpay_order_id) && (
+                    <div className="text-slate-600">
+                      <span className="text-slate-400 font-sans font-medium">Order ID: </span>
+                      <strong className="text-slate-700">{booking.orderId || booking.razorpayOrderId || booking.razorpay_order_id}</strong>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
           </div>

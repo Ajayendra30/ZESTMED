@@ -1380,3 +1380,131 @@ export const getUserBookings = async (user) => {
     return timeB - timeA;
   });
 };
+
+// ------------------------------------------------------------------------------
+// 8. RAZORPAY PAYMENT TRANSACTIONS & BOOKING LINKAGE
+// ------------------------------------------------------------------------------
+
+export const savePaymentTransaction = async (paymentData) => {
+  if (!paymentData) return null;
+
+  const user = getAuthenticatedUser();
+  const transactionRecord = {
+    id: paymentData.transactionId || `txn_${Date.now()}`,
+    transaction_id: paymentData.transactionId || `txn_${Date.now()}`,
+    razorpay_order_id: paymentData.orderId || '',
+    razorpay_payment_id: paymentData.paymentId || '',
+    razorpay_signature: paymentData.signature || '',
+    amount: Number(paymentData.amount) || 0,
+    currency: paymentData.currency || 'INR',
+    payment_status: paymentData.status || 'Success',
+    booking_id: paymentData.bookingId || '',
+    booking_type: paymentData.bookingType || 'general',
+    customer_name: paymentData.customerName || user?.name || 'Patient',
+    customer_phone: paymentData.customerPhone || user?.phone || user?.contact || '',
+    payment_method: paymentData.paymentMethod || 'Razorpay (Verified)',
+    created_at: new Date().toISOString()
+  };
+
+  // 1. Save to Supabase if configured
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase.from('payments').insert([transactionRecord]);
+    } catch (err) {
+      console.warn('[SupabaseService] savePaymentTransaction error:', err);
+    }
+  }
+
+  // 2. Local resilient ledger
+  const transactions = getLocalData('zestmed_payment_transactions', []);
+  transactions.unshift(transactionRecord);
+  setLocalData('zestmed_payment_transactions', transactions);
+
+  // 3. Update the corresponding booking's payment status
+  await updateBookingPaymentStatus(
+    paymentData.bookingId,
+    paymentData.bookingType,
+    {
+      paymentStatus: 'Paid',
+      paymentId: paymentData.paymentId,
+      orderId: paymentData.orderId,
+      transactionId: paymentData.transactionId
+    }
+  );
+
+  return transactionRecord;
+};
+
+export const updateBookingPaymentStatus = async (bookingId, bookingType, paymentDetails) => {
+  if (!bookingId) return false;
+
+  const updateFields = {
+    payment_status: 'Paid',
+    payment_id: paymentDetails.paymentId || '',
+    payment_method: 'Razorpay (Verified)'
+  };
+
+  // 1. Supabase update
+  if (isSupabaseConfigured()) {
+    try {
+      let table = 'orders';
+      let idCol = 'order_number';
+      if (bookingType === 'doctor') { table = 'doctor_appointments'; idCol = 'appointment_number'; }
+      else if (bookingType === 'surgery') { table = 'surgery_bookings'; idCol = 'booking_number'; }
+      else if (bookingType === 'physio') { table = 'physiotherapy_bookings'; idCol = 'booking_number'; }
+      else if (bookingType === 'lab_test') { table = 'test_bookings'; idCol = 'booking_number'; }
+      else if (bookingType === 'wellness') { table = 'wellness_bookings'; idCol = 'booking_number'; }
+
+      await supabase.from(table).update(updateFields).eq(idCol, bookingId);
+    } catch (err) {
+      console.warn('[SupabaseService] updateBookingPaymentStatus error:', err);
+    }
+  }
+
+  // 2. Local cache updates across registries
+  const registries = [
+    'zestmed_doctor_appointments',
+    'zestmed_physio_appointments',
+    'zestmed_surgery_bookings',
+    'zestmed_wellness_bookings',
+    'zestmed_lab_test_bookings',
+    'zestmed_medicine_orders',
+    'zestmed_patient_orders'
+  ];
+
+  registries.forEach(key => {
+    const list = getLocalData(key, []);
+    let modified = false;
+    const updatedList = list.map(item => {
+      if (item.id === bookingId || item.bookingId === bookingId || item.orderNumber === bookingId || item.booking_number === bookingId) {
+        modified = true;
+        return {
+          ...item,
+          paymentStatus: 'Paid',
+          paymentMethod: 'Razorpay (Verified)',
+          paymentId: paymentDetails.paymentId,
+          orderId: paymentDetails.orderId
+        };
+      }
+      return item;
+    });
+    if (modified) {
+      setLocalData(key, updatedList);
+    }
+  });
+
+  return true;
+};
+
+export const getPaymentTransactions = async () => {
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase.from('payments').select('*').order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    } catch (_) {}
+  }
+
+  return getLocalData('zestmed_payment_transactions', []);
+};

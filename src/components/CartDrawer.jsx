@@ -461,6 +461,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         isOpen={isRazorpayOpen}
         onClose={() => setIsRazorpayOpen(false)}
         amount={grandTotal}
+        bookingType="medicine_order"
+        serviceTitle={`ZestMed Pharmacy & Tests Order (${totalItemsCount} items)`}
         orderDetails={{
           itemsCount: totalItemsCount,
           subtotal,

@@ -294,6 +294,29 @@ CREATE TABLE IF NOT EXISTS public.wellness_bookings (
 );
 
 -- ------------------------------------------------------------------------------
+-- 7B. RAZORPAY PAYMENT TRANSACTIONS & AUDIT LEDGER
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    transaction_id VARCHAR(100) UNIQUE NOT NULL,
+    razorpay_order_id VARCHAR(100) NOT NULL,
+    razorpay_payment_id VARCHAR(100) UNIQUE NOT NULL,
+    razorpay_signature VARCHAR(255) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'INR',
+    payment_status VARCHAR(50) DEFAULT 'Success',
+    booking_id VARCHAR(100) NOT NULL,
+    booking_type VARCHAR(50) NOT NULL, -- 'doctor', 'surgery', 'physiotherapy', 'lab_test', 'wellness', 'medicine_order'
+    customer_name VARCHAR(150),
+    customer_phone VARCHAR(50),
+    payment_method VARCHAR(50) DEFAULT 'Razorpay (UPI / Cards / NetBanking)',
+    error_code VARCHAR(100),
+    error_description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ------------------------------------------------------------------------------
 -- 8. CONTACT INQUIRIES & AUDIT LOGS
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.inquiries (

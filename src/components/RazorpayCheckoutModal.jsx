@@ -1,57 +1,108 @@
+// src/components/RazorpayCheckoutModal.jsx
 import React, { useState } from 'react';
 import { 
-  X, ShieldCheck, CheckCircle2, CreditCard, Smartphone, Building, 
-  Banknote, Lock, ArrowRight, Check, AlertCircle, Copy, RefreshCw 
+  X, ShieldCheck, CheckCircle2, AlertCircle, RefreshCw, 
+  Lock, ArrowRight, Check, CreditCard, Banknote, Smartphone, Building
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 
-export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDetails, onPaymentSuccess }) {
+export default function RazorpayCheckoutModal({ 
+  isOpen, 
+  onClose, 
+  amount, 
+  orderDetails = {}, 
+  bookingId,
+  bookingType = 'medicine_order',
+  serviceTitle = 'ZESTMED Healthcare Service',
+  onPaymentSuccess 
+}) {
   const { addToast } = useToast();
-  const [selectedMethod, setSelectedMethod] = useState('upi');
-  const [upiId, setUpiId] = useState('patient@okhdfcbank');
-  const [cardNumber, setCardNumber] = useState('4111 •••• •••• 1111');
-  const [cardExpiry, setCardExpiry] = useState('08/29');
-  const [cardCvv, setCardCvv] = useState('843');
-  const [selectedBank, setSelectedBank] = useState('State Bank of India');
+  const { user } = useAuth();
+
+  const [paymentOption, setPaymentOption] = useState('online'); // 'online' (Razorpay) or 'offline' (COD/Pay on Visit)
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentSuccessData, setPaymentSuccessData] = useState(null);
+  const [paymentError, setPaymentError] = useState(null);
+  const [verifiedSuccessData, setVerifiedSuccessData] = useState(null);
 
   if (!isOpen) return null;
 
-  const handlePayNow = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      const paymentId = `pay_ZM_${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      const txnRecord = {
-        paymentId,
-        orderId: `order_GUW_${Math.floor(10000 + Math.random() * 90000)}`,
-        amount: amount || 499,
-        method: selectedMethod.toUpperCase(),
-        date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-        status: 'Captured',
-        razorpaySignature: 'rzp_sig_verified_prod_sandbox_ok'
+  const resolvedBookingId = bookingId || orderDetails.orderNumber || orderDetails.bookingId || `ZM-ORD-${Date.now().toString().slice(-6)}`;
+  const resolvedAmount = Number(amount || orderDetails.totalAmount || orderDetails.total || 499);
+
+  // Trigger Real Razorpay Standard Checkout SDK
+  const handleProceedToRazorpay = () => {
+    setPaymentError(null);
+
+    // If user chose Pay on Visit / COD
+    if (paymentOption === 'offline') {
+      const offlineRecord = {
+        transactionId: `cod_${Date.now()}`,
+        paymentId: 'PAY_ON_DELIVERY',
+        orderId: resolvedBookingId,
+        amount: resolvedAmount,
+        method: 'Cash / Pay on Visit',
+        status: 'Pending Collection',
+        paymentStatus: 'Pending',
+        bookingId: resolvedBookingId,
+        bookingType,
+        date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
       };
-      setPaymentSuccessData(txnRecord);
-      addToast('Payment captured successfully via Razorpay Gateway!', 'success');
+      addToast('Booking placed with Pay on Visit / Cash on Delivery', 'info');
       if (onPaymentSuccess) {
-        onPaymentSuccess(txnRecord);
+        onPaymentSuccess(offlineRecord);
       }
-    }, 1200);
+      onClose();
+      return;
+    }
+
+    setIsProcessing(true);
+
+    launchRazorpayCheckout({
+      amount: resolvedAmount,
+      bookingId: resolvedBookingId,
+      bookingType,
+      serviceTitle: serviceTitle || orderDetails.title || 'ZESTMED Healthcare Service',
+      customer: {
+        name: user?.name || orderDetails.patientName || 'Patient',
+        phone: user?.contact || user?.phone || orderDetails.phone || '',
+        email: user?.email || orderDetails.email || 'patient@zestmed.in'
+      },
+      onSuccess: (verifiedTransaction) => {
+        setIsProcessing(false);
+        setVerifiedSuccessData(verifiedTransaction);
+        addToast(`Payment Verified! ID: ${verifiedTransaction.paymentId}`, 'success');
+        if (onPaymentSuccess) {
+          onPaymentSuccess(verifiedTransaction);
+        }
+      },
+      onFailure: (error) => {
+        setIsProcessing(false);
+        const errMsg = error?.message || 'Payment was unsuccessful or declined by bank.';
+        setPaymentError(errMsg);
+        addToast(errMsg, 'error');
+      },
+      onDismiss: () => {
+        setIsProcessing(false);
+        addToast('Payment cancelled. You can retry whenever you are ready.', 'info');
+      }
+    });
   };
 
   const handleFinish = () => {
-    setPaymentSuccessData(null);
+    setVerifiedSuccessData(null);
+    setPaymentError(null);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
       <div 
-        className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-scale-up"
+        className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-scale-up text-left"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Razorpay Brand Top Bar */}
+        {/* Razorpay Brand Header */}
         <div className="bg-[#0C2340] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#0284C7] flex items-center justify-center font-black text-white text-base shadow-xs">
@@ -59,17 +110,19 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white tracking-wide">Razorpay Checkout</h3>
-                <span className="text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-900 px-1.5 py-0.2 rounded font-mono">
-                  Sandbox Test
+                <h3 className="text-sm font-bold text-white tracking-wide">Razorpay Payment Gateway</h3>
+                <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-400 text-slate-900 px-1.5 py-0.2 rounded font-mono">
+                  Official SDK
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300">ZESTMED Diagnostics & Polyclinic</p>
+              <p className="text-[11px] text-slate-300">ZESTMED Healthcare Merchant Hub</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            aria-label="Close payment"
           >
             <X className="w-5 h-5" />
           </button>
@@ -79,217 +132,198 @@ export default function RazorpayCheckoutModal({ isOpen, onClose, amount, orderDe
         <div className="bg-slate-50 px-6 py-3.5 border-b border-slate-200/80 flex items-center justify-between">
           <div className="text-xs text-slate-500">
             <span>Payable Amount:</span>
+            <div className="text-[11px] text-slate-400 font-mono mt-0.5">Ref: {resolvedBookingId}</div>
           </div>
           <div className="text-xl font-black text-slate-900">
-            ₹{amount ? Number(amount).toFixed(2) : '499.00'}
+            ₹{resolvedAmount.toFixed(2)}
           </div>
         </div>
 
-        {/* Content */}
+        {/* Modal Body */}
         <div className="p-6">
-          {paymentSuccessData ? (
-            /* Payment Success Receipt */
-            <div className="space-y-4 text-center py-2">
+          {verifiedSuccessData ? (
+            /* REAL PAYMENT SUCCESS CONFIRMATION RECEIPT */
+            <div className="space-y-4 text-center py-2 animate-fade-in">
               <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
-                <h4 className="text-xl font-black text-slate-900">Payment Successful!</h4>
+                <h4 className="text-xl font-black text-slate-900">Payment Verified & Settled</h4>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Razorpay Transaction Verified & Settled
+                  Cryptographically verified on ZestMed Node.js backend
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left text-xs space-y-2">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left text-xs space-y-2.5">
                 <div className="flex justify-between border-b border-slate-200 pb-2">
                   <span className="text-slate-500">Razorpay Payment ID:</span>
-                  <span className="font-mono font-bold text-[#0284C7]">{paymentSuccessData.paymentId}</span>
+                  <span className="font-mono font-bold text-[#0284C7]">{verifiedSuccessData.paymentId}</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200 pb-2">
-                  <span className="text-slate-500">Order Reference:</span>
-                  <span className="font-mono text-slate-700">{paymentSuccessData.orderId}</span>
+                  <span className="text-slate-500">Razorpay Order ID:</span>
+                  <span className="font-mono text-slate-700">{verifiedSuccessData.orderId}</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200 pb-2">
-                  <span className="text-slate-500">Amount Paid:</span>
-                  <span className="font-bold text-slate-900">₹{paymentSuccessData.amount.toFixed(2)}</span>
+                  <span className="text-slate-500">Amount Captured:</span>
+                  <span className="font-bold text-slate-900">₹{Number(verifiedSuccessData.amount || resolvedAmount).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">Booking / Service:</span>
+                  <span className="font-medium text-slate-800">{serviceTitle || resolvedBookingId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Status:</span>
+                  <span className="text-slate-500">Server Status:</span>
                   <span className="text-emerald-600 font-bold flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" />
-                    Captured (Assam GST Invoice Generated)
+                    Signature Verified (HMAC-SHA256)
                   </span>
                 </div>
               </div>
 
               <div className="bg-emerald-50 text-emerald-800 rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Diagnostic booking confirmed. Single-day reports guaranteed!</span>
+                <span>Transaction stored in database and linked to your booking.</span>
               </div>
 
               <button
                 type="button"
                 onClick={handleFinish}
-                className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-sm"
+                className="w-full bg-[#007A64] hover:bg-[#006853] text-white font-bold py-3 text-sm rounded-xl transition shadow-md cursor-pointer text-center"
               >
-                Close & Return
+                Done & View Booking
               </button>
             </div>
           ) : (
-            /* Select Payment Method Form */
+            /* PAYMENT SELECTION & REAL CHECKOUT LAUNCH */
             <div className="space-y-4">
-              {/* Payment Methods Tabs */}
-              <div className="grid grid-cols-4 gap-1.5 bg-slate-100 p-1 rounded-2xl text-xs font-bold text-center">
-                <button
-                  type="button"
-                  onClick={() => setSelectedMethod('upi')}
-                  className={`py-2 rounded-xl transition flex flex-col items-center gap-1 ${
-                    selectedMethod === 'upi' ? 'bg-white text-[#0284C7] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              
+              {/* Error Alert if payment failed */}
+              {paymentError && (
+                <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-shake">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <div className="font-bold">Payment Failed / Cancelled</div>
+                    <div className="text-[11px] text-rose-700 mt-0.5">{paymentError}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Mode Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700 block">
+                  Select Payment Option:
+                </label>
+
+                {/* Option 1: Razorpay Online (Recommended) */}
+                <div 
+                  onClick={() => setPaymentOption('online')}
+                  className={`p-3.5 rounded-2xl border-2 transition cursor-pointer flex items-center justify-between ${
+                    paymentOption === 'online'
+                      ? 'border-[#007A64] bg-[#E6F7F2]/40 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
-                  <Smartphone className="w-4 h-4" />
-                  <span>UPI / QR</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedMethod('card')}
-                  className={`py-2 rounded-xl transition flex flex-col items-center gap-1 ${
-                    selectedMethod === 'card' ? 'bg-white text-[#0284C7] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#007A64] text-white flex items-center justify-center shrink-0">
+                      <CreditCard className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                        <span>Pay Online via Razorpay</span>
+                        <span className="text-[10px] font-bold bg-[#007A64] text-white px-1.5 py-0.2 rounded">Instant</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        UPI (GPay, PhonePe, Paytm), Credit/Debit Cards, NetBanking
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    paymentOption === 'online' ? 'border-[#007A64] bg-[#007A64]' : 'border-slate-300'
+                  }`}>
+                    {paymentOption === 'online' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                </div>
+
+                {/* Option 2: Pay at Clinic / On Sample Collection */}
+                <div 
+                  onClick={() => setPaymentOption('offline')}
+                  className={`p-3.5 rounded-2xl border-2 transition cursor-pointer flex items-center justify-between ${
+                    paymentOption === 'offline'
+                      ? 'border-[#007A64] bg-[#E6F7F2]/40 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Card</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedMethod('netbanking')}
-                  className={`py-2 rounded-xl transition flex flex-col items-center gap-1 ${
-                    selectedMethod === 'netbanking' ? 'bg-white text-[#0284C7] shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Building className="w-4 h-4" />
-                  <span>NetBanking</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedMethod('cod')}
-                  className={`py-2 rounded-xl transition flex flex-col items-center gap-1 ${
-                    selectedMethod === 'cod' ? 'bg-white text-[#0284C7] shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Banknote className="w-4 h-4" />
-                  <span>Pay on Visit</span>
-                </button>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                      <Banknote className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-slate-900">
+                        Pay on Visit / Cash on Delivery
+                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        Pay cash or scan UPI QR code upon arrival/sample pickup
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    paymentOption === 'offline' ? 'border-[#007A64] bg-[#007A64]' : 'border-slate-300'
+                  }`}>
+                    {paymentOption === 'offline' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                </div>
               </div>
 
-              {/* UPI Tab */}
-              {selectedMethod === 'upi' && (
-                <div className="space-y-3 pt-1">
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 mb-1 block">UPI ID / VPA</label>
-                    <input
-                      type="text"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      placeholder="e.g. mobile@upi / yourname@okhdfcbank"
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#0284C7] outline-none font-medium"
-                    />
+              {/* Supported payment badges */}
+              {paymentOption === 'online' && (
+                <div className="bg-slate-50 rounded-2xl p-3 border border-slate-100 space-y-1.5 text-xs text-slate-500">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-slate-700">Supported by Razorpay:</span>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">0% Convenience Fee</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span className="font-semibold text-slate-700">Supported:</span>
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">Google Pay</span>
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">PhonePe</span>
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">Paytm</span>
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">BHIM</span>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">Google Pay</span>
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">PhonePe</span>
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">Paytm</span>
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">BHIM UPI</span>
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">Visa / Mastercard / RuPay</span>
+                    <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-700">All Major Banks</span>
                   </div>
                 </div>
               )}
 
-              {/* Card Tab */}
-              {selectedMethod === 'card' && (
-                <div className="space-y-2.5 pt-1">
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 mb-1 block">Card Number</label>
-                    <input
-                      type="text"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 font-mono"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs font-bold text-slate-700 mb-1 block">Valid Thru</label>
-                      <input
-                        type="text"
-                        value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value)}
-                        className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-slate-700 mb-1 block">CVV</label>
-                      <input
-                        type="password"
-                        maxLength={3}
-                        value={cardCvv}
-                        onChange={(e) => setCardCvv(e.target.value)}
-                        className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 font-mono"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* NetBanking Tab */}
-              {selectedMethod === 'netbanking' && (
-                <div className="space-y-3 pt-1">
-                  <div>
-                    <label className="text-xs font-bold text-slate-700 mb-1 block">Select Bank</label>
-                    <select
-                      value={selectedBank}
-                      onChange={(e) => setSelectedBank(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#0284C7] outline-none font-medium bg-white"
-                    >
-                      <option value="State Bank of India">State Bank of India (SBI)</option>
-                      <option value="HDFC Bank">HDFC Bank</option>
-                      <option value="ICICI Bank">ICICI Bank</option>
-                      <option value="Axis Bank">Axis Bank</option>
-                      <option value="Assam Gramin Vikash Bank">Assam Gramin Vikash Bank</option>
-                      <option value="Punjab National Bank">Punjab National Bank</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              {/* COD / Pay on Collection Tab */}
-              {selectedMethod === 'cod' && (
-                <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 text-xs text-teal-900 space-y-1">
-                  <div className="font-bold">Pay on Home Collection / Clinic Visit</div>
-                  <p className="text-teal-700 text-[11px]">
-                    You can pay using Cash, UPI QR, or Card directly to the Zestmed phlebotomist when they arrive for your test in Guwahati.
-                  </p>
-                </div>
-              )}
-
-              {/* Pay Button */}
+              {/* Action Button */}
               <div className="pt-2">
                 <button
                   type="button"
                   disabled={isProcessing}
-                  onClick={handlePayNow}
-                  className="w-full bg-[#0284C7] hover:bg-[#0369a1] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2 disabled:opacity-75"
+                  onClick={handleProceedToRazorpay}
+                  className="w-full bg-[#007A64] hover:bg-[#006853] text-white font-bold py-3.5 text-xs sm:text-sm rounded-2xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                 >
-                  <Lock className="w-4 h-4" />
-                  <span>
-                    {isProcessing ? 'Processing with Razorpay...' : `Pay ₹${amount ? Number(amount).toFixed(2) : '499.00'} Securely`}
-                  </span>
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Connecting to Razorpay Gateway...</span>
+                    </>
+                  ) : paymentOption === 'online' ? (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Pay ₹{resolvedAmount.toFixed(2)} via Razorpay</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Confirm Booking (Pay on Visit)</span>
+                    </>
+                  )}
                 </button>
               </div>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>PCI-DSS Compliant • 256-Bit SSL Encryption</span>
+              {/* Security Badges */}
+              <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1 select-none">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#007A64]" />
+                <span>100% Secure • 256-Bit SSL • Verified Server Signatures</span>
               </div>
             </div>
           )}

@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { 
   X, Stethoscope, Star, Calendar, Clock, MapPin, 
   Video, CheckCircle2, ShieldCheck, User, Phone, 
-  Search, ArrowRight, Heart, Filter 
+  Search, ArrowRight, Heart, Filter, CreditCard, Banknote, Lock 
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 
 export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [consultMode, setConsultMode] = useState('Clinic Visit');
   const [selectedSlot, setSelectedSlot] = useState('');
+  const [paymentMode, setPaymentMode] = useState('online'); // 'online' (Razorpay) or 'clinic'
   const [patientDetails, setPatientDetails] = useState({
     name: user?.name || '',
     phone: user?.contact || user?.phone || '',
@@ -76,6 +78,68 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
     setBookingConfirmed(null);
   };
 
+  const saveDoctorAppointment = async (apptId, paymentDetails = null) => {
+    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_AT_CLINIC');
+    const newBooking = {
+      id: apptId,
+      bookingId: apptId,
+      appointment_number: apptId,
+      type: 'Doctor Appointment',
+      category: 'doctor',
+      title: selectedDoctor.name,
+      doctor: selectedDoctor.name,
+      doctorName: selectedDoctor.name,
+      doctorSpecialty: selectedDoctor.specialty,
+      specialty: selectedDoctor.specialty,
+      doctorDegree: selectedDoctor.qualification || 'MBBS, MD',
+      doctorHospital: selectedDoctor.hospital,
+      hospital: selectedDoctor.hospital,
+      date: selectedSlot ? selectedSlot.split(',')[0] : 'Today',
+      time: selectedSlot || '10:00 AM',
+      slot: selectedSlot,
+      mode: consultMode,
+      fee: selectedDoctor.fee,
+      price: selectedDoctor.fee,
+      patientName: patientDetails.name,
+      patientPhone: patientDetails.phone,
+      phone: patientDetails.phone,
+      userId: user?.id || null,
+      userEmail: user?.email || '',
+      patientAge: patientDetails.age,
+      symptoms: patientDetails.symptoms || 'General Doctor Consultation',
+      status: 'Confirmed',
+      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay at Clinic',
+      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay at Clinic Desk',
+      paymentId: paymentDetails?.paymentId || '',
+      orderId: paymentDetails?.orderId || '',
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Save to Supabase PostgreSQL database
+      await bookDoctorAppointment(newBooking);
+    } catch (err) {
+      console.error('Failed to sync appointment with storage', err);
+    }
+
+    setBookingConfirmed({
+      apptId,
+      doctor: selectedDoctor,
+      mode: consultMode,
+      slot: selectedSlot,
+      patient: patientDetails,
+      fee: selectedDoctor.fee,
+      paymentDetails
+    });
+    setIsSubmitting(false);
+    addToast(`Appointment scheduled with ${selectedDoctor.name}!`, 'success');
+  };
+
   const handleConfirmBooking = (e) => {
     e.preventDefault();
     if (!user) {
@@ -99,62 +163,38 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const apptId = `ZM-DOC-${Math.floor(10000 + Math.random() * 90000)}`;
-      const newBooking = {
-        id: apptId,
+    const apptId = `ZM-DOC-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    if (paymentMode === 'online') {
+      setIsSubmitting(true);
+      launchRazorpayCheckout({
+        amount: selectedDoctor.fee || 600,
         bookingId: apptId,
-        type: 'Doctor Appointment',
-        category: 'doctor',
-        title: selectedDoctor.name,
-        doctor: selectedDoctor.name,
-        doctorName: selectedDoctor.name,
-        doctorSpecialty: selectedDoctor.specialty,
-        specialty: selectedDoctor.specialty,
-        doctorDegree: selectedDoctor.qualification || 'MBBS, MD',
-        doctorHospital: selectedDoctor.hospital,
-        hospital: selectedDoctor.hospital,
-        date: selectedSlot ? selectedSlot.split(',')[0] : 'Today',
-        time: selectedSlot || '10:00 AM',
-        slot: selectedSlot,
-        mode: consultMode,
-        fee: selectedDoctor.fee,
-        price: selectedDoctor.fee,
-        patientName: patientDetails.name,
-        patientPhone: patientDetails.phone,
-        phone: patientDetails.phone,
-        userId: user?.id || null,
-        userEmail: user?.email || '',
-        patientAge: patientDetails.age,
-        symptoms: patientDetails.symptoms || 'General Doctor Consultation',
-        status: 'Confirmed',
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
-        window.dispatchEvent(new Event('storage'));
-        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-        // Save to Supabase PostgreSQL database
-        bookDoctorAppointment(newBooking).catch((err) => console.warn('Supabase doctor booking error:', err));
-      } catch (err) {
-        console.error('Failed to sync appointment with storage', err);
-      }
-
-      setBookingConfirmed({
-        apptId,
-        doctor: selectedDoctor,
-        mode: consultMode,
-        slot: selectedSlot,
-        patient: patientDetails,
-        fee: selectedDoctor.fee
+        bookingType: 'doctor',
+        serviceTitle: `Doctor Consultation: ${selectedDoctor.name}`,
+        customer: {
+          name: patientDetails.name,
+          phone: patientDetails.phone,
+          email: user?.email || 'patient@zestmed.in'
+        },
+        onSuccess: (verifiedTxn) => {
+          saveDoctorAppointment(apptId, verifiedTxn);
+        },
+        onFailure: (err) => {
+          setIsSubmitting(false);
+          addToast(err?.message || 'Payment was not completed.', 'error');
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          addToast('Payment cancelled. You can choose Pay at Clinic.', 'info');
+        }
       });
-      addToast(`Appointment scheduled with ${selectedDoctor.name}!`, 'success');
-    }, 800);
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        saveDoctorAppointment(apptId, { paymentId: 'PAY_AT_CLINIC' });
+      }, 400);
+    }
   };
 
   const handleReset = () => {
@@ -247,9 +287,21 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Consultation Fee</span>
                     <span className="text-base font-black text-slate-900">₹{bookingConfirmed.fee}</span>
                   </div>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[11px]">
-                    Pay at Clinic / Razorpay Active
-                  </span>
+                  {bookingConfirmed.paymentDetails?.paymentId && bookingConfirmed.paymentDetails.paymentId !== 'PAY_AT_CLINIC' ? (
+                    <div className="text-right">
+                      <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[11px] inline-flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        Paid via Razorpay
+                      </span>
+                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                        Txn: {bookingConfirmed.paymentDetails.paymentId}
+                      </p>
+                    </div>
+                  ) : (
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[11px]">
+                      Pay at Clinic
+                    </span>
+                  )}
                 </div>
 
                 {/* Free Senior Citizen Cab CTA */}
@@ -429,14 +481,64 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                 </div>
               </div>
 
+              {/* Payment Method Selector */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Payment Method</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMode('online')}
+                    className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                      paymentMode === 'online'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] ring-1 ring-[#008F83]'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-[#008F83]" />
+                      <div className="text-left">
+                        <span className="block font-bold">Pay Online (Razorpay)</span>
+                        <span className="text-[10px] text-slate-500 font-normal">UPI, Cards, NetBanking</span>
+                      </div>
+                    </div>
+                    {paymentMode === 'online' && <CheckCircle2 className="w-4 h-4 text-[#008F83]" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMode('clinic')}
+                    className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                      paymentMode === 'clinic'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] ring-1 ring-[#008F83]'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Banknote className="w-4 h-4 text-emerald-600" />
+                      <div className="text-left">
+                        <span className="block font-bold">Pay at Clinic</span>
+                        <span className="text-[10px] text-slate-500 font-normal">Cash / UPI during visit</span>
+                      </div>
+                    </div>
+                    {paymentMode === 'clinic' && <CheckCircle2 className="w-4 h-4 text-[#008F83]" />}
+                  </button>
+                </div>
+              </div>
+
               <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
-                  <Stethoscope className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Confirming Appointment...' : `Confirm Booking • ₹${selectedDoctor.fee}`}</span>
+                  <Lock className="w-4 h-4" />
+                  <span>
+                    {isSubmitting
+                      ? 'Processing Appointment...'
+                      : paymentMode === 'online'
+                      ? `Pay ₹${selectedDoctor.fee} via Razorpay & Confirm`
+                      : `Confirm Booking • Pay ₹${selectedDoctor.fee} at Clinic`}
+                  </span>
                 </button>
               </div>
             </form>

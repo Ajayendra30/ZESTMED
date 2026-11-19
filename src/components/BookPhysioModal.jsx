@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   X, Activity, Star, Calendar, Clock, MapPin, Home, 
   CheckCircle2, ShieldCheck, User, Phone, Check, 
-  ArrowRight, Heart, Sparkles, Car 
+  ArrowRight, Heart, Sparkles, Car, CreditCard, Banknote, Lock 
 } from 'lucide-react';
 import { MOCK_PHYSIOTHERAPISTS, PHYSIO_CONDITIONS } from '../mock-data/physioData';
 import { useToast } from '../context/ToastContext';
@@ -11,6 +11,7 @@ import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
     address: `${currentLocation?.city || 'Dispur'}, Guwahati`,
     conditionNotes: ''
   });
+  const [paymentMode, setPaymentMode] = useState('online'); // 'online' (Razorpay) or 'clinic'
   const [bookingConfirmed, setBookingConfirmed] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,6 +59,70 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
     setBookingConfirmed(null);
   };
 
+  const savePhysioBooking = async (bookingRef, paymentDetails = null) => {
+    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_AT_SESSION');
+    const newBooking = {
+      id: bookingRef,
+      bookingId: bookingRef,
+      booking_number: bookingRef,
+      type: 'Physiotherapy',
+      category: 'physiotherapy',
+      title: selectedPhysio.name,
+      doctor: selectedPhysio.name,
+      doctorName: selectedPhysio.name,
+      doctorSpecialty: selectedPhysio.specialty,
+      specialty: selectedPhysio.specialty,
+      doctorDegree: selectedPhysio.degree,
+      doctorHospital: 'Zestmed Physiotherapy Center, Guwahati',
+      hospital: 'Zestmed Physiotherapy Center, Guwahati',
+      date: sessionDate,
+      time: sessionSlot,
+      slot: `${sessionDate}, ${sessionSlot}`,
+      mode: serviceType,
+      fee: selectedPhysio.sessionFee,
+      price: selectedPhysio.sessionFee,
+      totalAmount: selectedPhysio.sessionFee,
+      patientName: patientDetails.name,
+      patientPhone: patientDetails.phone,
+      phone: patientDetails.phone,
+      userId: user?.id || null,
+      userEmail: user?.email || '',
+      patientAge: patientDetails.age,
+      symptoms: patientDetails.conditionNotes || `${selectedPhysio.specialty} Session`,
+      status: 'Confirmed',
+      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay Post-Session',
+      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay Post-Session (Cash/UPI)',
+      paymentId: paymentDetails?.paymentId || '',
+      orderId: paymentDetails?.orderId || '',
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Save to Supabase PostgreSQL database
+      await bookPhysiotherapy(newBooking);
+    } catch (err) {
+      console.error('Failed to save booking to storage', err);
+    }
+
+    setBookingConfirmed({
+      bookingRef,
+      physio: selectedPhysio,
+      serviceType,
+      date: sessionDate,
+      slot: sessionSlot,
+      patient: patientDetails,
+      fee: selectedPhysio.sessionFee,
+      paymentDetails
+    });
+    setIsSubmitting(false);
+    addToast(`Physiotherapy session scheduled with ${selectedPhysio.name}!`, 'success');
+  };
+
   const handleConfirmBooking = (e) => {
     e.preventDefault();
     if (!user) {
@@ -80,63 +146,38 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const bookingRef = `ZM-PT-${Math.floor(10000 + Math.random() * 90000)}`;
-      const newBooking = {
-        id: bookingRef,
+    const bookingRef = `ZM-PT-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    if (paymentMode === 'online') {
+      setIsSubmitting(true);
+      launchRazorpayCheckout({
+        amount: selectedPhysio.sessionFee,
         bookingId: bookingRef,
-        type: 'Physiotherapy',
-        category: 'physiotherapy',
-        title: selectedPhysio.name,
-        doctor: selectedPhysio.name,
-        doctorName: selectedPhysio.name,
-        doctorSpecialty: selectedPhysio.specialty,
-        specialty: selectedPhysio.specialty,
-        doctorDegree: selectedPhysio.degree,
-        doctorHospital: 'Zestmed Physiotherapy Center, Guwahati',
-        hospital: 'Zestmed Physiotherapy Center, Guwahati',
-        date: sessionDate,
-        time: sessionSlot,
-        slot: `${sessionDate}, ${sessionSlot}`,
-        mode: serviceType,
-        fee: selectedPhysio.sessionFee,
-        price: selectedPhysio.sessionFee,
-        patientName: patientDetails.name,
-        patientPhone: patientDetails.phone,
-        phone: patientDetails.phone,
-        userId: user?.id || null,
-        userEmail: user?.email || '',
-        patientAge: patientDetails.age,
-        symptoms: patientDetails.conditionNotes || `${selectedPhysio.specialty} Session`,
-        status: 'Confirmed',
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
-        window.dispatchEvent(new Event('storage'));
-        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-        // Save to Supabase PostgreSQL database
-        bookPhysiotherapy(newBooking).catch((err) => console.warn('Supabase physio booking error:', err));
-      } catch (err) {
-        console.error('Failed to save booking to storage', err);
-      }
-
-      setBookingConfirmed({
-        bookingRef,
-        physio: selectedPhysio,
-        serviceType,
-        date: sessionDate,
-        slot: sessionSlot,
-        patient: patientDetails,
-        fee: selectedPhysio.sessionFee
+        bookingType: 'physiotherapy',
+        serviceTitle: `Physiotherapy: ${selectedPhysio.name}`,
+        customer: {
+          name: patientDetails.name,
+          phone: patientDetails.phone,
+          email: user?.email || 'patient@zestmed.in'
+        },
+        onSuccess: (verifiedTxn) => {
+          savePhysioBooking(bookingRef, verifiedTxn);
+        },
+        onFailure: (err) => {
+          setIsSubmitting(false);
+          addToast(err?.message || 'Payment not completed.', 'error');
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          addToast('Payment cancelled. You can choose Pay Post-Session.', 'info');
+        }
       });
-      addToast(`Physiotherapy session scheduled with ${selectedPhysio.name}!`, 'success');
-    }, 800);
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        savePhysioBooking(bookingRef, { paymentId: 'PAY_AT_SESSION' });
+      }, 400);
+    }
   };
 
   const handleReset = () => {
@@ -233,9 +274,21 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Session Fee</span>
                     <span className="text-base font-black text-slate-900">₹{bookingConfirmed.fee}</span>
                   </div>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[11px]">
-                    Pay Post Session / Online UPI Active
-                  </span>
+                  {bookingConfirmed.paymentDetails?.paymentId && bookingConfirmed.paymentDetails.paymentId !== 'PAY_AT_SESSION' ? (
+                    <div className="text-right">
+                      <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[11px] inline-flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        Paid via Razorpay
+                      </span>
+                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                        Txn: {bookingConfirmed.paymentDetails.paymentId}
+                      </p>
+                    </div>
+                  ) : (
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[11px]">
+                      Pay Post-Session
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -415,14 +468,64 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
                 />
               </div>
 
+              {/* Payment Method Selector */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Payment Method</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMode('online')}
+                    className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                      paymentMode === 'online'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] ring-1 ring-[#008F83]'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-[#008F83]" />
+                      <div className="text-left">
+                        <span className="block font-bold">Pay Online (Razorpay)</span>
+                        <span className="text-[10px] text-slate-500 font-normal">UPI, Cards, NetBanking</span>
+                      </div>
+                    </div>
+                    {paymentMode === 'online' && <CheckCircle2 className="w-4 h-4 text-[#008F83]" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMode('clinic')}
+                    className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
+                      paymentMode === 'clinic'
+                        ? 'border-[#008F83] bg-teal-50/80 text-[#008F83] ring-1 ring-[#008F83]'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Banknote className="w-4 h-4 text-emerald-600" />
+                      <div className="text-left">
+                        <span className="block font-bold">Pay Post-Session</span>
+                        <span className="text-[10px] text-slate-500 font-normal">Cash / UPI during visit</span>
+                      </div>
+                    </div>
+                    {paymentMode === 'clinic' && <CheckCircle2 className="w-4 h-4 text-[#008F83]" />}
+                  </button>
+                </div>
+              </div>
+
               <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#008F83] hover:bg-[#007a70] text-white font-bold py-3 text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
-                  <Activity className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Assigning Physiotherapist...' : `Confirm Session Booking • ₹${selectedPhysio.sessionFee}`}</span>
+                  <Lock className="w-4 h-4" />
+                  <span>
+                    {isSubmitting
+                      ? 'Confirming Session...'
+                      : paymentMode === 'online'
+                      ? `Pay ₹${selectedPhysio.sessionFee} via Razorpay & Confirm`
+                      : `Confirm Session • Pay ₹${selectedPhysio.sessionFee} Post-Session`}
+                  </span>
                 </button>
               </div>
             </form>

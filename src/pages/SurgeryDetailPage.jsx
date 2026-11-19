@@ -12,6 +12,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { bookSurgery } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 
 export default function SurgeryDetailPage() {
   const { id } = useParams();
@@ -93,6 +94,87 @@ export default function SurgeryDetailPage() {
     setIsBookingModalOpen(true);
   };
 
+  // Save Confirmed Surgery Booking
+  const saveConfirmedSurgeryBooking = async (bookingId, paymentDetails = null) => {
+    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_AT_HOSPITAL');
+    const isToken = patientForm.insuranceType.includes('Token');
+    const chargedAmount = isPaidOnline ? (isToken ? 999 : surgery.startingPrice) : surgery.startingPrice;
+
+    const bookingData = {
+      id: bookingId,
+      bookingId: bookingId,
+      booking_number: bookingId,
+      type: 'Surgery Package',
+      category: 'surgery',
+      isSurgery: true,
+      title: surgery.title,
+      surgeryName: surgery.title,
+      doctor: surgery.surgeon?.name || 'Dr. Anupam Sarma',
+      doctorName: surgery.surgeon?.name || 'Dr. Anupam Sarma',
+      doctorSpecialty: surgery.category,
+      specialty: surgery.category,
+      doctorHospital: patientForm.preferredHospital,
+      hospital: patientForm.preferredHospital,
+      hospital_preference: patientForm.preferredHospital,
+      date: patientForm.date,
+      preferred_date: patientForm.date,
+      time: patientForm.timeSlot,
+      slot: patientForm.timeSlot,
+      mode: patientForm.consultationMode,
+      fee: surgery.startingPrice,
+      price: surgery.startingPrice,
+      totalAmount: surgery.startingPrice,
+      patientName: patientForm.name,
+      patient_name: patientForm.name,
+      patientPhone: patientForm.phone,
+      phone: patientForm.phone,
+      patientAge: patientForm.age,
+      patientGender: patientForm.gender,
+      insuranceType: patientForm.insuranceType,
+      symptoms: patientForm.notes || `${surgery.shortTitle} Pre-Op Consultation - ${patientForm.insuranceType}`,
+      notes: patientForm.notes || null,
+      status: 'Confirmed',
+      bookingStatus: 'Confirmed',
+      paymentStatus: isPaidOnline 
+        ? (isToken ? 'Advance Token Paid (Razorpay Verified)' : 'Full Package Paid (Razorpay Verified)')
+        : patientForm.insuranceType === 'TPA Cashless Mediclaim' 
+        ? 'TPA Cashless Assistance' 
+        : 'Pay at Hospital',
+      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : patientForm.insuranceType,
+      paymentId: paymentDetails?.paymentId || '',
+      orderId: paymentDetails?.orderId || '',
+      paidAmount: isPaidOnline ? chargedAmount : 0,
+      userId: user.id || null,
+      userEmail: user.email || '',
+      createdAt: new Date().toISOString(),
+      seniorPickupRequested: patientForm.needSeniorPickup,
+      careManager: 'Dr. Anupam Sarma (Surgery Lead)',
+      carePhone: '+91 94351 09876'
+    };
+
+    try {
+      // 1. Save to Supabase PostgreSQL table
+      await bookSurgery(bookingData);
+
+      // 2. Save to local storage for instant dashboard synchronization
+      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      const filteredExisting = existing.filter(b => b.id !== bookingId && b.bookingId !== bookingId);
+      localStorage.setItem('patient_appointments', JSON.stringify([bookingData, ...filteredExisting]));
+      
+      // Trigger update events
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      setConfirmedBooking(bookingData);
+      addToast(`Surgery consultation reserved for ${surgery.shortTitle}!`, 'success');
+    } catch (err) {
+      console.error('Surgery booking error:', err);
+      addToast('Surgery consultation booked successfully', 'success');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Submit actual booking
   const handleConfirmBooking = async (e) => {
     e.preventDefault();
@@ -121,72 +203,40 @@ export default function SurgeryDetailPage() {
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      const bookingId = `ZM-SURG-${Math.floor(10000 + Math.random() * 90000)}`;
-      const bookingData = {
-        id: bookingId,
+    const bookingId = `ZM-SURG-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    if (patientForm.insuranceType.includes('Razorpay')) {
+      const isToken = patientForm.insuranceType.includes('Token');
+      const amountToCharge = isToken ? 999 : surgery.startingPrice;
+
+      setIsSubmitting(true);
+      launchRazorpayCheckout({
+        amount: amountToCharge,
         bookingId: bookingId,
-        booking_number: bookingId,
-        type: 'Surgery Package',
-        category: 'surgery',
-        isSurgery: true,
-        title: surgery.title,
-        surgeryName: surgery.title,
-        doctor: surgery.surgeon?.name || 'Dr. Anupam Sarma',
-        doctorName: surgery.surgeon?.name || 'Dr. Anupam Sarma',
-        doctorSpecialty: surgery.category,
-        specialty: surgery.category,
-        doctorHospital: patientForm.preferredHospital,
-        hospital: patientForm.preferredHospital,
-        hospital_preference: patientForm.preferredHospital,
-        date: patientForm.date,
-        preferred_date: patientForm.date,
-        time: patientForm.timeSlot,
-        slot: patientForm.timeSlot,
-        mode: patientForm.consultationMode,
-        fee: surgery.startingPrice,
-        price: surgery.startingPrice,
-        totalAmount: surgery.startingPrice,
-        patientName: patientForm.name,
-        patient_name: patientForm.name,
-        patientPhone: patientForm.phone,
-        phone: patientForm.phone,
-        patientAge: patientForm.age,
-        patientGender: patientForm.gender,
-        insuranceType: patientForm.insuranceType,
-        symptoms: patientForm.notes || `${surgery.shortTitle} Pre-Op Consultation - ${patientForm.insuranceType}`,
-        notes: patientForm.notes || null,
-        status: 'Confirmed',
-        bookingStatus: 'Confirmed',
-        paymentStatus: patientForm.insuranceType === 'TPA Cashless Mediclaim' ? 'TPA Cashless Assistance' : 'Pay at Hospital',
-        userId: user.id || null,
-        userEmail: user.email || '',
-        createdAt: new Date().toISOString(),
-        seniorPickupRequested: patientForm.needSeniorPickup,
-        careManager: 'Dr. Anupam Sarma (Surgery Lead)',
-        carePhone: '+91 94351 09876'
-      };
-
-      // 1. Save to Supabase PostgreSQL table
-      await bookSurgery(bookingData);
-
-      // 2. Save to local storage for instant dashboard synchronization
-      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      const filteredExisting = existing.filter(b => b.id !== bookingId && b.bookingId !== bookingId);
-      localStorage.setItem('patient_appointments', JSON.stringify([bookingData, ...filteredExisting]));
-      
-      // Trigger update events
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-      setConfirmedBooking(bookingData);
-      addToast(`Surgery consultation reserved for ${surgery.shortTitle}!`, 'success');
-    } catch (err) {
-      console.error('Surgery booking error:', err);
-      addToast('Surgery consultation booked successfully', 'success');
-    } finally {
-      setIsSubmitting(false);
+        bookingType: 'surgery',
+        serviceTitle: `Surgery Package: ${surgery.shortTitle}`,
+        customer: {
+          name: patientForm.name,
+          phone: patientForm.phone,
+          email: user?.email || 'patient@zestmed.in'
+        },
+        onSuccess: (verifiedTxn) => {
+          saveConfirmedSurgeryBooking(bookingId, verifiedTxn);
+        },
+        onFailure: (err) => {
+          setIsSubmitting(false);
+          addToast(err?.message || 'Payment not completed.', 'error');
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          addToast('Payment cancelled. You can choose Pay at Hospital or Cashless TPA.', 'info');
+        }
+      });
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        saveConfirmedSurgeryBooking(bookingId, { paymentId: 'PAY_AT_HOSPITAL' });
+      }, 400);
     }
   };
 
@@ -717,9 +767,15 @@ export default function SurgeryDetailPage() {
                       <span className="font-black text-[#007A64]">₹{confirmedBooking.fee?.toLocaleString('en-IN')}</span>
                     </div>
                     <div className="flex justify-between border-t border-slate-200 pt-2">
-                      <span className="text-slate-500 font-medium">Insurance Mode</span>
-                      <span className="font-bold text-emerald-700">{confirmedBooking.paymentStatus}</span>
+                      <span className="text-slate-500 font-medium">Payment / Mode</span>
+                      <span className="font-bold text-emerald-700 text-right">{confirmedBooking.paymentStatus}</span>
                     </div>
+                    {confirmedBooking.paymentId && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500 font-medium">Razorpay Txn</span>
+                        <span className="font-mono text-slate-800 font-bold">{confirmedBooking.paymentId}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Actions */}
@@ -905,7 +961,7 @@ export default function SurgeryDetailPage() {
                     </select>
                   </div>
 
-                  {/* Insurance Preference */}
+                  {/* Insurance & Payment Preference */}
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
                       Payment / Insurance Option
@@ -915,9 +971,11 @@ export default function SurgeryDetailPage() {
                       onChange={(e) => setPatientForm({ ...patientForm, insuranceType: e.target.value })}
                       className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#007A64] cursor-pointer"
                     >
-                      <option value="TPA Cashless Mediclaim">100% Cashless TPA Mediclaim (Hassle-Free Approval)</option>
-                      <option value="Ayushman Bharat (PM-JAY)">Ayushman Bharat (PM-JAY) Assistance</option>
-                      <option value="Pay Directly at Hospital (Card/UPI/Cash)">Pay Directly at Hospital (Card / UPI / Cash)</option>
+                      <option value="Pay Advance Booking Token (₹999 via Razorpay)">💳 Pay Advance Booking Token (₹999 via Razorpay Online)</option>
+                      <option value="Pay Full Package via Razorpay">💳 Pay Full Surgery Package (₹{surgery.startingPrice?.toLocaleString('en-IN')} via Razorpay Online)</option>
+                      <option value="TPA Cashless Mediclaim">🛡️ 100% Cashless TPA Mediclaim (Hassle-Free Approval)</option>
+                      <option value="Ayushman Bharat (PM-JAY)">🏥 Ayushman Bharat (PM-JAY) Assistance</option>
+                      <option value="Pay Directly at Hospital (Card/UPI/Cash)">🏥 Pay Directly at Hospital Desk (Card / UPI / Cash)</option>
                     </select>
                   </div>
 
@@ -939,11 +997,21 @@ export default function SurgeryDetailPage() {
                     className="w-full py-3.5 bg-[#007A64] hover:bg-[#006853] text-white font-black text-sm rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50 mt-2"
                   >
                     <CheckCircle2 className="w-4.5 h-4.5" />
-                    <span>{isSubmitting ? 'Confirming Booking...' : 'Confirm Surgery Consultation'}</span>
+                    <span>
+                      {isSubmitting
+                        ? 'Processing Booking...'
+                        : patientForm.insuranceType.includes('Token')
+                        ? 'Pay ₹999 Advance via Razorpay & Confirm'
+                        : patientForm.insuranceType.includes('Full')
+                        ? `Pay ₹${surgery.startingPrice?.toLocaleString('en-IN')} via Razorpay & Confirm`
+                        : 'Confirm Surgery Consultation'}
+                    </span>
                   </button>
 
                   <p className="text-[11px] text-slate-400 text-center font-medium">
-                    No advance payment required. Saved instantly to your real My Bookings account.
+                    {patientForm.insuranceType.includes('Razorpay')
+                      ? 'Secure 256-bit encrypted payment verified via Razorpay.'
+                      : 'No immediate advance payment required. Saved instantly to your real My Bookings account.'}
                   </p>
 
                 </form>

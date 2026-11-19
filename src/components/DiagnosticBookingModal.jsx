@@ -6,10 +6,11 @@ import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookLabTest } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { launchRazorpayCheckout } from '../services/razorpayClient';
 import { 
   X, Calendar, Clock, MapPin, User, CheckCircle2, 
   FlaskConical, ShieldCheck, ArrowRight, ArrowLeft, 
-  Droplets, AlertCircle 
+  Droplets, AlertCircle, CreditCard, Banknote, Lock 
 } from 'lucide-react';
 
 export default function DiagnosticBookingModal({ item, type = 'diagnostic', onClose }) {
@@ -22,6 +23,8 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
+  const [paymentMode, setPaymentMode] = useState('razorpay'); // 'razorpay' or 'collection'
+  const [verifiedPaymentData, setVerifiedPaymentData] = useState(null);
 
   // Form State
   const [patientName, setPatientName] = useState(user?.name || '');
@@ -75,6 +78,64 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
     setStep(3);
   };
 
+  const saveCompletedBooking = async (generatedRef, paymentDetails = null) => {
+    const isPaidOnline = Boolean(paymentDetails?.paymentId && paymentDetails.paymentId !== 'PAY_ON_COLLECTION');
+    const newLabBooking = {
+      id: generatedRef,
+      bookingId: generatedRef,
+      booking_number: generatedRef,
+      type: 'Diagnostic Lab Test',
+      category: item.category || 'Diagnostic Test',
+      testName: item.name,
+      testCode: item.testCode || `DX-${Math.floor(100 + Math.random() * 900)}`,
+      bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      collectionDate: `${selectedDate}, ${selectedSlot.split(' ')[0]} ${selectedSlot.split(' ')[1] || 'AM'}`,
+      date: selectedDate,
+      time: selectedSlot,
+      patientName: `${patientName || user?.name || 'Self'} (${patientGender}, ${patientAge ? patientAge + 'y' : 'Adult'})`,
+      phone: contactNumber || user?.phone || user?.contact || '',
+      patientPhone: contactNumber || user?.phone || user?.contact || '',
+      userId: user?.id || null,
+      userEmail: user?.email || '',
+      status: 'Confirmed',
+      paymentStatus: isPaidOnline ? 'Paid (Razorpay Verified)' : 'Pay on Collection',
+      paymentMethod: isPaidOnline ? 'Razorpay (Verified)' : 'Pay on Sample Collection',
+      paymentId: paymentDetails?.paymentId || '',
+      orderId: paymentDetails?.orderId || '',
+      specimen: item.specimen || 'Blood / Serum Sample (NABL Barcoded)',
+      collectionAddress: `${address || 'GS Road'}, ${district}, Assam - ${pincode}`,
+      phlebotomist: {
+        name: 'Bikash Das',
+        id: 'ZM-PHL-AS-14',
+        phone: '+91 92791 25091',
+        vaccinated: true
+      },
+      reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
+      price: item.price || 499,
+      totalAmount: item.price || 499,
+      parametersSummary: `${item.name} - Home Sample Collection Booked`,
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+      localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Save to Supabase PostgreSQL database
+      await bookLabTest(newLabBooking);
+    } catch (err) {
+      console.warn('Failed to sync lab booking with database:', err);
+    }
+
+    setBookingRef(generatedRef);
+    setVerifiedPaymentData(paymentDetails);
+    setIsSubmitting(false);
+    setStep(4);
+    addToast('Diagnostic appointment confirmed successfully!', 'success');
+  };
+
   const handleConfirmBooking = (e) => {
     e.preventDefault();
     if (!user) {
@@ -88,71 +149,39 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       });
       return;
     }
-    setIsSubmitting(true);
 
-    setTimeout(() => {
-      const generatedRef = `ASM-DX-${pincode}-${Math.floor(1000 + Math.random() * 9000)}`;
-      setBookingRef(generatedRef);
-      setIsSubmitting(false);
-      setStep(4);
+    const generatedRef = `ASM-DX-${pincode}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      const newLabBooking = {
-        id: generatedRef,
+    if (paymentMode === 'razorpay') {
+      setIsSubmitting(true);
+      launchRazorpayCheckout({
+        amount: item.price || 499,
         bookingId: generatedRef,
-        type: 'Diagnostic Lab Test',
-        category: item.category || 'Diagnostic Test',
-        testName: item.name,
-        testCode: item.testCode || `DX-${Math.floor(100 + Math.random() * 900)}`,
-        bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-        collectionDate: `${selectedDate}, ${selectedSlot.split(' ')[0]} ${selectedSlot.split(' ')[1] || 'AM'}`,
-        date: selectedDate,
-        time: selectedSlot,
-        patientName: `${patientName || user?.name || 'Self'} (${patientGender}, ${patientAge ? patientAge + 'y' : 'Adult'})`,
-        phone: contactNumber || user?.phone || user?.contact || '',
-        patientPhone: contactNumber || user?.phone || user?.contact || '',
-        userId: user?.id || null,
-        userEmail: user?.email || '',
-        status: 'Confirmed',
-        specimen: item.specimen || 'Blood / Serum Sample (NABL Barcoded)',
-        collectionAddress: `${address || 'GS Road'}, ${district}, Assam - ${pincode}`,
-        phlebotomist: {
-          name: 'Bikash Das',
-          id: 'ZM-PHL-AS-14',
-          phone: '+91 92791 25091',
-          vaccinated: true
+        bookingType: 'lab_test',
+        serviceTitle: item.name,
+        customer: {
+          name: patientName || user?.name || 'Patient',
+          phone: contactNumber || user?.phone || '',
+          email: user?.email || 'patient@zestmed.in'
         },
-        reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
-        price: item.price || 499,
-        parametersSummary: `${item.name} - Home Sample Collection Booked`,
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        const existing = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
-        window.dispatchEvent(new Event('storage'));
-        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-        // Save to Supabase PostgreSQL database
-        bookLabTest(newLabBooking).catch((err) => console.warn('Supabase lab booking error:', err));
-      } catch (err) {
-        console.error('Failed to save lab booking to localStorage', err);
-      }
-
-      // Also add to cart state as booked service
-      addItem(
-        {
-          ...item,
-          patientName,
-          bookingSlot: selectedSlot,
-          bookingDate: selectedDate,
-          bookingDistrict: district,
+        onSuccess: (verifiedTxn) => {
+          saveCompletedBooking(generatedRef, verifiedTxn);
         },
-        type
-      );
-
-      addToast(`Diagnostic Appointment Reserved in ${district}!`, 'success');
-    }, 1000);
+        onFailure: (err) => {
+          setIsSubmitting(false);
+          addToast(err?.message || 'Razorpay payment was not completed.', 'error');
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+          addToast('Payment cancelled. You can change payment method to Pay on Collection.', 'info');
+        }
+      });
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        saveCompletedBooking(generatedRef, { paymentId: 'PAY_ON_COLLECTION' });
+      }, 400);
+    }
   };
 
   const handleClose = () => {
@@ -391,6 +420,47 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                 </div>
               </div>
 
+              {/* Payment Mode Selection */}
+              <div className="space-y-1.5 pt-1">
+                <label className="font-semibold text-dark block">Payment Method</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div
+                    onClick={() => setPaymentMode('razorpay')}
+                    className={`p-2.5 rounded-xl border-2 transition cursor-pointer flex flex-col justify-between gap-1 text-left ${
+                      paymentMode === 'razorpay'
+                        ? 'border-[#007A64] bg-[#E6F7F2]/50'
+                        : 'border-slate-200 hover:border-slate-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[#007A64] flex items-center gap-1">
+                        <CreditCard className="w-3.5 h-3.5" />
+                        <span>Pay Online</span>
+                      </span>
+                      <span className="text-[9px] bg-[#007A64] text-white px-1 rounded font-bold">Razorpay</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">UPI, Cards, NetBanking</div>
+                  </div>
+
+                  <div
+                    onClick={() => setPaymentMode('collection')}
+                    className={`p-2.5 rounded-xl border-2 transition cursor-pointer flex flex-col justify-between gap-1 text-left ${
+                      paymentMode === 'collection'
+                        ? 'border-[#007A64] bg-[#E6F7F2]/50'
+                        : 'border-slate-200 hover:border-slate-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-800 flex items-center gap-1">
+                        <Banknote className="w-3.5 h-3.5" />
+                        <span>Pay on Visit</span>
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">Cash / UPI on collection</div>
+                  </div>
+                </div>
+              </div>
+
               {item.fastingRequired && (
                 <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
@@ -415,10 +485,16 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                   className="btn-primary flex-1 py-2.5 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 disabled:opacity-75"
                 >
                   {isSubmitting ? (
-                    <span>Confirming Appointment...</span>
+                    <span>Processing with Razorpay...</span>
+                  ) : paymentMode === 'razorpay' ? (
+                    <>
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Pay ₹{item.price.toFixed(2)} via Razorpay</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
                   ) : (
                     <>
-                      <span>Confirm Booking (Demo)</span>
+                      <span>Confirm Booking (Pay on Visit)</span>
                       <CheckCircle2 className="w-4 h-4" />
                     </>
                   )}
@@ -447,7 +523,14 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                 <div>• Date & Slot: <strong>{selectedDate} • {selectedSlot}</strong></div>
                 <div>• Location: {district}, Assam ({pincode})</div>
                 <div>• Address: {address}</div>
-                <div>• Total Payable: ₹{item.price.toFixed(2)} (Cash/UPI upon collection)</div>
+                <div>
+                  • Payment Status: {' '}
+                  <strong className={verifiedPaymentData?.paymentId && verifiedPaymentData.paymentId !== 'PAY_ON_COLLECTION' ? 'text-emerald-700' : 'text-amber-800'}>
+                    {verifiedPaymentData?.paymentId && verifiedPaymentData.paymentId !== 'PAY_ON_COLLECTION' 
+                      ? `Paid via Razorpay (ID: ${verifiedPaymentData.paymentId})` 
+                      : `Pay on Collection (₹${item.price.toFixed(2)})`}
+                  </strong>
+                </div>
               </div>
 
               <div className="bg-slate-50 p-3 rounded-xl border border-border text-[11px] text-slate-600 text-left space-y-1">
