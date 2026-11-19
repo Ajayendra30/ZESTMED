@@ -273,44 +273,44 @@ export default function SurgeryPackagesPage() {
         {/* ========================================================================= */}
         {/* 3. OUR SURGERY PACKAGES (6 Procedure Cards)                               */}
         {/* ========================================================================= */}
-        <section id="our-surgery-packages" className="space-y-4">
+        <section id="our-surgery-packages" className="space-y-4 sm:space-y-5">
           
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Our Surgery Packages
             </h2>
             <button
               type="button"
               onClick={() => handleOpenBooking()}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#007A64] hover:text-[#006250] hover:underline cursor-pointer group"
+              className="inline-flex items-center gap-2 text-sm sm:text-base font-bold text-[#007A64] hover:text-[#006250] hover:underline cursor-pointer group"
             >
               <span>View All Packages</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
           {/* 6 Grid Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4.5 xl:gap-5">
             {SURGERY_PACKAGES.map((pkg) => (
               <div
                 key={pkg.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-3 sm:p-3.5 flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition duration-200 group"
+                className="bg-white rounded-3xl border border-slate-200/90 p-3.5 sm:p-4.5 lg:p-4 xl:p-4.5 flex flex-col justify-between hover:shadow-xl hover:border-teal-300 transition duration-300 group shadow-xs"
               >
                 <div>
                   {/* Visual Illustration */}
-                  <div className="h-20 sm:h-22 w-full flex items-center justify-center mb-2.5 overflow-hidden">
+                  <div className="h-24 sm:h-28 w-full flex items-center justify-center mb-3 overflow-hidden rounded-2xl bg-slate-50/70 p-1.5">
                     <img
                       src={pkg.image}
                       alt={pkg.title}
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
 
                   {/* Title & Subtitle */}
-                  <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-tight text-center">
+                  <h3 className="text-xs sm:text-sm lg:text-[13.5px] xl:text-[14px] font-extrabold text-slate-900 leading-snug text-center min-h-[38px] flex items-center justify-center">
                     {pkg.title}
                   </h3>
-                  <p className="text-[11px] text-slate-500 font-medium text-center mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium text-center mt-1">
                     {pkg.subtitle}
                   </p>
                 </div>
@@ -319,15 +319,15 @@ export default function SurgeryPackagesPage() {
                 <button
                   type="button"
                   onClick={() => handleOpenBooking(pkg.mockRefId)}
-                  className="mt-3.5 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl py-1.5 px-2.5 flex items-center justify-between shadow-2xs hover:shadow-xs transition active:scale-98 cursor-pointer"
+                  className="mt-3.5 sm:mt-4 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl sm:rounded-2xl py-2 px-2.5 sm:px-3 flex items-center justify-between shadow-xs hover:shadow-md transition active:scale-98 cursor-pointer"
                   title={`Book ${pkg.title}`}
                 >
                   <div className="text-left leading-tight">
-                    <span className="block text-[9px] uppercase tracking-wider text-teal-100 font-medium">Starting from</span>
-                    <span className="block text-xs font-black text-white">{pkg.priceFormatted}</span>
+                    <span className="block text-[9.5px] sm:text-[10px] uppercase tracking-wider text-teal-100 font-semibold">Starting from</span>
+                    <span className="block text-xs sm:text-[13.5px] font-black text-white">{pkg.priceFormatted}</span>
                   </div>
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <ArrowRight className="w-3 h-3 text-white" />
+                  <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <ArrowRight className="w-3.5 h-3.5 text-white" />
                   </div>
                 </button>
               </div>
