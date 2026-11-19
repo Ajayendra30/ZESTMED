@@ -238,41 +238,33 @@ export default function SurgeryPackagesPage() {
         {/* ========================================================================= */}
         {/* 2. VALUE PROPOSITION STRIP (4 Key Pillars)                                */}
         {/* ========================================================================= */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4.5">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           
-          <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:shadow-sm hover:border-teal-200 transition">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-[#007A64]" />
-            </div>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-teal-200 transition duration-200">
+            <ShieldCheck className="w-8 h-8 sm:w-9 sm:h-9 text-[#007A64] shrink-0" />
             <div>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Experienced Surgeons</p>
+              <p className="text-sm sm:text-base lg:text-[17px] font-bold text-slate-900 leading-snug">Experienced Surgeons</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:shadow-sm hover:border-teal-200 transition">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <BedDouble className="w-5 h-5 text-[#007A64]" />
-            </div>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-teal-200 transition duration-200">
+            <BedDouble className="w-8 h-8 sm:w-9 sm:h-9 text-[#007A64] shrink-0" />
             <div>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Modern OT & Facilities</p>
+              <p className="text-sm sm:text-base lg:text-[17px] font-bold text-slate-900 leading-snug">Modern OT & Facilities</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:shadow-sm hover:border-teal-200 transition">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <CircleDollarSign className="w-5 h-5 text-[#007A64]" />
-            </div>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-teal-200 transition duration-200">
+            <CircleDollarSign className="w-8 h-8 sm:w-9 sm:h-9 text-[#007A64] shrink-0" />
             <div>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Transparent Pricing</p>
+              <p className="text-sm sm:text-base lg:text-[17px] font-bold text-slate-900 leading-snug">Transparent Pricing</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 hover:shadow-sm hover:border-teal-200 transition">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <HeartPulse className="w-5 h-5 text-[#007A64]" />
-            </div>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex items-center gap-4 hover:shadow-md hover:border-teal-200 transition duration-200">
+            <HeartPulse className="w-8 h-8 sm:w-9 sm:h-9 text-[#007A64] shrink-0" />
             <div>
-              <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Post-Surgery Care & Follow-up</p>
+              <p className="text-sm sm:text-base lg:text-[17px] font-bold text-slate-900 leading-snug">Post-Surgery Care & Follow-up</p>
             </div>
           </div>
 
