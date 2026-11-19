@@ -301,23 +301,23 @@ export default function PhysiotherapyPage() {
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 pt-8 sm:pt-10 lg:pt-6 pb-0">
           
           {/* Left Column: Heading, Subtitle & Action Buttons */}
-          <div className="w-full lg:w-[460px] xl:w-[500px] 2xl:w-[540px] shrink-0 space-y-4 self-center py-4 lg:py-8 z-20">
+          <div className="w-full lg:w-[480px] xl:w-[520px] 2xl:w-[560px] shrink-0 space-y-4 sm:space-y-4.5 self-center py-4 lg:py-8 z-20">
             
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
-              <Activity className="w-3.5 h-3.5 text-[#007A64]" />
+            <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E6F7F2] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
+              <Activity className="w-4 h-4 text-[#007A64]" />
               <span>Physiotherapy & Rehabilitation</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[38px] xl:text-[44px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[48px] font-black text-[#0F172A] leading-[1.18] tracking-tight">
               Expert Physiotherapy<br />
               Care for a <span className="text-[#007A64]">Healthier,</span><br />
               <span className="text-[#007A64]">More Active Life</span>
             </h1>
 
             {/* Subheading text */}
-            <p className="text-xs sm:text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-lg">
               Personalized physiotherapy treatment for pain relief, injury recovery and overall mobility improvement.
             </p>
 
@@ -326,19 +326,19 @@ export default function PhysiotherapyPage() {
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
+                className="bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center gap-2.5 group cursor-pointer active:scale-95 min-h-[48px]"
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-5 h-5" />
                 <span>Book a Session</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="bg-white hover:bg-slate-50 text-[#0F172A] border border-slate-300 font-bold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                className="bg-white hover:bg-slate-50 text-[#0F172A] border-2 border-slate-300 font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 min-h-[48px]"
               >
-                <Stethoscope className="w-4 h-4 text-[#007A64]" />
+                <Stethoscope className="w-5 h-5 text-[#007A64]" />
                 <span>Consult a Physiotherapist</span>
               </button>
             </div>
@@ -349,7 +349,7 @@ export default function PhysiotherapyPage() {
             <img
               src="/physio-hero-therapist.png"
               alt="Physiotherapist treating patient"
-              className="h-[270px] sm:h-[320px] md:h-[360px] lg:h-[390px] xl:h-[430px] 2xl:h-[460px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
+              className="h-[280px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[470px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
             />
           </div>
 
@@ -365,50 +365,50 @@ export default function PhysiotherapyPage() {
         {/* ========================================================================= */}
         {/* 2. FEATURE HIGHLIGHTS (4 Items Bar matching Reference Image)              */}
         {/* ========================================================================= */}
-        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-4 px-4 sm:px-6">
+        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-5 sm:py-6 px-4 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             
             {/* Feature 1 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-4 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                <User className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                <User className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F172A] leading-tight">Certified Physiotherapists</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Experienced & qualified professionals</p>
+                <p className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">Certified Physiotherapists</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Experienced & qualified professionals</p>
               </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-4 pt-2 sm:pt-0 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                <HomeIcon className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                <HomeIcon className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F172A] leading-tight">Personalized Treatment Plans</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Care tailored to your needs</p>
+                <p className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">Personalized Treatment Plans</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Care tailored to your needs</p>
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-4 pt-2 sm:pt-0 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                <ShieldCheck className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F172A] leading-tight">Pain Relief & Recovery</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Evidence-based therapy for faster healing</p>
+                <p className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">Pain Relief & Recovery</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Evidence-based therapy for faster healing</p>
               </div>
             </div>
 
             {/* Feature 4 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-4 pt-2 sm:pt-0 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                <Activity className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                <Activity className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F172A] leading-tight">Better Mobility & Strength</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Improve movement, posture and daily life</p>
+                <p className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">Better Mobility & Strength</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Improve movement, posture and daily life</p>
               </div>
             </div>
 
@@ -425,21 +425,21 @@ export default function PhysiotherapyPage() {
             
             {/* Header Row */}
             <div className="flex items-center justify-between">
-              <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
                 Our Physiotherapy Services
               </h2>
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="text-[#007A64] hover:text-[#005c4b] font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
+                className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
               >
                 <span>View All Services</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* 6 Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4.5 sm:gap-5">
               {PHYSIO_SERVICES.map((srv) => {
                 const IconComp = srv.icon;
                 const isSelected = formData.selectedService === srv.title;
@@ -448,7 +448,7 @@ export default function PhysiotherapyPage() {
                   <div
                     key={srv.id}
                     onClick={() => scrollToForm(srv.title)}
-                    className={`bg-white rounded-2xl border p-3 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none ${
+                    className={`bg-white rounded-2xl border p-4 sm:p-4.5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none ${
                       isSelected
                         ? 'border-[#007A64] ring-2 ring-[#007A64]/20'
                         : 'border-slate-200/90 hover:border-teal-200'
@@ -456,7 +456,7 @@ export default function PhysiotherapyPage() {
                   >
                     <div>
                       {/* Image Thumbnail with Floating Badge */}
-                      <div className="relative w-full h-32 rounded-xl overflow-hidden bg-slate-100">
+                      <div className="relative w-full h-36 sm:h-40 rounded-xl overflow-hidden bg-slate-100">
                         <img
                           src={srv.image}
                           onError={(e) => { e.currentTarget.src = srv.fallback; }}
@@ -464,23 +464,23 @@ export default function PhysiotherapyPage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         {/* Circular Icon Overlay */}
-                        <div className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-white text-[#007A64] shadow-md flex items-center justify-center border border-teal-100">
-                          <IconComp className="w-4.5 h-4.5 text-[#007A64]" />
+                        <div className="absolute bottom-2.5 left-2.5 w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white text-[#007A64] shadow-md flex items-center justify-center border border-teal-100">
+                          <IconComp className="w-5 sm:w-5.5 h-5 sm:h-5.5 text-[#007A64]" />
                         </div>
                       </div>
 
                       {/* Card Content */}
-                      <h3 className="text-sm font-extrabold text-[#0F172A] mt-3 group-hover:text-[#007A64] transition-colors leading-snug">
+                      <h3 className="text-base sm:text-lg font-black text-[#0F172A] mt-3.5 group-hover:text-[#007A64] transition-colors leading-snug">
                         {srv.title}
                       </h3>
-                      <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1">
+                      <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed mt-1">
                         {srv.desc}
                       </p>
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#007A64]">
+                    <div className="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64]">
                       <span>Book Session</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 );
@@ -491,45 +491,45 @@ export default function PhysiotherapyPage() {
 
           {/* Right Column: Appointment Booking Form Card */}
           <div className="lg:col-span-4" id="physio-booking-form-card">
-            <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-xl p-5 sm:p-6 space-y-4 sticky top-24">
+            <div className="bg-white rounded-[28px] border border-slate-200/90 shadow-xl p-6 sm:p-7 space-y-4.5 sticky top-24">
               
               {/* Form Title & Icon */}
-              <div className="flex items-start gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-start gap-3.5 border-b border-slate-100 pb-3.5">
                 <div className="shrink-0 flex items-center justify-center text-[#007A64] pt-0.5">
-                  <Calendar className="w-6 h-6 text-[#007A64]" />
+                  <Calendar className="w-7 h-7 text-[#007A64]" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
+                  <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">
                     Book a Physiotherapy Session
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
                     Schedule your session with our expert physiotherapist.
                   </p>
                 </div>
               </div>
 
               {/* Form Body */}
-              <form onSubmit={handleBookingSubmit} className="space-y-3">
+              <form onSubmit={handleBookingSubmit} className="space-y-3.5">
                 
                 {/* 1. Full Name */}
                 <div>
-                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <User className="w-4 h-4 text-[#007A64] shrink-0" />
+                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
+                    <User className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                     <input
                       type="text"
                       required
                       placeholder="Full Name"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs font-medium placeholder:text-slate-400"
+                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium placeholder:text-slate-400"
                     />
                   </div>
                 </div>
 
                 {/* 2. Mobile Number */}
                 <div>
-                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Phone className="w-4 h-4 text-[#007A64] shrink-0" />
+                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
+                    <Phone className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                     <input
                       type="tel"
                       required
@@ -537,33 +537,33 @@ export default function PhysiotherapyPage() {
                       placeholder="Mobile Number"
                       value={formData.mobileNumber}
                       onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs font-medium placeholder:text-slate-400"
+                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium placeholder:text-slate-400"
                     />
                   </div>
                 </div>
 
                 {/* 3. Preferred Date */}
                 <div>
-                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Calendar className="w-4 h-4 text-[#007A64] shrink-0" />
+                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
+                    <Calendar className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                     <input
                       type="date"
                       required
                       value={formData.preferredDate}
                       onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs font-medium cursor-pointer"
+                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
                     />
                   </div>
                 </div>
 
                 {/* 4. Preferred Time */}
                 <div>
-                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Clock className="w-4 h-4 text-[#007A64] shrink-0" />
+                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
+                    <Clock className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                     <select
                       value={formData.preferredTime}
                       onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs font-medium cursor-pointer"
+                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
                     >
                       <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM (Morning)</option>
                       <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM (Midday)</option>
@@ -576,12 +576,12 @@ export default function PhysiotherapyPage() {
 
                 {/* 5. Select Service */}
                 <div>
-                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Activity className="w-4 h-4 text-[#007A64] shrink-0" />
+                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
+                    <Activity className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                     <select
                       value={formData.selectedService}
                       onChange={(e) => setFormData({ ...formData, selectedService: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs font-medium cursor-pointer"
+                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
                     >
                       {PHYSIO_SERVICES.map(s => (
                         <option key={s.id} value={s.title}>{s.title}</option>
@@ -594,19 +594,19 @@ export default function PhysiotherapyPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full mt-2 bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50"
+                  className="w-full mt-2.5 bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <span>Scheduling Session...</span>
                   ) : (
                     <>
                       <span>Book Appointment</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
 
-                <p className="text-[10.5px] text-slate-400 text-center mt-1">
+                <p className="text-xs text-slate-400 text-center mt-1">
                   Guwahati Certified Physiotherapists • Home & Clinic Visits
                 </p>
               </form>
@@ -620,64 +620,64 @@ export default function PhysiotherapyPage() {
         {/* 4. WHY CHOOSE ZESTMED FOR PHYSIOTHERAPY? (5 Cards)                        */}
         {/* ========================================================================= */}
         <section className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
             Why Choose ZESTMED for Physiotherapy?
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-4.5">
             
             {/* 1. Expert & Certified Team */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
-                <Award className="w-7 h-7 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <Award className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-[#0F172A] leading-tight">Expert & Certified Team</h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Trained and experienced physiotherapists</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Expert & Certified Team</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Trained and experienced physiotherapists</p>
               </div>
             </div>
 
             {/* 2. Personalized Care */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
-                <FileText className="w-7 h-7 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <FileText className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-[#0F172A] leading-tight">Personalized Care</h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Condition-specific treatment plans</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Personalized Care</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Condition-specific treatment plans</p>
               </div>
             </div>
 
             {/* 3. Evidence-Based Approach */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
-                <Target className="w-7 h-7 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <Target className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-[#0F172A] leading-tight">Evidence-Based Approach</h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Proven and safe therapy methods</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Evidence-Based Approach</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Proven and safe therapy methods</p>
               </div>
             </div>
 
             {/* 4. Modern Equipment */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-7 h-7 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-[#0F172A] leading-tight">Modern Equipment</h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Advanced tools for effective rehabilitation</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Modern Equipment</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Advanced tools for effective rehabilitation</p>
               </div>
             </div>
 
             {/* 5. Holistic Recovery */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
-                <Heart className="w-7 h-7 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-[#0F172A] leading-tight">Holistic Recovery</h4>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Pain relief, mobility & long-term wellness</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Holistic Recovery</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Pain relief, mobility & long-term wellness</p>
               </div>
             </div>
 
@@ -688,23 +688,23 @@ export default function PhysiotherapyPage() {
         {/* 5. CONDITIONS WE TREAT (8 Cards in One Row)                              */}
         {/* ========================================================================= */}
         <section className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
             Conditions We Treat
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3.5">
             {CONDITIONS_LIST.map((cond) => {
               const IconComp = cond.icon;
               return (
                 <div
                   key={cond.id}
                   onClick={() => scrollToForm(cond.name)}
-                  className="bg-white rounded-2xl border border-slate-200/90 p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[105px] select-none"
+                  className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-4.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[115px] sm:min-h-[125px] select-none"
                 >
-                  <div className="h-8 w-8 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <IconComp className="w-6 h-6 text-[#007A64]" />
+                  <div className="h-10 w-10 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
+                    <IconComp className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
                   </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 group-hover:text-[#007A64] transition-colors leading-tight">
+                  <span className="text-xs sm:text-sm font-extrabold text-slate-800 group-hover:text-[#007A64] transition-colors leading-tight">
                     {cond.name}
                   </span>
                 </div>
@@ -716,74 +716,74 @@ export default function PhysiotherapyPage() {
         {/* ========================================================================= */}
         {/* 6. OUR TREATMENT PROCESS (4 Horizontal Steps with Connecting Arrows)      */}
         {/* ========================================================================= */}
-        <section className="rounded-[28px] bg-white border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-2xs">
+        <section className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 lg:p-11 shadow-2xs">
           
-          <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight mb-7 sm:mb-9">
             Our Treatment Process
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 items-center">
             
             {/* Step 1 */}
             <div className="flex flex-col items-start relative text-left">
-              <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
                 1
               </div>
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
-                <FileText className="w-7 h-7 stroke-[2.2]" />
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
+                <FileText className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
               </div>
-              <h4 className="text-sm font-black text-[#0F172A] leading-tight">
+              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
                 Assessment
               </h4>
-              <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
                 Detailed evaluation of your condition
               </p>
             </div>
 
             {/* Step 2 */}
             <div className="flex flex-col items-start relative text-left">
-              <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
                 2
               </div>
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
-                <Target className="w-7 h-7 stroke-[2.2]" />
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
+                <Target className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
               </div>
-              <h4 className="text-sm font-black text-[#0F172A] leading-tight">
+              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
                 Personalized Plan
               </h4>
-              <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
                 A customized therapy plan for you
               </p>
             </div>
 
             {/* Step 3 */}
             <div className="flex flex-col items-start relative text-left">
-              <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
                 3
               </div>
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
-                <Activity className="w-7 h-7 stroke-[2.2]" />
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
+                <Activity className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
               </div>
-              <h4 className="text-sm font-black text-[#0F172A] leading-tight">
+              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
                 Therapy Sessions
               </h4>
-              <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
                 Guided sessions with expert care
               </p>
             </div>
 
             {/* Step 4 */}
             <div className="flex flex-col items-start relative text-left">
-              <div className="w-6 h-6 rounded-full bg-[#007A64] text-white text-xs font-black flex items-center justify-center mb-3.5 shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-3.5 shadow-2xs">
                 4
               </div>
-              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
-                <CheckCircle2 className="w-7 h-7 stroke-[2.2]" />
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64]">
+                <CheckCircle2 className="w-8 sm:w-9 h-8 sm:h-9 stroke-[2.2]" />
               </div>
-              <h4 className="text-sm font-black text-[#0F172A] leading-tight">
+              <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">
                 Progress & Recovery
               </h4>
-              <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">
                 Track improvement and get long-term support
               </p>
             </div>
@@ -795,70 +795,70 @@ export default function PhysiotherapyPage() {
         {/* ========================================================================= */}
         {/* 7. OUR IMPACT IN NUMBERS                                                  */}
         {/* ========================================================================= */}
-        <section className="rounded-[28px] bg-white border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-2xs">
+        <section className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 lg:p-11 shadow-2xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Image: Physiotherapist helping elderly patient */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-[380px] rounded-2xl overflow-hidden shadow-md border border-slate-100 bg-slate-50">
+              <div className="w-full max-w-[420px] rounded-2xl overflow-hidden shadow-md border border-slate-100 bg-slate-50">
                 <img
                   src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=600&q=80"
                   onError={(e) => { e.currentTarget.src = '/physio-impact-raw.jpg'; }}
                   alt="Physiotherapy session with elderly patient"
-                  className="w-full h-auto max-h-[220px] object-cover object-center select-none"
+                  className="w-full h-auto max-h-[260px] object-cover object-center select-none"
                 />
               </div>
             </div>
 
             {/* Right: Heading & 4 Stats Counters */}
-            <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
+            <div className="lg:col-span-7 space-y-7">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F172A] tracking-tight">
                 Our Impact in Numbers
               </h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
                 
                 {/* Stat 1 */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Users className="w-7 h-7 text-[#007A64]" />
+                    <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">5,000+</p>
-                    <p className="text-xs text-slate-500 font-semibold">Happy Patients</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">5,000+</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Happy Patients</p>
                   </div>
                 </div>
 
                 {/* Stat 2 */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Calendar className="w-7 h-7 text-[#007A64]" />
+                    <Calendar className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">15+</p>
-                    <p className="text-xs text-slate-500 font-semibold">Expert Physiotherapists</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">15+</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Expert Physiotherapists</p>
                   </div>
                 </div>
 
                 {/* Stat 3 */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Activity className="w-7 h-7 text-[#007A64]" />
+                    <Activity className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">98%</p>
-                    <p className="text-xs text-slate-500 font-semibold">Recovery Rate</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">98%</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Recovery Rate</p>
                   </div>
                 </div>
 
                 {/* Stat 4 */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Star className="w-7 h-7 text-[#007A64]" />
+                    <Star className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">4.9/5</p>
-                    <p className="text-xs text-slate-500 font-semibold">Patient Satisfaction</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">4.9/5</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Patient Satisfaction</p>
                   </div>
                 </div>
 
@@ -878,11 +878,11 @@ export default function PhysiotherapyPage() {
           <div className="absolute left-1/3 top-0 w-48 h-48 bg-teal-300/15 rounded-full blur-3xl pointer-events-none" />
 
           {/* Left Text */}
-          <div className="relative z-10 space-y-1.5 text-center lg:text-left">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+          <div className="relative z-10 space-y-2 text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-white tracking-tight leading-tight">
               Start Your Recovery Today!
             </h2>
-            <p className="text-xs sm:text-sm text-[#D1FAE5] font-medium leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-[#D1FAE5] font-medium leading-relaxed max-w-lg">
               Book a physiotherapy session with our expert team and get back to an active, pain-free life.
             </p>
           </div>
@@ -893,11 +893,11 @@ export default function PhysiotherapyPage() {
             <button
               type="button"
               onClick={() => scrollToForm()}
-              className="bg-white hover:bg-slate-50 text-[#007A64] font-extrabold text-xs sm:text-sm px-6 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
+              className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
-              <Calendar className="w-4 h-4 text-[#007A64]" />
+              <Calendar className="w-5 h-5 text-[#007A64]" />
               <span>Book a Session Now</span>
-              <ArrowRight className="w-4 h-4 text-[#007A64]" />
+              <ArrowRight className="w-5 h-5 text-[#007A64]" />
             </button>
 
             {/* Illustrated Medical Clipboard with Green Checkmarks & Red Heart with Pulse */}

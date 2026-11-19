@@ -316,66 +316,66 @@ export default function DoctorAppointmentPage() {
       />
 
       {/* Main Container matching Zestmed Standard for remaining sections */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pt-4 sm:pt-5 pb-12 space-y-5 sm:space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 pb-12 space-y-7 sm:space-y-8">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
         {/* ========================================================================= */}
-        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-4 px-4 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-5 sm:py-6 px-4 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             
             {/* Feature 1 */}
-            <div className="flex items-center gap-3 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5 text-[#007A64]" />
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-6 h-6 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Verified Doctors</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Qualified & experienced</p>
+                <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Verified Doctors</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Qualified & experienced</p>
               </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <CalendarCheck className="w-5 h-5 text-[#007A64]" />
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
+                <CalendarCheck className="w-6 h-6 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Easy Booking</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Quick & hassle-free</p>
+                <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Easy Booking</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Quick & hassle-free</p>
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <Video className="w-5 h-5 text-[#007A64]" />
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
+                <Video className="w-6 h-6 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Online Consultation</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Consult from home</p>
+                <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Online Consultation</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Consult from home</p>
               </div>
             </div>
 
             {/* Feature 4 */}
-            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <Clock className="w-5 h-5 text-[#007A64]" />
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Flexible Slots</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Choose a time that suits you</p>
+                <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Flexible Slots</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Choose a time that suits you</p>
               </div>
             </div>
 
             {/* Feature 5 */}
-            <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
-                <CreditCard className="w-5 h-5 text-[#007A64]" />
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+              <div className="w-11 h-11 rounded-2xl bg-teal-50/90 text-[#007A64] flex items-center justify-center shrink-0">
+                <CreditCard className="w-6 h-6 text-[#007A64]" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-extrabold text-[#0F1E36] leading-tight">Secure & Easy Payment</p>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">Multiple payment options</p>
+                <p className="text-sm sm:text-base font-black text-[#0F1E36] leading-tight">Secure & Easy Payment</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-semibold mt-0.5">Multiple payment options</p>
               </div>
             </div>
 
@@ -385,11 +385,11 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 3. BROWSE BY SPECIALTY (10 Medical Specialties matching Reference)       */}
         {/* ========================================================================= */}
-        <section className="space-y-3.5">
+        <section className="space-y-4">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
               Browse by Specialty
             </h2>
             <button
@@ -398,15 +398,15 @@ export default function DoctorAppointmentPage() {
                 setActiveSpecialtyFilter('All');
                 setShowAllDoctors(true);
               }}
-              className="text-[#007A64] hover:text-[#005c4b] font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
             >
               <span>View All Specialties</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* 10 Specialty Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-3.5">
             {SPECIALTY_LIST.map((spec) => {
               const IconComp = spec.icon;
               const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
@@ -421,19 +421,19 @@ export default function DoctorAppointmentPage() {
                       setActiveSpecialtyFilter(spec.name);
                     }
                   }}
-                  className={`bg-white rounded-2xl border p-3.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[108px] select-none ${
+                  className={`bg-white rounded-2xl border p-4 sm:p-4.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[115px] sm:min-h-[125px] select-none ${
                     isSelected
                       ? 'border-[#007A64] ring-2 ring-[#007A64]/20 shadow-md bg-teal-50/20 scale-102'
                       : 'border-slate-200/80 hover:border-teal-200 hover:shadow-md shadow-2xs hover:scale-102'
                   }`}
                 >
                   {/* Clean Vector Icon */}
-                  <div className="h-9 w-9 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <IconComp className={`w-7 h-7 ${spec.color}`} />
+                  <div className="h-10 sm:h-11 w-10 sm:w-11 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
+                    <IconComp className={`w-8 h-8 sm:w-8.5 sm:h-8.5 ${spec.color}`} />
                   </div>
 
                   {/* Title Label */}
-                  <span className={`text-[11px] sm:text-xs font-bold leading-tight line-clamp-2 transition-colors ${
+                  <span className={`text-xs sm:text-sm font-bold leading-tight line-clamp-2 transition-colors ${
                     isSelected ? 'text-[#007A64] font-black' : 'text-slate-800 group-hover:text-[#007A64]'
                   }`}>
                     {spec.name}
@@ -447,16 +447,16 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 4. TOP DOCTORS SECTION (Exact Cards with User's Uploaded Photos)         */}
         {/* ========================================================================= */}
-        <section id="top-doctors-section" className="space-y-3.5 pt-1">
+        <section id="top-doctors-section" className="space-y-4 pt-1">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
                 Top Doctors
               </h2>
               {activeSpecialtyFilter !== 'All' && (
-                <span className="text-xs font-bold bg-[#DCFCE7] text-[#047857] px-2.5 py-0.5 rounded-full border border-teal-200">
+                <span className="text-xs sm:text-sm font-extrabold bg-[#DCFCE7] text-[#047857] px-3 py-1 rounded-full border border-teal-200">
                   {activeSpecialtyFilter}
                 </span>
               )}
@@ -468,25 +468,25 @@ export default function DoctorAppointmentPage() {
                 setShowAllDoctors(!showAllDoctors);
                 setActiveSpecialtyFilter('All');
               }}
-              className="text-[#007A64] hover:text-[#005c4b] font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
             >
               <span>{showAllDoctors ? 'Show Top 3 Doctors' : 'View All Doctors'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* Doctors Grid: Displays Dr. Amit Sharma, Dr. Neha Verma, Dr. Rohan Das */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {displayedDoctors.map((doc) => {
               return (
                 <div
                   key={doc.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group relative overflow-hidden"
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-3.5 sm:gap-4">
+                  <div className="flex items-start gap-4 sm:gap-4.5">
                     
                     {/* Doctor Avatar - Uses provided image with light grey background */}
-                    <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
+                    <div className="w-22 h-22 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
                       <img
                         src={doc.avatar}
                         alt={doc.name}
@@ -500,33 +500,33 @@ export default function DoctorAppointmentPage() {
                       {/* Name & Experience Badge in Top Row */}
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h3 className="text-sm sm:text-base font-extrabold text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
+                          <h3 className="text-base sm:text-lg font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
                             {doc.name}
                           </h3>
-                          <p className="text-xs font-semibold text-slate-700 mt-0.5">
+                          <p className="text-xs sm:text-sm font-bold text-slate-700 mt-0.5">
                             {doc.specialty}
                           </p>
                         </div>
 
                         {/* Experience Badge matching reference pill */}
-                        <div className="shrink-0 text-center px-2 py-0.5 rounded-lg bg-[#E6F4F1] text-[#007A64] border border-teal-200/50 leading-none">
-                          <p className="text-[11px] font-black">{doc.experience.split(' ')[0]}</p>
-                          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Experience</p>
+                        <div className="shrink-0 text-center px-2.5 py-1 rounded-xl bg-[#E6F4F1] text-[#007A64] border border-teal-200/50 leading-none">
+                          <p className="text-xs sm:text-[13px] font-black">{doc.experience.split(' ')[0]}</p>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Experience</p>
                         </div>
                       </div>
 
                       {/* Qualification */}
-                      <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">
+                      <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 truncate">
                         {doc.degree}
                       </p>
 
                       {/* Rating & Reviews */}
-                      <div className="flex items-center gap-1.5 mt-2 text-xs">
+                      <div className="flex items-center gap-1.5 mt-2.5 text-xs sm:text-sm">
                         <div className="flex items-center gap-1 text-amber-500 font-extrabold">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                           <span>{doc.ratingScore || '4.8'}</span>
                         </div>
-                        <span className="text-slate-400 text-[11px]">
+                        <span className="text-slate-400 text-xs">
                           ({doc.reviewsCount || '1,000+'} reviews)
                         </span>
                       </div>
@@ -535,16 +535,16 @@ export default function DoctorAppointmentPage() {
                   </div>
 
                   {/* Bottom Action Bar: Fee & Book Button */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                    <div className="text-xs">
-                      <span className="text-slate-500 font-medium">Consultation Fee</span>
-                      <p className="text-sm font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
+                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs text-slate-500 font-medium">Consultation Fee</span>
+                      <p className="text-base sm:text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
-                      className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+                      className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
                     >
                       Book Appointment
                     </button>
@@ -562,7 +562,7 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         <section className="rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#F4FBF9] to-[#EAF7F4] border border-[#D5EFE8] p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xs">
           
-          <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-[#0F1E36] tracking-tight mb-7 sm:mb-9">
+          <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0F1E36] tracking-tight mb-7 sm:mb-9">
             How to Book a Doctor Appointment?
           </h2>
 
@@ -573,11 +573,11 @@ export default function DoctorAppointmentPage() {
               
               {/* Step 1 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   1
                 </div>
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <Search className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <Search className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Search Doctor
@@ -589,11 +589,11 @@ export default function DoctorAppointmentPage() {
 
               {/* Step 2 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   2
                 </div>
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <Calendar className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Select Date & Time
@@ -605,11 +605,11 @@ export default function DoctorAppointmentPage() {
 
               {/* Step 3 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   3
                 </div>
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <UserCheck className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <UserCheck className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Book Appointment
@@ -621,11 +621,11 @@ export default function DoctorAppointmentPage() {
 
               {/* Step 4 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-8 h-8 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
                   4
                 </div>
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
-                  <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-white border border-[#D5EFE8] text-[#007A64] flex items-center justify-center mb-4 shadow-xs">
+                  <CheckCircle2 className="w-9 h-9 sm:w-11 sm:h-11 text-[#007A64] stroke-[2.2]" />
                 </div>
                 <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
                   Get Confirmation
@@ -690,53 +690,53 @@ export default function DoctorAppointmentPage() {
         {/* 6. WHY CHOOSE ZESTMED? (4 Cards matching Reference Image)                */}
         {/* ========================================================================= */}
         <section className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
             Why Choose ZESTMED?
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             
             {/* Card 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-6 h-6 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Verified Specialists</h4>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">Experienced & trusted doctors</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Verified Specialists</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Experienced & trusted doctors</p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Video className="w-6 h-6 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Video className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Online & On-site Consultation</h4>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">Choose what suits you</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Online & On-site Consultation</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Choose what suits you</p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <CalendarCheck className="w-6 h-6 text-[#007A64]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <CalendarCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Quick & Easy Booking</h4>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">Book in just a few clicks</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Quick & Easy Booking</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Book in just a few clicks</p>
               </div>
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 flex items-center gap-4 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <span className="text-xl font-black text-[#007A64]">₹</span>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-200/60 text-[#007A64] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <span className="text-2xl font-black text-[#007A64]">₹</span>
               </div>
               <div>
-                <h4 className="text-sm sm:text-base font-extrabold text-[#0F1E36]">Secure Payments</h4>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">Multiple payment options</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Secure Payments</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Multiple payment options</p>
               </div>
             </div>
 
@@ -749,7 +749,7 @@ export default function DoctorAppointmentPage() {
         <section className="space-y-4">
           
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
               What Our Patients Say
             </h2>
 
@@ -758,26 +758,26 @@ export default function DoctorAppointmentPage() {
               <button 
                 type="button" 
                 aria-label="Previous Testimonial"
-                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button 
                 type="button" 
                 aria-label="Next Testimonial"
-                className="w-8 h-8 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   <img 
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" 
                     alt="Ankit Kumar"
@@ -785,23 +785,23 @@ export default function DoctorAppointmentPage() {
                   />
                 </div>
                 <div>
-                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Ankit Kumar</h4>
+                  <h4 className="text-base font-black text-[#0F1E36]">Ankit Kumar</h4>
                   <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
                 "Very easy to book an appointment. The doctor was highly professional and explained everything clearly."
               </p>
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   <img 
                     src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" 
                     alt="Priya Sharma"
@@ -809,23 +809,23 @@ export default function DoctorAppointmentPage() {
                   />
                 </div>
                 <div>
-                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Priya Sharma</h4>
+                  <h4 className="text-base font-black text-[#0F1E36]">Priya Sharma</h4>
                   <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
                 "Great experience! I booked an online consultation and got the guidance I needed without visiting the clinic."
               </p>
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   <img 
                     src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" 
                     alt="Rohit Das"
@@ -833,15 +833,15 @@ export default function DoctorAppointmentPage() {
                   />
                 </div>
                 <div>
-                  <h4 className="text-sm font-extrabold text-[#0F1E36]">Rohit Das</h4>
+                  <h4 className="text-base font-black text-[#0F1E36]">Rohit Das</h4>
                   <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
                 "Zestmed makes it so convenient to find and consult the right doctor. Highly recommended!"
               </p>
             </div>
@@ -859,11 +859,11 @@ export default function DoctorAppointmentPage() {
           <div className="absolute left-1/3 top-0 w-48 h-48 bg-teal-300/15 rounded-full blur-3xl pointer-events-none" />
 
           {/* Left Text */}
-          <div className="relative z-10 space-y-1.5 text-center lg:text-left">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+          <div className="relative z-10 space-y-2 text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-white tracking-tight leading-tight">
               Consult with Expert Doctors Today!
             </h2>
-            <p className="text-xs sm:text-sm text-[#D1FAE5] font-medium leading-relaxed max-w-lg">
+            <p className="text-sm sm:text-base text-[#D1FAE5] font-medium leading-relaxed max-w-lg">
               Book your appointment now and take the first step towards better health.
             </p>
           </div>
@@ -874,11 +874,11 @@ export default function DoctorAppointmentPage() {
             <button
               type="button"
               onClick={() => handleOpenBooking(null, 'Clinic Visit')}
-              className="bg-white hover:bg-slate-50 text-[#007A64] font-extrabold text-xs sm:text-sm px-6 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
+              className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
-              <Calendar className="w-4 h-4 text-[#007A64]" />
+              <Calendar className="w-5 h-5 text-[#007A64]" />
               <span>Book an Appointment</span>
-              <ArrowRight className="w-4 h-4 text-[#007A64]" />
+              <ArrowRight className="w-5 h-5 text-[#007A64]" />
             </button>
 
             {/* Illustrated Medical Clipboard with Green Cross & Stethoscope */}
