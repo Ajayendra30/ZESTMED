@@ -320,7 +320,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   const [bookingFilter, setBookingFilter] = useState('all');
   const [serviceCategoryFilter, setServiceCategoryFilter] = useState('all');
-  const [orderFilter, setOrderFilter] = useState('all');
   const [profileForm, setProfileForm] = useState(() => {
     let saved = null;
     try {
@@ -404,9 +403,68 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
   };
 
+  // Formatted Medicine Bookings from local orders state so they always appear in My Bookings
+  const formattedMedicineBookings = useMemo(() => {
+    return (orders || []).map((o) => {
+      const itemNames = Array.isArray(o.items) && o.items.length > 0
+        ? o.items.map((it) => it.name).filter(Boolean).join(', ')
+        : 'Prescription Medicines';
+      return {
+        id: o.id || o.order_number,
+        bookingId: o.id || o.order_number,
+        serviceType: 'Medicine Order',
+        itemType: 'medicine',
+        displayType: 'Medicine Order',
+        serviceName: itemNames,
+        title: itemNames,
+        items: o.items || [],
+        trackingSteps: o.trackingSteps || [],
+        provider: o.hub || 'Zestmed Certified Pharmacy Hub',
+        bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+        createdAt: o.createdAt || new Date().toISOString(),
+        appointmentDate: o.date || 'Today',
+        appointmentTime: o.time || 'Express Delivery',
+        date: o.date || 'Today',
+        time: o.time || 'Express Delivery',
+        mode: 'Doorstep Delivery',
+        location: o.deliveryAddress || 'Guwahati, Assam',
+        deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
+        paymentStatus: o.paymentMethod || o.payment_status || 'UPI (Prepaid - Verified)',
+        bookingStatus: o.status || o.order_status || 'Out for Delivery',
+        status: o.status || o.order_status || 'Out for Delivery',
+        totalAmount: parseFloat(o.totalAmount || o.total || 0),
+        price: parseFloat(o.totalAmount || o.total || 0),
+        patientName: o.patientName || (user?.name || 'Self'),
+        phone: o.phone || (user?.phone || user?.contact || ''),
+        source: 'orders',
+        rawOrder: o
+      };
+    });
+  }, [orders, user]);
+
+  // Combined real user bookings (Database/Synced + Local persistent medicine orders)
+  const allUserBookings = useMemo(() => {
+    const map = new Map();
+    (userBookings || []).forEach((b) => {
+      const key = String(b.bookingId || b.id);
+      map.set(key, b);
+    });
+    (formattedMedicineBookings || []).forEach((mb) => {
+      const key = String(mb.bookingId || mb.id);
+      if (!map.has(key)) {
+        map.set(key, mb);
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => {
+      const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
+      const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
+  }, [userBookings, formattedMedicineBookings]);
+
   // Filtered Real User Bookings for My Bookings View
   const filteredUserBookings = useMemo(() => {
-    return userBookings.filter((b) => {
+    return allUserBookings.filter((b) => {
       // Category filter
       if (serviceCategoryFilter !== 'all') {
         if (serviceCategoryFilter === 'lab' && b.itemType !== 'lab') return false;
@@ -420,7 +478,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       // Status filter
       const st = (b.bookingStatus || b.status || '').toLowerCase();
       if (bookingFilter === 'confirmed') {
-        return st.includes('confirm') || st.includes('schedule');
+        return st.includes('confirm') || st.includes('schedule') || st.includes('out') || st.includes('deliver');
       }
       if (bookingFilter === 'pending') {
         return st.includes('pending') || st.includes('process');
@@ -434,7 +492,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
       return true;
     });
-  }, [userBookings, serviceCategoryFilter, bookingFilter]);
+  }, [allUserBookings, serviceCategoryFilter, bookingFilter]);
 
   // Harmonized combined bookings across all 6 patient actions
   const combinedBookings = useMemo(() => {
@@ -778,24 +836,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Medicine Store</span>
             </button>
 
-            {/* My Medicine Orders */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveMenu('orders');
-                setIsSidebarOpen(false);
-                addToast('Viewing Medicine Order History', 'info');
-              }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'orders'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              <span>My Medicine Orders</span>
-            </button>
-
             {/* Upload Prescription */}
             <button
               type="button"
@@ -1116,7 +1156,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
             {/* Card 3: Medicine Orders */}
             <div
-              onClick={() => setActiveMenu('orders')}
+              onClick={() => {
+                setActiveMenu('bookings');
+                setServiceCategoryFilter('medicine');
+                addToast('Viewing Medicine Orders in My Bookings', 'info');
+              }}
               className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
             >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
@@ -1127,10 +1171,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Orders
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {orders.length}
+                  {allUserBookings.filter(b => b.itemType === 'medicine').length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-sky-600 mt-0.5 flex items-center gap-0.5">
-                  <span>Track →</span>
+                  <span>Track in Bookings →</span>
                 </div>
               </div>
             </div>
@@ -1341,12 +1385,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <button
                   type="button"
                   onClick={() => {
-                    setActiveMenu('orders');
-                    addToast('Opening complete pharmacy orders ledger', 'info');
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('medicine');
+                    addToast('Viewing Medicine Orders in My Bookings', 'info');
                   }}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <span>View All</span>
+                  <span>View in Bookings</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -1600,7 +1645,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <span>My Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage and view all services booked through your account (Lab Tests, Doctor Appointments, Physiotherapy, Surgery Packages, and Wellness Packages).
+                    Manage and view all services booked through your account (Doctor Appointments, Surgery Packages, Medicine Orders, Lab Tests, Physiotherapy, and Wellness Packages).
                   </p>
                 </div>
               </div>
@@ -1608,12 +1653,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* Service Category Filter Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {[
-                  { id: 'all', label: `All Bookings (${userBookings.filter(b => b.itemType !== 'medicine').length})` },
-                  { id: 'lab', label: `Lab Tests (${userBookings.filter(b => b.itemType === 'lab').length})` },
-                  { id: 'doctor', label: `Doctor Appointments (${userBookings.filter(b => b.itemType === 'doctor').length})` },
-                  { id: 'physiotherapy', label: `Physiotherapy (${userBookings.filter(b => b.itemType === 'physiotherapy').length})` },
-                  { id: 'surgery', label: `Surgery Packages (${userBookings.filter(b => b.itemType === 'surgery').length})` },
-                  { id: 'wellness', label: `Wellness Packages (${userBookings.filter(b => b.itemType === 'wellness').length})` }
+                  { id: 'all', label: `All Bookings (${allUserBookings.length})` },
+                  { id: 'doctor', label: `Doctor Appointments (${allUserBookings.filter(b => b.itemType === 'doctor').length})` },
+                  { id: 'surgery', label: `Surgery Packages (${allUserBookings.filter(b => b.itemType === 'surgery').length})` },
+                  { id: 'medicine', label: `Medicine Orders (${allUserBookings.filter(b => b.itemType === 'medicine').length})` },
+                  { id: 'lab', label: `Lab Tests (${allUserBookings.filter(b => b.itemType === 'lab').length})` },
+                  { id: 'physiotherapy', label: `Physiotherapy (${allUserBookings.filter(b => b.itemType === 'physiotherapy').length})` },
+                  { id: 'wellness', label: `Wellness Packages (${allUserBookings.filter(b => b.itemType === 'wellness').length})` }
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -1757,7 +1803,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 self-end sm:self-center">
+                          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                             <span className={`text-xs font-extrabold px-3 py-1 rounded-full ${statusBadgeClass}`}>
                               {b.bookingStatus || b.status || 'Confirmed'}
                             </span>
@@ -1768,6 +1814,22 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             </div>
                           </div>
                         </div>
+
+                        {/* Medicine Items Preview if Medicine Order */}
+                        {isMedicine && Array.isArray(b.items) && b.items.length > 0 && (
+                          <div className="bg-slate-50/70 rounded-xl p-2.5 sm:p-3 space-y-1.5 text-xs border border-slate-100">
+                            {b.items.map((it, idx) => (
+                              <div key={idx} className="flex items-center justify-between text-slate-700">
+                                <div className="flex items-center gap-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6]" />
+                                  <span className="font-semibold text-slate-800">{it.name}</span>
+                                  <span className="text-slate-400 font-normal">({it.dosage || 'Standard Pack'})</span>
+                                </div>
+                                <span className="font-mono text-slate-600">Qty: {it.quantity || 1} • ₹{it.price ? (it.price * (it.quantity || 1)) : '--'}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                         {/* Middle & Bottom: Booking Date, Appointment Date, Payment Status, Actions */}
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs text-slate-600">
@@ -1784,7 +1846,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <div className="flex items-center gap-1.5">
                               <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                               <span>
-                                Service Date: <strong className="text-slate-800">{b.appointmentDate || b.date || 'Scheduled Date'} {b.appointmentTime || b.time ? `• ${b.appointmentTime || b.time}` : ''}</strong>
+                                {isMedicine ? 'Delivery: ' : 'Service Date: '}
+                                <strong className="text-slate-800">{b.appointmentDate || b.date || 'Scheduled Date'} {b.appointmentTime || b.time ? `• ${b.appointmentTime || b.time}` : ''}</strong>
                               </span>
                             </div>
 
@@ -1799,6 +1862,20 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                           {/* Action Buttons */}
                           <div className="flex items-center gap-2 shrink-0 self-end lg:self-auto">
+                            {isMedicine && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenOrderModal(b.items?.[0]?.name || b.serviceName || 'Medicines', b.bookingId || b.id);
+                                }}
+                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-slate-500" />
+                                <span>Invoice</span>
+                              </button>
+                            )}
+
                             <button
                               type="button"
                               onClick={(e) => {
@@ -1843,161 +1920,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </p>
                   </div>
                 )}
-              </div>
-            </div>
-          )}
-
-          {/* ======================================================== */}
-          {/* 2. MY MEDICINE ORDERS VIEW                               */}
-          {/* ======================================================== */}
-          {activeMenu === 'orders' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <ShoppingCart className="w-6 h-6 text-[#14B8A6]" />
-                    <span>My Medicine Orders</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Track genuine prescription pharmacy orders delivered across Assam.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigate('/medicines')}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Buy Medicines</span>
-                </button>
-              </div>
-
-              {/* Order Status Filters */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                {[
-                  { id: 'all', label: 'All Orders' },
-                  { id: 'out', label: 'Out for Delivery' },
-                  { id: 'delivered', label: 'Delivered' }
-                ].map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setOrderFilter(f.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
-                      orderFilter === f.id
-                        ? 'bg-[#14B8A6] text-white shadow-xs'
-                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Orders List */}
-              <div className="space-y-3.5">
-                {orders
-                  .filter((o) => {
-                    // Strictly exclude any non-medicine orders (wellness packages, diagnostic tests)
-                    const isNonMedicine = Array.isArray(o.items) && o.items.length > 0 && o.items.every(it => {
-                      const n = (it.name || '').toLowerCase();
-                      const t = (it.type || it.itemType || '').toLowerCase();
-                      const c = (it.category || '').toLowerCase();
-                      return (
-                        t === 'package' || t === 'test' ||
-                        c.includes('wellness') || c.includes('package') || c.includes('diagnostic') ||
-                        n.includes('wellness') || n.includes('package') || n.includes('screening') || n.includes('test')
-                      );
-                    });
-                    if (isNonMedicine) return false;
-
-                    if (orderFilter === 'all') return true;
-                    if (orderFilter === 'out') return (o.status || '').toLowerCase().includes('out');
-                    if (orderFilter === 'delivered') return (o.status || '').toLowerCase().includes('deliver');
-                    return true;
-                  })
-                  .map((order) => (
-                    <div
-                      key={order.id}
-                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
-                            <Package className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-sm font-bold text-slate-900">{order.id}</h3>
-                              <span className="text-xs text-slate-400 font-medium">• {order.date}</span>
-                            </div>
-                            <div className="text-xs text-slate-500 mt-0.5 truncate max-w-md">
-                              {order.deliveryAddress || 'Guwahati Central Hub Delivery'}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                              order.status === 'Delivered'
-                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                : 'bg-sky-50 text-sky-600 border border-sky-200'
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                          <span className="text-sm font-black text-slate-900 ml-1">
-                            ₹{order.totalAmount || order.total || 340}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Items Preview */}
-                      <div className="bg-slate-50/60 rounded-xl p-3 space-y-2">
-                        {(order.items || [
-                          { name: 'Paracetamol 500 mg', dosage: '500 mg', quantity: 2, price: 170 }
-                        ]).map((it, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-xs text-slate-700">
-                            <div className="flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6]" />
-                              <span className="font-semibold text-slate-800">{it.name}</span>
-                              <span className="text-slate-400 font-normal">({it.dosage || 'Standard'})</span>
-                            </div>
-                            <span className="font-mono text-slate-600">Qty: {it.quantity} • ₹{it.price}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                        <div className="text-xs text-slate-500">
-                          Payment: <strong className="text-slate-700 font-semibold">{order.paymentMethod || 'Prepaid UPI'}</strong>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenOrderModal(order.items?.[0]?.name || 'Medicines', order.id)}
-                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>View Invoice & Tracking</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              addToast(`Medicines from order ${order.id} re-added to cart!`, 'success');
-                              openCart();
-                            }}
-                            className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
-                          >
-                            <RotateCcw className="w-3.5 h-3.5" />
-                            <span>Reorder</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
               </div>
             </div>
           )}
@@ -2444,8 +2366,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         <button
                           type="button"
                           onClick={() => {
-                            setActiveMenu('orders');
-                            addToast('Navigating to medicine orders', 'info');
+                            setActiveMenu('bookings');
+                            setServiceCategoryFilter('medicine');
+                            addToast('Navigating to medicine orders in My Bookings', 'info');
                           }}
                           className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                         >

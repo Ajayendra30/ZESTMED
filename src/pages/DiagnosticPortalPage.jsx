@@ -394,30 +394,30 @@ export default function DiagnosticPortalPage() {
               </p>
 
               {/* 4 Trust Badges in a Horizontal Row */}
-              <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
+              <div className="pt-2 sm:pt-3 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
                     <ShieldCheck className="w-4 h-4 text-[#008F83]" />
                   </div>
-                  <span>100% Accurate Reports</span>
+                  <span>100% Accurate</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
                     <Home className="w-4 h-4 text-[#008F83]" />
                   </div>
                   <span>Free Home Collection</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs">
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
                     <Award className="w-4 h-4 text-[#008F83]" />
                   </div>
-                  <span>NABL Certified Labs</span>
+                  <span>NABL Certified</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-amber-500 shadow-xs">
+                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-amber-500 shadow-xs shrink-0">
                     <Clock className="w-4 h-4 text-amber-500" />
                   </div>
                   <span className="text-teal-900 font-extrabold">Single-Day Reports</span>
@@ -426,11 +426,11 @@ export default function DiagnosticPortalPage() {
             </div>
 
             {/* Right Image: Scientist with Microscope, Test Tubes and DNA Helix */}
-            <div className="hidden lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-end self-end -mb-7 md:-mb-8 lg:-mb-9">
+            <div className="flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-9">
               <img
                 src="/lab-tests-hero.png"
                 alt="Lab Diagnostics Scientist with Microscope"
-                className="h-auto max-h-[210px] xl:max-h-[235px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
+                className="h-auto max-h-[170px] sm:max-h-[200px] xl:max-h-[235px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
               />
             </div>
 

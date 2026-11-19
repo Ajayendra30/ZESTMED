@@ -418,11 +418,11 @@ export default function PhysiotherapyPage() {
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2 w-full">
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center gap-2.5 group cursor-pointer active:scale-95 min-h-[48px]"
+                className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2.5 group cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Calendar className="w-5 h-5" />
                 <span>Book a Session</span>
@@ -432,7 +432,7 @@ export default function PhysiotherapyPage() {
               <button
                 type="button"
                 onClick={() => scrollToForm()}
-                className="bg-white hover:bg-slate-50 text-[#0F172A] border-2 border-slate-300 font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 min-h-[48px]"
+                className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#0F172A] border-2 border-slate-300 font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Stethoscope className="w-5 h-5 text-[#007A64]" />
                 <span>Consult a Physiotherapist</span>
@@ -441,11 +441,11 @@ export default function PhysiotherapyPage() {
           </div>
 
           {/* Right Column: Transparent Cutout of Physiotherapist & Patient placed prominently on the right */}
-          <div className="w-full lg:flex-1 flex justify-center lg:justify-center xl:justify-center items-end self-end pointer-events-none select-none z-20 -mb-[1px]">
+          <div className="w-full lg:flex-1 flex justify-center lg:justify-center xl:justify-center items-end self-end pointer-events-none select-none z-20 mt-3 lg:mt-0 -mb-[1px]">
             <img
               src="/physio-hero-therapist.png"
               alt="Physiotherapist treating patient"
-              className="h-[280px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[470px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
+              className="h-[220px] xs:h-[260px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[470px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
             />
           </div>
 

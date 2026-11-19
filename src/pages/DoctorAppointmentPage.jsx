@@ -1051,14 +1051,14 @@ export default function DoctorAppointmentPage() {
       {/* 9. INTERACTIVE APPOINTMENT BOOKING MODAL                                  */}
       {/* ========================================================================= */}
       {isBookingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-fade-in">
           <div 
-            className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-2xl max-h-[92vh] flex flex-col overflow-y-auto animate-scale-up"
+            className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 w-full max-w-2xl max-h-[94vh] flex flex-col overflow-y-auto animate-scale-up"
             onClick={(e) => e.stopPropagation()}
           >
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50/70 to-white sticky top-0 z-10">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50/70 to-white sticky top-0 z-10">
               <div className="flex items-center gap-3">
                 <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                   <Stethoscope className="w-6 h-6 text-[#007A64]" />
@@ -1164,7 +1164,7 @@ export default function DoctorAppointmentPage() {
 
               </div>
             ) : (
-              <form onSubmit={handleConfirmAppointment} className="p-6 space-y-5">
+              <form onSubmit={handleConfirmAppointment} className="p-4 sm:p-6 space-y-4 sm:space-y-5">
                 
                 {/* Doctor Selection Pill */}
                 <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">

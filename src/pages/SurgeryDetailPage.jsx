@@ -341,7 +341,7 @@ export default function SurgeryDetailPage() {
                     <Car className="w-3.5 h-3.5 text-[#007A64]" />
                     <span>Senior Transport</span>
                   </div>
-                  <p className="text-xs sm:text-[13px] font-black text-[#007A64] mt-1">Free 10km Cab Included</p>
+                  <p className="text-[11px] sm:text-[13px] font-black text-[#007A64] mt-1">Free 10km Cab Included</p>
                 </div>
 
               </div>
@@ -687,15 +687,15 @@ export default function SurgeryDetailPage() {
           5. BOOKING MODAL (Step 4 & 5: Login required + Actual Booking Form)
           ========================================================================= */}
       {isBookingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
           <div 
-            className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[92vh] flex flex-col overflow-y-auto"
+            className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[94vh] flex flex-col overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50 via-white to-teal-50/50 sticky top-0 z-10">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50 via-white to-teal-50/50 sticky top-0 z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#007A64] text-white flex items-center justify-center shadow-xs shrink-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#007A64] text-white flex items-center justify-center shadow-xs shrink-0">
                   <Stethoscope className="w-5 h-5" />
                 </div>
                 <div>
@@ -720,7 +720,7 @@ export default function SurgeryDetailPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {confirmedBooking ? (
                 /* Booking Confirmed Screen */
                 <div className="text-center space-y-5 py-2">

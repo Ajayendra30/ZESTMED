@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -14,6 +20,20 @@
     color: #1E293B;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
+    width: 100%;
+    min-width: 320px;
+    position: relative;
+  }
+
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  img, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
   }
 }
 

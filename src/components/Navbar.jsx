@@ -130,11 +130,11 @@ export default function Navbar({
   return (
     <>
       {/* Top Announcement Bar - Full Width with Responsive Gutters */}
-      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2.5 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
-        <div className="w-full flex items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 text-slate-200 min-w-0">
-            <span className="flex items-center gap-1.5 font-bold whitespace-nowrap text-xs sm:text-sm text-teal-300">
-              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
+        <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 text-slate-200 min-w-0 flex-1">
+            <span className="flex items-center gap-1.5 font-bold truncate sm:whitespace-nowrap text-[11px] sm:text-sm text-teal-300">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
               <span>Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
@@ -167,12 +167,12 @@ export default function Navbar({
           <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-2.5 xl:gap-3">
             
             {/* Left: Brand Logo & Navigation (Hamburger alongside it) */}
-            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 min-w-0">
               <Link to="/" className="flex items-center group shrink-0">
                 <img
                   src="/logo.png"
                   alt="Zestmed Diagnostics & Polyclinic"
-                  className="h-10 sm:h-12 md:h-13 w-auto max-h-14 object-contain drop-shadow-xs group-hover:scale-105 transition-transform select-none shrink-0"
+                  className="h-8 xs:h-9 sm:h-12 md:h-13 w-auto max-h-14 object-contain drop-shadow-xs group-hover:scale-105 transition-transform select-none shrink-0"
                 />
               </Link>
 
@@ -180,7 +180,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition shrink-0 ml-1 border border-slate-200/70"
+                className="lg:hidden p-1.5 rounded-xl text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition shrink-0 ml-0.5 sm:ml-1 border border-slate-200/70"
                 aria-label="Navigation Menu"
                 title="Navigation Menu"
               >
@@ -674,7 +674,7 @@ export default function Navbar({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-slate-200 px-5 sm:px-6 py-4 space-y-4 shadow-xl">
+          <div className="lg:hidden bg-white border-b border-slate-200 px-4 sm:px-6 py-4 space-y-4 shadow-xl max-h-[calc(100vh-64px)] overflow-y-auto overscroll-contain">
             {/* User Profile / Auth Action Card in Mobile Menu */}
             {isLoggedIn ? (
               <div className="p-3.5 rounded-2xl bg-teal-50/70 border border-teal-100 flex items-center justify-between gap-3">

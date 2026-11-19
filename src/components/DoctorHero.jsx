@@ -60,11 +60,11 @@ export default function DoctorHero({
           </p>
 
           {/* Action Buttons - Side by side in a single horizontal line on desktop, wrapping cleanly on small mobile */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 pt-1.5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1.5 w-full">
             <button
               type="button"
               onClick={() => onBookAppointment && onBookAppointment(null, 'Clinic Visit')}
-              className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-sm sm:text-base px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer active:scale-95 min-h-[48px]"
+              className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
             >
               <Calendar className="w-5 h-5 shrink-0" />
               <span>Book an Appointment</span>
@@ -74,7 +74,7 @@ export default function DoctorHero({
             <button
               type="button"
               onClick={() => onOnlineConsultation && onOnlineConsultation(null, 'Online Consultation')}
-              className="bg-white hover:bg-slate-50 text-[#007A64] border-2 border-[#007A64] font-extrabold text-sm sm:text-base px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer active:scale-95 min-h-[48px]"
+              className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#007A64] border-2 border-[#007A64] font-extrabold text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
             >
               <Video className="w-5 h-5 shrink-0 text-[#007A64]" />
               <span>Online Consultation</span>
@@ -87,13 +87,13 @@ export default function DoctorHero({
           <img
             src="/doctor-hero-doctors.jpg"
             alt="ZESTMED Verified Specialist Doctors"
-            className="h-[230px] sm:h-[300px] md:h-[330px] lg:h-[345px] xl:h-[375px] 2xl:h-[400px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
+            className="h-[210px] xs:h-[250px] sm:h-[300px] md:h-[330px] lg:h-[345px] xl:h-[375px] 2xl:h-[400px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
           />
         </div>
 
         {/* Right Column: "Find a Doctor" Card - Positioned lower & filling space below */}
         <div className="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[370px] shrink-0 flex justify-center lg:justify-end relative z-20 self-center lg:self-end lg:mb-2.5 xl:mb-3">
-          <div className="w-full max-w-[370px] bg-white rounded-3xl shadow-xl border border-slate-100 p-5 sm:p-5.5 space-y-3">
+          <div className="w-full max-w-full sm:max-w-[370px] bg-white rounded-3xl shadow-xl border border-slate-100 p-4 sm:p-5.5 space-y-3">
             
             {/* Card Title matching Reference */}
             <div className="flex items-center gap-2.5 mb-2">

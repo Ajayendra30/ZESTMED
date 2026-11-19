@@ -153,6 +153,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
   const [wishlist, setWishlist] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const toggleWishlist = (id) => {
     setWishlist((prev) => ({
@@ -354,11 +355,11 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
             </div>
 
             {/* Right Column: Visual with Bottles and First Aid Box pulled down to bottom baseline */}
-            <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative items-end justify-end self-end -mb-8 md:-mb-9 lg:-mb-10">
+            <div className="flex lg:flex lg:col-span-5 xl:col-span-5 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-10">
               <img
                 src="/medicines-hero.png"
                 alt="Pharmacy Medicines and First Aid Kit"
-                className="h-auto max-h-[220px] xl:max-h-[245px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
+                className="h-auto max-h-[170px] sm:max-h-[200px] xl:max-h-[245px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
               />
             </div>
 
@@ -384,10 +385,25 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           3. MAIN STORE LAYOUT (SIDEBAR + PRODUCTS GRID) - FULL WIDTH
           ========================================================================= */}
       <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pb-12">
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden mb-4">
+          <button
+            type="button"
+            onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl font-bold text-xs sm:text-sm text-slate-800 shadow-2xs cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-[#008F83]" />
+              <span>Filter Medicines & Categories</span>
+            </span>
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isMobileFiltersOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-6 xl:gap-8 items-start w-full">
           
           {/* ================== LEFT FILTER SIDEBAR ================== */}
-          <aside className="lg:col-span-3 space-y-4 sm:space-y-5">
+          <aside className={`lg:col-span-3 space-y-4 sm:space-y-5 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
             
             {/* Box 1: Categories */}
             <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
