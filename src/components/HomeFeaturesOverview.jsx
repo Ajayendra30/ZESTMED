@@ -103,8 +103,8 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
         <div className="bg-[#EDFBF9] border border-[#C6F1E9] rounded-3xl p-5 sm:p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6 shadow-sm">
           {/* Left Title Block */}
           <div className="flex items-center gap-4 sm:gap-5 shrink-0 lg:max-w-sm">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#008F83] border-2 border-teal-200 flex items-center justify-center shadow-xs shrink-0">
-              <HeartPulse className="w-8 h-8 sm:w-9 sm:h-9 text-[#008F83]" />
+            <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+              <HeartPulse className="w-9 h-9 sm:w-10 sm:h-10 text-[#008F83]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
                 <React.Fragment key={idx}>
                   {/* Step Card */}
                   <div className="w-full sm:flex-1 bg-white rounded-2xl p-4 sm:p-5 lg:p-5 xl:p-6 border border-slate-200/80 shadow-xs hover:shadow-lg hover:border-teal-300 transition text-center flex flex-col items-center justify-center min-h-[145px] sm:min-h-[160px] xl:min-h-[175px]">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center mb-3 shadow-2xs shrink-0">
+                    <div className="h-14 sm:h-16 flex items-center justify-center mb-3 shrink-0 text-[#008F83]">
                       {st.icon}
                     </div>
                     <h3 className="text-xs sm:text-sm lg:text-[14px] xl:text-[15px] font-bold text-slate-900 leading-snug text-center min-h-[36px] sm:min-h-[42px] flex items-center justify-center">
@@ -206,8 +206,8 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
             <div>
               {/* Header */}
               <div className="flex items-center gap-3.5 sm:gap-4 mb-6 pb-4 border-b border-slate-100">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 text-[#008F83] border-2 border-teal-100 flex items-center justify-center shrink-0 shadow-2xs">
-                  <ShieldCheck className="w-8 h-8 sm:w-9 sm:h-9 text-[#008F83] stroke-[2.4]" />
+                <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                  <ShieldCheck className="w-9 h-9 sm:w-10 sm:h-10 text-[#008F83] stroke-[2.4]" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-900 tracking-tight">
                   Why Choose ZESTMED?

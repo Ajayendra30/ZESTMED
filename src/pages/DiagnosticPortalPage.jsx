@@ -765,8 +765,8 @@ export default function DiagnosticPortalPage() {
                 
                 {/* Left Title with Green Home Icon */}
                 <div className="flex items-center gap-3 shrink-0 w-full xl:w-auto">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 border border-teal-200/90 flex items-center justify-center text-[#008F83] shrink-0 shadow-2xs">
-                    <Home className="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#008F83]" />
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Home className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">

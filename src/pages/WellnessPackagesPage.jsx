@@ -281,8 +281,8 @@ export default function WellnessPackagesPage() {
           
           {/* 1. Preventive Care */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <Heart className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+              <Heart className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
               <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Preventive Care</p>
@@ -292,8 +292,8 @@ export default function WellnessPackagesPage() {
 
           {/* 2. Complete Health Check */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <FlaskConical className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+              <FlaskConical className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
               <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Complete Health Check</p>
@@ -303,19 +303,19 @@ export default function WellnessPackagesPage() {
 
           {/* 3. For All Age Groups */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <Users className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+              <Users className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
               <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">For All Age Groups</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Packages for men, women & seniors</p>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Packages for men, women &amp; seniors</p>
             </div>
           </div>
 
           {/* 4. Expert Consultation */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+              <ShieldCheck className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
               <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Expert Consultation</p>
@@ -325,11 +325,11 @@ export default function WellnessPackagesPage() {
 
           {/* 5. Easy & Quick Booking */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center shrink-0">
-              <Headphones className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+              <Headphones className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Easy & Quick Booking</p>
+              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Easy &amp; Quick Booking</p>
               <p className="text-[11px] text-slate-500 font-medium mt-0.5">Book online in just a few clicks</p>
             </div>
           </div>
@@ -460,11 +460,11 @@ export default function WellnessPackagesPage() {
             
             {/* 1. Accurate & Reliable */}
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center">
-                <Heart className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
+                <Heart className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
               </div>
               <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
-                Accurate & Reliable
+                Accurate &amp; Reliable
               </h3>
               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                 NABL-accredited labs
@@ -473,8 +473,8 @@ export default function WellnessPackagesPage() {
 
             {/* 2. Comprehensive Test Coverage */}
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center">
-                <ClipboardList className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
+                <ClipboardList className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
               </div>
               <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
                 Comprehensive Test Coverage
@@ -486,8 +486,8 @@ export default function WellnessPackagesPage() {
 
             {/* 3. Expert Medical Guidance */}
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center">
-                <Stethoscope className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
+                <Stethoscope className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
               </div>
               <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
                 Expert Medical Guidance
@@ -499,11 +499,11 @@ export default function WellnessPackagesPage() {
 
             {/* 4. Safe & Hygienic */}
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
+                <ShieldCheck className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
               </div>
               <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
-                Safe & Hygienic
+                Safe &amp; Hygienic
               </h3>
               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                 Highest safety standards
@@ -512,8 +512,8 @@ export default function WellnessPackagesPage() {
 
             {/* 5. Value for Money */}
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2 col-span-2 sm:col-span-1">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center font-bold">
-                <IndianRupee className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+              <div className="w-10 h-10 flex items-center justify-center font-bold text-[#007A64]">
+                <IndianRupee className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
               </div>
               <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
                 Value for Money

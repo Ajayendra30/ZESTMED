@@ -305,29 +305,29 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
               {/* 4 Trust Badges in a 2x2 Grid: Best Prices placed directly under Express Delivery */}
               <div className="pt-3 sm:pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-8 lg:gap-x-10 gap-y-3 sm:gap-y-3.5 max-w-xl text-sm sm:text-base text-slate-800 font-bold">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <ShieldCheck className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <span>100% Genuine Medicines</span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Truck className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <span>Express Delivery</span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <RotateCcw className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <span>Easy Returns</span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Tag className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <span>Best Prices</span>
                 </div>

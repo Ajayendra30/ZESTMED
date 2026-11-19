@@ -10,19 +10,12 @@ import { getRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
 function ZestmedLogo() {
   return (
-    <div className="flex items-center justify-center gap-2.5 select-none">
-      <svg className="w-9 h-9 shrink-0 drop-shadow-xs" viewBox="0 0 36 36" fill="none">
-        {/* Green Cross Body */}
-        <rect x="11" y="2" width="14" height="32" rx="4" fill="#007A64" />
-        <rect x="2" y="11" width="32" height="14" rx="4" fill="#007A64" />
-        {/* Inner white dynamic emblem */}
-        <path
-          d="M18 10C16.5 13 14 15 11 16.5C14 18 16.5 20 18 24C19.5 20 22 18 25 16.5C22 15 19.5 13 18 10Z"
-          fill="white"
-        />
-        <circle cx="18" cy="17" r="2.2" fill="#007A64" />
-      </svg>
-      <span className="text-2xl font-black text-[#0B2238] tracking-tight">Zestmed</span>
+    <div className="flex items-center justify-center select-none">
+      <img
+        src="/logo.png"
+        alt="Zestmed Diagnostics & Polyclinic"
+        className="h-10 sm:h-11 w-auto object-contain select-none"
+      />
     </div>
   );
 }

@@ -348,26 +348,26 @@ export default function SurgeryPackagesPage() {
             
             {/* Card 1 */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:border-teal-200 hover:shadow-sm transition">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3">
-                <Award className="w-5 h-5 text-[#007A64]" />
+              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
+                <Award className="w-7 h-7 text-[#007A64]" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 leading-tight">Expert Surgeons</h3>
-              <p className="text-xs text-slate-500 mt-1 leading-snug">Highly experienced & specialized team</p>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Highly experienced &amp; specialized team</p>
             </div>
 
             {/* Card 2 */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:border-teal-200 hover:shadow-sm transition">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3">
-                <Building2 className="w-5 h-5 text-[#007A64]" />
+              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
+                <Building2 className="w-7 h-7 text-[#007A64]" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 leading-tight">Advanced OT Facilities</h3>
-              <p className="text-xs text-slate-500 mt-1 leading-snug">Modern, sterile & well-equipped OTs</p>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Modern, sterile &amp; well-equipped OTs</p>
             </div>
 
             {/* Card 3 */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:border-teal-200 hover:shadow-sm transition">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3">
-                <ShieldCheck className="w-5 h-5 text-[#007A64]" />
+              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
+                <ShieldCheck className="w-7 h-7 text-[#007A64]" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 leading-tight">Safety First</h3>
               <p className="text-xs text-slate-500 mt-1 leading-snug">International safety protocols</p>
@@ -375,8 +375,8 @@ export default function SurgeryPackagesPage() {
 
             {/* Card 4 */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:border-teal-200 hover:shadow-sm transition">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3">
-                <CircleDollarSign className="w-5 h-5 text-[#007A64]" />
+              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
+                <CircleDollarSign className="w-7 h-7 text-[#007A64]" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 leading-tight">Transparent Pricing</h3>
               <p className="text-xs text-slate-500 mt-1 leading-snug">No hidden costs, clear package details</p>
@@ -384,11 +384,11 @@ export default function SurgeryPackagesPage() {
 
             {/* Card 5 */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 hover:border-teal-200 hover:shadow-sm transition">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3">
-                <Headphones className="w-5 h-5 text-[#007A64]" />
+              <div className="w-10 h-10 flex items-center justify-start mb-3 text-[#007A64]">
+                <Headphones className="w-7 h-7 text-[#007A64]" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 leading-tight">Complete Care</h3>
-              <p className="text-xs text-slate-500 mt-1 leading-snug">Pre-surgery, surgery & post-surgery support</p>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Pre-surgery, surgery &amp; post-surgery support</p>
             </div>
 
           </div>
@@ -509,8 +509,8 @@ export default function SurgeryPackagesPage() {
                   onClick={() => handleOpenBooking()}
                   className="bg-white rounded-2xl border border-slate-200/80 p-4 flex flex-col items-center justify-center text-center hover:border-teal-300 hover:shadow-xs transition duration-200 cursor-pointer group"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-teal-50 text-[#007A64] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <IconComp className="w-6 h-6 text-[#007A64]" />
+                  <div className="w-12 h-12 flex items-center justify-center mb-3 text-[#007A64] group-hover:scale-110 transition-transform">
+                    <IconComp className="w-7 h-7 text-[#007A64]" />
                   </div>
                   <span className="text-xs font-bold text-slate-800 group-hover:text-[#007A64] transition-colors leading-tight">
                     {cat.title}
