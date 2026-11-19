@@ -7,7 +7,8 @@ import { saveRegisteredPatient } from '../utils/patientRegistry';
 import { 
   updateDoctorAppointmentStatus, 
   updateLabBookingStatus, 
-  updateOrderStatus 
+  updateOrderStatus,
+  getUserBookings 
 } from '../services/supabaseService';
 import {
   Home,
@@ -49,7 +50,8 @@ import {
   ShieldCheck,
   Share2,
   FileCheck,
-  RotateCcw
+  RotateCcw,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -68,6 +70,7 @@ import OrderInvoiceModal from '../components/OrderInvoiceModal';
 import AddAddressModal from '../components/AddAddressModal';
 import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
+import BookingDetailModal from '../components/BookingDetailModal';
 import AuthModal from '../components/AuthModal';
 import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
@@ -78,12 +81,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const { addToast } = useToast();
 
   // Navigation State
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [activeMenu, setActiveMenu] = useState('bookings');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [healthTipIndex, setHealthTipIndex] = useState(0);
+
+  // Real Database Bookings for Logged-In User
+  const [userBookings, setUserBookings] = useState([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+  const [selectedBookingForDetail, setSelectedBookingForDetail] = useState(null);
 
   // Modals State
   const [selectedReportBooking, setSelectedReportBooking] = useState(null);
@@ -101,31 +109,68 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
   }, []);
 
-  // Persistent User Data
+  // Fetch real user bookings from database
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRealUserBookings = async () => {
+      if (!user) {
+        setUserBookings([]);
+        return;
+      }
+      setIsLoadingBookings(true);
+      try {
+        const bookings = await getUserBookings(user);
+        if (isMounted) {
+          setUserBookings(bookings || []);
+        }
+      } catch (err) {
+        console.error('[Dashboard] Error fetching user bookings:', err);
+        if (isMounted) setUserBookings([]);
+      } finally {
+        if (isMounted) setIsLoadingBookings(false);
+      }
+    };
+
+    fetchRealUserBookings();
+
+    const handleSyncStorage = () => {
+      fetchRealUserBookings();
+    };
+
+    window.addEventListener('storage', handleSyncStorage);
+    window.addEventListener('zestmed_booking_updated', handleSyncStorage);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handleSyncStorage);
+      window.removeEventListener('zestmed_booking_updated', handleSyncStorage);
+    };
+  }, [user]);
+
+  // Persistent User Data (for local fallback views)
   const [orders, setOrders] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_patient_orders');
-      return saved ? JSON.parse(saved) : initialPatientOrders;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return initialPatientOrders;
+      return [];
     }
   });
 
   const [labBookings, setLabBookings] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_patient_lab_bookings');
-      return saved ? JSON.parse(saved) : initialPatientLabBookings;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return initialPatientLabBookings;
+      return [];
     }
   });
 
   const [appointments, setAppointments] = useState(() => {
     try {
       const saved = localStorage.getItem('patient_appointments');
-      return saved ? JSON.parse(saved) : initialPatientAppointments;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return initialPatientAppointments;
+      return [];
     }
   });
 
@@ -243,6 +288,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [user]);
 
   const handleCancelBooking = (bookingId) => {
+    setUserBookings((prev) =>
+      prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, bookingStatus: 'Cancelled', status: 'Cancelled' } : b))
+    );
+
     setLabBookings((prev) => {
       const updated = prev.map((b) => (b.id === bookingId || b.bookingId === bookingId ? { ...b, status: 'Cancelled' } : b));
       try {
@@ -263,12 +312,57 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       return updated;
     });
 
+    setOrders((prev) => {
+      const updated = prev.map((o) => (o.id === bookingId || o.order_number === bookingId ? { ...o, status: 'Cancelled' } : o));
+      try {
+        localStorage.setItem('zestmed_patient_orders', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+
     // Sync cancellation to Supabase PostgreSQL
     updateDoctorAppointmentStatus(bookingId, 'Cancelled').catch(() => {});
     updateLabBookingStatus(bookingId, 'Cancelled').catch(() => {});
+    updateOrderStatus(bookingId, 'Cancelled').catch(() => {});
+
+    window.dispatchEvent(new Event('zestmed_booking_updated'));
 
     addToast(`Booking ${bookingId} cancelled. Refund will be processed if prepaid.`, 'info');
   };
+
+  // Filtered Real User Bookings for My Bookings View
+  const filteredUserBookings = useMemo(() => {
+    return userBookings.filter((b) => {
+      // Category filter
+      if (serviceCategoryFilter !== 'all') {
+        if (serviceCategoryFilter === 'lab' && b.itemType !== 'lab') return false;
+        if (serviceCategoryFilter === 'doctor' && b.itemType !== 'doctor') return false;
+        if (serviceCategoryFilter === 'physiotherapy' && b.itemType !== 'physiotherapy') return false;
+        if (serviceCategoryFilter === 'wellness' && b.itemType !== 'wellness') return false;
+        if (serviceCategoryFilter === 'surgery' && b.itemType !== 'surgery') return false;
+        if (serviceCategoryFilter === 'medicine' && b.itemType !== 'medicine') return false;
+      }
+
+      // Status filter
+      const st = (b.bookingStatus || b.status || '').toLowerCase();
+      if (bookingFilter === 'confirmed') {
+        return st.includes('confirm') || st.includes('schedule');
+      }
+      if (bookingFilter === 'pending') {
+        return st.includes('pending') || st.includes('process');
+      }
+      if (bookingFilter === 'completed') {
+        return st.includes('complete') || st.includes('deliver') || st.includes('report') || st.includes('publish');
+      }
+      if (bookingFilter === 'cancelled') {
+        return st.includes('cancel');
+      }
+
+      return true;
+    });
+  }, [userBookings, serviceCategoryFilter, bookingFilter]);
 
   // Harmonized combined bookings across all 6 patient actions
   const combinedBookings = useMemo(() => {
@@ -356,16 +450,16 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [combinedBookings, serviceCategoryFilter, bookingFilter]);
 
   const upcomingCount = useMemo(() => {
-    return combinedBookings.filter(
-      (b) => !(b.status || '').toLowerCase().includes('cancel') && !(b.status || '').toLowerCase().includes('complete')
+    return userBookings.filter(
+      (b) => !(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !(b.bookingStatus || b.status || '').toLowerCase().includes('complete')
     ).length;
-  }, [combinedBookings]);
+  }, [userBookings]);
 
   const upcomingList = useMemo(() => {
-    return combinedBookings
-      .filter((b) => !(b.status || '').toLowerCase().includes('cancel') && !(b.status || '').toLowerCase().includes('complete'))
+    return userBookings
+      .filter((b) => !(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !(b.bookingStatus || b.status || '').toLowerCase().includes('complete'))
       .slice(0, 3);
-  }, [combinedBookings]);
+  }, [userBookings]);
 
   const handleDeleteAddress = (addressId) => {
     setAddresses((prev) => {
@@ -580,22 +674,23 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Book Lab Test</span>
             </button>
 
-            {/* My Lab Bookings */}
+            {/* My Bookings */}
             <button
               type="button"
               onClick={() => {
                 setActiveMenu('bookings');
+                setServiceCategoryFilter('all');
                 setIsSidebarOpen(false);
-                addToast('Viewing Assam Home & Lab Appointments', 'info');
+                addToast('Viewing My Bookings', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'bookings'
+                activeMenu === 'bookings' && serviceCategoryFilter !== 'medicine'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>My Lab Bookings</span>
+              <span>My Bookings</span>
             </button>
 
             {/* Medicine Store */}
@@ -615,12 +710,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={() => {
-                setActiveMenu('orders');
+                setActiveMenu('bookings');
+                setServiceCategoryFilter('medicine');
                 setIsSidebarOpen(false);
-                addToast('Viewing Medicine Order History', 'info');
+                addToast('Viewing Medicine Orders in My Bookings', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'orders'
+                activeMenu === 'bookings' && serviceCategoryFilter === 'medicine'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
@@ -1421,7 +1517,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
           {/* ======================================================== */}
-          {/* 1. MY BOOKINGS & CONSULTATIONS VIEW                      */}
+          {/* ======================================================== */}
+          {/* 1. MY BOOKINGS VIEW                                      */}
           {/* ======================================================== */}
           {activeMenu === 'bookings' && (
             <div className="space-y-4 sm:space-y-6">
@@ -1429,10 +1526,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                     <Calendar className="w-6 h-6 text-[#14B8A6]" />
-                    <span>My Bookings & Consultations</span>
+                    <span>My Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage all your doctor appointments, physiotherapy sessions, lab tests, wellness packages, and surgery evaluations across Assam.
+                    Manage and view all services booked through your account (Lab Tests, Doctor Appointments, Physiotherapy, Surgery Packages, Wellness Packages, and Medicine Orders).
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -1466,12 +1563,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* Service Category Filter Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {[
-                  { id: 'all', label: `All Bookings (${combinedBookings.length})` },
-                  { id: 'lab', label: `Lab Tests (${combinedBookings.filter(b => b.itemType === 'lab').length})` },
-                  { id: 'doctor', label: `Doctor Consultations (${combinedBookings.filter(b => b.itemType === 'doctor').length})` },
-                  { id: 'physiotherapy', label: `Physiotherapy (${combinedBookings.filter(b => b.itemType === 'physiotherapy').length})` },
-                  { id: 'wellness', label: `Wellness Packages (${combinedBookings.filter(b => b.itemType === 'wellness').length})` },
-                  { id: 'surgery', label: `Surgery Packages (${combinedBookings.filter(b => b.itemType === 'surgery').length})` }
+                  { id: 'all', label: `All Bookings (${userBookings.length})` },
+                  { id: 'lab', label: `Lab Tests (${userBookings.filter(b => b.itemType === 'lab').length})` },
+                  { id: 'doctor', label: `Doctor Appointments (${userBookings.filter(b => b.itemType === 'doctor').length})` },
+                  { id: 'physiotherapy', label: `Physiotherapy (${userBookings.filter(b => b.itemType === 'physiotherapy').length})` },
+                  { id: 'surgery', label: `Surgery Packages (${userBookings.filter(b => b.itemType === 'surgery').length})` },
+                  { id: 'wellness', label: `Wellness Packages (${userBookings.filter(b => b.itemType === 'wellness').length})` },
+                  { id: 'medicine', label: `Medicine Orders (${userBookings.filter(b => b.itemType === 'medicine').length})` }
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -1493,8 +1591,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <span className="text-slate-400 font-semibold text-[11px] uppercase tracking-wider mr-1">Status:</span>
                 {[
                   { id: 'all', label: 'All Status' },
-                  { id: 'confirmed', label: 'Confirmed / Scheduled' },
-                  { id: 'report-ready', label: 'Report Ready / Completed' },
+                  { id: 'confirmed', label: 'Confirmed' },
+                  { id: 'pending', label: 'Pending' },
+                  { id: 'completed', label: 'Completed' },
                   { id: 'cancelled', label: 'Cancelled' }
                 ].map((f) => (
                   <button
@@ -1514,12 +1613,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
               {/* Bookings List */}
               <div className="space-y-3.5">
-                {filteredBookings.length > 0 ? (
-                  filteredBookings.map((b) => {
+                {isLoadingBookings ? (
+                  <div className="bg-white rounded-2xl p-10 border border-slate-100 shadow-sm text-center space-y-3">
+                    <div className="w-8 h-8 border-3 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-xs font-bold text-slate-600">Loading your real bookings from the database...</p>
+                  </div>
+                ) : filteredUserBookings.length > 0 ? (
+                  filteredUserBookings.map((b) => {
                     const isDoctor = b.itemType === 'doctor';
                     const isPhysio = b.itemType === 'physiotherapy';
                     const isSurgery = b.itemType === 'surgery';
                     const isWellness = b.itemType === 'wellness';
+                    const isMedicine = b.itemType === 'medicine';
 
                     const iconColor = isDoctor
                       ? 'bg-blue-50 text-blue-600'
@@ -1529,6 +1634,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       ? 'bg-amber-50 text-amber-600'
                       : isWellness
                       ? 'bg-teal-50 text-teal-600'
+                      : isMedicine
+                      ? 'bg-sky-50 text-sky-600'
                       : 'bg-teal-50 text-teal-600';
 
                     const IconComponent = isDoctor
@@ -1539,125 +1646,136 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       ? Scissors
                       : isWellness
                       ? Package
+                      : isMedicine
+                      ? ShoppingCart
                       : FlaskConical;
+
+                    const statusLower = (b.bookingStatus || b.status || 'Confirmed').toLowerCase();
+                    const isCancelled = statusLower.includes('cancel');
+                    const isCompleted = statusLower.includes('complete') || statusLower.includes('deliver') || statusLower.includes('report') || statusLower.includes('publish');
+                    const isPending = statusLower.includes('pending') || statusLower.includes('process');
+
+                    const statusBadgeClass = isCancelled
+                      ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                      : isCompleted
+                      ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                      : isPending
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+
+                    const formattedBookingDate = b.bookingDateTime
+                      ? new Date(b.bookingDateTime).toLocaleString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : b.createdAt
+                      ? new Date(b.createdAt).toLocaleString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : 'Recently Booked';
 
                     return (
                       <div
                         key={b.id || b.bookingId}
-                        className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
+                        onClick={() => setSelectedBookingForDetail(b)}
+                        className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs hover:shadow-md hover:border-teal-300 transition cursor-pointer space-y-3 group"
                       >
+                        {/* Top Row: Service Name, ID, Badges, Amount */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                           <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconColor}`}>
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${iconColor} group-hover:scale-105 transition-transform`}>
                               <IconComponent className="w-5 h-5" />
                             </div>
                             <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="text-sm font-bold text-slate-900">{b.title}</h3>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
-                                  {b.displayType}
+                              <div className="flex flex-wrap items-center gap-2">
+                                <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition">
+                                  {b.serviceName || b.title}
+                                </h3>
+                                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-teal-50 text-[#007A64] border border-teal-200">
+                                  {b.serviceType || b.displayType}
                                 </span>
                               </div>
-                              <div className="text-xs text-slate-400 font-mono mt-0.5">
-                                ID: {b.bookingId || b.id} • Patient: {b.patientName || 'Self'}
+                              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1 font-mono">
+                                <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200 font-bold text-slate-700">
+                                  ID: {b.bookingId || b.id}
+                                </span>
+                                <span className="text-slate-400 font-sans">
+                                  • Patient: <strong className="text-slate-700">{b.patientName || 'Self'}</strong>
+                                </span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                                (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('publish')
-                                  ? 'bg-purple-50 text-purple-600 border border-purple-200'
-                                  : (b.status || '').toLowerCase().includes('confirm')
-                                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                  : (b.status || '').toLowerCase().includes('cancel')
-                                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                                  : 'bg-blue-50 text-blue-600 border border-blue-200'
-                              }`}
-                            >
-                              {b.status || 'Confirmed'}
+                          <div className="flex items-center gap-3 self-end sm:self-center">
+                            <span className={`text-xs font-extrabold px-3 py-1 rounded-full ${statusBadgeClass}`}>
+                              {b.bookingStatus || b.status || 'Confirmed'}
                             </span>
-                            <span className="text-sm font-black text-slate-900 ml-1">
-                              ₹{Number(b.price || b.fee || 499).toLocaleString('en-IN')}
-                            </span>
+                            <div className="text-right">
+                              <span className="text-sm sm:text-base font-black text-slate-900">
+                                ₹{Number(b.totalAmount || b.price || 0).toLocaleString('en-IN')}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
-                          <div className="flex flex-wrap items-center gap-4">
+                        {/* Middle & Bottom: Booking Date, Appointment Date, Payment Status, Actions */}
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs text-slate-600">
+                          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                            {/* Booking Date and Time */}
                             <div className="flex items-center gap-1.5">
-                              <Clock className="w-4 h-4 text-slate-400" />
-                              <span>{b.date} • {b.time}</span>
+                              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>
+                                Booked on: <strong className="text-slate-700">{formattedBookingDate}</strong>
+                              </span>
                             </div>
+
+                            {/* Appointment or Service Date */}
                             <div className="flex items-center gap-1.5">
-                              <Home className="w-4 h-4 text-teal-500" />
-                              <span className="font-medium">{b.mode || 'Home Collection'}</span>
+                              <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                              <span>
+                                Service Date: <strong className="text-slate-800">{b.appointmentDate || b.date || 'Scheduled Date'} {b.appointmentTime || b.time ? `• ${b.appointmentTime || b.time}` : ''}</strong>
+                              </span>
                             </div>
-                            {b.location && (
-                              <div className="flex items-center gap-1.5 text-slate-500">
-                                <MapPin className="w-4 h-4 text-slate-400" />
-                                <span className="truncate max-w-xs">{b.location}</span>
-                              </div>
-                            )}
-                            {b.provider && (
-                              <div className="flex items-center gap-1.5 text-slate-500">
-                                <User className="w-4 h-4 text-slate-400" />
-                                <span>{isDoctor ? 'Doctor' : isPhysio ? 'Therapist' : isSurgery ? 'Lead Surgeon' : 'Specialist'}: <strong className="text-slate-700">{b.provider}</strong></span>
-                              </div>
-                            )}
+
+                            {/* Payment Status */}
+                            <div className="flex items-center gap-1.5">
+                              <CreditCard className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="bg-emerald-50/80 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md font-semibold">
+                                {b.paymentStatus || 'Paid (Verified)'}
+                              </span>
+                            </div>
                           </div>
 
-                          <div className="flex items-center gap-2 shrink-0">
-                            {(b.status || '').toLowerCase().includes('report') && (
-                              <button
-                                type="button"
-                                onClick={() => handleOpenReportModal(b.testName || b.title, b.date)}
-                                className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                              >
-                                <FileCheck className="w-3.5 h-3.5" />
-                                <span>View Report</span>
-                              </button>
-                            )}
+                          {/* Action Buttons */}
+                          <div className="flex items-center gap-2 shrink-0 self-end lg:self-auto">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedBookingForDetail(b);
+                              }}
+                              className="px-3.5 py-1.5 bg-[#008F83] hover:bg-[#007A64] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>View Details</span>
+                            </button>
 
-                            {isDoctor ? (
-                              <button
-                                type="button"
-                                onClick={() => addToast(`Connecting to Polyclinic Desk: +91 92791 25091 (Guwahati)`, 'info')}
-                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
-                              >
-                                Call Clinic
-                              </button>
-                            ) : isPhysio ? (
-                              <button
-                                type="button"
-                                onClick={() => addToast(`Physiotherapy Desk: +91 92791 25091 (Assam Care Lead)`, 'info')}
-                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
-                              >
-                                Contact Therapist
-                              </button>
-                            ) : isSurgery ? (
-                              <button
-                                type="button"
-                                onClick={() => addToast(`Surgery Care Coordinator: +91 94351 09876`, 'info')}
-                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
-                              >
-                                Contact Care Lead
-                              </button>
+                            {isCancelled ? (
+                              <span className="text-xs text-rose-500 font-semibold italic">Cancelled</span>
                             ) : (
                               <button
                                 type="button"
-                                onClick={() => addToast(`Phlebotomist ${b.provider || 'Bikash Das'} active on route (Guwahati).`, 'info')}
-                                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
-                              >
-                                Track Phlebotomist
-                              </button>
-                            )}
-
-                            {!(b.status || '').toLowerCase().includes('cancel') && (
-                              <button
-                                type="button"
-                                onClick={() => handleCancelBooking(b.id || b.bookingId)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCancelBooking(b.id || b.bookingId);
+                                }}
                                 className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition cursor-pointer"
                               >
                                 Cancel
@@ -1669,35 +1787,44 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     );
                   })
                 ) : (
-                  <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm text-center space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
-                      <Calendar className="w-6 h-6" />
+                  <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center mx-auto">
+                      <Calendar className="w-7 h-7" />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-800">No Bookings Found</h3>
-                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                      You do not have any bookings matching this category. Book top doctors, lab tests, physiotherapy, or wellness packages with 1 click.
+                    <h3 className="text-base font-extrabold text-slate-800">No Bookings Found</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                      {user 
+                        ? `There are no bookings recorded under your verified account (${user.phone || user.contact || user.email || user.name || 'Current User'}). Only your own real bookings will be displayed here.`
+                        : 'Please log in with your phone or email to view your booked services.'}
                     </p>
                     <div className="flex flex-wrap justify-center gap-2 pt-2">
                       <button
                         type="button"
                         onClick={() => navigate('/diagnostics')}
-                        className="px-3.5 py-1.5 bg-[#14B8A6] text-white rounded-xl text-xs font-bold hover:bg-[#0d9488] transition cursor-pointer"
+                        className="px-3.5 py-2 bg-[#14B8A6] text-white rounded-xl text-xs font-bold hover:bg-[#0d9488] transition cursor-pointer shadow-2xs"
                       >
                         Book Lab Test
                       </button>
                       <button
                         type="button"
                         onClick={() => navigate('/doctor-appointment')}
-                        className="px-3.5 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition cursor-pointer"
+                        className="px-3.5 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition cursor-pointer shadow-2xs"
                       >
                         Book Doctor
                       </button>
                       <button
                         type="button"
                         onClick={() => navigate('/physiotherapy')}
-                        className="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer"
+                        className="px-3.5 py-2 bg-white border border-[#008F83] text-[#008F83] rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                       >
                         Book Physio
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/medicines')}
+                        className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+                      >
+                        Medicine Store
                       </button>
                     </div>
                   </div>
@@ -2370,6 +2497,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       <PrescriptionUploadModal
         isOpen={isPrescriptionUploadModalOpen}
         onClose={() => setIsPrescriptionUploadModalOpen(false)}
+      />
+
+      {/* Booking Detail Modal */}
+      <BookingDetailModal
+        booking={selectedBookingForDetail}
+        isOpen={Boolean(selectedBookingForDetail)}
+        onClose={() => setSelectedBookingForDetail(null)}
+        onCancelBooking={handleCancelBooking}
       />
     </div>
   );

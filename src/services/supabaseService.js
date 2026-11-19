@@ -9,6 +9,13 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
  * ==============================================================================
  */
 
+// Helper to normalize 10-digit phone number
+export const normalizePhone = (phone) => {
+  if (!phone) return '';
+  const digits = String(phone).replace(/\D/g, '');
+  return digits.length > 10 ? digits.slice(-10) : digits;
+};
+
 // Helper to safely read from localStorage
 const getLocalData = (key, fallback = []) => {
   try {
@@ -152,11 +159,14 @@ export const getDoctorAppointments = async (phone = null) => {
 
 export const bookDoctorAppointment = async (appointmentData) => {
   const localList = getLocalData('patient_appointments', []);
+  const resolvedPhone = appointmentData.phone || appointmentData.patientPhone || '';
   const newAppointment = {
     ...appointmentData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     id: appointmentData.id || `DOC-${Date.now()}`,
     appointment_number: appointmentData.appointment_number || `DOC-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: appointmentData.createdAt || new Date().toISOString(),
     status: appointmentData.status || 'Confirmed',
   };
 
@@ -170,15 +180,15 @@ export const bookDoctorAppointment = async (appointmentData) => {
           {
             appointment_number: newAppointment.appointment_number,
             patient_name: newAppointment.patientName || newAppointment.patient_name,
-            phone: newAppointment.phone || '',
+            phone: resolvedPhone,
             doctor_name: newAppointment.doctorName || newAppointment.doctor_name,
-            department: newAppointment.department || 'General Medicine',
+            department: newAppointment.department || newAppointment.specialty || 'General Medicine',
             appointment_date: newAppointment.date || newAppointment.appointment_date,
             appointment_time: newAppointment.time || newAppointment.appointment_time,
-            consultation_type: newAppointment.type || newAppointment.consultation_type || 'Clinic Visit',
-            fees: parseFloat(newAppointment.fees || 500),
+            consultation_type: newAppointment.type || newAppointment.mode || 'Clinic Visit',
+            fees: parseFloat(newAppointment.fees || newAppointment.fee || 500),
             status: newAppointment.status,
-            notes: newAppointment.notes || null,
+            notes: newAppointment.notes || newAppointment.symptoms || null,
           },
         ])
         .select()
@@ -245,12 +255,15 @@ export const getPhysioBookings = async (phone = null) => {
 
 export const bookPhysiotherapy = async (physioData) => {
   const localList = getLocalData('patient_appointments', []);
+  const resolvedPhone = physioData.phone || physioData.patientPhone || physioData.mobileNumber || '';
   const newBooking = {
     ...physioData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     isPhysio: true,
     id: physioData.id || `PHY-${Date.now()}`,
     booking_number: physioData.booking_number || `PHY-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: physioData.createdAt || new Date().toISOString(),
     status: physioData.status || 'Confirmed',
   };
 
@@ -264,15 +277,15 @@ export const bookPhysiotherapy = async (physioData) => {
           {
             booking_number: newBooking.booking_number,
             patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: newBooking.phone || '',
-            condition: newBooking.condition || newBooking.serviceName || 'Physiotherapy Session',
-            service_type: newBooking.service_type || 'Home Visit',
+            phone: resolvedPhone,
+            condition: newBooking.condition || newBooking.serviceName || newBooking.specialty || 'Physiotherapy Session',
+            service_type: newBooking.service_type || newBooking.mode || 'Home Visit',
             booking_date: newBooking.date || newBooking.booking_date,
             preferred_slot: newBooking.time || newBooking.preferred_slot,
-            fees: parseFloat(newBooking.fees || newBooking.price || 799),
+            fees: parseFloat(newBooking.fees || newBooking.price || newBooking.fee || 799),
             address: newBooking.address || null,
             status: newBooking.status,
-            notes: newBooking.notes || null,
+            notes: newBooking.notes || newBooking.symptoms || null,
           },
         ])
         .select()
@@ -338,12 +351,15 @@ export const getSurgeryBookings = async (phone = null) => {
 
 export const bookSurgery = async (surgeryData) => {
   const localList = getLocalData('patient_appointments', []);
+  const resolvedPhone = surgeryData.phone || surgeryData.patientPhone || '';
   const newBooking = {
     ...surgeryData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     isSurgery: true,
     id: surgeryData.id || `SUR-${Date.now()}`,
     booking_number: surgeryData.booking_number || `SUR-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: surgeryData.createdAt || new Date().toISOString(),
     status: surgeryData.status || 'Consultation Scheduled',
   };
 
@@ -357,13 +373,13 @@ export const bookSurgery = async (surgeryData) => {
           {
             booking_number: newBooking.booking_number,
             patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: newBooking.phone || '',
-            surgery_name: newBooking.doctorName || newBooking.surgery_name,
-            hospital_preference: newBooking.hospital_preference || 'ZestMed SuperSpecialty Center',
+            phone: resolvedPhone,
+            surgery_name: newBooking.doctorName || newBooking.surgery_name || newBooking.title,
+            hospital_preference: newBooking.hospital_preference || newBooking.hospital || 'ZestMed SuperSpecialty Center',
             preferred_date: newBooking.date || newBooking.preferred_date,
             price: parseFloat(newBooking.fees || newBooking.price || 0),
             status: newBooking.status,
-            notes: newBooking.notes || null,
+            notes: newBooking.notes || newBooking.symptoms || null,
           },
         ])
         .select()
@@ -429,12 +445,15 @@ export const getWellnessBookings = async (phone = null) => {
 
 export const bookWellness = async (wellnessData) => {
   const localList = getLocalData('patient_appointments', []);
+  const resolvedPhone = wellnessData.phone || wellnessData.patientPhone || '';
   const newBooking = {
     ...wellnessData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     isWellness: true,
     id: wellnessData.id || `WEL-${Date.now()}`,
     booking_number: wellnessData.booking_number || `WEL-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: wellnessData.createdAt || new Date().toISOString(),
     status: wellnessData.status || 'Confirmed',
   };
 
@@ -448,8 +467,8 @@ export const bookWellness = async (wellnessData) => {
           {
             booking_number: newBooking.booking_number,
             patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: newBooking.phone || '',
-            package_name: newBooking.doctorName || newBooking.package_name,
+            phone: resolvedPhone,
+            package_name: newBooking.doctorName || newBooking.package_name || newBooking.title,
             booking_date: newBooking.date || newBooking.booking_date,
             preferred_slot: newBooking.time || newBooking.preferred_slot || 'Morning (09:00 AM)',
             price: parseFloat(newBooking.fees || newBooking.price || 0),
@@ -519,11 +538,14 @@ export const getLabBookings = async (phone = null) => {
 
 export const bookLabTest = async (bookingData) => {
   const localList = getLocalData('zestmed_patient_lab_bookings', []);
+  const resolvedPhone = bookingData.phone || bookingData.patientPhone || bookingData.contactNumber || '';
   const newBooking = {
     ...bookingData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     id: bookingData.id || `LAB-${Date.now()}`,
     booking_number: bookingData.booking_number || `LAB-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: bookingData.createdAt || new Date().toISOString(),
     status: bookingData.status || 'Pending Collection',
   };
 
@@ -537,15 +559,15 @@ export const bookLabTest = async (bookingData) => {
           {
             booking_number: newBooking.booking_number,
             patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: newBooking.phone || '',
+            phone: resolvedPhone,
             test_name: newBooking.testName || newBooking.test_name,
             sample_type: newBooking.sampleType || newBooking.sample_type || 'Blood',
-            collection_address: newBooking.address || newBooking.collection_address || 'Guwahati',
+            collection_address: newBooking.address || newBooking.collectionAddress || newBooking.collection_address || 'Guwahati',
             collection_date: newBooking.date || newBooking.collection_date,
-            collection_slot: newBooking.timeSlot || newBooking.collection_slot || '08:00 AM - 10:00 AM',
+            collection_slot: newBooking.time || newBooking.timeSlot || newBooking.collection_slot || '08:00 AM - 10:00 AM',
             price: parseFloat(newBooking.price || 0),
             status: newBooking.status,
-            phlebotomist: newBooking.phlebotomist || 'Rajib Barman',
+            phlebotomist: newBooking.phlebotomist?.name || newBooking.phlebotomist || 'Rajib Barman',
           },
         ])
         .select()
@@ -610,11 +632,14 @@ export const getMedicineOrders = async (phone = null) => {
 
 export const placeMedicineOrder = async (orderData) => {
   const localList = getLocalData('zestmed_patient_orders', []);
+  const resolvedPhone = orderData.phone || orderData.patientPhone || '';
   const newOrder = {
     ...orderData,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
     id: orderData.id || `ORD-${Date.now()}`,
     order_number: orderData.order_number || `ORD-${Date.now()}`,
-    created_at: new Date().toISOString(),
+    created_at: orderData.createdAt || new Date().toISOString(),
     status: orderData.status || 'Processing',
   };
 
@@ -628,13 +653,13 @@ export const placeMedicineOrder = async (orderData) => {
           {
             order_number: newOrder.order_number,
             patient_name: newOrder.patientName || newOrder.patient_name || 'Verified Patient',
-            phone: newOrder.phone || '',
+            phone: resolvedPhone,
             delivery_address: newOrder.deliveryAddress || newOrder.delivery_address || 'Guwahati, Assam',
             subtotal: parseFloat(newOrder.subtotal || newOrder.total || 0),
             discount: parseFloat(newOrder.discount || 0),
             delivery_fee: parseFloat(newOrder.deliveryFee || 0),
             total_amount: parseFloat(newOrder.total || newOrder.total_amount || 0),
-            payment_status: newOrder.paymentStatus || 'Paid (COD)',
+            payment_status: newOrder.paymentStatus || newOrder.paymentMethod || 'Paid (COD)',
             payment_method: newOrder.paymentMethod || 'Cash on Delivery',
             order_status: newOrder.status,
             items: newOrder.items || [],
@@ -757,4 +782,421 @@ export const submitInquiry = async (inquiryData) => {
   const newInq = { ...inquiryData, id: `INQ-${Date.now()}`, created_at: new Date().toISOString() };
   setLocalData('zestmed_inquiries', [newInq, ...list]);
   return newInq;
+};
+
+// ------------------------------------------------------------------------------
+// 10. UNIFIED USER BOOKINGS (Fetch Real Database Records for Logged-In User)
+// ------------------------------------------------------------------------------
+
+export const getUserBookings = async (user) => {
+  if (!user) return [];
+
+  const rawPhone = user.phone || user.contact || '';
+  const cleanPhone = normalizePhone(rawPhone);
+  const userName = (user.name || '').trim();
+  const userId = user.id || '';
+  const userEmail = (user.email || '').trim().toLowerCase();
+
+  const isMatchingUser = (item) => {
+    if (!item) return false;
+    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
+    if (cleanPhone && itemPhone && cleanPhone === itemPhone) return true;
+    if (userId && item.userId && userId === item.userId) return true;
+    if (userName && userName !== 'Verified Patient' && !userName.startsWith('Patient') && userName !== 'Self') {
+      const itemPatientName = (item.patientName || item.patient_name || item.name || '').toLowerCase();
+      if (itemPatientName.includes(userName.toLowerCase())) return true;
+    }
+    if (userEmail && item.userEmail && item.userEmail.toLowerCase() === userEmail) return true;
+    return false;
+  };
+
+  const allResults = [];
+  const seenIds = new Set();
+
+  // 1. Fetch from Supabase PostgreSQL tables if configured
+  if (isSupabaseConfigured()) {
+    try {
+      const phoneFilter = cleanPhone ? `phone.ilike.%${cleanPhone}%` : null;
+      const nameFilter = (userName && userName !== 'Verified Patient' && !userName.startsWith('Patient') && userName !== 'Self')
+        ? `patient_name.ilike.%${userName}%`
+        : null;
+
+      const filterClause = [phoneFilter, nameFilter].filter(Boolean).join(',');
+
+      if (filterClause) {
+        const [docsRes, physioRes, surgRes, wellRes, labsRes, ordersRes] = await Promise.allSettled([
+          supabase.from('doctor_appointments').select('*').or(filterClause).order('created_at', { ascending: false }),
+          supabase.from('physiotherapy_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
+          supabase.from('surgery_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
+          supabase.from('wellness_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
+          supabase.from('test_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
+          supabase.from('orders').select('*').or(filterClause).order('created_at', { ascending: false }),
+        ]);
+
+        if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) {
+          docsRes.value.data.forEach((d) => {
+            const bId = d.appointment_number || d.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Doctor Appointment',
+                itemType: 'doctor',
+                displayType: 'Doctor Appointment',
+                serviceName: d.doctor_name ? `${d.doctor_name}${d.department ? ` (${d.department})` : ''}` : 'Doctor Consultation',
+                title: d.doctor_name || 'Doctor Appointment',
+                provider: d.doctor_name,
+                department: d.department,
+                bookingDateTime: d.created_at || new Date().toISOString(),
+                createdAt: d.created_at || new Date().toISOString(),
+                appointmentDate: d.appointment_date || 'Scheduled Date',
+                appointmentTime: d.appointment_time || 'Clinic Slot',
+                date: d.appointment_date || 'Scheduled Date',
+                time: d.appointment_time || 'Clinic Slot',
+                mode: d.consultation_type || 'Clinic Visit',
+                paymentStatus: d.payment_status || 'Paid (Online / At Clinic)',
+                bookingStatus: d.status || 'Confirmed',
+                status: d.status || 'Confirmed',
+                totalAmount: parseFloat(d.fees || 600),
+                price: parseFloat(d.fees || 600),
+                patientName: d.patient_name || userName || 'Self',
+                phone: d.phone || rawPhone,
+                notes: d.notes,
+                source: 'database',
+              });
+            }
+          });
+        }
+
+        if (physioRes.status === 'fulfilled' && Array.isArray(physioRes.value.data)) {
+          physioRes.value.data.forEach((p) => {
+            const bId = p.booking_number || p.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Physiotherapy',
+                itemType: 'physiotherapy',
+                displayType: 'Physiotherapy Session',
+                serviceName: p.condition || 'Physiotherapy Rehabilitation',
+                title: p.condition || 'Physiotherapy Session',
+                provider: 'Certified Clinical Physiotherapist',
+                bookingDateTime: p.created_at || new Date().toISOString(),
+                createdAt: p.created_at || new Date().toISOString(),
+                appointmentDate: p.booking_date || 'Scheduled Date',
+                appointmentTime: p.preferred_slot || 'Session Slot',
+                date: p.booking_date || 'Scheduled Date',
+                time: p.preferred_slot || 'Session Slot',
+                mode: p.service_type || 'Home / Clinic Visit',
+                location: p.address || 'Guwahati Center',
+                paymentStatus: p.payment_status || 'Paid (Online / At Clinic)',
+                bookingStatus: p.status || 'Confirmed',
+                status: p.status || 'Confirmed',
+                totalAmount: parseFloat(p.fees || 850),
+                price: parseFloat(p.fees || 850),
+                patientName: p.patient_name || userName || 'Self',
+                phone: p.phone || rawPhone,
+                notes: p.notes,
+                source: 'database',
+              });
+            }
+          });
+        }
+
+        if (surgRes.status === 'fulfilled' && Array.isArray(surgRes.value.data)) {
+          surgRes.value.data.forEach((s) => {
+            const bId = s.booking_number || s.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Surgery Package',
+                itemType: 'surgery',
+                displayType: 'Surgery Package Evaluation',
+                serviceName: s.surgery_name || 'Surgery Consultation Package',
+                title: s.surgery_name || 'Surgery Package',
+                provider: 'Senior Surgeon & Care Lead',
+                bookingDateTime: s.created_at || new Date().toISOString(),
+                createdAt: s.created_at || new Date().toISOString(),
+                appointmentDate: s.preferred_date || 'Consultation Date',
+                appointmentTime: 'Hospital Evaluation Slot',
+                date: s.preferred_date || 'Consultation Date',
+                time: 'Hospital Evaluation Slot',
+                mode: 'Hospital Visit',
+                location: s.hospital_preference || 'ZestMed SuperSpecialty Center',
+                hospital: s.hospital_preference || 'ZestMed SuperSpecialty Center',
+                paymentStatus: s.payment_status || 'Consultation Reserved',
+                bookingStatus: s.status || 'Confirmed',
+                status: s.status || 'Confirmed',
+                totalAmount: parseFloat(s.price || 0),
+                price: parseFloat(s.price || 0),
+                patientName: s.patient_name || userName || 'Self',
+                phone: s.phone || rawPhone,
+                notes: s.notes,
+                source: 'database',
+              });
+            }
+          });
+        }
+
+        if (wellRes.status === 'fulfilled' && Array.isArray(wellRes.value.data)) {
+          wellRes.value.data.forEach((w) => {
+            const bId = w.booking_number || w.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Wellness Package',
+                itemType: 'wellness',
+                displayType: 'Wellness Health Package',
+                serviceName: w.package_name || 'Wellness Health Package',
+                title: w.package_name || 'Wellness Package',
+                provider: 'Preventive Health Diagnostics Team',
+                bookingDateTime: w.created_at || new Date().toISOString(),
+                createdAt: w.created_at || new Date().toISOString(),
+                appointmentDate: w.booking_date || 'Scheduled Date',
+                appointmentTime: w.preferred_slot || 'Morning Slot',
+                date: w.booking_date || 'Scheduled Date',
+                time: w.preferred_slot || 'Morning Slot',
+                mode: 'Home Health Checkup',
+                paymentStatus: w.payment_status || 'Paid (Verified)',
+                bookingStatus: w.status || 'Confirmed',
+                status: w.status || 'Confirmed',
+                totalAmount: parseFloat(w.price || 0),
+                price: parseFloat(w.price || 0),
+                patientName: w.patient_name || userName || 'Self',
+                phone: w.phone || rawPhone,
+                notes: w.notes,
+                source: 'database',
+              });
+            }
+          });
+        }
+
+        if (labsRes.status === 'fulfilled' && Array.isArray(labsRes.value.data)) {
+          labsRes.value.data.forEach((l) => {
+            const bId = l.booking_number || l.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Lab Test',
+                itemType: 'lab',
+                displayType: 'Diagnostic Lab Test',
+                serviceName: l.test_name || 'Diagnostic Laboratory Test',
+                title: l.test_name || 'Diagnostic Lab Test',
+                specimen: l.sample_type || 'Blood Sample (NABL Certified)',
+                provider: l.phlebotomist || 'Bikash Das (Phlebotomist)',
+                bookingDateTime: l.created_at || new Date().toISOString(),
+                createdAt: l.created_at || new Date().toISOString(),
+                appointmentDate: l.collection_date || 'Scheduled Date',
+                appointmentTime: l.collection_slot || 'Morning Collection',
+                date: l.collection_date || 'Scheduled Date',
+                time: l.collection_slot || 'Morning Collection',
+                mode: 'Home Sample Collection',
+                location: l.collection_address || 'Guwahati Hub',
+                collectionAddress: l.collection_address || 'Guwahati Hub',
+                paymentStatus: l.payment_status || 'Paid (Online / At Collection)',
+                bookingStatus: l.status || 'Confirmed',
+                status: l.status || 'Confirmed',
+                totalAmount: parseFloat(l.price || 499),
+                price: parseFloat(l.price || 499),
+                patientName: l.patient_name || userName || 'Self',
+                phone: l.phone || rawPhone,
+                source: 'database',
+              });
+            }
+          });
+        }
+
+        if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
+          ordersRes.value.data.forEach((o) => {
+            const bId = o.order_number || o.id;
+            if (!seenIds.has(String(bId))) {
+              seenIds.add(String(bId));
+              const itemNames = Array.isArray(o.items) && o.items.length > 0
+                ? o.items.map((i) => i.name).filter(Boolean).join(', ')
+                : 'Prescription Medicines';
+              allResults.push({
+                id: bId,
+                bookingId: bId,
+                serviceType: 'Medicine Order',
+                itemType: 'medicine',
+                displayType: 'Pharmacy Medicine Order',
+                serviceName: itemNames,
+                title: itemNames,
+                items: o.items || [],
+                provider: 'Zestmed Certified Pharma Hub',
+                bookingDateTime: o.created_at || new Date().toISOString(),
+                createdAt: o.created_at || new Date().toISOString(),
+                appointmentDate: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+                appointmentTime: 'Express Delivery Hub',
+                date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+                time: 'Doorstep Delivery',
+                mode: 'Express Home Delivery',
+                location: o.delivery_address || 'Guwahati, Assam',
+                deliveryAddress: o.delivery_address || 'Guwahati, Assam',
+                paymentStatus: o.payment_status || o.payment_method || 'Paid (COD / Online)',
+                bookingStatus: o.order_status || o.status || 'Processing',
+                status: o.order_status || o.status || 'Processing',
+                totalAmount: parseFloat(o.total_amount || 0),
+                price: parseFloat(o.total_amount || 0),
+                patientName: o.patient_name || userName || 'Self',
+                phone: o.phone || rawPhone,
+                source: 'database',
+              });
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('[SupabaseService] getUserBookings Supabase query error:', err);
+    }
+  }
+
+  // 2. Fetch and merge user-specific persistent records from local storage
+  const localAppts = getLocalData('patient_appointments', []).filter(isMatchingUser);
+  const localLabs = getLocalData('zestmed_patient_lab_bookings', []).filter(isMatchingUser);
+  const localOrders = getLocalData('zestmed_patient_orders', []).filter(isMatchingUser);
+
+  localAppts.forEach((a) => {
+    const bId = a.bookingId || a.id;
+    if (!seenIds.has(String(bId))) {
+      seenIds.add(String(bId));
+      const cat = (a.category || a.type || '').toLowerCase();
+      let sType = 'Doctor Appointment';
+      let iType = 'doctor';
+      if (a.isPhysio || cat.includes('physio')) {
+        sType = 'Physiotherapy';
+        iType = 'physiotherapy';
+      } else if (a.isSurgery || cat.includes('surgery')) {
+        sType = 'Surgery Package';
+        iType = 'surgery';
+      } else if (a.isWellness || cat.includes('wellness')) {
+        sType = 'Wellness Package';
+        iType = 'wellness';
+      }
+
+      allResults.push({
+        id: bId,
+        bookingId: bId,
+        serviceType: sType,
+        itemType: iType,
+        displayType: sType,
+        serviceName: a.title || a.doctorName || a.specialty || sType,
+        title: a.title || a.doctorName || sType,
+        provider: a.doctor || a.doctorName || a.therapist || a.careManager,
+        department: a.specialty || a.department,
+        bookingDateTime: a.createdAt || new Date().toISOString(),
+        createdAt: a.createdAt || new Date().toISOString(),
+        appointmentDate: a.date || 'Scheduled Date',
+        appointmentTime: a.time || a.slot || 'Standard Slot',
+        date: a.date || 'Scheduled Date',
+        time: a.time || a.slot || 'Standard Slot',
+        mode: a.mode || (iType === 'doctor' ? 'Clinic Visit' : 'Home / Clinic Visit'),
+        location: a.hospital || a.location || 'Zestmed Center, Guwahati',
+        hospital: a.hospital,
+        paymentStatus: a.paymentStatus || 'Paid (Verified)',
+        bookingStatus: a.status || 'Confirmed',
+        status: a.status || 'Confirmed',
+        totalAmount: parseFloat(a.price || a.fee || a.fees || 0),
+        price: parseFloat(a.price || a.fee || a.fees || 0),
+        patientName: a.patientName || userName || 'Self',
+        phone: a.patientPhone || a.phone || rawPhone,
+        notes: a.symptoms || a.notes,
+        source: 'local',
+      });
+    }
+  });
+
+  localLabs.forEach((l) => {
+    const bId = l.bookingId || l.id;
+    if (!seenIds.has(String(bId))) {
+      seenIds.add(String(bId));
+      const isWellness = (l.category || l.type || '').toLowerCase().includes('wellness');
+      const sType = isWellness ? 'Wellness Package' : 'Lab Test';
+      const iType = isWellness ? 'wellness' : 'lab';
+
+      allResults.push({
+        id: bId,
+        bookingId: bId,
+        serviceType: sType,
+        itemType: iType,
+        displayType: sType,
+        serviceName: l.testName || l.name || sType,
+        title: l.testName || l.name || sType,
+        specimen: l.specimen || 'Blood / Serum Sample (Barcoded)',
+        provider: l.phlebotomist?.name || l.phlebotomist || 'Bikash Das (Phlebotomist)',
+        bookingDateTime: l.createdAt || l.bookedDate || new Date().toISOString(),
+        createdAt: l.createdAt || l.bookedDate || new Date().toISOString(),
+        appointmentDate: l.date || l.collectionDate || 'Scheduled Date',
+        appointmentTime: l.time || 'Morning Sample Collection',
+        date: l.date || l.collectionDate || 'Scheduled Date',
+        time: l.time || 'Morning Sample Collection',
+        mode: l.collectionAddress ? 'Home Sample Collection' : 'Lab Visit',
+        location: l.collectionAddress || 'Guwahati Hub',
+        collectionAddress: l.collectionAddress || 'Guwahati Hub',
+        paymentStatus: l.paymentStatus || 'Paid (Verified)',
+        bookingStatus: l.status || 'Confirmed',
+        status: l.status || 'Confirmed',
+        totalAmount: parseFloat(l.price || 499),
+        price: parseFloat(l.price || 499),
+        patientName: l.patientName || userName || 'Self',
+        phone: l.phone || l.patientPhone || rawPhone,
+        reportData: l.reportData,
+        source: 'local',
+      });
+    }
+  });
+
+  localOrders.forEach((o) => {
+    const bId = o.id || o.order_number;
+    if (!seenIds.has(String(bId))) {
+      seenIds.add(String(bId));
+      const itemNames = Array.isArray(o.items) && o.items.length > 0
+        ? o.items.map((i) => i.name).filter(Boolean).join(', ')
+        : 'Prescription Medicines';
+
+      allResults.push({
+        id: bId,
+        bookingId: bId,
+        serviceType: 'Medicine Order',
+        itemType: 'medicine',
+        displayType: 'Medicine Order',
+        serviceName: itemNames,
+        title: itemNames,
+        items: o.items || [],
+        provider: 'Zestmed Certified Pharmacy Hub',
+        bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+        createdAt: o.createdAt || new Date().toISOString(),
+        appointmentDate: o.date || 'Today',
+        appointmentTime: o.time || 'Express Delivery',
+        date: o.date || 'Today',
+        time: o.time || 'Express Delivery',
+        mode: 'Doorstep Delivery',
+        location: o.deliveryAddress || 'Guwahati, Assam',
+        deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
+        paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
+        bookingStatus: o.status || o.order_status || 'Processing',
+        status: o.status || o.order_status || 'Processing',
+        totalAmount: parseFloat(o.totalAmount || o.total || 0),
+        price: parseFloat(o.totalAmount || o.total || 0),
+        patientName: o.patientName || userName || 'Self',
+        phone: o.phone || rawPhone,
+        source: 'local',
+      });
+    }
+  });
+
+  // Sort by booking date time descending (most recent first)
+  return allResults.sort((a, b) => {
+    const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
+    const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
+    return timeB - timeA;
+  });
 };
