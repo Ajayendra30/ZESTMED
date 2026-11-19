@@ -563,86 +563,86 @@ export default function DoctorAppointmentPage() {
         {/* ========================================================================= */}
         {/* 5. HOW TO BOOK A DOCTOR APPOINTMENT? (Matches Reference Image)            */}
         {/* ========================================================================= */}
-        <section className="rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#F4FBF9] to-[#EAF7F4] border border-[#D5EFE8] p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xs">
+        <section className="rounded-[28px] bg-gradient-to-r from-[#F0FAF7] via-[#F4FBF9] to-[#EAF7F4] border border-[#D5EFE8] p-6 sm:p-7 lg:p-8 relative overflow-hidden shadow-2xs">
           
-          <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0F1E36] tracking-tight mb-7 sm:mb-9">
+          <h2 className="text-xl sm:text-2xl font-black text-[#0F1E36] tracking-tight mb-5 sm:mb-6">
             How to Book a Doctor Appointment?
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
-            {/* Left: 4-Step Interactive Flow with Larger Icons & Typography */}
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-4 gap-5 sm:gap-6 items-start">
+            {/* Left: 4-Step Interactive Flow - Balanced Typography & Proportions */}
+            <div className="lg:col-span-9 grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-5 items-start">
               
               {/* Step 1 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-2.5 shadow-2xs">
                   1
                 </div>
-                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
-                  <Search className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
+                  <Search className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Search Doctor
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Find by specialty, location or name
                 </p>
               </div>
 
               {/* Step 2 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-2.5 shadow-2xs">
                   2
                 </div>
-                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
-                  <Calendar className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
+                  <Calendar className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Select Date & Time
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Choose a convenient slot
                 </p>
               </div>
 
               {/* Step 3 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-2.5 shadow-2xs">
                   3
                 </div>
-                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
-                  <UserCheck className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
+                  <UserCheck className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Book Appointment
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Confirm your details and book
                 </p>
               </div>
 
               {/* Step 4 */}
               <div className="flex flex-col items-start relative text-left">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#007A64] text-white text-sm sm:text-base font-black flex items-center justify-center mb-3.5 shadow-2xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center mb-2.5 shadow-2xs">
                   4
                 </div>
-                <div className="w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-start mb-3 text-[#007A64]">
-                  <CheckCircle2 className="w-8 sm:w-10 h-8 sm:h-10 text-[#007A64] stroke-[2.2]" />
+                <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
+                  <CheckCircle2 className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-base sm:text-lg lg:text-xl font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Get Confirmation
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Receive instant booking confirmation
                 </p>
               </div>
 
             </div>
 
-            {/* Right: Desk Calendar 3D Graphic matching Reference Image */}
-            <div className="lg:col-span-4 flex justify-center lg:justify-end">
-              <div className="relative w-52 sm:w-60 lg:w-72 h-52 sm:h-60 lg:h-72 flex items-center justify-center">
+            {/* Right: Desk Calendar 3D Graphic - Balanced & Aligned */}
+            <div className="lg:col-span-3 flex justify-center lg:justify-end">
+              <div className="relative w-36 sm:w-44 lg:w-48 h-36 sm:h-44 lg:h-48 flex items-center justify-center">
                 {/* Ambient glow behind calendar */}
                 <div className="absolute inset-0 bg-teal-300/30 rounded-full blur-2xl pointer-events-none" />
                 
