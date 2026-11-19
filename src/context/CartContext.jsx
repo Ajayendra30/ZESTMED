@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
+import { useAuth } from './AuthContext';
+import { getAuthenticatedUser, getAuthToken } from '../utils/authGuard';
 
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
   const { addToast } = useToast();
+  const { user } = useAuth();
+  
   const [cartItems, setCartItems] = useState(() => {
+    // Only load saved cart for authenticated users
+    const authUser = getAuthenticatedUser();
+    if (!authUser) return [];
+
     try {
       const saved = localStorage.getItem('zestmed_cart');
       return saved ? JSON.parse(saved) : [];
@@ -16,15 +24,55 @@ export const CartProvider = ({ children }) => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  // Keep cart in localStorage only when authenticated
   useEffect(() => {
     try {
-      localStorage.setItem('zestmed_cart', JSON.stringify(cartItems));
+      if (user) {
+        localStorage.setItem('zestmed_cart', JSON.stringify(cartItems));
+      } else {
+        localStorage.removeItem('zestmed_cart');
+        if (cartItems.length > 0) {
+          setCartItems([]);
+        }
+      }
     } catch (e) {
       console.error('Failed to save cart to localStorage', e);
     }
-  }, [cartItems]);
+  }, [cartItems, user]);
 
-  const addItem = (item, type = 'medicine') => {
+  const addItem = (item, type = 'medicine', options = {}) => {
+    // 1. Mandatory Login Check
+    const activeUser = user || getAuthenticatedUser();
+    if (!activeUser) {
+      // Save pending cart item to resume immediately after login
+      try {
+        sessionStorage.setItem('zestmed_pending_cart_item', JSON.stringify({
+          item,
+          itemType: type,
+          timestamp: Date.now()
+        }));
+      } catch (_) {}
+
+      addToast('Please login or register to add items to your cart', 'info');
+
+      // Calculate return URL
+      let returnUrl = '/';
+      if (typeof window !== 'undefined' && window.location) {
+        returnUrl = window.location.pathname + window.location.search;
+      }
+      if (returnUrl.startsWith('/login') || returnUrl.startsWith('/auth') || returnUrl.startsWith('/register')) {
+        returnUrl = '/';
+      }
+
+      if (options.navigate) {
+        options.navigate(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+      } else if (typeof window !== 'undefined') {
+        window.location.href = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+      }
+      return false;
+    }
+
+    // 2. Add to active user cart
     setCartItems(prev => {
       const existing = prev.find(i => i.id === item.id);
       if (existing) {
@@ -34,6 +82,20 @@ export const CartProvider = ({ children }) => {
       addToast(`Added "${item.name}" to cart!`, 'success');
       return [...prev, { ...item, itemType: type, quantity: 1 }];
     });
+
+    // 3. Notify protected Node.js backend
+    try {
+      const token = getAuthToken();
+      if (token && typeof fetch !== 'undefined') {
+        fetch('/api/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ item, type })
+        }).catch(() => {});
+      }
+    } catch (_) {}
+
+    return true;
   };
 
   const removeItem = (id) => {

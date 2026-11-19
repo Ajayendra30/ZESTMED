@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   MOCK_MEDICINES, MEDICINE_CATEGORIES 
 } from '../mock-data/medicines';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   Plus, Check, Star, ShieldCheck, ArrowRight, 
   Upload, AlertCircle, ShoppingBag 
 } from 'lucide-react';
 
 export default function MedicineSection({ onSelectProduct, onOpenPrescriptionModal }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { addItem, cartItems } = useCart();
 
@@ -151,6 +158,17 @@ export default function MedicineSection({ onSelectProduct, onOpenPrescriptionMod
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (!user) {
+                          enforceAuth({
+                            user,
+                            navigate,
+                            location,
+                            toastMessage: 'Please login or register to add medicines to your cart',
+                            pendingAction: { type: 'add_to_cart', item: product, itemType: 'medicine' },
+                            addToast
+                          });
+                          return;
+                        }
                         addItem(product, 'medicine');
                       }}
                       className={`p-2.5 rounded-xl font-semibold text-xs flex items-center gap-1 transition ${

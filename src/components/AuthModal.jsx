@@ -1,8 +1,9 @@
 // src/components/AuthModal.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useCart } from '../context/CartContext';
 import { 
   X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown, User, CheckCircle2 
 } from 'lucide-react';
@@ -138,6 +139,27 @@ export default function AuthModal() {
     }
   };
 
+  const { addItem } = useCart();
+  const location = useLocation();
+
+  const handlePostLoginFlow = () => {
+    // 1. Check for pending cart item in sessionStorage
+    try {
+      const pendingRaw = sessionStorage.getItem('zestmed_pending_cart_item');
+      if (pendingRaw) {
+        const parsed = JSON.parse(pendingRaw);
+        sessionStorage.removeItem('zestmed_pending_cart_item');
+        if (parsed?.item) {
+          addItem(parsed.item, parsed.itemType || 'medicine');
+        }
+      }
+    } catch (e) {
+      console.warn('Failed restoring pending cart item:', e);
+    }
+
+    handleClose();
+  };
+
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     const fullOtp = otp.join('');
@@ -147,14 +169,12 @@ export default function AuthModal() {
     }
     const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || 'Rahul Verma').trim();
     loginWithPhoneOtp(phoneNumber, resolvedName);
-    handleClose();
-    navigate('/patient-dashboard');
+    handlePostLoginFlow();
   };
 
   const handleGoogleSignIn = () => {
     loginWithGoogle();
-    handleClose();
-    navigate('/patient-dashboard');
+    handlePostLoginFlow();
   };
 
   const handleResendOtp = () => {

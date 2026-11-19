@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { placeMedicineOrder, bookLabTest } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, 
   FileText, ArrowRight, CheckCircle2, AlertTriangle, Truck, Clock, Lock
@@ -32,6 +33,16 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
   const grandTotal = subtotal + deliveryCharge;
 
   const handleOpenRazorpayCheckout = () => {
+    if (!user) {
+      closeCart();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to checkout and place your order',
+        addToast
+      });
+      return;
+    }
     setIsRazorpayOpen(true);
   };
 

@@ -1,9 +1,10 @@
 // src/pages/AuthPage.jsx
 // Dedicated full-page Login experience matching the mobile mockup reference design
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useCart } from '../context/CartContext';
 import { 
   ArrowLeft, Smartphone, ShieldCheck, ChevronDown, 
   RotateCcw, CheckCircle2, X, User 
@@ -48,8 +49,11 @@ function LandscapeIllustration() {
 
 export default function AuthPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { user, loginWithPhoneOtp, loginWithGoogle, logout } = useAuth();
   const { addToast } = useToast();
+  const { addItem } = useCart();
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState(() => {
@@ -145,6 +149,32 @@ export default function AuthPage() {
     }
   };
 
+  // Handle post-login redirection and restoration of pending cart / booking actions
+  const handlePostLoginRedirect = () => {
+    // 1. Restore pending cart item if exists
+    try {
+      const pendingRaw = sessionStorage.getItem('zestmed_pending_cart_item');
+      if (pendingRaw) {
+        const parsed = JSON.parse(pendingRaw);
+        sessionStorage.removeItem('zestmed_pending_cart_item');
+        if (parsed?.item) {
+          addItem(parsed.item, parsed.itemType || 'medicine');
+        }
+      }
+    } catch (e) {
+      console.warn('Failed restoring pending cart item:', e);
+    }
+
+    // 2. Redirect back to original service or returnUrl
+    const rawReturn = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || location.state?.returnUrl;
+    let target = rawReturn;
+    if (!target || target.startsWith('/login') || target.startsWith('/auth') || target.startsWith('/register')) {
+      target = '/patient-dashboard';
+    }
+
+    navigate(target, { replace: true, state: { autoOpenBooking: true } });
+  };
+
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     const fullOtp = otp.join('');
@@ -154,12 +184,12 @@ export default function AuthPage() {
     }
     const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || 'Deepjyoti Kalita').trim();
     loginWithPhoneOtp(phoneNumber, resolvedName);
-    navigate('/patient-dashboard');
+    handlePostLoginRedirect();
   };
 
   const handleGoogleSignIn = () => {
     loginWithGoogle();
-    navigate('/patient-dashboard');
+    handlePostLoginRedirect();
   };
 
   const handleResendOtp = () => {
@@ -169,8 +199,11 @@ export default function AuthPage() {
     addToast('New OTP sent to +91 ' + phoneNumber + ': 1234', 'info');
   };
 
-  // If already logged in, show quick dashboard access
+  // If already logged in, show quick return or dashboard access
   if (user) {
+    const rawReturn = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || location.state?.returnUrl;
+    const hasReturnUrl = rawReturn && !rawReturn.startsWith('/login') && !rawReturn.startsWith('/auth');
+
     return (
       <div 
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity font-sans select-none"
@@ -198,9 +231,18 @@ export default function AuthPage() {
             </p>
           </div>
           <div className="space-y-3 pt-2">
+            {hasReturnUrl && (
+              <button
+                onClick={() => navigate(rawReturn, { replace: true, state: { autoOpenBooking: true } })}
+                className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>Continue to Service</span>
+                <ArrowLeft className="w-4 h-4 rotate-180" />
+              </button>
+            )}
             <button
               onClick={() => navigate('/patient-dashboard')}
-              className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition cursor-pointer"
+              className={`w-full py-3 rounded-2xl ${hasReturnUrl ? 'bg-slate-100 hover:bg-slate-200 text-slate-800' : 'bg-[#007A64] hover:bg-[#006852] text-white'} font-bold text-sm shadow-md transition cursor-pointer`}
             >
               Go to Patient Dashboard
             </button>

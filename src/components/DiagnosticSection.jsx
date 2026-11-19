@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   MOCK_DIAGNOSTIC_TESTS, DIAGNOSTIC_CATEGORIES 
 } from '../mock-data/diagnosticTests';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   FlaskConical, Clock, Droplets, CheckCircle2, 
   AlertCircle, Home, Plus, Check, ArrowRight 
 } from 'lucide-react';
 
 export default function DiagnosticSection({ onSelectTest, onScheduleCollection }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAll, setShowAll] = useState(false);
   const { addItem, cartItems } = useCart();
@@ -144,6 +151,17 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (!user) {
+                        enforceAuth({
+                          user,
+                          navigate,
+                          location,
+                          toastMessage: 'Please login or register to book a lab test',
+                          pendingAction: { type: 'add_to_cart', item: test, itemType: 'diagnostic' },
+                          addToast
+                        });
+                        return;
+                      }
                       addItem(test, 'diagnostic');
                     }}
                     className={`btn-primary text-xs py-2 px-4 rounded-xl font-semibold transition ${

@@ -9,6 +9,7 @@ import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 
 export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -77,6 +78,17 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
 
   const handleConfirmBooking = (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to book a doctor consultation',
+        addToast
+      });
+      return;
+    }
+
     if (!patientDetails.name.trim()) {
       addToast('Please enter the patient name', 'error');
       return;

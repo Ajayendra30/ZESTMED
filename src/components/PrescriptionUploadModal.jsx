@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   X, UploadCloud, FileText, CheckCircle2, AlertCircle, 
   ShieldCheck, Camera, ArrowRight 
 } from 'lucide-react';
 
 export default function PrescriptionUploadModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const [selectedFile, setSelectedFile] = useState(null);
   const [patientNote, setPatientNote] = useState('');
@@ -36,6 +41,17 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to upload your doctor prescription',
+        addToast
+      });
+      return;
+    }
+
     if (!selectedFile) {
       addToast('Please upload or attach a prescription first', 'error');
       return;

@@ -10,6 +10,7 @@ import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -58,6 +59,17 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup })
 
   const handleConfirmBooking = (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to book a physiotherapy session',
+        addToast
+      });
+      return;
+    }
+
     if (!patientDetails.name.trim()) {
       addToast('Please enter patient name', 'error');
       return;

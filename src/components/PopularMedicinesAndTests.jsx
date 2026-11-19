@@ -1,17 +1,21 @@
 // src/components/PopularMedicinesAndTests.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Pill, FlaskConical, Heart, ShoppingCart, Calendar, 
   ArrowRight, Droplet, Activity, ShieldCheck, HeartPulse 
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 
 export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest, onSelectPackage }) {
   const { addItem } = useCart();
   const { addToast } = useToast();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [wishlisted, setWishlisted] = useState({});
 
   const toggleWishlist = (id, name, e) => {
@@ -129,17 +133,40 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
 
   const handleAddToCart = (item, e) => {
     e.stopPropagation();
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to add medicines to your cart',
+        pendingAction: { type: 'add_to_cart', item, itemType: 'medicine' },
+        addToast
+      });
+      return;
+    }
     addItem(item);
     addToast(`${item.name} added to cart`, 'success');
   };
 
   const handleBookTest = (test, e) => {
     e.stopPropagation();
-    addItem({
+    const itemData = {
       ...test,
       price: test.price,
       name: test.name
-    });
+    };
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book lab tests',
+        pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'diagnostic' },
+        addToast
+      });
+      return;
+    }
+    addItem(itemData, 'diagnostic');
     addToast(`${test.name} booked! Added to cart`, 'success');
   };
 

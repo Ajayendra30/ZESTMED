@@ -1,11 +1,19 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   X, CheckCircle2, ShieldCheck, Clock, Users, 
   Calendar 
 } from 'lucide-react';
 
 export default function PackageDetailModal({ pkg, onClose, onScheduleCollection }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const { addItem, cartItems } = useCart();
 
   if (!pkg) return null;
@@ -13,6 +21,18 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
   const inCart = cartItems.some(i => i.id === pkg.id);
 
   const handleBookNow = () => {
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a health package',
+        pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
+        addToast
+      });
+      return;
+    }
     if (!inCart) {
       addItem(pkg, 'package');
     }

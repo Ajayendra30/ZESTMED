@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   X, Star, ShieldCheck, Truck, Check, AlertCircle, 
   Plus, Minus, ShoppingBag, Pill 
 } from 'lucide-react';
 
 export default function ProductDetailModal({ product, onClose }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const { addItem, cartItems, updateQuantity } = useCart();
   const [qty, setQty] = useState(1);
 
@@ -14,6 +22,18 @@ export default function ProductDetailModal({ product, onClose }) {
   const inCartItem = cartItems.find(i => i.id === product.id);
 
   const handleAddToCart = () => {
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to add medicines to your cart',
+        pendingAction: { type: 'add_to_cart', item: product, itemType: 'medicine' },
+        addToast
+      });
+      return;
+    }
     addItem(product, 'medicine');
   };
 

@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { MOCK_DOCTORS, matchesSpecialty } from '../mock-data/doctorsData';
+import { getAuthenticatedUser, getAuthToken } from '../utils/authGuard';
 
 /**
  * ==============================================================================
@@ -159,6 +160,23 @@ export const getDoctorAppointments = async (phone = null) => {
 };
 
 export const bookDoctorAppointment = async (appointmentData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a doctor appointment.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/bookings/doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(appointmentData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('patient_appointments', []);
   const resolvedPhone = appointmentData.phone || appointmentData.patientPhone || '';
   const newAppointment = {
@@ -329,6 +347,23 @@ export const getPhysioBookings = async (phone = null) => {
 };
 
 export const bookPhysiotherapy = async (physioData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a physiotherapy session.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/bookings/physiotherapy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(physioData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('patient_appointments', []);
   const resolvedPhone = physioData.phone || physioData.patientPhone || physioData.mobileNumber || '';
   const newBooking = {
@@ -425,6 +460,23 @@ export const getSurgeryBookings = async (phone = null) => {
 };
 
 export const bookSurgery = async (surgeryData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a surgery package.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/bookings/surgery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(surgeryData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('patient_appointments', []);
   const resolvedPhone = surgeryData.phone || surgeryData.patientPhone || '';
   const newBooking = {
@@ -519,6 +571,23 @@ export const getWellnessBookings = async (phone = null) => {
 };
 
 export const bookWellness = async (wellnessData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a wellness package.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/bookings/wellness', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(wellnessData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('patient_appointments', []);
   const resolvedPhone = wellnessData.phone || wellnessData.patientPhone || '';
   const newBooking = {
@@ -612,6 +681,23 @@ export const getLabBookings = async (phone = null) => {
 };
 
 export const bookLabTest = async (bookingData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a diagnostic lab test.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/bookings/lab-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(bookingData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('zestmed_patient_lab_bookings', []);
   const resolvedPhone = bookingData.phone || bookingData.patientPhone || bookingData.contactNumber || '';
   const newBooking = {
@@ -706,6 +792,23 @@ export const getMedicineOrders = async (phone = null) => {
 };
 
 export const placeMedicineOrder = async (orderData) => {
+  const authUser = getAuthenticatedUser();
+  if (!authUser) {
+    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before placing a medicine order.');
+  }
+
+  // Sync with protected Node.js API endpoint
+  try {
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/orders/medicine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(orderData)
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
   const localList = getLocalData('zestmed_patient_orders', []);
   const resolvedPhone = orderData.phone || orderData.patientPhone || '';
   const newOrder = {

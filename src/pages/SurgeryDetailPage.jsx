@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShieldCheck, Calendar, Clock, MapPin, CheckCircle2, 
   ArrowRight, Phone, Award, User, FileText, ChevronRight, 
@@ -11,10 +11,12 @@ import { getSurgeryPackageById } from '../mock-data/surgeryPackagesData';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { bookSurgery } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 
 export default function SurgeryDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, openAuth } = useAuth();
   const { addToast } = useToast();
 
@@ -53,15 +55,24 @@ export default function SurgeryDetailPage() {
     }
   }, [user]);
 
+  // Auto-open surgery booking modal when returning from login
+  useEffect(() => {
+    if (user && location.state?.autoOpenBooking) {
+      setIsBookingModalOpen(true);
+    }
+  }, [user, location.state]);
+
   // When clicking Book Now
   const handleOpenBooking = () => {
     if (!user) {
-      addToast('Please login or register to book your surgery package', 'info');
-      if (openAuth) {
-        openAuth('login');
-      } else {
-        navigate('/auth');
-      }
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book your surgery package',
+        pendingAction: { type: 'book_surgery', surgeryId: id },
+        addToast
+      });
       return;
     }
     setIsBookingModalOpen(true);
@@ -72,7 +83,14 @@ export default function SurgeryDetailPage() {
     e.preventDefault();
 
     if (!user) {
-      if (openAuth) openAuth('login');
+      setIsBookingModalOpen(false);
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to confirm your surgery booking',
+        addToast
+      });
       return;
     }
 

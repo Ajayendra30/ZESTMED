@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookLabTest } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   X, Calendar, Clock, MapPin, User, CheckCircle2, 
   FlaskConical, ShieldCheck, ArrowRight, ArrowLeft, 
@@ -76,6 +77,16 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
 
   const handleConfirmBooking = (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to complete your lab test booking',
+        addToast
+      });
+      return;
+    }
     setIsSubmitting(true);
 
     setTimeout(() => {

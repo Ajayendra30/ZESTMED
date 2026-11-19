@@ -1,13 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MOCK_HEALTH_PACKAGES } from '../mock-data/packages';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   CheckCircle2, Clock, Users, 
   ArrowRight, ShieldCheck, Check, Plus 
 } from 'lucide-react';
 
 export default function HealthPackages({ onSelectPackage }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const { addItem, cartItems } = useCart();
 
   return (
@@ -123,7 +130,20 @@ export default function HealthPackages({ onSelectPackage }) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => addItem(pkg, 'package')}
+                      onClick={() => {
+                        if (!user) {
+                          enforceAuth({
+                            user,
+                            navigate,
+                            location,
+                            toastMessage: 'Please login or register to book a health package',
+                            pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
+                            addToast
+                          });
+                          return;
+                        }
+                        addItem(pkg, 'package');
+                      }}
                       className={`btn-primary text-xs py-2 px-3.5 rounded-xl font-semibold transition ${
                         inCart ? 'bg-emerald-600 hover:bg-emerald-700' : ''
                       }`}

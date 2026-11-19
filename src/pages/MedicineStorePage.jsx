@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   Search, ShieldCheck, Truck, Tag, RotateCcw,
   Heart, Star, ShoppingCart, ChevronDown, 
@@ -135,6 +137,9 @@ const CATEGORIES_LIST = [
 ];
 
 export default function MedicineStorePage({ onOpenPrescriptionModal }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -175,7 +180,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
   };
 
   const handleAddToCart = (product) => {
-    addItem({
+    const itemData = {
       id: product.id,
       name: product.name,
       price: product.price,
@@ -184,8 +189,21 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
       quantity: 1,
       image: product.image,
       pack: product.pack
-    });
-    addToast(`${product.name} added to cart!`, 'success');
+    };
+
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to add medicines to your cart',
+        pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'medicine' },
+        addToast
+      });
+      return;
+    }
+
+    addItem(itemData, 'medicine');
   };
 
   const handleSearchSubmit = (e) => {

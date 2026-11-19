@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Calendar, ArrowRight, Video, Search, Stethoscope, 
   MapPin, ChevronDown, ShieldCheck, Clock, CreditCard, 
@@ -11,6 +11,7 @@ import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 import DoctorHero from '../components/DoctorHero';
 
 // =========================================================================
@@ -149,6 +150,7 @@ export default function DoctorAppointmentPage() {
   const { addToast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Search card form states
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
@@ -228,9 +230,40 @@ export default function DoctorAppointmentPage() {
     return list;
   }, [doctorsList, activeSpecialtyFilter, showAllDoctors]);
 
+  // Auto-open doctor booking when returning from login
+  useEffect(() => {
+    if (user && location.state?.autoOpenBooking) {
+      try {
+        const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed?.type === 'book_doctor') {
+            sessionStorage.removeItem('zestmed_pending_action');
+            setBookingDoctor(parsed.doctor || displayedDoctors[0] || doctorsList[0]);
+            if (parsed.mode) setConsultationMode(parsed.mode);
+            setIsBookingModalOpen(true);
+          }
+        }
+      } catch (_) {}
+    }
+  }, [user, location.state, doctorsList, displayedDoctors]);
+
   // Open booking modal
   const handleOpenBooking = (doctor = null, mode = 'Clinic Visit') => {
     const docToBook = doctor || (displayedDoctors.length > 0 ? displayedDoctors[0] : (doctorsList[0] || MOCK_DOCTORS[0]));
+
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a doctor appointment',
+        pendingAction: { type: 'book_doctor', doctor: docToBook, mode },
+        addToast
+      });
+      return;
+    }
+
     setBookingDoctor(docToBook);
     setConsultationMode(mode);
     setConfirmedBooking(null);
@@ -259,6 +292,18 @@ export default function DoctorAppointmentPage() {
   // Confirm and save appointment
   const handleConfirmAppointment = (e) => {
     e.preventDefault();
+    if (!user) {
+      setIsBookingModalOpen(false);
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to confirm your doctor appointment',
+        addToast
+      });
+      return;
+    }
+
     if (!patientForm.name.trim()) {
       addToast('Please enter the patient name', 'error');
       return;

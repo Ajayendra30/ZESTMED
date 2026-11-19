@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 import DiagnosticBookingModal from '../components/DiagnosticBookingModal';
 import { 
   Search, ShieldCheck, Clock, Award, Home,
@@ -211,6 +213,9 @@ const SIDEBAR_CATEGORIES = [
 ];
 
 export default function DiagnosticPortalPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -223,6 +228,22 @@ export default function DiagnosticPortalPage() {
   const [sortBy, setSortBy] = useState('Popularity');
   const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
   const [bookingTestItem, setBookingTestItem] = useState(null);
+
+  // Auto-open booking modal when returning from login
+  useEffect(() => {
+    if (user && location.state?.autoOpenBooking) {
+      try {
+        const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed?.type === 'book_test' && parsed.test) {
+            sessionStorage.removeItem('zestmed_pending_action');
+            setBookingTestItem(parsed.test);
+          }
+        }
+      } catch (_) {}
+    }
+  }, [user, location.state]);
 
   const toggleSidebarCategory = (catId) => {
     setSelectedSidebarCategories((prev) =>
@@ -237,6 +258,17 @@ export default function DiagnosticPortalPage() {
   };
 
   const handleBookTest = (test) => {
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a diagnostic lab test',
+        pendingAction: { type: 'book_test', test },
+        addToast
+      });
+      return;
+    }
     setBookingTestItem(test);
   };
 

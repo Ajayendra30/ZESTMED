@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   Search, ShieldCheck, HeartPulse, Home, Heart, Star, 
   SlidersHorizontal, Clock, ArrowRight, LayoutGrid, Users, 
@@ -133,6 +135,9 @@ const CATEGORY_PILLS = [
 ];
 
 export default function HealthPackagesPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const { addItem } = useCart();
   const { addToast } = useToast();
 
@@ -158,7 +163,7 @@ export default function HealthPackagesPage() {
   };
 
   const handleBookPackage = (pkg) => {
-    addItem({
+    const itemData = {
       id: pkg.id,
       name: pkg.name,
       price: pkg.price,
@@ -167,7 +172,21 @@ export default function HealthPackagesPage() {
       quantity: 1,
       image: pkg.image,
       testsCount: pkg.testsCount
-    });
+    };
+
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a health package',
+        pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'package' },
+        addToast
+      });
+      return;
+    }
+
+    addItem(itemData, 'package');
     addToast(`${pkg.name} added to cart!`, 'success');
   };
 

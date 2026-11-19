@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   X, Car, CheckCircle2, ShieldCheck, MapPin, Clock, Calendar, 
   User, Phone, Heart, Navigation, Check, AlertCircle, Info 
 } from 'lucide-react';
 import { useLocation } from '../context/LocationContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 
 export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultService = 'Lab Test & Diagnostics' }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { currentLocation } = useLocation();
   const { addToast } = useToast();
 
@@ -31,6 +36,17 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onClose) onClose();
+      enforceAuth({
+        user,
+        navigate,
+        toastMessage: 'Please login or register to book Senior Citizen Door-to-Door Cab Service',
+        addToast
+      });
+      return;
+    }
+
     if (!formData.patientName.trim()) {
       addToast('Please enter the Senior Citizen\'s full name', 'error');
       return;

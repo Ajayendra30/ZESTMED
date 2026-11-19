@@ -100,6 +100,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
   const [isPrescriptionUploadModalOpen, setIsPrescriptionUploadModalOpen] = useState(false);
 
+  // Enforce mandatory authentication on Patient Dashboard route
+  useEffect(() => {
+    if (!user) {
+      addToast('Please login to access your patient dashboard and bookings', 'info');
+      navigate('/login?returnUrl=/patient-dashboard', { replace: true });
+    }
+  }, [user, navigate, addToast]);
+
   // Check URL query to open prescription vault if requested
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

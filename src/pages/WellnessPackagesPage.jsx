@@ -1,7 +1,7 @@
 // src/pages/WellnessPackagesPage.jsx
 // Pixel-accurate recreation of the exact reference design for ZESTMED Wellness Packages
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShieldCheck, Calendar, ArrowRight, Info, CheckCircle2, 
   Heart, FlaskConical, Users, Headphones, Check, Sparkles,
@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 import PackageDetailModal from '../components/PackageDetailModal';
 
 // 4 Core Wellness Packages matching reference Section 1
@@ -164,12 +166,25 @@ const CATEGORIES_DATA = [
 
 export default function WellnessPackagesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const { addItem, openCart } = useCart();
   const { addToast } = useToast();
 
   const [selectedPackage, setSelectedPackage] = useState(null);
 
   const handleBookNow = (pkg) => {
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a wellness package',
+        pendingAction: { type: 'add_to_cart', item: pkg, itemType: 'package' },
+        addToast
+      });
+      return;
+    }
     addItem(pkg, 'package');
     addToast(`${pkg.name} added to your cart!`, 'success');
     openCart();

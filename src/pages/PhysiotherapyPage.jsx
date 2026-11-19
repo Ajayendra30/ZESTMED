@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Calendar, ArrowRight, Phone, User, Clock, Activity, 
   ShieldCheck, CheckCircle2, ChevronRight, Star, Heart,
@@ -9,6 +9,7 @@ import {
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
+import { enforceAuth } from '../utils/authGuard';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -181,6 +182,7 @@ export default function PhysiotherapyPage() {
   const { addToast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Booking Form States
   const [formData, setFormData] = useState({
@@ -201,11 +203,43 @@ export default function PhysiotherapyPage() {
     }
   }, [user]);
 
+  // Auto-open or scroll to form when returning from login
+  useEffect(() => {
+    if (user && location.state?.autoOpenBooking) {
+      try {
+        const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed?.type === 'book_physio') {
+            sessionStorage.removeItem('zestmed_pending_action');
+            if (parsed.service) {
+              setFormData((prev) => ({ ...prev, selectedService: parsed.service }));
+            }
+            const formElement = document.getElementById('physio-booking-form-card');
+            if (formElement) formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      } catch (_) {}
+    }
+  }, [user, location.state]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   // Smooth scroll helper to form
   const scrollToForm = (serviceTitle = null) => {
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a physiotherapy session',
+        pendingAction: { type: 'book_physio', service: serviceTitle || formData.selectedService },
+        addToast
+      });
+      return;
+    }
+
     if (serviceTitle) {
       setFormData(prev => ({ ...prev, selectedService: serviceTitle }));
     }
@@ -218,6 +252,18 @@ export default function PhysiotherapyPage() {
   // Form Submission
   const handleBookingSubmit = (e) => {
     e.preventDefault();
+
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        toastMessage: 'Please login or register to book a physiotherapy session',
+        pendingAction: { type: 'book_physio', service: formData.selectedService },
+        addToast
+      });
+      return;
+    }
 
     if (!formData.fullName.trim()) {
       addToast('Please enter your full name', 'error');
