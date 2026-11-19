@@ -20,6 +20,9 @@
  */
 import { createPaymentOrder, verifyPaymentSignature } from './razorpayService.js';
 
+// In-memory persistent user cart storage keyed by user identifier
+const userCartsMap = new Map();
+
 export const verifyAuthHeader = (authHeader) => {
   if (!authHeader) return null;
   const parts = authHeader.split(' ');
@@ -143,6 +146,7 @@ export const handleApiRequest = async (req, res) => {
   // Protected service endpoints: mandatory login required
   const isProtectedPath = 
     pathname.startsWith('/api/payments/') ||
+    pathname === '/api/cart' ||
     pathname.startsWith('/api/cart/') ||
     pathname.startsWith('/api/bookings/') ||
     pathname.startsWith('/api/orders/') ||
@@ -292,19 +296,78 @@ export const handleApiRequest = async (req, res) => {
     return true;
   }
 
-  // 1. Add to Cart API
-  if (pathname === '/api/cart/add' && method === 'POST') {
+  // 1. Get User Cart API (Isolated per authenticated user)
+  if (pathname === '/api/cart' && method === 'GET') {
+    const userId = authenticatedUser.id || authenticatedUser.phone || authenticatedUser.email || 'user';
+    const items = userCartsMap.get(userId) || [];
+    const count = items.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
     res.statusCode = 200;
     res.end(JSON.stringify({
       success: true,
-      message: `Item "${body.name || 'Product'}" successfully added to cart for user ${authenticatedUser.id || authenticatedUser.phone}`,
-      user: authenticatedUser.id,
-      item: body
+      items,
+      count,
+      userId
     }));
     return true;
   }
 
-  // 2. Checkout Cart API
+  // 2. Synchronize User Cart API (Saves user's actual cart items)
+  if (pathname === '/api/cart/sync' && method === 'POST') {
+    const userId = authenticatedUser.id || authenticatedUser.phone || authenticatedUser.email || 'user';
+    const items = Array.isArray(body?.items) ? body.items : [];
+    userCartsMap.set(userId, items);
+    const count = items.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
+    res.statusCode = 200;
+    res.end(JSON.stringify({
+      success: true,
+      items,
+      count,
+      userId
+    }));
+    return true;
+  }
+
+  // 3. Add to Cart API
+  if (pathname === '/api/cart/add' && method === 'POST') {
+    const userId = authenticatedUser.id || authenticatedUser.phone || authenticatedUser.email || 'user';
+    const current = userCartsMap.get(userId) || [];
+    const newItem = body.item || body;
+    const existingIndex = current.findIndex(i => i.id === newItem.id);
+    let updated;
+    if (existingIndex >= 0) {
+      updated = current.map((i, idx) => idx === existingIndex ? { ...i, quantity: (Number(i.quantity) || 1) + 1 } : i);
+    } else {
+      updated = [...current, { ...newItem, quantity: Number(newItem.quantity) || 1 }];
+    }
+    userCartsMap.set(userId, updated);
+    const count = updated.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
+
+    res.statusCode = 200;
+    res.end(JSON.stringify({
+      success: true,
+      message: `Item "${newItem.name || 'Product'}" successfully added to cart`,
+      items: updated,
+      count,
+      userId
+    }));
+    return true;
+  }
+
+  // 4. Clear Cart API
+  if ((pathname === '/api/cart/clear' && method === 'POST') || (pathname === '/api/cart' && method === 'DELETE')) {
+    const userId = authenticatedUser.id || authenticatedUser.phone || authenticatedUser.email || 'user';
+    userCartsMap.set(userId, []);
+    res.statusCode = 200;
+    res.end(JSON.stringify({
+      success: true,
+      items: [],
+      count: 0,
+      userId
+    }));
+    return true;
+  }
+
+  // 5. Checkout Cart API
   if (pathname === '/api/cart/checkout' && method === 'POST') {
     res.statusCode = 201;
     res.end(JSON.stringify({

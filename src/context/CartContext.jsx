@@ -1,21 +1,37 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useToast } from './ToastContext';
 import { useAuth } from './AuthContext';
 import { getAuthenticatedUser, getAuthToken } from '../utils/authGuard';
 
 const CartContext = createContext(null);
 
+// Generate isolated localStorage key per user to prevent cross-account contamination
+const getUserCartKey = (u) => {
+  if (!u) return null;
+  const uid = u.id || u.phone || u.email || 'user';
+  return `zestmed_user_cart_${uid}`;
+};
+
 export const CartProvider = ({ children }) => {
   const { addToast } = useToast();
   const { user } = useAuth();
-  
+  const activeUserRef = useRef(null);
+
+  // Initialize cart state strictly isolated per logged-in user
   const [cartItems, setCartItems] = useState(() => {
-    // Only load saved cart for authenticated users
+    try {
+      // Purge legacy unnamespaced key so dummy or outdated cart items are completely wiped
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('zestmed_cart');
+      }
+    } catch (_) {}
+
     const authUser = getAuthenticatedUser();
     if (!authUser) return [];
 
     try {
-      const saved = localStorage.getItem('zestmed_cart');
+      const key = getUserCartKey(authUser);
+      const saved = key ? localStorage.getItem(key) : null;
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -24,21 +40,96 @@ export const CartProvider = ({ children }) => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Keep cart in localStorage only when authenticated
+  // Sync / fetch cart whenever user changes or logs in
   useEffect(() => {
+    const activeUser = user || getAuthenticatedUser();
+    const currentUserId = activeUser?.id || activeUser?.phone || activeUser?.email || null;
+    activeUserRef.current = currentUserId;
+
+    // Purge legacy non-isolated key
     try {
-      if (user) {
-        localStorage.setItem('zestmed_cart', JSON.stringify(cartItems));
-      } else {
-        localStorage.removeItem('zestmed_cart');
-        if (cartItems.length > 0) {
-          setCartItems([]);
-        }
-      }
-    } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
+      localStorage.removeItem('zestmed_cart');
+    } catch (_) {}
+
+    if (!currentUserId) {
+      // User is logged out: cart count MUST be 0
+      setCartItems([]);
+      return;
     }
-  }, [cartItems, user]);
+
+    // 1. Load user's isolated local storage cart
+    const userKey = getUserCartKey(activeUser);
+    let initialUserCart = [];
+    try {
+      const stored = userKey ? localStorage.getItem(userKey) : null;
+      if (stored) {
+        initialUserCart = JSON.parse(stored);
+      }
+    } catch (_) {
+      initialUserCart = [];
+    }
+    setCartItems(Array.isArray(initialUserCart) ? initialUserCart : []);
+
+    // 2. Fetch authenticated user's actual cart from backend / database
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/cart', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Ensure user hasn't switched during fetch
+        if (activeUserRef.current === currentUserId && data?.success && Array.isArray(data.items)) {
+          if (data.items.length > 0) {
+            setCartItems(data.items);
+            try {
+              if (userKey) localStorage.setItem(userKey, JSON.stringify(data.items));
+            } catch (_) {}
+          } else if (initialUserCart.length > 0) {
+            // Push existing local items for this user to backend
+            fetch('/api/cart/sync', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ items: initialUserCart })
+            }).catch(() => {});
+          }
+        }
+      })
+      .catch(() => {});
+    }
+  }, [user]);
+
+  // Helper to persist to user storage & backend
+  const persistAndSyncCart = (updatedItems) => {
+    const activeUser = user || getAuthenticatedUser();
+    if (!activeUser) return;
+
+    const userKey = getUserCartKey(activeUser);
+    try {
+      if (userKey) {
+        localStorage.setItem(userKey, JSON.stringify(updatedItems));
+      }
+    } catch (_) {}
+
+    const token = getAuthToken();
+    if (token && typeof fetch !== 'undefined') {
+      fetch('/api/cart/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items: updatedItems })
+      }).catch(() => {});
+    }
+  };
 
   const addItem = (item, type = 'medicine', options = {}) => {
     // 1. Mandatory Login Check
@@ -65,34 +156,28 @@ export const CartProvider = ({ children }) => {
     }
 
     // 2. Add to active user cart
-    setCartItems(prev => {
-      const existing = prev.find(i => i.id === item.id);
-      if (existing) {
-        addToast(`Updated quantity for "${item.name}"`, 'info');
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-      }
+    let updated;
+    const existingIndex = cartItems.findIndex(i => i.id === item.id);
+    if (existingIndex >= 0) {
+      updated = cartItems.map((i, idx) => 
+        idx === existingIndex ? { ...i, quantity: (Number(i.quantity) || 1) + 1 } : i
+      );
+      addToast(`Updated quantity for "${item.name}"`, 'info');
+    } else {
+      updated = [...cartItems, { ...item, itemType: type, quantity: 1 }];
       addToast(`Added "${item.name}" to cart!`, 'success');
-      return [...prev, { ...item, itemType: type, quantity: 1 }];
-    });
+    }
 
-    // 3. Notify protected Node.js backend
-    try {
-      const token = getAuthToken();
-      if (token && typeof fetch !== 'undefined') {
-        fetch('/api/cart/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ item, type })
-        }).catch(() => {});
-      }
-    } catch (_) {}
-
+    setCartItems(updated);
+    persistAndSyncCart(updated);
     return true;
   };
 
   const removeItem = (id) => {
     const item = cartItems.find(i => i.id === id);
-    setCartItems(prev => prev.filter(i => i.id !== id));
+    const updated = cartItems.filter(i => i.id !== id);
+    setCartItems(updated);
+    persistAndSyncCart(updated);
     if (item) {
       addToast(`Removed "${item.name}" from cart`, 'info');
     }
@@ -103,21 +188,42 @@ export const CartProvider = ({ children }) => {
       removeItem(id);
       return;
     }
-    setCartItems(prev => prev.map(i => i.id === id ? { ...i, quantity: newQty } : i));
+    const updated = cartItems.map(i => i.id === id ? { ...i, quantity: newQty } : i);
+    setCartItems(updated);
+    persistAndSyncCart(updated);
   };
 
   const clearCart = () => {
     setCartItems([]);
+    const activeUser = user || getAuthenticatedUser();
+    if (activeUser) {
+      const userKey = getUserCartKey(activeUser);
+      try {
+        if (userKey) localStorage.removeItem(userKey);
+      } catch (_) {}
+
+      const token = getAuthToken();
+      if (token && typeof fetch !== 'undefined') {
+        fetch('/api/cart/clear', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }).catch(() => {});
+      }
+    }
     addToast('Cart cleared', 'info');
   };
 
-  const totalItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalItemsCount = cartItems.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
+  const cartCount = totalItemsCount; // Alias for dashboard and other consumers
 
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((acc, item) => acc + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
 
   const totalMRP = cartItems.reduce((acc, item) => {
-    const mrp = item.mrp || item.price;
-    return acc + (mrp * item.quantity);
+    const mrp = Number(item.mrp) || Number(item.price) || 0;
+    return acc + (mrp * (Number(item.quantity) || 1));
   }, 0);
 
   const totalSavings = Math.max(0, totalMRP - subtotal);
@@ -126,10 +232,12 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider value={{
       cartItems,
       addItem,
+      addToCart: addItem, // Legacy alias compatibility
       removeItem,
       updateQuantity,
       clearCart,
       totalItemsCount,
+      cartCount,
       subtotal,
       totalMRP,
       totalSavings,

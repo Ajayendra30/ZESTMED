@@ -77,7 +77,7 @@ import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } fro
 export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const navigate = useNavigate();
   const { user, isLoggedIn, logout, openAuth, loginWithGoogle, updateUser } = useAuth();
-  const { cartCount, openCart } = useCart();
+  const { totalItemsCount, cartCount, openCart } = useCart();
   const { addToast } = useToast();
 
   // Navigation State
@@ -968,19 +968,21 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             </div>
           </div>
 
-          {/* Right: Cart (with badge 2), Notification Bell & User Profile */}
+          {/* Right: Cart, Notification Bell & User Profile */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-            {/* Cart Icon with badge 2 */}
+            {/* Cart Icon with Live Badge */}
             <button
               type="button"
               onClick={openCart}
-              className="relative p-1.5 sm:p-2 rounded-xl text-[#00A884] hover:bg-teal-50 transition"
+              className="relative p-1.5 sm:p-2 rounded-xl text-[#00A884] hover:bg-teal-50 transition cursor-pointer"
               title="View Cart"
             >
               <ShoppingCart className="w-5 h-5 text-[#00A884]" />
-              <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white">
-                {cartCount > 0 ? cartCount : 2}
-              </span>
+              {(totalItemsCount || cartCount || 0) > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center ring-2 ring-white leading-none">
+                  {totalItemsCount || cartCount}
+                </span>
+              )}
             </button>
 
             {/* Notification Bell with Red Badge */}
