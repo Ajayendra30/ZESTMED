@@ -203,40 +203,40 @@ export default function WellnessPackagesPage() {
             <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3 sm:space-y-3.5 text-left">
               
               {/* Wellness Packages Pill Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD] text-xs font-bold shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#007A64]" />
+              <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
+                <ShieldCheck className="w-4 h-4 text-[#007A64]" />
                 <span>Wellness Packages</span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[38px] xl:text-[42px] font-black text-[#0B1B2B] leading-[1.14] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[45px] font-black text-[#0B1B2B] leading-[1.15] tracking-tight">
                 Preventive Health<br />
                 Checkup <span className="text-[#007A64]">Packages</span>
               </h1>
 
               {/* Subtitle */}
-              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-md">
+              <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-md">
                 Stay ahead of health problems with our comprehensive wellness packages.
               </p>
 
               {/* Buttons - Horizontally Aligned in a Single Row */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 pt-1.5">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => scrollToSection('wellness-packages-grid')}
-                  className="bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
+                  className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-sm sm:text-base px-6 sm:px-7 py-3 sm:py-3.5 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[48px]"
                 >
-                  <Calendar className="w-4 h-4 shrink-0" />
+                  <Calendar className="w-5 h-5 shrink-0" />
                   <span>Book a Package</span>
-                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <ArrowRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   type="button"
                   onClick={() => scrollToSection('why-choose-section')}
-                  className="bg-white hover:bg-slate-50 text-[#007A64] border border-[#007A64] font-bold text-xs sm:text-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[44px]"
+                  className="bg-white hover:bg-slate-50 text-[#007A64] border-2 border-[#007A64] font-extrabold text-sm sm:text-base px-6 sm:px-7 py-3 sm:py-3.5 rounded-2xl shadow-2xs hover:shadow-sm transition flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap shrink-0 min-h-[48px]"
                 >
-                  <Info className="w-4 h-4 shrink-0 text-[#007A64]" />
+                  <Info className="w-5 h-5 shrink-0 text-[#007A64]" />
                   <span>Compare Packages</span>
                 </button>
               </div>
@@ -247,12 +247,12 @@ export default function WellnessPackagesPage() {
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="max-h-[250px] sm:max-h-[290px] md:max-h-[310px] lg:max-h-[330px] xl:max-h-[360px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none transition-all duration-300"
+                className="max-h-[250px] sm:max-h-[290px] md:max-h-[310px] lg:max-h-[340px] xl:max-h-[370px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none transition-all duration-300"
               />
             </div>
 
             {/* Right Column: 4 Feature Checkmark Cards */}
-            <div className="w-full lg:w-[280px] xl:w-[300px] shrink-0 flex flex-col gap-2.5 sm:gap-3 z-20 self-center">
+            <div className="w-full lg:w-[300px] xl:w-[330px] shrink-0 flex flex-col gap-3 sm:gap-3.5 z-20 self-center">
               {[
                 'Early Disease Detection',
                 'Comprehensive Health Screening',
@@ -261,9 +261,9 @@ export default function WellnessPackagesPage() {
               ].map((feat) => (
                 <div
                   key={feat}
-                  className="bg-white rounded-full px-4 py-2 sm:py-2.5 shadow-md border border-slate-100 flex items-center gap-2.5 text-xs sm:text-[13px] font-extrabold text-[#0B1B2B] hover:border-teal-200 transition"
+                  className="bg-white rounded-full px-4.5 sm:px-5 py-2.5 sm:py-3 shadow-md border border-slate-100 flex items-center gap-3 text-xs sm:text-sm font-black text-[#0B1B2B] hover:border-teal-200 transition"
                 >
-                  <CheckCircle2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#007A64] shrink-0 fill-[#E0F5EE]" />
+                  <CheckCircle2 className="w-5 h-5 text-[#007A64] shrink-0 fill-[#E0F5EE]" />
                   <span className="leading-tight">{feat}</span>
                 </div>
               ))}
@@ -276,61 +276,61 @@ export default function WellnessPackagesPage() {
       {/* ========================================================================= */}
       {/* 2. VALUE PROPOSITION STRIP (5 items) matching Reference                   */}
       {/* ========================================================================= */}
-      <section className="bg-white border-b border-slate-200/80 shadow-2xs py-4 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4 sm:divide-x divide-slate-100">
+      <section className="bg-white border-b border-slate-200/80 shadow-2xs py-5 sm:py-6 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 sm:divide-x divide-slate-100">
           
           {/* 1. Preventive Care */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
+          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
             <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Heart className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+              <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Preventive Care</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Detect health issues early</p>
+              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Preventive Care</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Detect health issues early</p>
             </div>
           </div>
 
           {/* 2. Complete Health Check */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
             <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <FlaskConical className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+              <FlaskConical className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Complete Health Check</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">All essential tests in one package</p>
+              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Complete Health Check</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">All essential tests in one package</p>
             </div>
           </div>
 
           {/* 3. For All Age Groups */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
             <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Users className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+              <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">For All Age Groups</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Packages for men, women &amp; seniors</p>
+              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">For All Age Groups</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Packages for men, women &amp; seniors</p>
             </div>
           </div>
 
           {/* 4. Expert Consultation */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
             <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <ShieldCheck className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+              <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Expert Consultation</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Guidance from qualified doctors</p>
+              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Expert Consultation</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Guidance from qualified doctors</p>
             </div>
           </div>
 
           {/* 5. Easy & Quick Booking */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 pl-1 sm:pl-3">
+          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
             <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Headphones className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+              <Headphones className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">Easy &amp; Quick Booking</p>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5">Book online in just a few clicks</p>
+              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Easy &amp; Quick Booking</p>
+              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Book online in just a few clicks</p>
             </div>
           </div>
 
@@ -343,64 +343,64 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 3. "Our Wellness Packages" (4 Cards Grid) matching Reference             */}
         {/* ========================================================================= */}
-        <section id="wellness-packages-grid" className="space-y-4">
+        <section id="wellness-packages-grid" className="space-y-5">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0B1B2B] tracking-tight">
               Our Wellness Packages
             </h2>
             <Link
               to="/packages"
-              className="text-[#007A64] hover:text-[#005c4b] font-bold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
             >
               <span>View All Packages</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4.5 h-4.5" />
             </Link>
           </div>
 
           {/* 4 Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4.5 sm:gap-5.5">
             {WELLNESS_PACKAGES.map((pkg) => {
               const IconComp = pkg.icon;
 
               return (
                 <div
                   key={pkg.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-3.5">
                     
                     {/* Top Header: Icon + Package Name & Subtitle */}
-                    <div className="flex items-start gap-3">
-                      <div className={`w-9 h-9 rounded-xl ${pkg.iconColor} flex items-center justify-center shrink-0`}>
-                        <IconComp className="w-5 h-5 stroke-[2.2]" />
+                    <div className="flex items-start gap-3.5">
+                      <div className={`w-11 h-11 rounded-2xl ${pkg.iconColor} flex items-center justify-center shrink-0`}>
+                        <IconComp className="w-6 h-6 stroke-[2.2]" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-sm sm:text-[15px] font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors">
+                        <h3 className="text-base sm:text-lg font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors">
                           {pkg.name}
                         </h3>
-                        <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium leading-tight mt-1">
                           {pkg.subtitle}
                         </p>
                       </div>
                     </div>
 
                     {/* Middle: Checklist & Right Illustration Graphic */}
-                    <div className="flex items-center justify-between gap-2 pt-1 min-h-[96px]">
+                    <div className="flex items-center justify-between gap-3 pt-1.5 min-h-[105px]">
                       
                       {/* Left Checklist */}
-                      <ul className="space-y-1.5 text-[11px] text-slate-700 font-semibold flex-1">
+                      <ul className="space-y-2 text-xs sm:text-sm text-slate-700 font-semibold flex-1">
                         {pkg.tests.map((test, idx) => (
-                          <li key={idx} className="flex items-center gap-1.5 leading-snug">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 fill-emerald-50" />
+                          <li key={idx} className="flex items-center gap-2 leading-snug">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 fill-emerald-50" />
                             <span className="truncate">{test}</span>
                           </li>
                         ))}
                       </ul>
 
                       {/* Right Illustration Asset */}
-                      <div className="w-16 h-16 sm:w-18 sm:h-18 shrink-0 flex items-center justify-center select-none pointer-events-none">
+                      <div className="w-20 h-20 sm:w-22 sm:h-22 shrink-0 flex items-center justify-center select-none pointer-events-none">
                         <img
                           src={pkg.image}
                           alt={pkg.name}
@@ -412,19 +412,19 @@ export default function WellnessPackagesPage() {
                   </div>
 
                   {/* Bottom: Pricing & Action Button */}
-                  <div className="pt-3.5 mt-3 border-t border-slate-100 space-y-2.5">
+                  <div className="pt-4 mt-4 border-t border-slate-100 space-y-3">
                     
                     {/* Pricing Row */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-xs text-slate-400 line-through font-semibold">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xs sm:text-sm text-slate-400 line-through font-semibold">
                           ₹{pkg.mrp.toLocaleString('en-IN')}
                         </span>
-                        <span className="text-base sm:text-lg font-black text-[#007A64]">
+                        <span className="text-lg sm:text-xl font-black text-[#007A64]">
                           ₹{pkg.price.toLocaleString('en-IN')}
                         </span>
                       </div>
-                      <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
                         {pkg.discount}
                       </span>
                     </div>
@@ -433,10 +433,10 @@ export default function WellnessPackagesPage() {
                     <button
                       type="button"
                       onClick={() => handleBookNow(pkg)}
-                      className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                      className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base py-2.5 sm:py-3 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                     >
                       <span>Book Now</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4.5 h-4.5" />
                     </button>
 
                   </div>
@@ -451,74 +451,74 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 4. "Why Choose ZESTMED for Wellness Packages?" matching Reference        */}
         {/* ========================================================================= */}
-        <section id="why-choose-section" className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
+        <section id="why-choose-section" className="space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
             Why Choose ZESTMED for Wellness Packages?
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
             
             {/* 1. Accurate & Reliable */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
-                <Heart className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 flex items-center justify-center text-[#007A64]">
+                <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+              <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                 Accurate &amp; Reliable
               </h3>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                 NABL-accredited labs
               </p>
             </div>
 
             {/* 2. Comprehensive Test Coverage */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
-                <ClipboardList className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 flex items-center justify-center text-[#007A64]">
+                <ClipboardList className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+              <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                 Comprehensive Test Coverage
               </h3>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                 Wide range of essential tests
               </p>
             </div>
 
             {/* 3. Expert Medical Guidance */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
-                <Stethoscope className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 flex items-center justify-center text-[#007A64]">
+                <Stethoscope className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+              <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                 Expert Medical Guidance
               </h3>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                 Reports reviewed by specialists
               </p>
             </div>
 
             {/* 4. Safe & Hygienic */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 flex items-center justify-center text-[#007A64]">
-                <ShieldCheck className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 flex items-center justify-center text-[#007A64]">
+                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+              <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                 Safe &amp; Hygienic
               </h3>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                 Highest safety standards
               </p>
             </div>
 
             {/* 5. Value for Money */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-4 sm:p-5 flex flex-col items-center text-center space-y-2 col-span-2 sm:col-span-1">
-              <div className="w-10 h-10 flex items-center justify-center font-bold text-[#007A64]">
-                <IndianRupee className="w-7 h-7 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex flex-col items-center text-center space-y-3 col-span-2 sm:col-span-1">
+              <div className="w-12 h-12 flex items-center justify-center font-bold text-[#007A64]">
+                <IndianRupee className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
               </div>
-              <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+              <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                 Value for Money
               </h3>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                 Affordable & cost-effective
               </p>
             </div>
@@ -529,83 +529,83 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 5. "How It Works?" (4 Step Cards) matching Reference                      */}
         {/* ========================================================================= */}
-        <section className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
+        <section className="space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
             How It Works?
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4.5 items-center">
             
             {/* Step 1: Choose a Package */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 flex items-start gap-3 relative">
-              <div className="w-7 h-7 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex items-start gap-3.5 relative min-h-[110px] sm:min-h-[120px]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-2xs">
                 1
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Laptop className="w-4 h-4 text-[#007A64] stroke-[2]" />
-                  <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Laptop className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+                  <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                     Choose a Package
                   </h3>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Select a wellness package that suits you
                 </p>
               </div>
-              <ChevronRight className="hidden lg:block w-4 h-4 text-slate-300 absolute -right-2 top-1/2 -translate-y-1/2 z-10" />
+              <ChevronRight className="hidden lg:block w-5 h-5 text-slate-300 absolute -right-2.5 top-1/2 -translate-y-1/2 z-10" />
             </div>
 
             {/* Step 2: Book & Schedule */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 flex items-start gap-3 relative">
-              <div className="w-7 h-7 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex items-start gap-3.5 relative min-h-[110px] sm:min-h-[120px]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-2xs">
                 2
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Calendar className="w-4 h-4 text-[#007A64] stroke-[2]" />
-                  <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
-                    Book & Schedule
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Calendar className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+                  <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
+                    Book &amp; Schedule
                   </h3>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Pick a date, time, and collection option
                 </p>
               </div>
-              <ChevronRight className="hidden lg:block w-4 h-4 text-slate-300 absolute -right-2 top-1/2 -translate-y-1/2 z-10" />
+              <ChevronRight className="hidden lg:block w-5 h-5 text-slate-300 absolute -right-2.5 top-1/2 -translate-y-1/2 z-10" />
             </div>
 
             {/* Step 3: Give Your Sample */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 flex items-start gap-3 relative">
-              <div className="w-7 h-7 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex items-start gap-3.5 relative min-h-[110px] sm:min-h-[120px]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-2xs">
                 3
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <FlaskConical className="w-4 h-4 text-[#007A64] stroke-[2]" />
-                  <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <FlaskConical className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+                  <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                     Give Your Sample
                   </h3>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Visit our center or opt for home collection
                 </p>
               </div>
-              <ChevronRight className="hidden lg:block w-4 h-4 text-slate-300 absolute -right-2 top-1/2 -translate-y-1/2 z-10" />
+              <ChevronRight className="hidden lg:block w-5 h-5 text-slate-300 absolute -right-2.5 top-1/2 -translate-y-1/2 z-10" />
             </div>
 
             {/* Step 4: Get Your Reports */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 flex items-start gap-3">
-              <div className="w-7 h-7 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition p-5 sm:p-6 flex items-start gap-3.5 min-h-[110px] sm:min-h-[120px]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#007A64] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-2xs">
                 4
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <FileText className="w-4 h-4 text-[#007A64] stroke-[2]" />
-                  <h3 className="text-xs sm:text-sm font-extrabold text-[#0B1B2B] leading-tight">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <FileText className="w-5 h-5 text-[#007A64] stroke-[2.2]" />
+                  <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">
                     Get Your Reports
                   </h3>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Receive accurate reports online with expert insights
                 </p>
               </div>
@@ -617,24 +617,24 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 6. "Health Packages by Category" matching Reference                       */}
         {/* ========================================================================= */}
-        <section className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
+        <section className="space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0B1B2B] tracking-tight text-center sm:text-left">
             Health Packages by Category
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5 sm:gap-5.5">
             {CATEGORIES_DATA.map((cat) => (
               <div
                 key={cat.id}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-5 flex items-center justify-between gap-3 group relative overflow-hidden"
+                className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-5 sm:p-6 flex items-center justify-between gap-4 group relative overflow-hidden"
               >
                 {/* Left Content */}
-                <div className="space-y-2.5 min-w-0 flex-1">
+                <div className="space-y-3 min-w-0 flex-1">
                   <div>
-                    <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] group-hover:text-[#007A64] transition-colors leading-tight">
+                    <h3 className="text-base sm:text-lg font-black text-[#0B1B2B] group-hover:text-[#007A64] transition-colors leading-tight">
                       {cat.name}
                     </h3>
-                    <p className="text-[11px] text-slate-500 font-medium leading-snug mt-1">
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium leading-snug mt-1">
                       {cat.subtitle}
                     </p>
                   </div>
@@ -645,15 +645,15 @@ export default function WellnessPackagesPage() {
                       scrollToSection('wellness-packages-grid');
                       addToast(`Showing packages for ${cat.name}`, 'info');
                     }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#007A64] hover:bg-[#006852] text-white text-xs font-bold rounded-lg shadow-2xs transition cursor-pointer active:scale-95"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-black rounded-xl shadow-2xs transition cursor-pointer active:scale-95"
                   >
                     <span>Explore</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
 
                 {/* Right Image Asset */}
-                <div className="w-20 h-20 sm:w-22 sm:h-22 shrink-0 select-none pointer-events-none flex items-center justify-end">
+                <div className="w-22 h-22 sm:w-24 sm:h-24 lg:w-26 lg:h-26 shrink-0 select-none pointer-events-none flex items-center justify-end">
                   <img
                     src={cat.image}
                     alt={cat.name}
@@ -668,7 +668,7 @@ export default function WellnessPackagesPage() {
         {/* ========================================================================= */}
         {/* 7. BOTTOM CALL TO ACTION BANNER matching Reference                        */}
         {/* ========================================================================= */}
-        <section className="rounded-3xl bg-gradient-to-r from-[#006853] via-[#007A64] to-[#005B48] p-5 sm:p-7 lg:p-8 text-white relative overflow-hidden shadow-lg border border-teal-600/30">
+        <section className="rounded-3xl bg-gradient-to-r from-[#006853] via-[#007A64] to-[#005B48] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden shadow-lg border border-teal-600/30">
           
           {/* Subtle Ambient Glow */}
           <div className="absolute top-0 right-1/4 w-60 h-60 bg-teal-300/10 rounded-full blur-3xl pointer-events-none" />
@@ -676,29 +676,29 @@ export default function WellnessPackagesPage() {
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
             
             {/* Left Headline & Subhead */}
-            <div className="space-y-1.5 text-center md:text-left">
-              <h2 className="text-xl sm:text-2xl lg:text-[26px] font-black text-white tracking-tight leading-snug">
+            <div className="space-y-2 text-center md:text-left">
+              <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-white tracking-tight leading-snug">
                 Take a Proactive Step Towards Better Health!
               </h2>
-              <p className="text-xs sm:text-sm text-teal-100 font-medium">
+              <p className="text-sm sm:text-base text-teal-100 font-medium leading-relaxed max-w-xl">
                 Book a wellness package today and keep your health in check.
               </p>
             </div>
 
             {/* Right Action Button & Illustration */}
-            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <div className="flex items-center gap-3.5 sm:gap-5 shrink-0">
               <button
                 type="button"
                 onClick={() => scrollToSection('wellness-packages-grid')}
-                className="bg-white hover:bg-slate-50 text-[#007A64] font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap"
+                className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
               >
-                <Calendar className="w-4 h-4 text-[#007A64] shrink-0" />
+                <Calendar className="w-5 h-5 text-[#007A64] shrink-0" />
                 <span>Book a Wellness Package</span>
-                <ArrowRight className="w-4 h-4 text-[#007A64] shrink-0" />
+                <ArrowRight className="w-5 h-5 text-[#007A64] shrink-0" />
               </button>
 
               {/* 3D Clipboard & Heart Graphic */}
-              <div className="w-16 h-14 sm:w-20 sm:h-16 shrink-0 flex items-center justify-center select-none pointer-events-none">
+              <div className="w-18 h-16 sm:w-22 sm:h-18 lg:w-26 lg:h-22 shrink-0 flex items-center justify-center select-none pointer-events-none">
                 <img
                   src="/wellness-cta-clipboard.png"
                   alt="Wellness Health Protection"
