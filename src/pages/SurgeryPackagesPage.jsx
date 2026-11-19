@@ -71,6 +71,7 @@ function EarIcon({ className = "w-6 h-6 text-[#007A64]" }) {
 const SURGERY_PACKAGES = [
   {
     id: 'surg-gallbladder',
+    slug: 'gallbladder-stone-surgery',
     title: 'Gallbladder Stone Surgery',
     subtitle: '(Laparoscopic)',
     image: '/surgery-pkg1-gallbladder.png',
@@ -81,16 +82,18 @@ const SURGERY_PACKAGES = [
   },
   {
     id: 'surg-appendix',
+    slug: 'appendectomy',
     title: 'Appendectomy',
     subtitle: '(Appendix Surgery)',
     image: '/surgery-pkg2-appendix.png',
     startingPrice: 35000,
     priceFormatted: '₹35,000',
     category: 'Laparoscopic & General',
-    mockRefId: 'surg-gallbladder'
+    mockRefId: 'surg-appendix'
   },
   {
     id: 'surg-hernia',
+    slug: 'hernia-repair',
     title: 'Hernia Repair',
     subtitle: '(Inguinal / Umbilical)',
     image: '/surgery-pkg3-hernia.png',
@@ -101,26 +104,29 @@ const SURGERY_PACKAGES = [
   },
   {
     id: 'surg-knee',
+    slug: 'knee-replacement',
     title: 'Knee Replacement',
     subtitle: '(Total / Partial)',
     image: '/surgery-pkg4-knee.png',
     startingPrice: 250000,
     priceFormatted: '₹2,50,000',
     category: 'Orthopedic & Joint',
-    mockRefId: 'surg-knee-replacement'
+    mockRefId: 'surg-knee'
   },
   {
     id: 'surg-hip',
+    slug: 'hip-replacement',
     title: 'Hip Replacement',
     subtitle: '(Total Hip Surgery)',
     image: '/surgery-pkg5-hip.png',
     startingPrice: 280000,
     priceFormatted: '₹2,80,000',
     category: 'Orthopedic & Joint',
-    mockRefId: 'surg-knee-replacement'
+    mockRefId: 'surg-hip'
   },
   {
     id: 'surg-cataract',
+    slug: 'cataract-surgery',
     title: 'Cataract Surgery',
     subtitle: '(With Lens Implant)',
     image: '/surgery-pkg6-cataract.png',
@@ -287,7 +293,7 @@ export default function SurgeryPackagesPage() {
                 key={pkg.id}
                 className="bg-white rounded-3xl border border-slate-200/90 p-3.5 sm:p-4.5 lg:p-4 xl:p-4.5 flex flex-col justify-between hover:shadow-xl hover:border-teal-300 transition duration-300 group shadow-xs"
               >
-                <div>
+                <Link to={`/surgery-packages/${pkg.slug}`} className="block group-hover:opacity-95 transition">
                   {/* Visual Illustration */}
                   <div className="h-24 sm:h-28 w-full flex items-center justify-center mb-3 overflow-hidden rounded-2xl bg-slate-50/70 p-1.5">
                     <img
@@ -298,20 +304,19 @@ export default function SurgeryPackagesPage() {
                   </div>
 
                   {/* Title & Subtitle */}
-                  <h3 className="text-xs sm:text-sm lg:text-[13.5px] xl:text-[14px] font-extrabold text-slate-900 leading-snug text-center min-h-[38px] flex items-center justify-center">
+                  <h3 className="text-xs sm:text-sm lg:text-[13.5px] xl:text-[14px] font-extrabold text-slate-900 group-hover:text-[#007A64] transition-colors leading-snug text-center min-h-[38px] flex items-center justify-center">
                     {pkg.title}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-slate-500 font-medium text-center mt-1">
                     {pkg.subtitle}
                   </p>
-                </div>
+                </Link>
 
-                {/* Starting Price & Action Button matching reference */}
-                <button
-                  type="button"
-                  onClick={() => scrollToSection('surgery-planning-cta')}
-                  className="mt-3.5 sm:mt-4 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl sm:rounded-2xl py-2 px-2.5 sm:px-3 flex items-center justify-between shadow-xs hover:shadow-md transition active:scale-98 cursor-pointer"
-                  title={`Book ${pkg.title}`}
+                {/* Starting Price & Action Button linking directly to dedicated detail page */}
+                <Link
+                  to={`/surgery-packages/${pkg.slug}`}
+                  className="mt-3.5 sm:mt-4 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl sm:rounded-2xl py-2 px-2.5 sm:px-3 flex items-center justify-between shadow-xs hover:shadow-md transition active:scale-98 cursor-pointer select-none"
+                  title={`View details for ${pkg.title}`}
                 >
                   <div className="text-left leading-tight">
                     <span className="block text-[9.5px] sm:text-[10px] uppercase tracking-wider text-teal-100 font-semibold">Starting from</span>
@@ -320,7 +325,7 @@ export default function SurgeryPackagesPage() {
                   <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                     <ArrowRight className="w-3.5 h-3.5 text-white" />
                   </div>
-                </button>
+                </Link>
               </div>
             ))}
           </div>

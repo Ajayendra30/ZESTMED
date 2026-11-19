@@ -20,6 +20,7 @@ import ContactPage from './pages/ContactPage';
 import HealthPackagesPage from './pages/HealthPackagesPage';
 import WellnessPackagesPage from './pages/WellnessPackagesPage';
 import SurgeryPackagesPage from './pages/SurgeryPackagesPage';
+import SurgeryDetailPage from './pages/SurgeryDetailPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
 import PhysiotherapyPage from './pages/PhysiotherapyPage';
 import AboutPage from './pages/AboutPage';
@@ -186,7 +187,10 @@ function AppContent() {
           <Route path="/labtests" element={<DiagnosticPortalPage />} />
           <Route path="/lab-test" element={<DiagnosticPortalPage />} />
           <Route path="/surgery-packages" element={<SurgeryPackagesPage />} />
+          <Route path="/surgery-packages/:id" element={<SurgeryDetailPage />} />
           <Route path="/surgeries" element={<SurgeryPackagesPage />} />
+          <Route path="/surgeries/:id" element={<SurgeryDetailPage />} />
+          <Route path="/surgery/:id" element={<SurgeryDetailPage />} />
           <Route path="/packages" element={<SurgeryPackagesPage />} />
           <Route path="/health-packages" element={<HealthPackagesPage />} />
           <Route path="/wellness-packages" element={<WellnessPackagesPage />} />
