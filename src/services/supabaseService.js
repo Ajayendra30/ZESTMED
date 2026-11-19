@@ -1022,12 +1022,13 @@ export const getUserBookings = async (user) => {
               const itemNames = Array.isArray(o.items) && o.items.length > 0
                 ? o.items.map((i) => i.name).filter(Boolean).join(', ')
                 : 'Prescription Medicines';
+              const isWellness = itemNames.toLowerCase().includes('wellness') || itemNames.toLowerCase().includes('package');
               allResults.push({
                 id: bId,
                 bookingId: bId,
-                serviceType: 'Medicine Order',
-                itemType: 'medicine',
-                displayType: 'Pharmacy Medicine Order',
+                serviceType: isWellness ? 'Wellness Package' : 'Medicine Order',
+                itemType: isWellness ? 'wellness' : 'medicine',
+                displayType: isWellness ? 'Wellness Health Package' : 'Pharmacy Medicine Order',
                 serviceName: itemNames,
                 title: itemNames,
                 items: o.items || [],
@@ -1161,13 +1162,14 @@ export const getUserBookings = async (user) => {
       const itemNames = Array.isArray(o.items) && o.items.length > 0
         ? o.items.map((i) => i.name).filter(Boolean).join(', ')
         : 'Prescription Medicines';
+      const isWellness = itemNames.toLowerCase().includes('wellness') || itemNames.toLowerCase().includes('package');
 
       allResults.push({
         id: bId,
         bookingId: bId,
-        serviceType: 'Medicine Order',
-        itemType: 'medicine',
-        displayType: 'Medicine Order',
+        serviceType: isWellness ? 'Wellness Package' : 'Medicine Order',
+        itemType: isWellness ? 'wellness' : 'medicine',
+        displayType: isWellness ? 'Wellness Health Package' : 'Medicine Order',
         serviceName: itemNames,
         title: itemNames,
         items: o.items || [],

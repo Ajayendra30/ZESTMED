@@ -40,8 +40,27 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     setIsRazorpayOpen(false);
     setCheckoutComplete(true);
 
+    // Helper to identify package or test items vs pure medicines
+    const isPackageOrTestItem = (i) => {
+      const type = (i.type || i.itemType || '').toLowerCase();
+      const cat = (i.category || '').toLowerCase();
+      const name = (i.name || '').toLowerCase();
+      return (
+        type === 'test' || 
+        type === 'package' || 
+        cat === 'diagnostic test' || 
+        cat === 'health package' ||
+        cat.includes('wellness') ||
+        name.includes('wellness package') ||
+        name.includes('health package') ||
+        name.includes('screening package') ||
+        Array.isArray(i.tests) ||
+        Boolean(i.turnaroundTime)
+      );
+    };
+
     // 1. Process Medicine Orders
-    const medicineItems = cartItems.filter(i => i.type !== 'test' && i.type !== 'package');
+    const medicineItems = cartItems.filter(i => !isPackageOrTestItem(i));
     if (medicineItems.length > 0) {
       const orderMedTotal = medicineItems.reduce((acc, curr) => acc + (curr.price * (curr.quantity || 1)), 0);
       const newOrder = {
@@ -96,40 +115,47 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     }
 
     // 2. Process Diagnostic Tests or Wellness Packages
-    const diagnosticOrPackageItems = cartItems.filter(i => i.type === 'test' || i.type === 'package');
+    const diagnosticOrPackageItems = cartItems.filter(i => isPackageOrTestItem(i));
     if (diagnosticOrPackageItems.length > 0) {
       try {
         const existingBookings = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        const newBookings = diagnosticOrPackageItems.map(item => ({
-          id: `ZM-${item.type === 'package' ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
-          bookingId: `ZM-${item.type === 'package' ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
-          type: item.type === 'package' ? 'Wellness Package' : 'Diagnostic Lab Test',
-          testName: item.name,
-          testCode: item.type === 'package' ? 'WEL-PKG' : (item.testCode || 'DX-781'),
-          category: item.type === 'package' ? 'Wellness Package' : (item.category || 'Diagnostic Test'),
-          bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-          collectionDate: 'Tomorrow, 07:30 AM',
-          date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
-          time: '07:30 AM - Home Collection',
-          patientName: user?.name || 'Self',
-          phone: user?.phone || user?.contact || '',
-          patientPhone: user?.phone || user?.contact || '',
-          userId: user?.id || null,
-          userEmail: user?.email || '',
-          status: 'Confirmed',
-          specimen: item.type === 'package' ? 'Blood & Serum Sample (Fasting)' : (item.specimen || 'Blood / Serum Sample (NABL Barcoded)'),
-          collectionAddress: user?.address || 'Dispur, Guwahati - 781005',
-          phlebotomist: {
-            name: 'Bikash Das',
-            id: 'ZM-PHL-AS-14',
-            phone: '+91 92791 25091',
-            vaccinated: true
-          },
-          reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
-          price: item.price,
-          parametersSummary: item.includes || `${item.name} - Sample Collection Booked`,
-          createdAt: new Date().toISOString()
-        }));
+        const newBookings = diagnosticOrPackageItems.map(item => {
+          const isPkg = (item.type || item.itemType || '').toLowerCase() === 'package' || 
+                        (item.category || '').toLowerCase().includes('wellness') ||
+                        (item.name || '').toLowerCase().includes('wellness') ||
+                        (item.name || '').toLowerCase().includes('package');
+          return {
+            id: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+            bookingId: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+            type: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+            testName: item.name,
+            testCode: isPkg ? 'WEL-PKG' : (item.testCode || 'DX-781'),
+            category: isPkg ? 'Wellness Package' : (item.category || 'Diagnostic Test'),
+            bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+            collectionDate: 'Tomorrow, 07:30 AM',
+            date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+            time: '07:30 AM - Home Collection',
+            patientName: user?.name || 'Self',
+            phone: user?.phone || user?.contact || '',
+            patientPhone: user?.phone || user?.contact || '',
+            userId: user?.id || null,
+            userEmail: user?.email || '',
+            status: 'Confirmed',
+            price: item.price || 0,
+            totalAmount: item.price || 0,
+            specimen: isPkg ? 'Blood & Serum Sample (Fasting)' : (item.specimen || 'Blood / Serum Sample (NABL Barcoded)'),
+            collectionAddress: user?.address || 'Dispur, Guwahati - 781005',
+            phlebotomist: {
+              name: 'Bikash Das',
+              id: 'ZM-PHL-AS-14',
+              phone: '+91 92791 25091',
+              vaccinated: true
+            },
+            reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
+            parametersSummary: item.includes || `${item.name} - Sample Collection Booked`,
+            createdAt: new Date().toISOString()
+          };
+        });
         localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...existingBookings]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));

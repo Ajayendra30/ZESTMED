@@ -199,6 +199,70 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     };
   }, []);
 
+  // Sanitize orders so wellness packages and lab tests never contaminate medicine orders
+  useEffect(() => {
+    try {
+      const rawOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
+      if (Array.isArray(rawOrders) && rawOrders.length > 0) {
+        const isNonMedicine = (o) => {
+          if (!Array.isArray(o.items) || o.items.length === 0) return false;
+          return o.items.every(it => {
+            const n = (it.name || '').toLowerCase();
+            const t = (it.type || it.itemType || '').toLowerCase();
+            const c = (it.category || '').toLowerCase();
+            return (
+              t === 'package' || t === 'test' ||
+              c.includes('wellness') || c.includes('package') || c.includes('diagnostic') ||
+              n.includes('wellness') || n.includes('package') || n.includes('screening') || n.includes('test')
+            );
+          });
+        };
+
+        const packageOrders = rawOrders.filter(isNonMedicine);
+        const medicineOrders = rawOrders.filter(o => !isNonMedicine(o));
+
+        if (packageOrders.length > 0) {
+          const existingLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+          const migratedBookings = packageOrders.flatMap(po => {
+            return (po.items || []).map((it, idx) => ({
+              id: po.id ? po.id.replace('ORD', 'WEL') : `ZM-WEL-${Date.now()}-${idx}`,
+              bookingId: po.order_number ? po.order_number.replace('ORD', 'WEL') : (po.id || `ZM-WEL-${Date.now()}`),
+              type: 'Wellness Package',
+              testName: it.name,
+              category: 'Wellness Package',
+              bookedDate: po.date || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+              date: po.date || 'Tomorrow',
+              time: po.time || '08:00 AM - Home Collection',
+              patientName: po.patientName || 'Self',
+              phone: po.phone || '',
+              status: po.status || 'Confirmed',
+              price: po.totalAmount || it.price,
+              totalAmount: po.totalAmount || it.price,
+              collectionAddress: po.deliveryAddress || 'Guwahati, Assam',
+              paymentMethod: po.paymentMethod || 'Razorpay (UPI - Verified)'
+            }));
+          });
+
+          const labMap = new Map();
+          [...migratedBookings, ...existingLabs].forEach(item => {
+            const key = item.bookingId || item.id;
+            if (key) labMap.set(key, item);
+          });
+          const updatedLabs = Array.from(labMap.values());
+
+          localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updatedLabs));
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(medicineOrders));
+          setOrders(medicineOrders.length > 0 ? medicineOrders : initialPatientOrders);
+          setLabBookings(updatedLabs);
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        }
+      }
+    } catch (e) {
+      console.warn('Error sanitizing orders:', e);
+    }
+  }, []);
+
   const [addresses, setAddresses] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_saved_addresses');
@@ -1849,6 +1913,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="space-y-3.5">
                 {orders
                   .filter((o) => {
+                    // Strictly exclude any non-medicine orders (wellness packages, diagnostic tests)
+                    const isNonMedicine = Array.isArray(o.items) && o.items.length > 0 && o.items.every(it => {
+                      const n = (it.name || '').toLowerCase();
+                      const t = (it.type || it.itemType || '').toLowerCase();
+                      const c = (it.category || '').toLowerCase();
+                      return (
+                        t === 'package' || t === 'test' ||
+                        c.includes('wellness') || c.includes('package') || c.includes('diagnostic') ||
+                        n.includes('wellness') || n.includes('package') || n.includes('screening') || n.includes('test')
+                      );
+                    });
+                    if (isNonMedicine) return false;
+
                     if (orderFilter === 'all') return true;
                     if (orderFilter === 'out') return (o.status || '').toLowerCase().includes('out');
                     if (orderFilter === 'delivered') return (o.status || '').toLowerCase().includes('deliver');
