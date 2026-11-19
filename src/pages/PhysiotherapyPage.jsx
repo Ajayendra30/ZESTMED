@@ -806,70 +806,70 @@ export default function PhysiotherapyPage() {
         {/* ========================================================================= */}
         {/* 7. OUR IMPACT IN NUMBERS                                                  */}
         {/* ========================================================================= */}
-        <section className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-9 lg:p-11 shadow-2xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <section className="rounded-2xl sm:rounded-[24px] bg-white border border-slate-200/90 p-5 sm:p-7 lg:p-8 shadow-2xs">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
             {/* Left Image: Physiotherapist helping elderly patient */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="w-full max-w-[420px] rounded-2xl overflow-hidden shadow-md border border-slate-100 bg-slate-50">
+            <div className="lg:col-span-4 xl:col-span-4 flex justify-center lg:justify-start">
+              <div className="w-full max-w-[320px] rounded-xl overflow-hidden shadow-xs border border-slate-100 bg-slate-50">
                 <img
                   src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=600&q=80"
                   onError={(e) => { e.currentTarget.src = '/physio-impact-raw.jpg'; }}
                   alt="Physiotherapy session with elderly patient"
-                  className="w-full h-auto max-h-[260px] object-cover object-center select-none"
+                  className="w-full h-auto max-h-[190px] sm:max-h-[210px] object-cover object-center select-none"
                 />
               </div>
             </div>
 
             {/* Right: Heading & 4 Stats Counters */}
-            <div className="lg:col-span-7 space-y-7">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F172A] tracking-tight">
+            <div className="lg:col-span-8 xl:col-span-8 space-y-4 sm:space-y-5">
+              <h2 className="text-xl sm:text-2xl lg:text-[26px] font-black text-[#0F172A] tracking-tight">
                 Our Impact in Numbers
               </h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 
                 {/* Stat 1 */}
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-2.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
+                    <Users className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">5,000+</p>
-                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Happy Patients</p>
+                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">5,000+</p>
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Happy Patients</p>
                   </div>
                 </div>
 
                 {/* Stat 2 */}
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-2.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Calendar className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
+                    <Calendar className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">15+</p>
-                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Expert Physiotherapists</p>
+                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">15+</p>
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Expert Physiotherapists</p>
                   </div>
                 </div>
 
                 {/* Stat 3 */}
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-2.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Activity className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
+                    <Activity className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">98%</p>
-                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Recovery Rate</p>
+                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">98%</p>
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Recovery Rate</p>
                   </div>
                 </div>
 
                 {/* Stat 4 */}
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-2.5">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Star className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
+                    <Star className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
                   </div>
                   <div>
-                    <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#0F172A] leading-tight">4.9/5</p>
-                    <p className="text-xs sm:text-sm text-slate-500 font-bold">Patient Satisfaction</p>
+                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">4.9/5</p>
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Patient Satisfaction</p>
                   </div>
                 </div>
 
