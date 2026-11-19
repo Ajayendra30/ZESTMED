@@ -5,10 +5,10 @@ import {
   Video, CheckCircle2, ShieldCheck, User, Phone, 
   Search, ArrowRight, Heart, Filter 
 } from 'lucide-react';
-import { MOCK_DOCTORS, DOCTOR_SPECIALTIES } from '../mock-data/doctorsData';
+import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { bookDoctorAppointment } from '../services/supabaseService';
+import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 
 export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -27,6 +27,23 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
   });
   const [bookingConfirmed, setBookingConfirmed] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [doctorsList, setDoctorsList] = useState(MOCK_DOCTORS);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadDocs() {
+      try {
+        const docs = await getDoctors();
+        if (isMounted && docs && docs.length > 0) {
+          setDoctorsList(docs);
+        }
+      } catch (err) {
+        console.warn('Error fetching doctors in modal:', err);
+      }
+    }
+    loadDocs();
+    return () => { isMounted = false; };
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -41,12 +58,14 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
 
   if (!isOpen) return null;
 
-  const filteredDoctors = MOCK_DOCTORS.filter((doc) => {
-    const matchSpecialty = selectedSpecialty === 'All Specialties' || doc.specialty === selectedSpecialty;
+  const filteredDoctors = doctorsList.filter((doc) => {
+    const matchSpecialty = matchesSpecialty(doc, selectedSpecialty);
     const matchQuery = !searchDoctor.trim() || 
-      doc.name.toLowerCase().includes(searchDoctor.toLowerCase()) || 
-      doc.specialty.toLowerCase().includes(searchDoctor.toLowerCase()) ||
-      doc.hospital.toLowerCase().includes(searchDoctor.toLowerCase());
+      (doc.name || '').toLowerCase().includes(searchDoctor.toLowerCase()) || 
+      (doc.specialty || '').toLowerCase().includes(searchDoctor.toLowerCase()) ||
+      (doc.specialization || '').toLowerCase().includes(searchDoctor.toLowerCase()) ||
+      (doc.department || '').toLowerCase().includes(searchDoctor.toLowerCase()) ||
+      (doc.hospital || '').toLowerCase().includes(searchDoctor.toLowerCase());
     return matchSpecialty && matchQuery;
   });
 

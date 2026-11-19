@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { MOCK_DOCTORS, matchesSpecialty } from '../mock-data/doctorsData';
 
 /**
  * ==============================================================================
@@ -223,6 +224,80 @@ export const updateDoctorAppointmentStatus = async (id, status) => {
   }
 
   return true;
+};
+
+// ------------------------------------------------------------------------------
+// 2B. VERIFIED SPECIALIST DOCTORS (DATABASE + CACHED REGISTRY)
+// ------------------------------------------------------------------------------
+
+export const getDoctors = async (specialtyFilter = null) => {
+  let doctors = [];
+
+  // 1. Fetch from Supabase PostgreSQL database if available
+  if (isSupabaseConfigured()) {
+    try {
+      let query = supabase.from('doctors').select('*');
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        doctors = data.map((d) => ({
+          id: d.id ? String(d.id) : `doc-${d.doctor_id || Math.random()}`,
+          name: d.name || d.full_name || d.doctor_name,
+          degree: d.degree || d.qualification || 'MBBS',
+          specialty: d.specialty || d.department || d.specialization || 'General Physician',
+          specialization: d.specialization || d.specialty || d.department,
+          department: d.department || d.specialty,
+          designation: d.designation || d.specialty,
+          experience: d.experience ? (String(d.experience).includes('Yr') ? d.experience : `${d.experience}+ Yrs Experience`) : '10+ Yrs Experience',
+          hospital: d.hospital || d.clinic || 'Zestmed Polyclinic Hub',
+          rating: d.rating || '★ 4.9 (900+ reviews)',
+          ratingScore: d.rating_score || d.ratingScore || 4.9,
+          reviewsCount: d.reviews_count || d.reviewsCount || '900+',
+          fee: d.fee || d.consultation_fee || d.fees || 600,
+          nextSlot: d.next_slot || d.nextSlot || 'Today, 04:30 PM',
+          modes: d.modes || (Array.isArray(d.consultation_modes) ? d.consultation_modes : ['Clinic Visit', 'Online Consultation']),
+          avatar: d.avatar || d.image_url || '/doctor-amit-sharma.jpg',
+          bio: d.bio || ''
+        }));
+      }
+    } catch (err) {
+      console.warn('[SupabaseService] getDoctors from Supabase error:', err);
+    }
+  }
+
+  // 2. Resilient local fallback / cached verified registry
+  if (!doctors || doctors.length === 0) {
+    const cached = getLocalData('zestmed_doctors_cache', null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      // Ensure existing records have correct specialization mapping
+      doctors = cached.map((d) => {
+        if (d.name && d.name.toLowerCase().includes('neha verma')) {
+          return {
+            ...d,
+            specialty: 'Gynecology',
+            specialization: 'Gynecology',
+            department: 'Gynecology',
+            designation: 'Obstetrician & Gynecologist'
+          };
+        }
+        return d;
+      });
+    } else {
+      doctors = MOCK_DOCTORS;
+      setLocalData('zestmed_doctors_cache', MOCK_DOCTORS);
+    }
+  }
+
+  // 3. Filter by specialty if specified
+  if (specialtyFilter && specialtyFilter !== 'All' && specialtyFilter !== 'All Specialties') {
+    return doctors.filter((doc) => matchesSpecialty(doc, specialtyFilter));
+  }
+
+  return doctors;
+};
+
+export const getDoctorById = async (id) => {
+  const allDocs = await getDoctors();
+  return allDocs.find((d) => String(d.id) === String(id)) || null;
 };
 
 // ------------------------------------------------------------------------------

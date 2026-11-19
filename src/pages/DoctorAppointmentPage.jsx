@@ -7,10 +7,10 @@ import {
   CalendarCheck, FileText, Sparkles, Heart, Activity,
   ChevronLeft, ChevronRight, UserCheck
 } from 'lucide-react';
-import { MOCK_DOCTORS, DOCTOR_SPECIALTIES } from '../mock-data/doctorsData';
+import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { bookDoctorAppointment } from '../services/supabaseService';
+import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 import DoctorHero from '../components/DoctorHero';
 
 // =========================================================================
@@ -159,6 +159,30 @@ export default function DoctorAppointmentPage() {
   const [activeSpecialtyFilter, setActiveSpecialtyFilter] = useState('All');
   const [showAllDoctors, setShowAllDoctors] = useState(false);
 
+  // Doctors catalog state fetched from database
+  const [doctorsList, setDoctorsList] = useState(MOCK_DOCTORS);
+  const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
+
+  // Load doctors from database on component mount
+  useEffect(() => {
+    let isMounted = true;
+    async function loadDoctors() {
+      try {
+        setIsLoadingDoctors(true);
+        const docs = await getDoctors();
+        if (isMounted && docs && docs.length > 0) {
+          setDoctorsList(docs);
+        }
+      } catch (err) {
+        console.warn('Error fetching doctors from database:', err);
+      } finally {
+        if (isMounted) setIsLoadingDoctors(false);
+      }
+    }
+    loadDoctors();
+    return () => { isMounted = false; };
+  }, []);
+
   // Booking Modal States
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingDoctor, setBookingDoctor] = useState(null);
@@ -191,12 +215,10 @@ export default function DoctorAppointmentPage() {
 
   // Filtered doctors list based on user search or specialty pills
   const displayedDoctors = useMemo(() => {
-    let list = MOCK_DOCTORS;
+    let list = doctorsList;
 
     if (activeSpecialtyFilter !== 'All') {
-      list = list.filter((doc) => 
-        doc.specialty.toLowerCase().includes(activeSpecialtyFilter.toLowerCase())
-      );
+      list = list.filter((doc) => matchesSpecialty(doc, activeSpecialtyFilter));
     }
 
     if (!showAllDoctors && activeSpecialtyFilter === 'All') {
@@ -204,11 +226,11 @@ export default function DoctorAppointmentPage() {
     }
 
     return list;
-  }, [activeSpecialtyFilter, showAllDoctors]);
+  }, [doctorsList, activeSpecialtyFilter, showAllDoctors]);
 
   // Open booking modal
   const handleOpenBooking = (doctor = null, mode = 'Clinic Visit') => {
-    const docToBook = doctor || MOCK_DOCTORS[0];
+    const docToBook = doctor || (displayedDoctors.length > 0 ? displayedDoctors[0] : (doctorsList[0] || MOCK_DOCTORS[0]));
     setBookingDoctor(docToBook);
     setConsultationMode(mode);
     setConfirmedBooking(null);
@@ -479,84 +501,107 @@ export default function DoctorAppointmentPage() {
           </div>
 
           {/* Doctors Grid: Displays Dr. Amit Sharma, Dr. Neha Verma, Dr. Rohan Das */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {displayedDoctors.map((doc) => {
-              return (
-                <div
-                  key={doc.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group relative overflow-hidden"
-                >
-                  <div className="flex items-start gap-4 sm:gap-4.5">
-                    
-                    {/* Doctor Avatar - Uses provided image with light grey background */}
-                    <div className="w-22 h-22 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
-                      <img
-                        src={doc.avatar}
-                        alt={doc.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-
-                    {/* Doctor Details */}
-                    <div className="min-w-0 flex-1">
+          {displayedDoctors.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-8 sm:p-12 text-center space-y-3">
+              <div className="w-14 h-14 bg-teal-50 text-[#007A64] rounded-2xl flex items-center justify-center mx-auto">
+                <Stethoscope className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-black text-[#0F1E36]">No Doctors Found</h3>
+              <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                No doctors currently match "{activeSpecialtyFilter}". You can explore all our verified specialists below.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSpecialtyFilter('All');
+                  setShowAllDoctors(true);
+                }}
+                className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-bold shadow-2xs hover:shadow-md transition cursor-pointer"
+              >
+                <span>View All Doctors</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {displayedDoctors.map((doc) => {
+                return (
+                  <div
+                    key={doc.id}
+                    className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group relative overflow-hidden"
+                  >
+                    <div className="flex items-start gap-4 sm:gap-4.5">
                       
-                      {/* Name & Experience Badge in Top Row */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="text-base sm:text-lg font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
-                            {doc.name}
-                          </h3>
-                          <p className="text-xs sm:text-sm font-bold text-slate-700 mt-0.5">
-                            {doc.specialty}
-                          </p>
-                        </div>
-
-                        {/* Experience Badge matching reference pill */}
-                        <div className="shrink-0 text-center px-2.5 py-1 rounded-xl bg-[#E6F4F1] text-[#007A64] border border-teal-200/50 leading-none">
-                          <p className="text-xs sm:text-[13px] font-black">{doc.experience.split(' ')[0]}</p>
-                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Experience</p>
-                        </div>
+                      {/* Doctor Avatar - Uses provided image with light grey background */}
+                      <div className="w-22 h-22 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
+                        <img
+                          src={doc.avatar}
+                          alt={doc.name}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
 
-                      {/* Qualification */}
-                      <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 truncate">
-                        {doc.degree}
-                      </p>
+                      {/* Doctor Details */}
+                      <div className="min-w-0 flex-1">
+                        
+                        {/* Name & Experience Badge in Top Row */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <h3 className="text-base sm:text-lg font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
+                              {doc.name}
+                            </h3>
+                            <p className="text-xs sm:text-sm font-bold text-slate-700 mt-0.5">
+                              {doc.designation || doc.specialty}
+                            </p>
+                          </div>
 
-                      {/* Rating & Reviews */}
-                      <div className="flex items-center gap-1.5 mt-2.5 text-xs sm:text-sm">
-                        <div className="flex items-center gap-1 text-amber-500 font-extrabold">
-                          <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                          <span>{doc.ratingScore || '4.8'}</span>
+                          {/* Experience Badge matching reference pill */}
+                          <div className="shrink-0 text-center px-2.5 py-1 rounded-xl bg-[#E6F4F1] text-[#007A64] border border-teal-200/50 leading-none">
+                            <p className="text-xs sm:text-[13px] font-black">{doc.experience.split(' ')[0]}</p>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Experience</p>
+                          </div>
                         </div>
-                        <span className="text-slate-400 text-xs">
-                          ({doc.reviewsCount || '1,000+'} reviews)
-                        </span>
+
+                        {/* Qualification */}
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 truncate">
+                          {doc.degree}
+                        </p>
+
+                        {/* Rating & Reviews */}
+                        <div className="flex items-center gap-1.5 mt-2.5 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 text-amber-500 font-extrabold">
+                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            <span>{doc.ratingScore || '4.8'}</span>
+                          </div>
+                          <span className="text-slate-400 text-xs">
+                            ({doc.reviewsCount || '1,000+'} reviews)
+                          </span>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Bar: Fee & Book Button */}
+                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                      <div>
+                        <span className="text-xs text-slate-500 font-medium">Consultation Fee</span>
+                        <p className="text-base sm:text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
                       </div>
 
+                      <button
+                        type="button"
+                        onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
+                        className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+                      >
+                        Book Appointment
+                      </button>
                     </div>
+
                   </div>
-
-                  {/* Bottom Action Bar: Fee & Book Button */}
-                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
-                    <div>
-                      <span className="text-xs text-slate-500 font-medium">Consultation Fee</span>
-                      <p className="text-base sm:text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
-                      className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-                    >
-                      Book Appointment
-                    </button>
-                  </div>
-
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
         </section>
 

@@ -36,7 +36,10 @@ export const MOCK_DOCTORS = [
     id: 'doc-2',
     name: 'Dr. Neha Verma',
     degree: 'MBBS, MS (Obstetrics & Gynecology)',
-    specialty: 'Gynecologist',
+    specialty: 'Gynecology',
+    specialization: 'Gynecology',
+    department: 'Gynecology',
+    designation: 'Obstetrician & Gynecologist',
     experience: '12+ Yrs Experience',
     hospital: 'Zestmed Polyclinic & Maternal Care Center',
     rating: '★ 4.9 (980+ reviews)',
@@ -52,7 +55,10 @@ export const MOCK_DOCTORS = [
     id: 'doc-3',
     name: 'Dr. Rohan Das',
     degree: 'MBBS, MS (Orthopedics)',
-    specialty: 'Orthopedic Surgeon',
+    specialty: 'Orthopedics',
+    specialization: 'Orthopedics',
+    department: 'Orthopedics',
+    designation: 'Orthopedic Surgeon',
     experience: '8+ Yrs Experience',
     hospital: 'Zestmed Advanced Orthopedic & Joint Care Unit',
     rating: '★ 4.8 (760+ reviews)',
@@ -177,3 +183,139 @@ export const MOCK_DOCTORS = [
     bio: 'Chest physician and pulmonologist specializing in asthma, allergic airway diseases, sleep apnea, and post-viral recovery.'
   }
 ];
+
+/**
+ * Normalizes and checks if a doctor matches a specialty filter query or category.
+ * Accurately handles synonyms, stems (e.g. Gynecology <-> Gynecologist), and departments.
+ */
+export const matchesSpecialty = (doctor, filter) => {
+  if (!filter || filter === 'All' || filter === 'All Specialties') return true;
+  if (!doctor) return false;
+
+  const f = filter.toLowerCase().trim();
+  const dSpecialty = (doctor.specialty || '').toLowerCase();
+  const dDept = (doctor.department || '').toLowerCase();
+  const dSpecialization = (doctor.specialization || '').toLowerCase();
+  const dDegree = (doctor.degree || '').toLowerCase();
+  const dDesignation = (doctor.designation || '').toLowerCase();
+  const dBio = (doctor.bio || '').toLowerCase();
+
+  // Direct exact or substring matches
+  if (
+    dSpecialty === f ||
+    dDept === f ||
+    dSpecialization === f ||
+    dSpecialty.includes(f) ||
+    f.includes(dSpecialty) ||
+    dDept.includes(f) ||
+    dSpecialization.includes(f)
+  ) {
+    return true;
+  }
+
+  // Gynecology mappings: gynecology, gynecologist, gynae, obstetrics
+  if (f.includes('gyne') || f.includes('gynae')) {
+    return (
+      dSpecialty.includes('gynec') ||
+      dSpecialty.includes('gynae') ||
+      dDept.includes('gynec') ||
+      dDept.includes('gynae') ||
+      dSpecialization.includes('gynec') ||
+      dSpecialization.includes('gynae') ||
+      dDegree.includes('gynec') ||
+      dDegree.includes('obstetrics') ||
+      dDesignation.includes('gynec') ||
+      dBio.includes('gynec') ||
+      dBio.includes('obstetric')
+    );
+  }
+
+  // Orthopedics mappings: orthopedics, orthopedic surgeon, ortho
+  if (f.includes('ortho')) {
+    return (
+      dSpecialty.includes('ortho') ||
+      dDept.includes('ortho') ||
+      dSpecialization.includes('ortho') ||
+      dDegree.includes('ortho') ||
+      dDesignation.includes('ortho')
+    );
+  }
+
+  // Cardiology
+  if (f.includes('cardio')) {
+    return (
+      dSpecialty.includes('cardio') ||
+      dDept.includes('cardio') ||
+      dSpecialization.includes('cardio') ||
+      dDegree.includes('cardio')
+    );
+  }
+
+  // General Physician
+  if (f.includes('physician') || f.includes('general')) {
+    return (
+      dSpecialty.includes('physician') ||
+      dSpecialty.includes('general') ||
+      dDept.includes('general') ||
+      dDegree.includes('medicine')
+    );
+  }
+
+  // Pediatrics
+  if (f.includes('pedia')) {
+    return (
+      dSpecialty.includes('pedia') ||
+      dDept.includes('pedia') ||
+      dSpecialization.includes('pedia')
+    );
+  }
+
+  // Dermatology
+  if (f.includes('derma')) {
+    return (
+      dSpecialty.includes('derma') ||
+      dDept.includes('derma') ||
+      dSpecialization.includes('derma')
+    );
+  }
+
+  // ENT
+  if (f === 'ent' || f.includes('ear') || f.includes('throat')) {
+    return (
+      dSpecialty.includes('ent') ||
+      dDept.includes('ent') ||
+      dDegree.includes('ent') ||
+      dDegree.includes('dlo')
+    );
+  }
+
+  // Gastroenterology
+  if (f.includes('gastro')) {
+    return (
+      dSpecialty.includes('gastro') ||
+      dDept.includes('gastro') ||
+      dSpecialization.includes('gastro')
+    );
+  }
+
+  // Neurology
+  if (f.includes('neuro')) {
+    return (
+      dSpecialty.includes('neuro') ||
+      dDept.includes('neuro') ||
+      dSpecialization.includes('neuro')
+    );
+  }
+
+  // Pulmonology
+  if (f.includes('pulmo') || f.includes('chest') || f.includes('respiratory')) {
+    return (
+      dSpecialty.includes('pulmo') ||
+      dDept.includes('pulmo') ||
+      dSpecialization.includes('pulmo') ||
+      dDegree.includes('pulmonary')
+    );
+  }
+
+  return false;
+};
