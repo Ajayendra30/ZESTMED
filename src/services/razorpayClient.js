@@ -85,18 +85,18 @@ export const createServerOrder = async ({ amount, bookingId, bookingType, custom
     return data;
   }
 
-  // Fallback for development/testing when backend API is offline or returning non-JSON
-  console.warn('[RazorpayClient] Generating resilient order reference for Razorpay Checkout.');
+  // Fallback for development/testing when backend API is offline: use Standard Checkout
+  console.warn('[RazorpayClient] Proceeding with Standard Checkout.');
   const numericAmount = Number(amount) || 100;
   return {
     success: true,
-    orderId: `order_test_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`,
+    orderId: null,
     amount: Math.round(numericAmount * 100),
     amountRupees: numericAmount,
     currency: 'INR',
     receipt: `rcpt_${bookingId || Date.now()}`,
     keyId: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_U22znXn1PSuEH1',
-    isTestOrder: true
+    isStandardCheckout: true
   };
 };
 
@@ -276,7 +276,8 @@ export const launchRazorpayCheckout = async ({
       typeof orderData.orderId === 'string' &&
       orderData.orderId.startsWith('order_') &&
       !orderData.orderId.startsWith('order_test_') &&
-      !orderData.isTestOrder
+      !orderData.isTestOrder &&
+      !orderData.isStandardCheckout
     );
 
     // Step C: Initialize Razorpay Standard Checkout UI
