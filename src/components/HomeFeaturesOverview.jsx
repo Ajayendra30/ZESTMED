@@ -202,26 +202,26 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
           
           {/* Left Column: Why Choose ZESTMED? */}
-          <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 md:p-8 lg:p-8 xl:p-9 border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
               {/* Header */}
-              <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
-                <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#008F83] border border-teal-100 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5 text-[#008F83] stroke-[2.4]" />
+              <div className="flex items-center gap-3.5 sm:gap-4 mb-6 pb-4 border-b border-slate-100">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 text-[#008F83] border-2 border-teal-100 flex items-center justify-center shrink-0 shadow-2xs">
+                  <ShieldCheck className="w-8 h-8 sm:w-9 sm:h-9 text-[#008F83] stroke-[2.4]" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                <h3 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-900 tracking-tight">
                   Why Choose ZESTMED?
                 </h3>
               </div>
 
               {/* 5 Checklist Points */}
-              <div className="space-y-3.5">
+              <div className="space-y-4 sm:space-y-4.5 xl:space-y-5">
                 {whyChoosePoints.map((pt, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-teal-100/90 text-[#008F83] flex items-center justify-center shrink-0">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  <div key={idx} className="flex items-center gap-3.5 sm:gap-4">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-teal-100 text-[#008F83] flex items-center justify-center shrink-0 shadow-2xs">
+                      <Check className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[3]" />
                     </div>
-                    <span className="text-xs sm:text-sm font-bold text-slate-700 leading-snug">
+                    <span className="text-sm sm:text-base lg:text-[16px] xl:text-lg font-bold text-slate-800 leading-snug">
                       {pt}
                     </span>
                   </div>
