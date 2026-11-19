@@ -150,9 +150,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [orders, setOrders] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_patient_orders');
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved) : initialPatientOrders;
     } catch {
-      return [];
+      return initialPatientOrders;
     }
   });
 
@@ -684,7 +684,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 addToast('Viewing My Bookings', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'bookings' && serviceCategoryFilter !== 'medicine'
+                activeMenu === 'bookings'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
@@ -710,13 +710,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <button
               type="button"
               onClick={() => {
-                setActiveMenu('bookings');
-                setServiceCategoryFilter('medicine');
+                setActiveMenu('orders');
                 setIsSidebarOpen(false);
-                addToast('Viewing Medicine Orders in My Bookings', 'info');
+                addToast('Viewing Medicine Order History', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'bookings' && serviceCategoryFilter === 'medicine'
+                activeMenu === 'orders'
                   ? 'bg-[#14B8A6] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
@@ -1522,54 +1521,27 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           {activeMenu === 'bookings' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                     <Calendar className="w-6 h-6 text-[#14B8A6]" />
                     <span>My Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage and view all services booked through your account (Lab Tests, Doctor Appointments, Physiotherapy, Surgery Packages, Wellness Packages, and Medicine Orders).
+                    Manage and view all services booked through your account (Lab Tests, Doctor Appointments, Physiotherapy, Surgery Packages, and Wellness Packages).
                   </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/diagnostics')}
-                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Book Lab Test</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/doctor-appointment')}
-                    className="bg-[#0F1E36] hover:bg-[#1a335a] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Stethoscope className="w-3.5 h-3.5" />
-                    <span>Book Doctor</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/physiotherapy')}
-                    className="bg-white hover:bg-slate-50 text-[#008F83] border border-[#008F83] px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>Book Physio</span>
-                  </button>
                 </div>
               </div>
 
               {/* Service Category Filter Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {[
-                  { id: 'all', label: `All Bookings (${userBookings.length})` },
+                  { id: 'all', label: `All Bookings (${userBookings.filter(b => b.itemType !== 'medicine').length})` },
                   { id: 'lab', label: `Lab Tests (${userBookings.filter(b => b.itemType === 'lab').length})` },
                   { id: 'doctor', label: `Doctor Appointments (${userBookings.filter(b => b.itemType === 'doctor').length})` },
                   { id: 'physiotherapy', label: `Physiotherapy (${userBookings.filter(b => b.itemType === 'physiotherapy').length})` },
                   { id: 'surgery', label: `Surgery Packages (${userBookings.filter(b => b.itemType === 'surgery').length})` },
-                  { id: 'wellness', label: `Wellness Packages (${userBookings.filter(b => b.itemType === 'wellness').length})` },
-                  { id: 'medicine', label: `Medicine Orders (${userBookings.filter(b => b.itemType === 'medicine').length})` }
+                  { id: 'wellness', label: `Wellness Packages (${userBookings.filter(b => b.itemType === 'wellness').length})` }
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -1818,13 +1790,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         className="px-3.5 py-2 bg-white border border-[#008F83] text-[#008F83] rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                       >
                         Book Physio
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => navigate('/medicines')}
-                        className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 transition cursor-pointer shadow-2xs"
-                      >
-                        Medicine Store
                       </button>
                     </div>
                   </div>
