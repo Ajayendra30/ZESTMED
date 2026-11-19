@@ -171,7 +171,7 @@ export default function SurgeryPackagesPage() {
         <div className="absolute -top-16 -left-16 w-64 h-64 bg-teal-200/40 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 right-1/3 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 lg:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Content Column */}
@@ -233,7 +233,7 @@ export default function SurgeryPackagesPage() {
       </section>
 
       {/* Main Responsive Container for subsequent sections */}
-      <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 space-y-9 sm:space-y-12">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-8 sm:pt-10 space-y-9 sm:space-y-12">
 
         {/* ========================================================================= */}
         {/* 2. VALUE PROPOSITION STRIP (4 Key Pillars)                                */}
