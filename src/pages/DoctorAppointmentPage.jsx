@@ -700,46 +700,46 @@ export default function DoctorAppointmentPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             
             {/* Card 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[155px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Verified Specialists</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Experienced & trusted doctors</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36] leading-tight">Verified Specialists</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Experienced &amp; trusted doctors</p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[155px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Video className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Online & On-site Consultation</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Choose what suits you</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36] leading-tight">Online &amp; On-site Consultation</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Choose what suits you</p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[155px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <CalendarCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Quick & Easy Booking</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Book in just a few clicks</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36] leading-tight">Quick &amp; Easy Booking</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Book in just a few clicks</p>
               </div>
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex items-center gap-4.5 shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group">
-              <div className="shrink-0 flex items-center justify-center text-[#007A64] group-hover:scale-105 transition-transform">
-                <span className="text-3xl font-black text-[#007A64]">₹</span>
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[155px]">
+              <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
+                <CreditCard className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F1E36]">Secure Payments</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Multiple payment options</p>
+                <h4 className="text-base sm:text-lg font-black text-[#0F1E36] leading-tight">Secure Payments</h4>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Multiple payment options</p>
               </div>
             </div>
 
