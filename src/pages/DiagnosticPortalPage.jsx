@@ -409,9 +409,9 @@ export default function DiagnosticPortalPage() {
           2. BREADCRUMBS
           ========================================================================= */}
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4">
-        <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-semibold">
+        <div className="flex items-center gap-2 text-sm sm:text-base text-slate-500 font-semibold">
           <Link to="/" className="flex items-center gap-1.5 hover:text-[#008F83] transition">
-            <Home className="w-4 h-4 text-[#008F83]" />
+            <Home className="w-4.5 h-4.5 text-[#008F83]" />
             <span>Home</span>
           </Link>
           <span className="text-slate-400">&gt;</span>
@@ -422,11 +422,11 @@ export default function DiagnosticPortalPage() {
       {/* =========================================================================
           3. SEARCH BAR & HORIZONTAL CATEGORY CARDS
           ========================================================================= */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-4 mb-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-5 mb-7">
         {/* Search Bar with Search Button */}
         <form onSubmit={handleSearchSubmit} className="relative w-full">
-          <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs flex items-center p-1 sm:p-1.5 pl-4 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/20 transition">
-            <Search className="w-5 h-5 text-slate-400 shrink-0 mr-3" />
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm flex items-center p-1.5 sm:p-2 pl-5 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/20 transition">
+            <Search className="w-6 h-6 text-slate-400 shrink-0 mr-3.5" />
             <input
               type="text"
               value={searchInputVal}
@@ -435,7 +435,7 @@ export default function DiagnosticPortalPage() {
                 if (!e.target.value) setSearchQuery('');
               }}
               placeholder="Search for lab tests, e.g., CBC, Lipid Profile, Thyroid, etc..."
-              className="w-full bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none"
             />
             {searchInputVal && (
               <button
@@ -444,14 +444,14 @@ export default function DiagnosticPortalPage() {
                   setSearchInputVal('');
                   setSearchQuery('');
                 }}
-                className="text-xs text-slate-400 hover:text-slate-600 px-2 py-1 mr-1"
+                className="text-xs sm:text-sm text-slate-400 hover:text-slate-600 px-3 py-1.5 mr-1.5 font-medium"
               >
                 Clear
               </button>
             )}
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white text-sm font-semibold rounded-lg transition shrink-0 cursor-pointer shadow-xs"
+              className="px-7 sm:px-8 py-3 bg-[#008F83] hover:bg-[#00786E] text-white text-sm sm:text-base font-bold rounded-xl transition shrink-0 cursor-pointer shadow-xs"
             >
               Search
             </button>
@@ -459,7 +459,7 @@ export default function DiagnosticPortalPage() {
         </form>
 
         {/* 9 Category Horizontal Cards */}
-        <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto pb-2 pt-1 scrollbar-none">
+        <div className="flex items-center gap-3 sm:gap-3.5 overflow-x-auto pb-3 pt-1 scrollbar-none">
           {CATEGORY_PILLS.map((pill) => {
             const isActive = activeCategory === pill.id;
             const IconComponent = pill.icon;
@@ -469,16 +469,16 @@ export default function DiagnosticPortalPage() {
                 key={pill.id}
                 type="button"
                 onClick={() => setActiveCategory(pill.id)}
-                className={`flex flex-col items-center justify-center min-w-[110px] sm:min-w-[124px] h-[78px] px-2.5 py-2 rounded-xl transition cursor-pointer border shrink-0 text-center ${
+                className={`flex flex-col items-center justify-center min-w-[124px] sm:min-w-[138px] h-[88px] sm:h-[94px] px-3.5 py-2.5 rounded-2xl transition cursor-pointer border shrink-0 text-center ${
                   isActive
-                    ? 'bg-[#E7F7F4] border-[#008F83] shadow-xs'
-                    : 'bg-white border-slate-200/90 hover:border-teal-300 hover:bg-slate-50/80'
+                    ? 'bg-[#E7F7F4] border-2 border-[#008F83] shadow-xs'
+                    : 'bg-white border border-slate-200/90 hover:border-teal-300 hover:bg-slate-50/80'
                 }`}
               >
-                <div className="mb-1.5 flex items-center justify-center">
+                <div className="mb-2 flex items-center justify-center">
                   {pill.isCustom ? (
                     <IconComponent
-                      className={`w-6 h-6 ${
+                      className={`w-7 h-7 sm:w-7.5 sm:h-7.5 ${
                         isActive
                           ? 'text-[#008F83]'
                           : pill.id === 'diabetes'
@@ -500,14 +500,14 @@ export default function DiagnosticPortalPage() {
                     />
                   ) : (
                     <IconComponent
-                      className={`w-6 h-6 ${
+                      className={`w-7 h-7 sm:w-7.5 sm:h-7.5 ${
                         isActive ? 'text-[#008F83]' : 'text-teal-600'
                       }`}
                     />
                   )}
                 </div>
                 <span
-                  className={`text-xs font-bold leading-tight ${
+                  className={`text-xs sm:text-sm font-bold leading-tight ${
                     isActive ? 'text-[#008F83]' : 'text-slate-800'
                   }`}
                 >
@@ -526,16 +526,16 @@ export default function DiagnosticPortalPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
           
           {/* ================== LEFT FILTER SIDEBAR ================== */}
-          <aside className="lg:col-span-3 space-y-5">
+          <aside className="lg:col-span-3 space-y-6">
             
             {/* Box 1: Test Categories */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs">
-              <div className="flex items-center gap-2 mb-4 pb-2.5 border-b border-slate-100">
-                <Filter className="w-4 h-4 text-[#008F83]" />
-                <h3 className="text-sm font-bold text-slate-900">Test Categories</h3>
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs">
+              <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
+                <Filter className="w-5 h-5 text-[#008F83]" />
+                <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Test Categories</h3>
               </div>
 
-              <div className="space-y-2.5 text-xs sm:text-sm">
+              <div className="space-y-3 text-sm sm:text-[15px]">
                 {SIDEBAR_CATEGORIES.slice(0, isViewMoreCategories ? SIDEBAR_CATEGORIES.length : 6).map((cat) => {
                   const isChecked = selectedSidebarCategories.includes(cat.id);
                   return (
@@ -543,18 +543,18 @@ export default function DiagnosticPortalPage() {
                       key={cat.id}
                       className="flex items-center justify-between cursor-pointer text-slate-700 hover:text-slate-900 group select-none"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleSidebarCategory(cat.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
+                          className="w-4.5 h-4.5 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
                         />
-                        <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
+                        <span className={`text-sm sm:text-[15px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
                           {cat.name}
                         </span>
                       </div>
-                      <span className="text-slate-400 text-xs">({cat.count})</span>
+                      <span className="text-slate-400 text-xs sm:text-sm font-medium">({cat.count})</span>
                     </label>
                   );
                 })}
@@ -562,24 +562,24 @@ export default function DiagnosticPortalPage() {
                 <button
                   type="button"
                   onClick={() => setIsViewMoreCategories(!isViewMoreCategories)}
-                  className="flex items-center gap-1 text-xs font-bold text-[#008F83] hover:underline pt-1.5 cursor-pointer"
+                  className="flex items-center gap-1.5 text-sm font-bold text-[#008F83] hover:underline pt-2 cursor-pointer"
                 >
                   <span>{isViewMoreCategories ? 'View Less' : 'View More'}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isViewMoreCategories ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isViewMoreCategories ? 'rotate-180' : ''}`} />
                 </button>
               </div>
             </div>
 
             {/* Box 2: Filter by Price Range & Offers */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-5">
-              <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                <Filter className="w-4 h-4 text-[#008F83]" />
-                <h3 className="text-sm font-bold text-slate-900">Filter by</h3>
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs space-y-6">
+              <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+                <Filter className="w-5 h-5 text-[#008F83]" />
+                <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">Filter by</h3>
               </div>
 
               {/* Price Range */}
               <div>
-                <span className="text-xs font-bold text-slate-800 block mb-2.5">Price Range</span>
+                <span className="text-sm sm:text-base font-bold text-slate-900 block mb-3">Price Range</span>
                 <input
                   type="range"
                   min="0"
@@ -587,19 +587,19 @@ export default function DiagnosticPortalPage() {
                   step="100"
                   value={priceMax}
                   onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-[#008F83] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                  className="w-full accent-[#008F83] cursor-pointer h-2 bg-slate-200 rounded-lg"
                 />
-                <div className="flex items-center justify-between text-xs text-slate-600 font-bold mt-2">
+                <div className="flex items-center justify-between text-sm text-slate-700 font-bold mt-2.5">
                   <span>₹0</span>
                   <span className="text-slate-400">—</span>
-                  <span className="text-slate-900 font-bold">₹{priceMax.toLocaleString()}</span>
+                  <span className="text-slate-900 font-black">₹{priceMax.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Offers */}
-              <div className="pt-3 border-t border-slate-100">
-                <span className="text-xs font-bold text-slate-800 block mb-2.5">Offers</span>
-                <div className="space-y-2.5 text-xs sm:text-[13px]">
+              <div className="pt-4 border-t border-slate-100">
+                <span className="text-sm sm:text-base font-bold text-slate-900 block mb-3">Offers</span>
+                <div className="space-y-3 text-sm sm:text-[15px]">
                   {[
                     { pct: 10, label: '10% and above', count: 48 },
                     { pct: 20, label: '20% and above', count: 36 },
@@ -611,18 +611,18 @@ export default function DiagnosticPortalPage() {
                         key={offer.pct}
                         className="flex items-center justify-between cursor-pointer text-slate-700 hover:text-slate-900 select-none"
                       >
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-3">
                           <input
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => toggleDiscount(offer.pct)}
-                            className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
+                            className="w-4.5 h-4.5 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
                           />
-                          <span className={`text-xs sm:text-[13px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
+                          <span className={`text-sm sm:text-[15px] ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
                             {offer.label}
                           </span>
                         </div>
-                        <span className="text-slate-400 text-xs">({offer.count})</span>
+                        <span className="text-slate-400 text-xs sm:text-sm font-medium">({offer.count})</span>
                       </label>
                     );
                   })}
@@ -634,21 +634,21 @@ export default function DiagnosticPortalPage() {
           </aside>
 
           {/* ================== RIGHT CONTENT: POPULAR LAB TESTS ================== */}
-          <main className="lg:col-span-9 space-y-4">
+          <main className="lg:col-span-9 space-y-5">
             
             {/* Header: Title + Sort dropdown */}
             <div className="flex items-center justify-between gap-4">
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Popular Lab Tests
               </h2>
 
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
-                <span className="text-slate-500 font-medium">Sort by:</span>
+              <div className="flex items-center gap-2.5 text-sm sm:text-base text-slate-600">
+                <span className="text-slate-500 font-semibold">Sort by:</span>
                 <div className="relative">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#008F83] cursor-pointer shadow-2xs"
+                    className="appearance-none pl-4 pr-9 py-2 bg-white border border-slate-200 rounded-xl text-sm sm:text-base font-bold text-slate-800 focus:outline-none focus:border-[#008F83] cursor-pointer shadow-xs"
                   >
                     <option value="Popularity">Popularity</option>
                     <option value="Price: Low to High">Price: Low to High</option>
@@ -656,15 +656,15 @@ export default function DiagnosticPortalPage() {
                     <option value="Highest Discount">Highest Discount</option>
                     <option value="Customer Rating">Customer Rating</option>
                   </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
             </div>
 
             {/* Test Cards Grid: 3 Columns x 2 Rows = 6 Cards */}
             {filteredTests.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-                <p className="text-slate-600 font-semibold mb-2">No tests match your filter criteria.</p>
+              <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
+                <p className="text-slate-600 font-semibold mb-2 text-base">No tests match your filter criteria.</p>
                 <button
                   type="button"
                   onClick={() => {
@@ -675,7 +675,7 @@ export default function DiagnosticPortalPage() {
                     setPriceMax(10000);
                     setSelectedDiscounts([]);
                   }}
-                  className="px-4 py-2 bg-[#008F83] text-white text-xs font-bold rounded-lg mt-2"
+                  className="px-5 py-2.5 bg-[#008F83] text-white text-sm font-bold rounded-xl mt-2 cursor-pointer shadow-xs hover:bg-[#00786E] transition"
                 >
                   Reset Filters
                 </button>
@@ -686,56 +686,56 @@ export default function DiagnosticPortalPage() {
                   return (
                     <div
                       key={test.id}
-                      className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+                      className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-5.5 shadow-xs hover:shadow-lg hover:border-teal-300/80 transition-all duration-200 flex flex-col justify-between"
                     >
                       {/* Top Content Row: Icon Badge + Details */}
                       <div>
                         <div className="flex items-start gap-3.5 mb-3">
                           {/* Left Icon Badge */}
-                          <div className={`w-14 h-14 rounded-xl ${test.iconBg} flex items-center justify-center shrink-0 shadow-2xs`}>
-                            {test.iconType === 'blood' && <BloodDropSvg className="w-7 h-7 text-rose-500" />}
-                            {test.iconType === 'thyroid' && <ThyroidSvg className="w-7 h-7 text-purple-600" />}
-                            {test.iconType === 'liver' && <LiverSvg className="w-7 h-7 text-rose-600" />}
-                            {test.iconType === 'body' && <BodySilhouetteSvg className="w-7 h-7 text-sky-600" />}
-                            {test.iconType === 'heart' && <HeartPulseSvg className="w-7 h-7 text-rose-500" />}
-                            {test.iconType === 'kidney' && <KidneysSvg className="w-7 h-7 text-purple-600" />}
+                          <div className={`w-15 h-15 sm:w-16 sm:h-16 rounded-2xl ${test.iconBg} flex items-center justify-center shrink-0 shadow-xs`}>
+                            {test.iconType === 'blood' && <BloodDropSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-rose-500" />}
+                            {test.iconType === 'thyroid' && <ThyroidSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-purple-600" />}
+                            {test.iconType === 'liver' && <LiverSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-rose-600" />}
+                            {test.iconType === 'body' && <BodySilhouetteSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-sky-600" />}
+                            {test.iconType === 'heart' && <HeartPulseSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-rose-500" />}
+                            {test.iconType === 'kidney' && <KidneysSvg className="w-8 h-8 sm:w-8.5 sm:h-8.5 text-purple-600" />}
                           </div>
 
                           {/* Right Content */}
                           <div className="flex-1 min-w-0">
                             {/* Title & Discount Badge */}
-                            <div className="flex items-start justify-between gap-1.5">
-                              <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="text-base sm:text-[17px] font-bold text-slate-900 leading-snug line-clamp-1">
                                 {test.name}
                               </h3>
-                              <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold whitespace-nowrap shrink-0">
+                              <span className="px-2 py-0.5 rounded-md bg-[#E8F8EE] text-[#16A34A] text-xs font-bold whitespace-nowrap shrink-0">
                                 {test.discountPercent}% OFF
                               </span>
                             </div>
 
                             {/* Description */}
-                            <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1">
+                            <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed line-clamp-2 mt-1.5">
                               {test.description}
                             </p>
 
                             {/* Star Rating */}
-                            <div className="flex items-center gap-1 mt-2 text-xs">
-                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                            <div className="flex items-center gap-1.5 mt-2.5 text-xs sm:text-sm">
+                              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                               <span className="font-bold text-slate-800">{test.rating}</span>
-                              <span className="text-slate-400">({test.reviewsCount})</span>
+                              <span className="text-slate-400 font-medium">({test.reviewsCount})</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Bottom Pricing & CTA Button */}
-                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
+                      <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-3">
                         {/* Price Row */}
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-base sm:text-lg font-black text-slate-900">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-lg sm:text-xl font-black text-slate-900">
                             ₹{test.price.toLocaleString()}
                           </span>
-                          <span className="text-xs text-slate-400 line-through">
+                          <span className="text-xs sm:text-sm text-slate-400 line-through font-medium">
                             ₹{test.mrp.toLocaleString()}
                           </span>
                         </div>
@@ -744,9 +744,9 @@ export default function DiagnosticPortalPage() {
                         <button
                           type="button"
                           onClick={() => handleBookTest(test)}
-                          className="px-3.5 py-2 bg-[#008F83] hover:bg-[#00786E] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer"
+                          className="px-4 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-xs hover:shadow-md cursor-pointer"
                         >
-                          <Calendar className="w-3.5 h-3.5" />
+                          <Calendar className="w-4 h-4" />
                           <span>Book Now</span>
                         </button>
                       </div>
@@ -760,55 +760,55 @@ export default function DiagnosticPortalPage() {
             {/* =========================================================================
                 BOTTOM PROMOTIONAL BAR: HOME SAMPLE COLLECTION (Directly below Popular Lab Tests)
                 ========================================================================= */}
-            <div className="pt-3">
-              <div className="bg-[#EAF7F5] border border-teal-100/90 rounded-2xl p-4 sm:p-5 xl:py-4 xl:px-4 2xl:px-5 shadow-xs flex flex-col xl:flex-row items-center justify-between gap-4 sm:gap-4 xl:gap-3.5">
+            <div className="pt-4">
+              <div className="bg-[#EAF7F5] border border-teal-200/90 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col xl:flex-row items-center justify-between gap-5 sm:gap-6">
                 
                 {/* Left Title with Green Home Icon */}
-                <div className="flex items-center gap-3 shrink-0 w-full xl:w-auto">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-teal-50 border border-teal-200/80 flex items-center justify-center text-[#008F83] shrink-0 shadow-2xs">
-                    <Home className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83]" />
+                <div className="flex items-center gap-3.5 shrink-0 w-full xl:w-auto">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border-2 border-teal-200/90 flex items-center justify-center text-[#008F83] shrink-0 shadow-xs">
+                    <Home className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">
+                    <h4 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
                       Home Sample Collection
                     </h4>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5 max-w-[240px] xl:max-w-[200px] 2xl:max-w-none leading-snug">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1 leading-snug">
                       Book your test and get sample collection at your doorstep.
                     </p>
                   </div>
                 </div>
 
                 {/* Center 4 Features */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-3 flex-1 min-w-0 w-full text-center py-2.5 xl:py-1 border-y xl:border-y-0 xl:border-x border-teal-200/60 xl:px-3 2xl:px-4">
-                  <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
-                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 flex-1 min-w-0 w-full text-center py-3 xl:py-1 border-y xl:border-y-0 xl:border-x border-teal-200/80 xl:px-4 2xl:px-5">
+                  <div className="flex flex-col items-center justify-center gap-1.5 min-w-0 px-1">
+                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83] shrink-0" />
+                    <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight text-center">
                       <div>Easy</div>
                       <div>Booking</div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
-                    <ScooterSvg className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                  <div className="flex flex-col items-center justify-center gap-1.5 min-w-0 px-1">
+                    <ScooterSvg className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83] shrink-0" />
+                    <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight text-center">
                       <div>Trained</div>
                       <div>Phlebotomist</div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
-                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
-                    <div className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight text-center">
+                  <div className="flex flex-col items-center justify-center gap-1.5 min-w-0 px-1">
+                    <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#008F83] shrink-0" />
+                    <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight text-center">
                       <div>Safe &amp;</div>
                       <div>Hygienic</div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center gap-1 min-w-0 px-1">
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 shrink-0" />
-                    <div className="text-[10px] sm:text-[11px] font-bold text-emerald-800 leading-tight text-center">
+                  <div className="flex flex-col items-center justify-center gap-1.5 min-w-0 px-1">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 shrink-0" />
+                    <div className="text-xs sm:text-sm font-bold text-emerald-800 leading-tight text-center">
                       <div className="whitespace-nowrap">Single Day Reports</div>
-                      <div className="text-[10px] font-semibold text-teal-700 whitespace-nowrap">(12–24 Hrs)</div>
+                      <div className="text-[11px] sm:text-xs font-semibold text-teal-700 whitespace-nowrap">(12–24 Hrs)</div>
                     </div>
                   </div>
                 </div>
@@ -820,10 +820,10 @@ export default function DiagnosticPortalPage() {
                     onClick={() => {
                       setBookingTestItem(LAB_TESTS_DATA[0]);
                     }}
-                    className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-xs cursor-pointer whitespace-nowrap shrink-0"
+                    className="w-full sm:w-auto px-6 sm:px-7 py-3 bg-[#008F83] hover:bg-[#00786E] text-white rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2.5 transition shadow-sm hover:shadow-md cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <span>Book a Lab Test Now</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
 
