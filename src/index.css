@@ -58,6 +58,21 @@
   @apply bg-[#01333A] hover:bg-[#002227] text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
 }
 
+/* Dark Popover Scrollbar matching reference images */
+.custom-dark-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-dark-scrollbar::-webkit-scrollbar-track {
+  background: #18191E;
+}
+.custom-dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #383A44;
+  border-radius: 4px;
+}
+.custom-dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4E515F;
+}
+
 .btn-secondary {
   @apply bg-white hover:bg-slate-50 text-[#01333A] border border-[#01333A]/20 font-medium px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2;
 }

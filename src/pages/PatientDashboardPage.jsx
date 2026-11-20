@@ -72,6 +72,7 @@ import AddAddressModal from '../components/AddAddressModal';
 import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import BookingDetailModal from '../components/BookingDetailModal';
+import NotificationPopover, { DEFAULT_NOTIFICATIONS } from '../components/NotificationPopover';
 import AuthModal from '../components/AuthModal';
 import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
@@ -1110,29 +1111,30 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
               </button>
 
-              {/* Notifications Popover */}
-              {isNotificationsOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 p-3.5 z-30"
-                  onMouseLeave={() => setIsNotificationsOpen(false)}
-                >
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-900">Health Alerts & Updates</span>
-                    <span className="text-[10px] font-bold text-[#14B8A6] bg-teal-50 px-2 py-0.5 rounded-full">
-                      3 New
-                    </span>
-                  </div>
-                  <div className="space-y-2 pt-2.5 max-h-60 overflow-y-auto">
-                    {notificationsList.map((n) => (
-                      <div key={n.id} className="text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
-                        <p className="font-bold text-slate-900 leading-tight">{n.title}</p>
-                        <p className="text-slate-600 leading-snug mt-0.5">{n.desc}</p>
-                        <span className="text-[10px] text-slate-400 font-mono mt-1 block">{n.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Notifications Popover matching Reference Images (Dark UI with Settings) */}
+              <NotificationPopover
+                isOpen={isNotificationsOpen}
+                onClose={() => setIsNotificationsOpen(false)}
+                notifications={DEFAULT_NOTIFICATIONS}
+                onNotificationClick={(n) => {
+                  setIsNotificationsOpen(false);
+                  if (n.linkType === 'lab') {
+                    setActiveMenu('reports');
+                    addToast('Navigating to Diagnostic Lab Reports', 'info');
+                  } else if (n.linkType === 'order') {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('medicine');
+                    addToast('Navigating to Medicine Orders', 'info');
+                  } else if (n.linkType === 'doctor') {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('doctor');
+                    addToast('Navigating to Doctor Appointments', 'info');
+                  } else if (n.linkType === 'rx') {
+                    setActiveMenu('prescription');
+                    addToast('Navigating to Prescription Vault', 'info');
+                  }
+                }}
+              />
             </div>
 
             {/* User Profile Info */}
@@ -2427,7 +2429,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* 6. NOTIFICATIONS CENTER VIEW                             */}
           {/* ======================================================== */}
           {activeMenu === 'notifications' && (
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-6 max-w-2xl mx-auto py-2">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -2435,7 +2437,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <span>Notification Center</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Real-time operational alerts for diagnostic reports, home sample collections, and pharmacy orders.
+                    Real-time clinical alerts for diagnostic reports, doctor appointments, and prescription pharmacy orders.
                   </p>
                 </div>
                 <button
@@ -2448,78 +2450,30 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </button>
               </div>
 
-              {/* Notification Cards List */}
-              <div className="space-y-3">
-                {notificationsList.map((n) => (
-                  <div
-                    key={n.id}
-                    className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 mt-0.5">
-                        <Bell className="w-5 h-5 text-[#14B8A6]" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold text-slate-900">{n.title}</h4>
-                          <span className="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
-                            {n.time}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-600 mt-1">{n.desc}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                      {n.title.toLowerCase().includes('report') && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenu('reports');
-                            addToast('Navigating to verified reports', 'info');
-                          }}
-                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                        >
-                          View Report
-                        </button>
-                      )}
-                      {n.title.toLowerCase().includes('phlebotomist') && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenu('bookings');
-                            addToast('Navigating to active lab bookings', 'info');
-                          }}
-                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                        >
-                          Track Visit
-                        </button>
-                      )}
-                      {n.title.toLowerCase().includes('medicine') && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenu('bookings');
-                            setServiceCategoryFilter('medicine');
-                            addToast('Navigating to medicine orders in My Bookings', 'info');
-                          }}
-                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                        >
-                          Track Delivery
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => addToast(`Notification #${n.id} dismissed`, 'info')}
-                        className="px-2.5 py-1.5 text-slate-400 hover:text-slate-600 rounded-xl text-xs transition cursor-pointer"
-                        title="Dismiss"
-                      >
-                        Dismiss
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Exact Dark Notification Card & Settings matching Reference Images */}
+              <NotificationPopover
+                inline={true}
+                isOpen={true}
+                onClose={() => {}}
+                notifications={DEFAULT_NOTIFICATIONS}
+                onNotificationClick={(n) => {
+                  if (n.linkType === 'lab') {
+                    setActiveMenu('reports');
+                    addToast('Navigating to Diagnostic Lab Reports', 'info');
+                  } else if (n.linkType === 'order') {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('medicine');
+                    addToast('Navigating to Medicine Orders in My Bookings', 'info');
+                  } else if (n.linkType === 'doctor') {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('doctor');
+                    addToast('Navigating to Doctor Appointments in My Bookings', 'info');
+                  } else if (n.linkType === 'rx') {
+                    setActiveMenu('prescription');
+                    addToast('Navigating to Prescription Vault', 'info');
+                  }
+                }}
+              />
             </div>
           )}
         </main>
