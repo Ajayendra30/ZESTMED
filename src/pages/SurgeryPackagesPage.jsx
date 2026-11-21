@@ -418,9 +418,9 @@ export default function SurgeryPackagesPage() {
                 </span>
                 <Stethoscope className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Consultation</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Meet our specialist &amp; get a proper evaluation</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug whitespace-nowrap">Meet our specialist for evaluation</p>
               </div>
             </div>
 
@@ -432,9 +432,9 @@ export default function SurgeryPackagesPage() {
                 </span>
                 <ClipboardList className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Surgery Planning</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Choose the right surgery package</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug whitespace-nowrap">Choose the right surgery package</p>
               </div>
             </div>
 
@@ -446,9 +446,9 @@ export default function SurgeryPackagesPage() {
                 </span>
                 <BedDouble className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Procedure</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Safe surgery with advanced technology</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug whitespace-nowrap">Safe surgery with advanced technology</p>
               </div>
             </div>
 
@@ -460,9 +460,9 @@ export default function SurgeryPackagesPage() {
                 </span>
                 <HeartPulse className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Recovery &amp; Follow-up</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Personalized post-surgery care and regular follow-up</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug whitespace-nowrap">Post-surgery care &amp; regular follow-up</p>
               </div>
             </div>
 
