@@ -248,7 +248,8 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
               <div className="pt-2">
                 <Link
                   to="/diagnostics"
-                  className="inline-flex items-center gap-2 bg-white hover:bg-teal-50 text-[#00545D] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black shadow-md transition-all duration-200 group"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="inline-flex items-center gap-2 bg-white hover:bg-teal-50 text-[#00545D] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-black shadow-md hover:shadow-lg transition-all duration-200 group cursor-pointer active:scale-95"
                 >
                   <span>Book a Test Now</span>
                   <ArrowRight className="w-4 h-4 text-[#00545D] group-hover:translate-x-1 transition-transform" />
@@ -257,13 +258,18 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
             </div>
 
             {/* Right Visual: Phlebotomist Home Sample Collection Image */}
-            <div className="relative sm:absolute bottom-0 right-0 w-full sm:w-[48%] lg:w-[45%] h-auto sm:h-full flex items-end justify-end pointer-events-none select-none">
+            <Link
+              to="/diagnostics"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="relative sm:absolute bottom-0 right-0 w-full sm:w-[48%] lg:w-[45%] h-auto sm:h-full flex items-end justify-end select-none cursor-pointer group"
+              title="Book Home Sample Collection Diagnostic Test"
+            >
               <img
                 src="/home-sample-collection.png"
                 alt="ZESTMED Home Sample Collection Phlebotomist and Patient"
-                className="h-auto max-h-[190px] sm:max-h-[230px] lg:max-h-[250px] w-auto max-w-full object-contain object-right-bottom drop-shadow-xl"
+                className="h-auto max-h-[190px] sm:max-h-[230px] lg:max-h-[250px] w-auto max-w-full object-contain object-right-bottom drop-shadow-xl group-hover:scale-[1.02] transition-transform duration-200"
               />
-            </div>
+            </Link>
           </div>
 
         </div>
