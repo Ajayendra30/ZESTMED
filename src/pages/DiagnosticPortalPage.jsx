@@ -396,30 +396,22 @@ export default function DiagnosticPortalPage() {
               {/* 4 Trust Badges in a Horizontal Row */}
               <div className="pt-2 sm:pt-3 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <ShieldCheck className="w-4 h-4 text-[#008F83]" />
-                  </div>
+                  <ShieldCheck className="w-5 h-5 text-[#008F83] shrink-0" />
                   <span>100% Accurate</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <Home className="w-4 h-4 text-[#008F83]" />
-                  </div>
+                  <Home className="w-5 h-5 text-[#008F83] shrink-0" />
                   <span>Free Home Collection</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-[#008F83] shadow-xs shrink-0">
-                    <Award className="w-4 h-4 text-[#008F83]" />
-                  </div>
+                  <Award className="w-5 h-5 text-[#008F83] shrink-0" />
                   <span>NABL Certified</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 border border-teal-200/80 flex items-center justify-center text-amber-500 shadow-xs shrink-0">
-                    <Clock className="w-4 h-4 text-amber-500" />
-                  </div>
+                  <Clock className="w-5 h-5 text-amber-500 shrink-0" />
                   <span className="text-teal-900 font-extrabold">Single-Day Reports</span>
                 </div>
               </div>
