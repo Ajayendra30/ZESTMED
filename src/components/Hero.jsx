@@ -11,9 +11,9 @@ import heroBgImg from '../assets/hero-bg.jpg';
 export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurgeryModal, onOpenSeniorPickup }) {
   return (
     <section className="relative w-full min-w-full overflow-hidden bg-[#EFFBF9] pt-5 sm:pt-6 lg:pt-8 pb-10 sm:pb-12 lg:pb-14 xl:pb-16 border-b border-teal-100/60">
-      {/* Hero Background Image - Full width edge-to-edge with responsive positioning */}
+      {/* Hero Background Image - Full width edge-to-edge */}
       <div 
-        className="absolute inset-0 w-full h-full bg-cover bg-center sm:bg-[center_bottom] lg:bg-[right_bottom] xl:bg-[right_bottom] bg-no-repeat pointer-events-none select-none transition-all duration-300"
+        className="absolute inset-0 w-full h-full bg-cover bg-center lg:bg-right bg-no-repeat pointer-events-none select-none"
         style={{ backgroundImage: `url(${heroBgImg})` }}
       />
 
