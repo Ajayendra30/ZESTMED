@@ -214,7 +214,17 @@ export default function DoctorAppointmentPage() {
   // Active filters, expandable profiles and views
   const [activeSpecialtyFilter, setActiveSpecialtyFilter] = useState('All');
   const [showAllDoctors, setShowAllDoctors] = useState(false);
-  const [expandedDoctorId, setExpandedDoctorId] = useState(null);
+  
+  // Track expanded doctor profiles independently by doctor ID
+  const [expandedDoctorIds, setExpandedDoctorIds] = useState({});
+
+  const toggleDoctorProfile = (docId) => {
+    if (!docId) return;
+    setExpandedDoctorIds(prev => ({
+      ...prev,
+      [docId]: !prev[docId]
+    }));
+  };
 
   // Doctors catalog state fetched from database
   const [doctorsList, setDoctorsList] = useState(MOCK_DOCTORS);
@@ -745,9 +755,10 @@ export default function DoctorAppointmentPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
               {displayedDoctors.map((doc) => {
-                const isExpanded = expandedDoctorId === doc.id;
+                const isExpanded = Boolean(expandedDoctorIds[doc.id]);
                 const qualifications = getDoctorQualifications(doc);
                 const focusAreas = getDoctorSpecialityFocus(doc);
+                const isDoctorInfoAvailable = Boolean(doc && doc.name && (doc.degree || doc.bio || doc.experience || doc.fee));
 
                 return (
                   <div
@@ -828,31 +839,107 @@ export default function DoctorAppointmentPage() {
                           </div>
                         </div>
 
-                        {/* Expandable Section matching Reference Image 2 */}
+                        {/* Complete Details Expanded Section when View Profile is toggled */}
                         {isExpanded && (
                           <div className="space-y-3 pt-2 text-xs animate-in fade-in duration-200">
-                            {/* Doctor Bio Box */}
-                            <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
-                              {doc.bio || 'Senior medical consultant specializing in comprehensive patient care, accurate clinical diagnoses, and specialized therapeutic management.'}
-                            </div>
+                            {!isDoctorInfoAvailable ? (
+                              /* Appropriate fallback message when doctor info is incomplete */
+                              <div className="bg-amber-50/90 rounded-2xl p-4 border border-amber-200/80 text-xs text-amber-800 space-y-1.5">
+                                <div className="flex items-center gap-2 font-black text-amber-900">
+                                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                                  <span>Profile Information Updating</span>
+                                </div>
+                                <p className="text-amber-700 font-medium leading-relaxed">
+                                  Complete clinical credentials and schedule for this specialist are being verified by the medical board. Please contact our reception desk for appointment booking.
+                                </p>
+                              </div>
+                            ) : (
+                              <>
+                                {/* Doctor Bio Box */}
+                                <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+                                  {doc.bio || `${doc.name} is a senior medical consultant specializing in comprehensive patient care, accurate clinical diagnoses, and specialized therapeutic management.`}
+                                </div>
 
-                            {/* AVAILABLE DAYS with Calendar icon and day pills */}
-                            <div className="rounded-xl border border-teal-200/90 bg-teal-50/20 p-3.5 space-y-2">
-                              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#007A64]">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>AVAILABLE DAYS</span>
-                              </div>
-                              <div className="flex flex-wrap items-center gap-1.5">
-                                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                                  <span
-                                    key={day}
-                                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs"
-                                  >
-                                    {day}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
+                                {/* Complete Credentials Bar: Experience, Consultation Fee & Next Slot */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                                  {/* Experience */}
+                                  <div className="p-2.5 rounded-xl bg-teal-50/70 border border-teal-100/90 flex flex-col justify-between">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                                      Experience
+                                    </span>
+                                    <span className="font-extrabold text-[#007A64] text-xs sm:text-sm">
+                                      {doc.experience || '10+ Yrs'}
+                                    </span>
+                                  </div>
+
+                                  {/* Consultation Fee */}
+                                  <div className="p-2.5 rounded-xl bg-teal-50/70 border border-teal-100/90 flex flex-col justify-between">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                                      Consultation Fee
+                                    </span>
+                                    <span className="font-black text-slate-900 text-xs sm:text-sm">
+                                      ₹{doc.fee || 600}
+                                    </span>
+                                  </div>
+
+                                  {/* Next Slot */}
+                                  <div className="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-teal-50/70 border border-teal-100/90 flex flex-col justify-between">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                                      Next Slot
+                                    </span>
+                                    <span className="font-bold text-[#007A64] text-xs sm:text-sm truncate">
+                                      {doc.nextSlot || 'Today, 04:30 PM'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Hospital / Clinic Hub */}
+                                <div className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50/90 p-2.5 rounded-xl border border-slate-100">
+                                  <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                                  <span className="font-semibold truncate">{doc.hospital || 'Zestmed Polyclinic & Diagnostic Hub, Guwahati'}</span>
+                                </div>
+
+                                {/* AVAILABLE DAYS with Calendar icon and day pills */}
+                                <div className="rounded-xl border border-teal-200/90 bg-teal-50/20 p-3.5 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#007A64]">
+                                      <Calendar className="w-3.5 h-3.5 text-[#007A64]" />
+                                      <span>AVAILABLE DAYS</span>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-500">
+                                      04:00 PM – 08:00 PM
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                                      <span
+                                        key={day}
+                                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs"
+                                      >
+                                        {day}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Consultation Modes & Verification */}
+                                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+                                  <div className="flex items-center gap-2 text-[11px] font-bold text-slate-700">
+                                    <span className="flex items-center gap-1 text-[#007A64]">
+                                      <CheckCircle2 className="w-3.5 h-3.5" /> Clinic Visit
+                                    </span>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1 text-[#007A64]">
+                                      <Video className="w-3.5 h-3.5" /> Video Consult
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                    <span>AMC/NMC Verified</span>
+                                  </div>
+                                </div>
+                              </>
+                            )}
                           </div>
                         )}
 
@@ -860,10 +947,10 @@ export default function DoctorAppointmentPage() {
 
                       {/* 3. Card Action Footer matching Reference Image 1 & 2 */}
                       <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                        {/* View Profile v / Hide Details ^ button */}
+                        {/* Independent View Profile v / Hide Details ^ button */}
                         <button
                           type="button"
-                          onClick={() => setExpandedDoctorId(isExpanded ? null : doc.id)}
+                          onClick={() => toggleDoctorProfile(doc.id)}
                           className="px-3.5 sm:px-4 py-2.5 rounded-xl border border-[#007A64] hover:bg-teal-50/60 text-[#007A64] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition cursor-pointer"
                         >
                           <span>{isExpanded ? 'Hide Details' : 'View Profile'}</span>
