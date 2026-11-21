@@ -40,12 +40,17 @@ export default function DoctorHero({
     });
   }, [doctors, selectedSpecialty]);
   return (
-    <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#EFFBF8] via-[#E2F2F8] to-[#D5EBF8]">
+    <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-slate-100">
       
-      {/* 1. Subtle Background Hospital Aura & Ambient Light */}
-      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-        <div className="absolute -top-24 left-[10%] w-[380px] h-[380px] bg-teal-200/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 right-[15%] w-[420px] h-[420px] bg-sky-200/30 rounded-full blur-3xl" />
+      {/* 1. Full Hero Background Image with Responsive Positioning */}
+      <div className="absolute inset-0 select-none pointer-events-none overflow-hidden">
+        <img
+          src="/doctor-hero-hospital-corridor.jpg"
+          alt="Modern Hospital Specialty Clinic Corridor"
+          className="w-full h-full object-cover object-center sm:object-[center_35%] lg:object-center transition-all duration-300"
+        />
+        {/* Soft Ambient Protective Overlay for Typography Legibility & Brand Theme */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/92 via-white/80 to-white/70 sm:from-white/88 sm:via-white/72 sm:to-white/55 lg:from-white/90 lg:via-white/70 lg:to-white/55 backdrop-blur-[0.5px]" />
       </div>
 
       {/* 2. Main Full-Width Content Container - Compact top padding, grounded bottom */}
