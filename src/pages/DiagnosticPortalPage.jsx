@@ -425,12 +425,12 @@ export default function DiagnosticPortalPage() {
               </div>
             </div>
 
-            {/* Right Image: Scientist with Microscope, Test Tubes and DNA Helix */}
+            {/* Right Image: Scientist with Microscope & Laboratory Equipment */}
             <div className="flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-9">
               <img
-                src="/lab-tests-hero.png"
+                src="/lab-tests-hero.jpg"
                 alt="Lab Diagnostics Scientist with Microscope"
-                className="h-auto max-h-[170px] sm:max-h-[200px] xl:max-h-[235px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
+                className="h-auto max-h-[180px] sm:max-h-[210px] xl:max-h-[250px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none rounded-2xl"
               />
             </div>
 
