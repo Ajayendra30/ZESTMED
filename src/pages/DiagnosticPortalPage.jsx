@@ -384,7 +384,7 @@ export default function DiagnosticPortalPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
             
             {/* Left Content */}
-            <div className="lg:col-span-6 xl:col-span-6 z-10 space-y-3 sm:space-y-4 max-w-xl">
+            <div className="lg:col-span-7 xl:col-span-7 z-10 space-y-3.5 sm:space-y-4 max-w-xl">
               <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-tight">
                 Lab Tests & <span className="text-[#008F83]">Diagnostics</span>
               </h1>
@@ -393,32 +393,40 @@ export default function DiagnosticPortalPage() {
                 Book a wide range of lab tests online across Guwahati with home sample collection. All test reports delivered within a single day (12-24 Hours).
               </p>
 
-              {/* 4 Trust Badges in a Horizontal Row */}
-              <div className="pt-2 sm:pt-3 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-800 font-bold">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-[#008F83] shrink-0" />
+              {/* 4 Trust Badges in a 2x2 Grid matching Medicines Store layout & styling */}
+              <div className="pt-3 sm:pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-8 lg:gap-x-10 gap-y-3 sm:gap-y-3.5 max-w-xl text-sm sm:text-base text-slate-800 font-bold">
+                <div className="flex items-center gap-3">
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <ShieldCheck className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
+                  </div>
                   <span>100% Accurate</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Home className="w-5 h-5 text-[#008F83] shrink-0" />
+                <div className="flex items-center gap-3">
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Home className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
+                  </div>
                   <span>Free Home Collection</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-[#008F83] shrink-0" />
+                <div className="flex items-center gap-3">
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Award className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
+                  </div>
                   <span>NABL Certified</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-amber-500 shrink-0" />
-                  <span className="text-teal-900 font-extrabold">Single-Day Reports</span>
+                <div className="flex items-center gap-3">
+                  <div className="shrink-0 flex items-center justify-center text-[#008F83]">
+                    <Clock className="w-6.5 h-6.5 sm:w-7 sm:h-7 text-[#008F83]" />
+                  </div>
+                  <span>Single-Day Reports</span>
                 </div>
               </div>
             </div>
 
             {/* Right Image: Scientist with Microscope & Laboratory Equipment */}
-            <div className="flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-9">
+            <div className="flex lg:flex lg:col-span-5 xl:col-span-5 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-9">
               <img
                 src="/lab-tests-hero.png"
                 alt="Lab Diagnostics Scientist with Microscope"
