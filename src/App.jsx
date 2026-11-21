@@ -22,6 +22,7 @@ import WellnessPackagesPage from './pages/WellnessPackagesPage';
 import SurgeryPackagesPage from './pages/SurgeryPackagesPage';
 import SurgeryDetailPage from './pages/SurgeryDetailPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
+import BookDoctorPage from './pages/BookDoctorPage';
 import PhysiotherapyPage from './pages/PhysiotherapyPage';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
@@ -198,7 +199,9 @@ function AppContent() {
           <Route path="/doctor-appointment" element={<DoctorAppointmentPage />} />
           <Route path="/doctors" element={<DoctorAppointmentPage />} />
           <Route path="/doctor" element={<DoctorAppointmentPage />} />
-          <Route path="/book-doctor" element={<DoctorAppointmentPage />} />
+          <Route path="/book-doctor" element={<BookDoctorPage />} />
+          <Route path="/book-doctor-appointment" element={<BookDoctorPage />} />
+          <Route path="/book-appointment" element={<BookDoctorPage />} />
           <Route path="/physiotherapy" element={<PhysiotherapyPage />} />
           <Route path="/physio" element={<PhysiotherapyPage />} />
           <Route path="/physiotherapist" element={<PhysiotherapyPage />} />

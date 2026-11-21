@@ -6,7 +6,7 @@ import {
   Star, CheckCircle2, User, Phone, X, Award, AlertCircle,
   CalendarCheck, FileText, Sparkles, Heart, Activity,
   ChevronLeft, ChevronRight, UserCheck, Banknote, Lock,
-  PhoneCall, MessageSquare
+  PhoneCall, MessageSquare, GraduationCap, BadgeCheck
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
@@ -148,6 +148,57 @@ const SPECIALTY_LIST = [
   { id: 'pulmo', name: 'Pulmonology', icon: PulmonologyIcon, color: 'text-[#007A64]' },
 ];
 
+// Helper functions matching Reference Card Layout
+function getDoctorQualifications(doc) {
+  if (doc?.qualifications && Array.isArray(doc.qualifications) && doc.qualifications.length > 0) {
+    return doc.qualifications;
+  }
+  if (!doc?.degree) return ['MBBS', 'MD'];
+  const parts = doc.degree.split(/,\s*(?=[A-Z])/).map(p => p.trim()).filter(Boolean);
+  return parts.length > 0 ? parts : [doc.degree];
+}
+
+function getDoctorSpecialityFocus(doc) {
+  if (doc?.specialityFocus && Array.isArray(doc.specialityFocus) && doc.specialityFocus.length > 0) {
+    return doc.specialityFocus;
+  }
+  const spec = (doc?.specialty || '').toLowerCase();
+  if (spec.includes('general') || spec.includes('physician')) {
+    return ['Internal Medicine', 'Preventive Care'];
+  }
+  if (spec.includes('cardio')) {
+    return ['Interventional Cardiology', 'Cardiac Audit'];
+  }
+  if (spec.includes('ortho')) {
+    return ['Joint Replacement', 'Arthroscopy'];
+  }
+  if (spec.includes('gyne') || spec.includes('gynae') || spec.includes('obstetric')) {
+    return ['High-Risk Pregnancy', 'Maternal Health'];
+  }
+  if (spec.includes('pedia')) {
+    return ['Neonatal Care', 'Child Wellness'];
+  }
+  if (spec.includes('derma')) {
+    return ['Clinical Dermatology', 'Trichology'];
+  }
+  if (spec.includes('ent')) {
+    return ['Endoscopic Sinus', 'Otology'];
+  }
+  if (spec.includes('gastro')) {
+    return ['Digestive Health', 'Therapeutic Endoscopy'];
+  }
+  if (spec.includes('neuro')) {
+    return ['Stroke Management', 'Neuro Therapeutics'];
+  }
+  if (spec.includes('pulmo') || spec.includes('chest')) {
+    return ['Asthma & COPD', 'Chest Medicine'];
+  }
+  if (spec.includes('dental') || spec.includes('dentist')) {
+    return ['Periodontics', 'Conservative Dentistry'];
+  }
+  return [doc?.specialty || 'Clinical Specialist', 'Consultation'];
+}
+
 export default function DoctorAppointmentPage() {
   const { addToast } = useToast();
   const { user, openAuth } = useAuth();
@@ -279,7 +330,7 @@ export default function DoctorAppointmentPage() {
     return list;
   }, [doctorsList, activeSpecialtyFilter, selectedDoctor, showAllDoctors]);
 
-  // Auto-open doctor booking when user logs in on the same page
+  // Auto-redirect to doctor booking page when user logs in with pending action
   useEffect(() => {
     if (user) {
       try {
@@ -288,36 +339,30 @@ export default function DoctorAppointmentPage() {
           const parsed = JSON.parse(pendingRaw);
           if (parsed?.type === 'book_doctor') {
             sessionStorage.removeItem('zestmed_pending_action');
-            setBookingDoctor(parsed.doctor || displayedDoctors[0] || doctorsList[0]);
-            if (parsed.mode) setConsultationMode(parsed.mode);
-            setIsBookingModalOpen(true);
+            navigate('/book-doctor', {
+              state: {
+                doctor: parsed.doctor || displayedDoctors[0] || doctorsList[0],
+                mode: parsed.mode || 'Clinic Visit',
+                specialty: (parsed.doctor || displayedDoctors[0] || doctorsList[0])?.specialty
+              }
+            });
           }
         }
       } catch (_) {}
     }
-  }, [user, location.state, doctorsList, displayedDoctors]);
+  }, [user, location.state, doctorsList, displayedDoctors, navigate]);
 
-  // Open booking modal
+  // Open booking page (Matching user requirement)
   const handleOpenBooking = (doctor = null, mode = 'Clinic Visit') => {
     const docToBook = doctor || (displayedDoctors.length > 0 ? displayedDoctors[0] : (doctorsList[0] || MOCK_DOCTORS[0]));
 
-    if (!user) {
-      enforceAuth({
-        user,
-        navigate,
-        location,
-        openAuth,
-        toastMessage: 'Please login to book a doctor appointment',
-        pendingAction: { type: 'book_doctor', doctor: docToBook, mode },
-        addToast
-      });
-      return;
-    }
-
-    setBookingDoctor(docToBook);
-    setConsultationMode(mode);
-    setConfirmedBooking(null);
-    setIsBookingModalOpen(true);
+    navigate('/book-doctor', {
+      state: {
+        doctor: docToBook,
+        mode,
+        specialty: docToBook?.specialty
+      }
+    });
   };
 
   // Submit search from "Find a Doctor" widget
@@ -698,17 +743,19 @@ export default function DoctorAppointmentPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
               {displayedDoctors.map((doc) => {
                 const isExpanded = expandedDoctorId === doc.id;
+                const qualifications = getDoctorQualifications(doc);
+                const focusAreas = getDoctorSpecialityFocus(doc);
 
                 return (
                   <div
                     key={doc.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
+                    className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
                   >
-                    {/* 1. Visual Header / Portrait Banner with Overlay Badges */}
-                    <div className="relative h-56 sm:h-60 w-full overflow-hidden bg-slate-100 select-none">
+                    {/* 1. Doctor Portrait Photo matching Reference Image 1 & 2 */}
+                    <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-100 select-none">
                       <img
                         src={doc.avatar}
                         alt={doc.name}
@@ -718,138 +765,120 @@ export default function DoctorAppointmentPage() {
                           e.target.src = '/contact-doctor.png';
                         }}
                       />
-                      
-                      {/* Vignette Gradient at base of image */}
-                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
-
-                      {/* Floating Specialty Badge (Top-Left) */}
-                      <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black text-[#007A64] border border-teal-100 shadow-sm flex items-center gap-1.5">
-                        <Stethoscope className="w-3.5 h-3.5 text-[#007A64]" />
-                        <span>{doc.specialty}</span>
-                      </div>
-
-                      {/* Floating Rating Badge (Top-Right) */}
-                      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-black text-amber-600 border border-amber-100 shadow-sm flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        <span>{doc.ratingScore || '4.8'}</span>
-                        <span className="text-[10px] text-slate-400 font-semibold">
-                          ({String(doc.reviewsCount || '1000').split(' ')[0]})
-                        </span>
-                      </div>
-
-                      {/* Experience Pill overlaid inside bottom of image */}
-                      <div className="absolute bottom-2.5 left-3 text-white text-xs font-bold drop-shadow-md flex items-center gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5 text-teal-300" />
-                        <span>{doc.experience}</span>
-                      </div>
                     </div>
 
-                    {/* 2. Doctor Clinical Information Body */}
-                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
-                      <div className="space-y-2">
-                        {/* Name & Sub-Designation */}
+                    {/* 2. Doctor Information Body matching Reference Image 1 & 2 */}
+                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-3.5">
+                        
+                        {/* Specialty / Department in bold uppercase teal */}
                         <div>
-                          <h3 className="text-lg sm:text-xl font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
+                          <p className="text-xs sm:text-[13px] font-black uppercase tracking-wider text-[#007A64] mb-1">
+                            {doc.specialty || 'SPECIALIST CONSULTANT'}
+                          </p>
+                          <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
                             {doc.name}
                           </h3>
-                          <p className="text-xs sm:text-[13px] font-bold text-[#007A64] mt-0.5">
-                            {doc.designation || `Senior Consultant • ${doc.specialty}`}
+                          <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">
+                            {doc.designation || 'Senior Consultant'}
                           </p>
                         </div>
 
-                        {/* Qualifications */}
-                        <p className="text-xs text-slate-600 font-medium leading-relaxed truncate">
-                          {doc.degree}
-                        </p>
-
-                        {/* Hospital / Clinic Hub */}
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                          <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
-                          <span className="truncate">{doc.hospital}</span>
+                        {/* QUALIFICATION Section with Graduation Cap icon */}
+                        <div className="flex items-start gap-3 pt-1">
+                          <div className="w-8 h-8 rounded-full bg-[#E6F4F1] text-[#007A64] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                            <GraduationCap className="w-4 h-4 text-[#007A64]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">
+                              QUALIFICATION
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {qualifications.map((q, idx) => (
+                                <span
+                                  key={idx}
+                                  className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-bold"
+                                >
+                                  {q}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
 
-                        {/* Next Available Slot Pill */}
-                        <div className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-xl bg-teal-50/70 border border-teal-100 text-slate-700">
-                          <span className="font-semibold text-slate-600 flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-[#007A64]" />
-                            <span>Next Available Slot:</span>
-                          </span>
-                          <span className="font-bold text-[#007A64]">{doc.nextSlot || 'Today, 04:30 PM'}</span>
+                        {/* SPECIALITY FOCUS Section with BadgeCheck icon */}
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                            <BadgeCheck className="w-4 h-4 text-[#4F46E5]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">
+                              SPECIALITY FOCUS
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {focusAreas.map((f, idx) => (
+                                <span
+                                  key={idx}
+                                  className="px-2.5 py-0.5 rounded-md bg-teal-50 text-[#007A64] text-xs font-bold"
+                                >
+                                  {f}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
 
-                        {/* NE Health Hub Inline Expandable Accordion ("View Profile v") */}
-                        <button
-                          type="button"
-                          onClick={() => setExpandedDoctorId(isExpanded ? null : doc.id)}
-                          className="w-full pt-2 pb-1 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 hover:text-[#007A64] transition cursor-pointer"
-                        >
-                          <span>{isExpanded ? 'Hide Clinical Profile' : 'View Profile & Timings'}</span>
-                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#007A64]' : 'text-slate-400'}`} />
-                        </button>
-
-                        {/* Expandable Clinical Profile Details */}
+                        {/* Expandable Section matching Reference Image 2 */}
                         {isExpanded && (
-                          <div className="space-y-2.5 pt-2 text-xs border-t border-dashed border-teal-200 animate-in fade-in duration-200">
-                            {/* Doctor Biography */}
-                            <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
-                              <p className="text-slate-600 leading-relaxed font-normal">
-                                {doc.bio || 'Senior medical consultant with specialized clinical focus on patient-centric diagnosis, modern clinical therapeutics, and continuous care.'}
-                              </p>
+                          <div className="space-y-3 pt-2 text-xs animate-in fade-in duration-200">
+                            {/* Doctor Bio Box */}
+                            <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+                              {doc.bio || 'Senior medical consultant specializing in comprehensive patient care, accurate clinical diagnoses, and specialized therapeutic management.'}
                             </div>
 
-                            {/* Consulting Days & Schedule */}
-                            <div>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                                Available Consulting Schedule:
-                              </span>
-                              <div className="flex flex-wrap items-center gap-1">
+                            {/* AVAILABLE DAYS with Calendar icon and day pills */}
+                            <div className="rounded-xl border border-teal-200/90 bg-teal-50/20 p-3.5 space-y-2">
+                              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#007A64]">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>AVAILABLE DAYS</span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-1.5">
                                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                                  <span key={day} className="px-1.5 py-0.5 rounded bg-teal-50 text-[#007A64] border border-teal-200/60 font-semibold text-[10px]">
+                                  <span
+                                    key={day}
+                                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs"
+                                  >
                                     {day}
                                   </span>
                                 ))}
-                                <span className="text-[10px] text-slate-500 font-semibold ml-1">04:00 PM – 08:00 PM</span>
                               </div>
-                            </div>
-
-                            {/* Modes */}
-                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-700">
-                              <span className="flex items-center gap-1 text-[#007A64]">
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Clinic Visit
-                              </span>
-                              <span>•</span>
-                              <span className="flex items-center gap-1 text-[#007A64]">
-                                <Video className="w-3.5 h-3.5" /> Video Consult
-                              </span>
-                            </div>
-
-                            {/* Verified Registration */}
-                            <div className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Medical Registration: AMC / NMC Verified</span>
                             </div>
                           </div>
                         )}
 
                       </div>
 
-                      {/* 3. Card Action Footer */}
+                      {/* 3. Card Action Footer matching Reference Image 1 & 2 */}
                       <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                        <div>
-                          <span className="text-[11px] text-slate-400 font-medium block">Consultation Fee</span>
-                          <p className="text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
-                        </div>
+                        {/* View Profile v / Hide Details ^ button */}
+                        <button
+                          type="button"
+                          onClick={() => setExpandedDoctorId(isExpanded ? null : doc.id)}
+                          className="px-3.5 sm:px-4 py-2.5 rounded-xl border border-[#007A64] hover:bg-teal-50/60 text-[#007A64] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition cursor-pointer"
+                        >
+                          <span>{isExpanded ? 'Hide Details' : 'View Profile'}</span>
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
 
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
-                            className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
-                          >
-                            <Calendar className="w-4 h-4" />
-                            <span>Book Slot</span>
-                          </button>
-                        </div>
+                        {/* Book Slot filled button -> opens the new booking page */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
+                          className="flex-1 px-4 sm:px-5 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition cursor-pointer active:scale-95"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          <span>Book Slot</span>
+                        </button>
                       </div>
 
                     </div>
