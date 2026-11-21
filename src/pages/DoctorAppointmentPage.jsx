@@ -14,7 +14,6 @@ import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
-import DoctorHero from '../components/DoctorHero';
 
 // =========================================================================
 // Pixel-accurate Medical Specialty SVG Icons matching Reference Image
@@ -520,27 +519,8 @@ export default function DoctorAppointmentPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
       
-      {/* ========================================================================= */}
-      {/* 1. HERO BANNER - Full-Width Edge to Edge (No Outer Card Box)              */}
-      {/* ========================================================================= */}
-      <DoctorHero
-        selectedSpecialty={selectedSpecialty}
-        setSelectedSpecialty={setSelectedSpecialty}
-        selectedDoctor={selectedDoctor}
-        setSelectedDoctor={setSelectedDoctor}
-        selectedLocation={selectedLocation}
-        setSelectedLocation={setSelectedLocation}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        specialties={DOCTOR_SPECIALTIES}
-        doctors={doctorsList}
-        onSearchSubmit={handleSearchSubmit}
-        onBookAppointment={handleOpenBooking}
-        onOnlineConsultation={handleOpenBooking}
-      />
-
-      {/* Main Container matching Zestmed Standard for remaining sections */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 pb-12 space-y-7 sm:space-y-8">
+      {/* Main Container matching Zestmed Standard */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-6 sm:pt-8 pb-12 space-y-7 sm:space-y-8">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
