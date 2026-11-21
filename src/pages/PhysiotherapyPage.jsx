@@ -378,7 +378,7 @@ export default function PhysiotherapyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-16 font-sans select-none">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans select-none">
       
       {/* ========================================================================= */}
       {/* 1. HERO BANNER - Full-Width Edge to Edge (Exact Crisp Background & Cutout)  */}
@@ -461,7 +461,7 @@ export default function PhysiotherapyPage() {
       </section>
 
       {/* Main Container matching Zestmed Standard for remaining sections */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 pb-12 space-y-8 sm:space-y-10">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 pb-4 sm:pb-6 space-y-8 sm:space-y-10">
 
         {/* ========================================================================= */}
         {/* 2. FEATURE HIGHLIGHTS (4 Items Bar matching Reference Image)              */}
