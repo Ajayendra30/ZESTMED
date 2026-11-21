@@ -309,16 +309,16 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           <div className="absolute -top-16 -right-16 w-[420px] h-[420px] bg-gradient-to-bl from-[#75D2E4]/45 via-[#9FE5F2]/25 to-transparent rounded-full blur-2xl" />
         </div>
 
-        <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pt-8 md:pt-9 lg:pt-10 pb-8 md:pb-9 lg:pb-10 relative z-10 min-h-[260px] lg:min-h-[290px] flex items-center">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 md:pt-8 lg:pt-9 pb-7 md:pb-8 lg:pb-9 relative z-10 min-h-[320px] sm:min-h-[360px] lg:min-h-[390px] xl:min-h-[420px] 2xl:min-h-[450px] flex items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
             
             {/* Left Column */}
-            <div className="lg:col-span-7 xl:col-span-7 z-10 space-y-3.5 sm:space-y-4">
+            <div className="lg:col-span-6 xl:col-span-6 z-10 space-y-3.5 sm:space-y-4 max-w-xl">
               <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black text-slate-900 tracking-tight leading-tight">
                 Medicines <span className="text-[#008F83]">Store</span>
               </h1>
               
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl font-medium leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-600 max-w-xl font-medium leading-relaxed">
                 Order genuine medicines online with fast & safe delivery at your doorstep.
               </p>
 
@@ -354,12 +354,12 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
               </div>
             </div>
 
-            {/* Right Column: Visual with Bottles and First Aid Box pulled down to bottom baseline */}
-            <div className="flex lg:flex lg:col-span-5 xl:col-span-5 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-2 sm:-mb-4 lg:-mb-10">
+            {/* Right Column: Visual with Bottles and First Aid Box - Increased size to fill empty space without cropping */}
+            <div className="w-full flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-4 sm:-mb-6 lg:-mb-9">
               <img
                 src="/medicines-hero.png"
                 alt="Pharmacy Medicines and First Aid Kit"
-                className="h-auto max-h-[170px] sm:max-h-[200px] xl:max-h-[245px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
+                className="h-auto max-h-[240px] sm:max-h-[290px] md:max-h-[330px] lg:max-h-[360px] xl:max-h-[400px] 2xl:max-h-[440px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
               />
             </div>
 
