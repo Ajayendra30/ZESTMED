@@ -789,9 +789,9 @@ export default function PhysiotherapyPage() {
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Award className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
-              <div>
-                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Expert & Certified Team</h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Trained and experienced physiotherapists</p>
+              <div className="mt-auto">
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Expert &amp; Certified Team</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Trained and experienced physiotherapists</p>
               </div>
             </div>
 
@@ -800,9 +800,9 @@ export default function PhysiotherapyPage() {
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <FileText className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Personalized Care</h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Condition-specific treatment plans</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Condition-specific treatment plans</p>
               </div>
             </div>
 
@@ -811,9 +811,9 @@ export default function PhysiotherapyPage() {
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Target className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Evidence-Based Approach</h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Proven and safe therapy methods</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Proven, safe &amp; effective therapy methods</p>
               </div>
             </div>
 
@@ -822,9 +822,9 @@ export default function PhysiotherapyPage() {
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Modern Equipment</h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Advanced tools for effective rehabilitation</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Advanced tools for effective rehabilitation</p>
               </div>
             </div>
 
@@ -833,9 +833,9 @@ export default function PhysiotherapyPage() {
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Holistic Recovery</h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Pain relief, mobility & long-term wellness</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Pain relief, mobility &amp; long-term wellness</p>
               </div>
             </div>
 
