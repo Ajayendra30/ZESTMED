@@ -206,17 +206,22 @@ export default function WellnessPackagesPage() {
       {/* ========================================================================= */}
       <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#EBF9F5]">
         
-        {/* Hero Background Image - Covers entire section properly while maintaining original aspect ratio */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none select-none"
-          style={{ backgroundImage: "url('/wellness-hero-bg.jpg')" }}
-        />
+        {/* Hero Background Image - Grounded & smoothly blended to eliminate any horizontal seam lines */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
+          <img
+            src="/wellness-hero-bg.jpg"
+            alt=""
+            className="w-full h-full object-cover object-bottom"
+          />
+          {/* Subtle soft bottom gradient overlay to melt any background ledge/seam lines */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#EBF9F5] via-[#EBF9F5]/50 to-transparent" />
+        </div>
 
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-3 sm:pt-4 lg:pt-4 pb-6 sm:pb-8 lg:pb-9">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-8">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-3 sm:pt-4 lg:pt-4 pb-4 sm:pb-5 lg:pb-0">
+          <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-4 xl:gap-8">
             
             {/* Left Column: Heading, Subtitle & Action CTAs */}
-            <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3 sm:space-y-3.5 text-left">
+            <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3 sm:space-y-3.5 text-left self-center lg:self-center lg:pb-5 xl:pb-6">
               
               {/* Wellness Packages Pill Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
@@ -258,17 +263,19 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Center Column: Family Image with Glowing Shield (Single Image) */}
-            <div className="flex-1 w-full flex items-center justify-center relative select-none pointer-events-none z-10 min-w-0">
+            {/* Center Column: Family Image with Glowing Shield (Single Image) - Grounded Flush to Bottom Border */}
+            <div className="flex-1 w-full flex items-end justify-center relative select-none pointer-events-none self-end z-10 min-w-0">
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="max-h-[250px] sm:max-h-[290px] md:max-h-[310px] lg:max-h-[340px] xl:max-h-[370px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none transition-all duration-300"
+                className="max-h-[260px] sm:max-h-[300px] md:max-h-[330px] lg:max-h-[360px] xl:max-h-[390px] w-auto max-w-full object-contain object-bottom block select-none transition-all duration-300"
               />
+              {/* Soft bottom edge feathering on mobile view to eliminate any abrupt cutoffs */}
+              <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[#EBF9F5] to-transparent pointer-events-none lg:hidden" />
             </div>
 
             {/* Right Column: 4 Feature Checkmark Cards */}
-            <div className="w-full lg:w-[300px] xl:w-[330px] shrink-0 flex flex-col gap-3 sm:gap-3.5 z-20 self-center">
+            <div className="w-full lg:w-[300px] xl:w-[330px] shrink-0 flex flex-col gap-3 sm:gap-3.5 z-20 self-center lg:self-center lg:pb-5 xl:pb-6">
               {[
                 'Early Disease Detection',
                 'Comprehensive Health Screening',
