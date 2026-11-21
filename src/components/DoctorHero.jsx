@@ -7,7 +7,8 @@ import { Calendar, ArrowRight, Video } from 'lucide-react';
  * Features:
  * - High-contrast typography & action buttons over the hospital corridor background
  * - "Book an Appointment" and "Online Consultation" side by side in a single horizontal line
- * - Clean, spacious layout without the doctor cutout image
+ * - Grounded high-resolution transparent doctor cutout image on the right
+ * - Perfectly fills the hero space without empty gaps on the left side
  * - Fully responsive across mobile, tablet, and desktop
  */
 export default function DoctorHero({
@@ -25,14 +26,14 @@ export default function DoctorHero({
           className="w-full h-full object-cover object-center sm:object-[center_35%] lg:object-center transition-all duration-300"
         />
         {/* Soft Ambient Protective Overlay for Typography Legibility & Brand Theme */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/88 to-white/75 sm:from-white/92 sm:via-white/80 sm:to-white/65 lg:from-white/95 lg:via-white/85 lg:to-white/65 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/88 to-white/40 sm:from-white/92 sm:via-white/82 sm:to-white/35 lg:from-white/95 lg:via-white/85 lg:to-white/30 backdrop-blur-[0.5px]" />
       </div>
 
-      {/* 2. Main Content Container */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 lg:py-14">
+      {/* 2. Main Content Container - Seamless edge-to-edge layout */}
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 lg:pt-8 pb-5 sm:pb-6 lg:pb-0 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 xl:gap-12">
         
-        {/* Content Column: Heading, Subtitle & Action Buttons */}
-        <div className="w-full max-w-2xl lg:max-w-3xl space-y-3.5 sm:space-y-4 relative z-20 text-left">
+        {/* Left Column: Heading, Subtitle & Action Buttons */}
+        <div className="w-full lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl shrink-0 space-y-3.5 sm:space-y-4 relative z-20 text-left self-center lg:self-center py-2 lg:py-8">
           
           {/* Doctor Appointment Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E0F3ED] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
@@ -73,6 +74,15 @@ export default function DoctorHero({
               <span>Online Consultation</span>
             </button>
           </div>
+        </div>
+
+        {/* Right Column: Doctors Image - Grounded to bottom border, fully visible without cropping */}
+        <div className="flex-1 w-full flex items-end justify-center lg:justify-end relative select-none pointer-events-none self-end z-10 min-w-0">
+          <img
+            src="/doctor-hero-doctors.png"
+            alt="ZESTMED Verified Specialist Doctors"
+            className="h-[240px] xs:h-[280px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[475px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
+          />
         </div>
 
       </div>
