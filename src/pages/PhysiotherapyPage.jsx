@@ -452,16 +452,16 @@ export default function PhysiotherapyPage() {
           </div>
 
           {/* Right Column: Transparent Cutout of Physiotherapist & Patient placed prominently on the right */}
-          <div className="w-full lg:flex-1 flex justify-center lg:justify-center xl:justify-center items-end self-end pointer-events-none select-none z-20 mt-3 lg:mt-0 -mb-[1px]">
+          <div className="w-full lg:flex-1 flex justify-center lg:justify-end xl:justify-end items-end self-end pointer-events-none select-none z-20 mt-3 lg:mt-0 -mb-[1px]">
             <img
               src="/physio-hero-therapist.png"
               alt="Physiotherapist treating patient"
-              className="h-[220px] xs:h-[260px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[470px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
+              className="h-[230px] xs:h-[270px] sm:h-[340px] md:h-[380px] lg:h-[410px] xl:h-[450px] 2xl:h-[480px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none"
             />
           </div>
 
           {/* Right spacer for 2xl / ultra-wide screens to keep clinic table and spine shelf visible on right */}
-          <div className="hidden 2xl:block w-[140px] shrink-0 pointer-events-none" />
+          <div className="hidden 2xl:block w-[60px] shrink-0 pointer-events-none" />
 
         </div>
       </section>
