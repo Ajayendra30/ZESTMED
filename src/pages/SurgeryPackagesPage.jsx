@@ -157,7 +157,7 @@ export default function SurgeryPackagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FBFA] font-sans text-slate-800 pb-16 antialiased selection:bg-[#007A64] selection:text-white">
+    <div className="min-h-screen bg-[#F8FBFA] font-sans text-slate-800 antialiased selection:bg-[#007A64] selection:text-white">
       
       {/* ========================================================================= */}
       {/* 1. HERO SECTION - Full Width Edge-to-Edge                                  */}
@@ -230,7 +230,7 @@ export default function SurgeryPackagesPage() {
       </section>
 
       {/* Main Responsive Container for subsequent sections */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-8 sm:pt-10 space-y-9 sm:space-y-12">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-8 sm:pt-10 pb-4 sm:pb-6 space-y-9 sm:space-y-12">
 
         {/* ========================================================================= */}
         {/* 2. VALUE PROPOSITION STRIP (4 Key Pillars)                                */}
