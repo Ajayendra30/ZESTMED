@@ -231,10 +231,14 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
           </div>
 
           {/* Right Column: Home Sample Collection at Your Doorstep Banner */}
-          <div className="lg:col-span-7 bg-gradient-to-r from-[#00545D] via-[#00626D] to-[#00747E] rounded-3xl p-6 sm:p-8 lg:p-9 text-white relative shadow-sm overflow-hidden flex flex-col sm:flex-row items-center justify-between min-h-[220px] lg:min-h-[250px]">
-            {/* Background Soft Glow */}
-            <div className="absolute -top-16 -right-16 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-[55%] h-full bg-gradient-to-l from-teal-400/20 via-cyan-300/10 to-transparent rounded-l-full pointer-events-none" />
+          <div className="lg:col-span-7 bg-[#00545D] rounded-3xl p-6 sm:p-8 lg:p-9 text-white relative shadow-sm overflow-hidden flex flex-col sm:flex-row items-center justify-between min-h-[240px] sm:min-h-[260px] lg:min-h-[280px]">
+            {/* Background Graphic: Wavy Teal Gradient & Phlebotomist in Curved Arch */}
+            <div 
+              className="absolute inset-0 w-full h-full bg-cover bg-right sm:bg-center pointer-events-none select-none rounded-3xl transition-all duration-300"
+              style={{ backgroundImage: "url('/home-sample-collection.png')" }}
+            />
+            {/* Mobile Contrast Gradient for Guaranteed Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00545D]/90 via-[#00545D]/65 to-transparent sm:hidden pointer-events-none rounded-3xl" />
 
             {/* Left Content */}
             <div className="relative z-10 max-w-xs sm:max-w-sm lg:max-w-md space-y-2.5 text-left mb-4 sm:mb-0">
@@ -257,19 +261,13 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
               </div>
             </div>
 
-            {/* Right Visual: Phlebotomist Home Sample Collection Image */}
+            {/* Right Visual Clickable Overlay Link to Diagnostics */}
             <Link
               to="/diagnostics"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="relative sm:absolute bottom-0 right-0 w-full sm:w-[48%] lg:w-[45%] h-auto sm:h-full flex items-end justify-end select-none cursor-pointer group"
+              className="hidden sm:block absolute inset-y-0 right-0 w-[48%] lg:w-[45%] z-10 cursor-pointer"
               title="Book Home Sample Collection Diagnostic Test"
-            >
-              <img
-                src="/home-sample-collection.png"
-                alt="ZESTMED Home Sample Collection Phlebotomist and Patient"
-                className="h-auto max-h-[190px] sm:max-h-[230px] lg:max-h-[250px] w-auto max-w-full object-contain object-right-bottom drop-shadow-xl group-hover:scale-[1.02] transition-transform duration-200"
-              />
-            </Link>
+            />
           </div>
 
         </div>
