@@ -2,13 +2,13 @@ import React from 'react';
 import { Calendar, ArrowRight, Video } from 'lucide-react';
 
 /**
- * DoctorHero - Pixel-accurate Full-Width Hero Section for Doctor Appointment page
+ * DoctorHero - Full-Width Edge-to-Edge Hero Section for Doctor Appointment page
  * 
  * Features:
- * - Two-column responsive layout: Heading & Action CTAs on the left, prominent doctor asset on the right
+ * - High-contrast typography & action buttons over the hospital corridor background
  * - "Book an Appointment" and "Online Consultation" side by side in a single horizontal line
- * - Grounded doctor image against modern hospital clinic background
- * - Cleaned up to remove the "Find a Doctor" widget as requested
+ * - Clean, spacious layout without the doctor cutout image
+ * - Fully responsive across mobile, tablet, and desktop
  */
 export default function DoctorHero({
   onBookAppointment,
@@ -25,14 +25,14 @@ export default function DoctorHero({
           className="w-full h-full object-cover object-center sm:object-[center_35%] lg:object-center transition-all duration-300"
         />
         {/* Soft Ambient Protective Overlay for Typography Legibility & Brand Theme */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/70 sm:from-white/90 sm:via-white/75 sm:to-white/60 lg:from-white/92 lg:via-white/75 lg:to-white/50 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/88 to-white/75 sm:from-white/92 sm:via-white/80 sm:to-white/65 lg:from-white/95 lg:via-white/85 lg:to-white/65 backdrop-blur-[0.5px]" />
       </div>
 
-      {/* 2. Main Full-Width Content Container - Compact top padding, grounded bottom */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-3 sm:pt-4 lg:pt-5 pb-4 sm:pb-5 lg:pb-0 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8">
+      {/* 2. Main Content Container */}
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 lg:py-14">
         
-        {/* Left Column: Heading, Subtitle & Action Buttons */}
-        <div className="w-full lg:max-w-lg xl:max-w-xl shrink-0 space-y-3 sm:space-y-4 relative z-20 text-left self-center lg:self-center py-4 lg:py-8">
+        {/* Content Column: Heading, Subtitle & Action Buttons */}
+        <div className="w-full max-w-2xl lg:max-w-3xl space-y-3.5 sm:space-y-4 relative z-20 text-left">
           
           {/* Doctor Appointment Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E0F3ED] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
@@ -41,24 +41,23 @@ export default function DoctorHero({
           </div>
 
           {/* Main Headline - High contrast & fully visible */}
-          <h1 className="text-2xl sm:text-3xl lg:text-[34px] xl:text-[40px] 2xl:text-[44px] font-black text-[#0F1E36] leading-[1.18] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[44px] 2xl:text-[48px] font-black text-[#0F1E36] leading-[1.18] tracking-tight">
             Book Doctor Appointment<br />
             <span className="font-extrabold text-[#0F1E36]">with </span>
             <span className="text-[#007A64] font-black">Trusted Specialists</span>
           </h1>
 
           {/* Subheading text */}
-          <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-medium leading-relaxed max-w-lg">
-            Consult experienced and verified doctors across<br className="hidden sm:inline" />
-            multiple specialties, online or at the clinic.
+          <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-medium leading-relaxed max-w-xl">
+            Consult experienced and verified doctors across multiple specialties, online or at the clinic.
           </p>
 
           {/* Action Buttons - Side by side in a single horizontal line on desktop, wrapping cleanly on small mobile */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1.5 w-full">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full">
             <button
               type="button"
               onClick={() => onBookAppointment && onBookAppointment(null, 'Clinic Visit')}
-              className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-sm sm:text-base px-5 sm:px-7 py-3 sm:py-3.5 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
+              className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-sm sm:text-base px-6 sm:px-8 py-3.5 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
             >
               <Calendar className="w-5 h-5 shrink-0" />
               <span>Book an Appointment</span>
@@ -68,21 +67,12 @@ export default function DoctorHero({
             <button
               type="button"
               onClick={() => onOnlineConsultation && onOnlineConsultation(null, 'Online Consultation')}
-              className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#007A64] border-2 border-[#007A64] font-extrabold text-sm sm:text-base px-5 sm:px-7 py-3 sm:py-3.5 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
+              className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#007A64] border-2 border-[#007A64] font-extrabold text-sm sm:text-base px-6 sm:px-8 py-3.5 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2 sm:gap-2.5 whitespace-nowrap cursor-pointer active:scale-95 min-h-[48px]"
             >
               <Video className="w-5 h-5 shrink-0 text-[#007A64]" />
               <span>Online Consultation</span>
             </button>
           </div>
-        </div>
-
-        {/* Right Column: Doctor Image Asset - Prominent, Grounded to bottom border */}
-        <div className="flex-1 w-full flex items-end justify-center lg:justify-end relative select-none pointer-events-none self-end z-10 min-w-0">
-          <img
-            src="/doctor-hero-doctors.jpg"
-            alt="ZESTMED Verified Specialist Doctors"
-            className="h-[230px] xs:h-[270px] sm:h-[320px] md:h-[360px] lg:h-[390px] xl:h-[430px] 2xl:h-[460px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
-          />
         </div>
 
       </div>
