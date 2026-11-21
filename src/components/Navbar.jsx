@@ -7,7 +7,7 @@ import {
   ShoppingBag, ShoppingCart, MapPin, User, Search, Menu, X, 
   ChevronDown, PhoneCall, LogOut, ShieldCheck,
   LayoutDashboard, Activity, FileText, Layers, Syringe, ShieldAlert,
-  Truck, ArrowRight, Pill, Heart, Sparkles, Clock, Tag, Gift,
+  Truck, ArrowRight, Pill, Heart, Award, Clock, Tag, Gift,
   FileCheck2, Baby, Stethoscope, Droplet, Apple, ShieldPlus,
   FlaskConical
 } from 'lucide-react';
@@ -387,7 +387,7 @@ export default function Navbar({
                                   className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition group"
                                 >
                                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                                    <Sparkles className="w-4 h-4" />
+                                    <Award className="w-4 h-4" />
                                   </div>
                                   <span className="font-semibold text-slate-700 group-hover:text-[#008F83]">Bestsellers</span>
                                 </Link>
