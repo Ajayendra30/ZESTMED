@@ -218,7 +218,7 @@ export default function WellnessPackagesPage() {
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-3 sm:pt-4 lg:pt-4 pb-4 sm:pb-5 lg:pb-0">
-          <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-4 xl:gap-8">
+          <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-3 xl:gap-5 2xl:gap-6">
             
             {/* Left Column: Heading, Subtitle & Action CTAs */}
             <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3 sm:space-y-3.5 text-left self-center lg:self-center lg:pb-5 xl:pb-6">
@@ -263,12 +263,12 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Center Column: Family Image with Glowing Shield (Single Image) - Grounded Flush to Bottom Border */}
+            {/* Center Column: Family Image with Glowing Shield (Single Image) - Increased size to fill empty space without cropping */}
             <div className="flex-1 w-full flex items-end justify-center relative select-none pointer-events-none self-end z-10 min-w-0">
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="max-h-[260px] sm:max-h-[300px] md:max-h-[330px] lg:max-h-[360px] xl:max-h-[390px] w-auto max-w-full object-contain object-bottom block select-none transition-all duration-300"
+                className="max-h-[290px] sm:max-h-[340px] md:max-h-[390px] lg:max-h-[440px] xl:max-h-[490px] 2xl:max-h-[535px] w-auto max-w-full object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
               />
               {/* Soft bottom edge feathering on mobile view to eliminate any abrupt cutoffs */}
               <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[#EBF9F5] to-transparent pointer-events-none lg:hidden" />
