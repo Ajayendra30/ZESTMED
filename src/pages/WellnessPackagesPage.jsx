@@ -296,72 +296,72 @@ export default function WellnessPackagesPage() {
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 2. VALUE PROPOSITION STRIP (5 items) matching Reference                   */}
-      {/* ========================================================================= */}
-      <section className="bg-white border-b border-slate-200/80 shadow-2xs py-5 sm:py-6 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 sm:divide-x divide-slate-100">
-          
-          {/* 1. Preventive Care */}
-          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
-            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+      {/* Main Page Container matching Zestmed Standard */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-6 sm:pt-8 pb-4 sm:pb-6 space-y-7 sm:space-y-9">
+
+        {/* ========================================================================= */}
+        {/* 2. VALUE PROPOSITION STRIP (5 items) matching Reference                   */}
+        {/* ========================================================================= */}
+        <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-5 sm:py-6 px-4 sm:px-6 lg:px-8">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            
+            {/* 1. Preventive Care */}
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3 lg:pl-4">
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Preventive Care</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Detect health issues early</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Preventive Care</p>
-              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Detect health issues early</p>
+
+            {/* 2. Complete Health Check */}
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3 lg:pl-4">
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <FlaskConical className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Complete Health Check</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">All essential tests in one package</p>
+              </div>
             </div>
+
+            {/* 3. For All Age Groups */}
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3 lg:pl-4">
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">For All Age Groups</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Packages for men, women &amp; seniors</p>
+              </div>
+            </div>
+
+            {/* 4. Expert Consultation */}
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3 lg:pl-4">
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Expert Consultation</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Guidance from qualified doctors</p>
+              </div>
+            </div>
+
+            {/* 5. Easy & Quick Booking */}
+            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3 lg:pl-4">
+              <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                <Headphones className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+              </div>
+              <div>
+                <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Easy &amp; Quick Booking</p>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Book online in just a few clicks</p>
+              </div>
+            </div>
+
           </div>
-
-          {/* 2. Complete Health Check */}
-          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <FlaskConical className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
-            </div>
-            <div>
-              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Complete Health Check</p>
-              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">All essential tests in one package</p>
-            </div>
-          </div>
-
-          {/* 3. For All Age Groups */}
-          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
-            </div>
-            <div>
-              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">For All Age Groups</p>
-              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Packages for men, women &amp; seniors</p>
-            </div>
-          </div>
-
-          {/* 4. Expert Consultation */}
-          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
-            </div>
-            <div>
-              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Expert Consultation</p>
-              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Guidance from qualified doctors</p>
-            </div>
-          </div>
-
-          {/* 5. Easy & Quick Booking */}
-          <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
-            <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-              <Headphones className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
-            </div>
-            <div>
-              <p className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight">Easy &amp; Quick Booking</p>
-              <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">Book online in just a few clicks</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Main Page Container */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-8 space-y-9 sm:space-y-11">
+        </section>
 
         {/* ========================================================================= */}
         {/* 3. "Our Wellness Packages" (4 Cards Grid) matching Reference             */}
