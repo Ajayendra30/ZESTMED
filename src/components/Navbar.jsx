@@ -129,26 +129,26 @@ export default function Navbar({
 
   return (
     <>
-      {/* Top Announcement Bar - Full Width with Responsive Gutters */}
-      <div className="bg-[#0B2238] text-white text-xs sm:text-sm py-2 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
-        <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
+      {/* Top Announcement Bar - Compact, Sleek Height with Exact Original Content */}
+      <div className="bg-[#0B2238] text-white text-[11px] sm:text-xs py-1 sm:py-1.5 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
+        <div className="w-full flex items-center justify-between gap-2 sm:gap-4 min-h-[24px]">
           <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 text-slate-200 min-w-0 flex-1">
-            <span className="flex items-center gap-1.5 font-bold truncate sm:whitespace-nowrap text-[11px] sm:text-sm text-teal-300">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+            <span className="flex items-center gap-1.5 font-bold truncate sm:whitespace-nowrap text-[11px] sm:text-xs text-teal-300 leading-none">
+              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0" />
               <span>Reports Delivered in a Single Day (12-24 Hrs)</span>
             </span>
-            <span className="hidden sm:inline text-slate-500">|</span>
+            <span className="hidden sm:inline text-slate-500 leading-none">|</span>
             <button
               type="button"
               onClick={onOpenSeniorPickup}
-              className="hidden sm:inline-flex items-center gap-1.5 font-medium whitespace-nowrap text-xs sm:text-sm text-emerald-300 hover:text-emerald-200 hover:underline cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 font-medium whitespace-nowrap text-[11px] sm:text-xs text-emerald-300 hover:text-emerald-200 hover:underline cursor-pointer leading-none"
             >
               🚗 Free Senior Citizen Pick-up & Drop within 10km (Guwahati)
             </button>
           </div>
 
           <div className="hidden lg:flex items-center shrink-0">
-            <span className="font-bold text-white whitespace-nowrap text-xs sm:text-sm bg-teal-800/70 px-3.5 py-1 rounded-full border border-teal-600/40 shadow-xs">
+            <span className="font-bold text-white whitespace-nowrap text-[11px] sm:text-xs bg-teal-800/70 px-2.5 py-0.5 rounded-full border border-teal-600/40 shadow-xs leading-none">
               📍 Serving Exclusively Guwahati, Assam
             </span>
           </div>
