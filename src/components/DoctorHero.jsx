@@ -29,8 +29,8 @@ export default function DoctorHero({
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/88 to-white/40 sm:from-white/92 sm:via-white/82 sm:to-white/35 lg:from-white/95 lg:via-white/85 lg:to-white/30 backdrop-blur-[0.5px]" />
       </div>
 
-      {/* 2. Main Content Container - Seamless edge-to-edge layout */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 lg:pt-8 pb-5 sm:pb-6 lg:pb-0 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 xl:gap-12">
+      {/* 2. Main Content Container - Seamless edge-to-edge layout with ample height */}
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 lg:pt-8 pb-5 sm:pb-6 lg:pb-0 min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] xl:min-h-[550px] 2xl:min-h-[600px] flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 xl:gap-12">
         
         {/* Left Column: Heading, Subtitle & Action Buttons */}
         <div className="w-full lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl shrink-0 space-y-3.5 sm:space-y-4 relative z-20 text-left self-center lg:self-center py-2 lg:py-8">
@@ -76,12 +76,12 @@ export default function DoctorHero({
           </div>
         </div>
 
-        {/* Right Column: Doctors Image - Grounded to bottom border, fully visible without cropping */}
+        {/* Right Column: Doctors Image - Increased size to fill space beautifully, fully visible without cropping */}
         <div className="flex-1 w-full flex items-end justify-center lg:justify-end relative select-none pointer-events-none self-end z-10 min-w-0">
           <img
             src="/doctor-hero-doctors.png"
             alt="ZESTMED Verified Specialist Doctors"
-            className="h-[240px] xs:h-[280px] sm:h-[330px] md:h-[370px] lg:h-[400px] xl:h-[440px] 2xl:h-[475px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
+            className="h-[270px] xs:h-[320px] sm:h-[380px] md:h-[440px] lg:h-[490px] xl:h-[545px] 2xl:h-[595px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
           />
         </div>
 
