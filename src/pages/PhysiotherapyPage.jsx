@@ -972,49 +972,69 @@ export default function PhysiotherapyPage() {
                 Our Impact in Numbers
               </h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                 
-                {/* Stat 1 */}
-                <div className="flex items-center gap-2.5">
+                {/* Stat 1: 5,000+ Happy Patients */}
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Users className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                    <Users className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">5,000+</p>
-                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Happy Patients</p>
+                    <p className="text-xl sm:text-2xl font-black text-[#007A64] leading-tight">5,000+</p>
+                    <p className="text-xs sm:text-[13px] text-slate-600 font-semibold leading-snug mt-0.5">Happy Patients</p>
                   </div>
                 </div>
 
-                {/* Stat 2 */}
-                <div className="flex items-center gap-2.5">
+                {/* Stat 2: 15+ Expert Physiotherapists */}
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Calendar className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]">
+                      <rect x="3" y="4" width="18" height="18" rx="3" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                      <path d="M7 14h.01" />
+                      <path d="M11 14h.01" />
+                      <path d="M7 17.5h.01" />
+                      <circle cx="16.5" cy="16.5" r="4.2" fill="#FFFFFF" stroke="currentColor" strokeWidth="2.2" />
+                      <path d="m14.8 16.5 1.2 1.2 2.4-2.4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">15+</p>
-                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Expert Physiotherapists</p>
+                    <p className="text-xl sm:text-2xl font-black text-[#007A64] leading-tight">15+</p>
+                    <p className="text-xs sm:text-[13px] text-slate-600 font-semibold leading-snug mt-0.5">Expert Physiotherapists</p>
                   </div>
                 </div>
 
-                {/* Stat 3 */}
-                <div className="flex items-center gap-2.5">
+                {/* Stat 3: 98% Recovery Rate */}
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Activity className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]">
+                      <path d="M12 2.5a9.5 9.5 0 1 0 9.5 9.5" />
+                      <path d="M12 6.5a5.5 5.5 0 1 0 5.5 5.5" />
+                      <circle cx="12" cy="12" r="1.8" />
+                      <path d="m21.5 2.5-8 8" />
+                      <path d="M21.5 6.5V2.5h-4" />
+                    </svg>
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">98%</p>
-                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Recovery Rate</p>
+                    <p className="text-xl sm:text-2xl font-black text-[#0F172A] leading-tight">98%</p>
+                    <p className="text-xs sm:text-[13px] text-slate-600 font-semibold leading-snug mt-0.5">Recovery Rate</p>
                   </div>
                 </div>
 
-                {/* Stat 4 */}
-                <div className="flex items-center gap-2.5">
+                {/* Stat 4: 4.9/5 Patient Satisfaction */}
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                    <Star className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64]" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]">
+                      <circle cx="12" cy="8.5" r="6.2" />
+                      <polygon points="12 5.2 13.1 7.4 15.5 7.7 13.8 9.3 14.2 11.7 12 10.5 9.8 11.7 10.2 9.3 8.5 7.7 10.9 7.4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="m15.5 13.5 1.5 8a.5.5 0 0 1-.8.47l-3.6-2.7a1 1 0 0 0-1.2 0l-3.6 2.7a.5.5 0 0 1-.8-.47l1.5-8" />
+                    </svg>
                   </div>
                   <div>
-                    <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#0F172A] leading-tight">4.9/5</p>
-                    <p className="text-[11px] sm:text-xs text-slate-500 font-bold leading-snug">Patient Satisfaction</p>
+                    <p className="text-xl sm:text-2xl font-black text-[#007A64] leading-tight">4.9/5</p>
+                    <p className="text-xs sm:text-[13px] text-slate-600 font-semibold leading-snug mt-0.5">Patient Satisfaction</p>
                   </div>
                 </div>
 
