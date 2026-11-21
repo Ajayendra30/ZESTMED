@@ -470,7 +470,42 @@ export default function SurgeryPackagesPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 6. OTHER SURGERY CATEGORIES (7 Cards Grid)                                */}
+        {/* 6. WORLD-CLASS SURGICAL FACILITIES AT ZESTMED (Facilities Showcase)        */}
+        {/* ========================================================================= */}
+        <section className="rounded-3xl border border-teal-200/70 bg-gradient-to-r from-[#E6FAF5] via-[#E2F7F2] to-white p-7 sm:p-9 lg:p-11 relative overflow-hidden shadow-xs">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            
+            {/* Left Content */}
+            <div className="lg:col-span-6 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/90 border border-teal-200 text-[#007A64] text-xs sm:text-sm font-extrabold shadow-2xs">
+                <Building2 className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#007A64]" />
+                <span>Advanced Surgical Care</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                World-Class Surgical Facilities at <span className="text-[#007A64]">ZESTMED</span>
+              </h3>
+
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
+                Equipped with modern operation theatres, advanced medical technology and a dedicated surgical team for safe and successful outcomes.
+              </p>
+            </div>
+
+            {/* Right Operation Theatre Image */}
+            <div className="lg:col-span-6 flex items-center justify-center lg:justify-end">
+              <img
+                src="/surgery-facilities-ot.png"
+                alt="Modern Operation Theatre at ZESTMED"
+                className="w-full h-auto object-contain max-h-64 sm:max-h-72 lg:max-h-80 drop-shadow-md select-none"
+              />
+            </div>
+
+          </div>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 7. OTHER SURGERY CATEGORIES (7 Cards Grid)                                */}
         {/* ========================================================================= */}
         <section className="space-y-4">
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -499,7 +534,7 @@ export default function SurgeryPackagesPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 7. BOTTOM CALL TO ACTION BANNER                                           */}
+        {/* 8. BOTTOM CALL TO ACTION BANNER                                           */}
         {/* ========================================================================= */}
         <section id="surgery-planning-cta" className="rounded-3xl bg-gradient-to-r from-[#006853] via-[#007A64] to-[#005B48] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden shadow-lg border border-teal-600/30">
           
