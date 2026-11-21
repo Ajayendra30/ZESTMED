@@ -642,10 +642,10 @@ export default function WellnessPackagesPage() {
             {CATEGORIES_DATA.map((cat) => (
               <div
                 key={cat.id}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-5 sm:p-6 flex items-center justify-between gap-4 group relative overflow-hidden"
+                className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 p-4 sm:p-6 flex items-center justify-between gap-3.5 sm:gap-4 group relative overflow-hidden"
               >
                 {/* Left Content */}
-                <div className="space-y-3 min-w-0 flex-1">
+                <div className="space-y-2.5 sm:space-y-3 min-w-0 flex-1">
                   <div>
                     <h3 className="text-base sm:text-lg font-black text-[#0B1B2B] group-hover:text-[#007A64] transition-colors leading-tight">
                       {cat.name}
@@ -661,19 +661,19 @@ export default function WellnessPackagesPage() {
                       scrollToSection('wellness-packages-grid');
                       addToast(`Showing packages for ${cat.name}`, 'info');
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-black rounded-xl shadow-2xs transition cursor-pointer active:scale-95"
+                    className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-black rounded-xl shadow-2xs transition cursor-pointer active:scale-95"
                   >
                     <span>Explore</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
 
-                {/* Right Image Asset */}
-                <div className="w-22 h-22 sm:w-24 sm:h-24 lg:w-26 lg:h-26 shrink-0 select-none pointer-events-none flex items-center justify-end">
+                {/* Right Image Asset - Fully visible without cropping, cutting off, or stretching on mobile */}
+                <div className="w-20 h-20 min-[380px]:w-24 min-[380px]:h-24 sm:w-24 sm:h-24 lg:w-28 lg:h-28 shrink-0 select-none pointer-events-none flex items-center justify-center sm:justify-end">
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="max-h-full max-w-full object-contain drop-shadow-xs group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full max-h-full max-w-full object-contain object-center sm:object-right drop-shadow-xs group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -714,7 +714,7 @@ export default function WellnessPackagesPage() {
               </button>
 
               {/* 3D Clipboard & Heart Graphic */}
-              <div className="w-18 h-16 sm:w-22 sm:h-18 lg:w-26 lg:h-22 shrink-0 flex items-center justify-center select-none pointer-events-none">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 shrink-0 flex items-center justify-center select-none pointer-events-none">
                 <img
                   src="/wellness-cta-clipboard.png"
                   alt="Wellness Health Protection"
