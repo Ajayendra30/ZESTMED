@@ -785,57 +785,57 @@ export default function PhysiotherapyPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-4.5">
             
             {/* 1. Expert & Certified Team */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[140px] sm:min-h-[145px]">
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Award className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Expert & Certified Team</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Trained and experienced physiotherapists</p>
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Expert & Certified Team</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Trained and experienced physiotherapists</p>
               </div>
             </div>
 
             {/* 2. Personalized Care */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[140px] sm:min-h-[145px]">
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <FileText className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Personalized Care</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Condition-specific treatment plans</p>
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Personalized Care</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Condition-specific treatment plans</p>
               </div>
             </div>
 
             {/* 3. Evidence-Based Approach */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[140px] sm:min-h-[145px]">
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Target className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Evidence-Based Approach</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Proven and safe therapy methods</p>
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Evidence-Based Approach</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Proven and safe therapy methods</p>
               </div>
             </div>
 
             {/* 4. Modern Equipment */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[140px] sm:min-h-[145px]">
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Modern Equipment</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Advanced tools for effective rehabilitation</p>
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Modern Equipment</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Advanced tools for effective rehabilitation</p>
               </div>
             </div>
 
             {/* 5. Holistic Recovery */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[145px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all group min-h-[140px] sm:min-h-[145px]">
               <div className="w-12 h-12 flex items-center justify-start mb-3 text-[#007A64] group-hover:scale-105 transition-transform">
                 <Heart className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-black text-[#0F172A] leading-tight">Holistic Recovery</h4>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-snug">Pain relief, mobility & long-term wellness</p>
+                <h4 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-[#0F172A] leading-tight whitespace-nowrap">Holistic Recovery</h4>
+                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">Pain relief, mobility & long-term wellness</p>
               </div>
             </div>
 
