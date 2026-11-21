@@ -1008,7 +1008,7 @@ export default function PhysiotherapyPage() {
             <div className="lg:col-span-4 xl:col-span-4 flex justify-center lg:justify-start">
               <div className="w-full max-w-[320px] rounded-xl overflow-hidden shadow-xs border border-slate-100 bg-slate-50">
                 <img
-                  src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=600&q=80"
+                  src="/physio-impact.png"
                   onError={(e) => { e.currentTarget.src = '/physio-impact-raw.jpg'; }}
                   alt="Physiotherapy session with elderly patient"
                   className="w-full h-auto max-h-[190px] sm:max-h-[210px] object-cover object-center select-none"
