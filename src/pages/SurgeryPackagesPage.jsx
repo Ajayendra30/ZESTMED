@@ -347,9 +347,9 @@ export default function SurgeryPackagesPage() {
               <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
                 <Award className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Expert Surgeons</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Highly experienced &amp; specialized team</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Highly experienced &amp; specialized team</p>
               </div>
             </div>
 
@@ -358,9 +358,9 @@ export default function SurgeryPackagesPage() {
               <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
                 <Building2 className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Advanced OT Facilities</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Modern, sterile &amp; well-equipped OTs</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Modern, sterile &amp; well-equipped OTs</p>
               </div>
             </div>
 
@@ -369,9 +369,9 @@ export default function SurgeryPackagesPage() {
               <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
                 <ShieldCheck className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Safety First</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">International safety protocols</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">International safety protocols &amp; care</p>
               </div>
             </div>
 
@@ -380,9 +380,9 @@ export default function SurgeryPackagesPage() {
               <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
                 <CircleDollarSign className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Transparent Pricing</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">No hidden costs, clear package details</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">No hidden costs, clear package details</p>
               </div>
             </div>
 
@@ -391,9 +391,9 @@ export default function SurgeryPackagesPage() {
               <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
                 <Headphones className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
-              <div>
+              <div className="mt-auto">
                 <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Complete Care</h3>
-                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Pre-surgery, surgery &amp; post-surgery support</p>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug min-h-[36px] sm:min-h-[38px]">Pre-surgery, surgery &amp; post-surgery support</p>
               </div>
             </div>
 
