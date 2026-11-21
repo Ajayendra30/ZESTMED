@@ -343,57 +343,57 @@ export default function SurgeryPackagesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4.5">
             
             {/* Card 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-5.5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between">
-              <div className="w-12 h-12 flex items-center justify-start mb-3.5 text-[#007A64]">
-                <Award className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between min-h-[140px] sm:min-h-[145px]">
+              <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                <Award className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Expert Surgeons</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Highly experienced &amp; specialized team</p>
+                <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Expert Surgeons</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Highly experienced &amp; specialized team</p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-5.5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between">
-              <div className="w-12 h-12 flex items-center justify-start mb-3.5 text-[#007A64]">
-                <Building2 className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between min-h-[140px] sm:min-h-[145px]">
+              <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                <Building2 className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Advanced OT Facilities</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Modern, sterile &amp; well-equipped OTs</p>
+                <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Advanced OT Facilities</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Modern, sterile &amp; well-equipped OTs</p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-5.5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between">
-              <div className="w-12 h-12 flex items-center justify-start mb-3.5 text-[#007A64]">
-                <ShieldCheck className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between min-h-[140px] sm:min-h-[145px]">
+              <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                <ShieldCheck className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Safety First</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">International safety protocols</p>
+                <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Safety First</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">International safety protocols</p>
               </div>
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-5.5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between">
-              <div className="w-12 h-12 flex items-center justify-start mb-3.5 text-[#007A64]">
-                <CircleDollarSign className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between min-h-[140px] sm:min-h-[145px]">
+              <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                <CircleDollarSign className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Transparent Pricing</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">No hidden costs, clear package details</p>
+                <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Transparent Pricing</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">No hidden costs, clear package details</p>
               </div>
             </div>
 
             {/* Card 5 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-5.5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between">
-              <div className="w-12 h-12 flex items-center justify-start mb-3.5 text-[#007A64]">
-                <Headphones className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64] stroke-[2.2]" />
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 lg:p-3.5 xl:p-5 hover:border-teal-300 hover:shadow-md transition flex flex-col justify-between min-h-[140px] sm:min-h-[145px]">
+              <div className="w-14 h-14 flex items-center justify-start mb-3 text-[#007A64]">
+                <Headphones className="w-10 h-10 sm:w-11 sm:h-11 lg:w-10 lg:h-10 xl:w-11 xl:h-11 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Complete Care</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Pre-surgery, surgery &amp; post-surgery support</p>
+                <h3 className="text-sm sm:text-base lg:text-[13px] xl:text-[15px] 2xl:text-base font-black text-slate-900 leading-tight whitespace-nowrap">Complete Care</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1 leading-snug">Pre-surgery, surgery &amp; post-surgery support</p>
               </div>
             </div>
 
@@ -411,58 +411,58 @@ export default function SurgeryPackagesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4.5 relative">
             
             {/* Step 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4.5 sm:p-5.5 lg:p-4.5 xl:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
               <div className="flex items-center justify-between mb-3.5">
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
                   1
                 </span>
-                <Stethoscope className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <Stethoscope className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Consultation</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Meet our specialist &amp; get a proper evaluation</p>
+                <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Consultation</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Meet our specialist &amp; get a proper evaluation</p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4.5 sm:p-5.5 lg:p-4.5 xl:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
               <div className="flex items-center justify-between mb-3.5">
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
                   2
                 </span>
-                <ClipboardList className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <ClipboardList className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Surgery Planning</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Choose the right surgery package</p>
+                <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Surgery Planning</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Choose the right surgery package</p>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4.5 sm:p-5.5 lg:p-4.5 xl:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
               <div className="flex items-center justify-between mb-3.5">
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
                   3
                 </span>
-                <BedDouble className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <BedDouble className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Procedure</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Safe surgery with advanced technology</p>
+                <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Procedure</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Safe surgery with advanced technology</p>
               </div>
             </div>
 
             {/* Step 4 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4.5 sm:p-5.5 lg:p-4.5 xl:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
               <div className="flex items-center justify-between mb-3.5">
                 <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
                   4
                 </span>
-                <HeartPulse className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <HeartPulse className="w-9 h-9 sm:w-10 sm:h-10 text-[#007A64] stroke-[2.2]" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">Recovery &amp; Follow-up</h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">Personalized post-surgery care and regular follow-up</p>
+                <h3 className="text-base sm:text-lg lg:text-[15px] xl:text-lg font-black text-slate-900 leading-tight whitespace-nowrap">Recovery &amp; Follow-up</h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 font-medium mt-1.5 leading-snug">Personalized post-surgery care and regular follow-up</p>
               </div>
             </div>
 
