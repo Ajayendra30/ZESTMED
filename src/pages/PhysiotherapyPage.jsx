@@ -4,7 +4,7 @@ import {
   Calendar, ArrowRight, Phone, User, Clock, Activity, 
   ShieldCheck, CheckCircle2, ChevronRight, Star, Heart,
   Award, Sparkles, FileText, Target, Home as HomeIcon,
-  Stethoscope, Users, X, CreditCard, Banknote, Lock 
+  Stethoscope, Users, X, CreditCard, Banknote, Lock, ClipboardList 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -862,7 +862,8 @@ export default function PhysiotherapyPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 6. OUR TREATMENT PROCESS (4 Steps matching Surgery Process Design)        */}
+        {/* ========================================================================= */}
+        {/* 6. OUR TREATMENT PROCESS (4 Steps matching Reference Design)              */}
         {/* ========================================================================= */}
         <section className="space-y-4">
           
@@ -870,77 +871,113 @@ export default function PhysiotherapyPage() {
             Our Treatment Process
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4.5 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4.5 relative items-center">
             
-            {/* Step 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
-              <div className="flex items-center justify-between mb-3.5">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+            {/* Step 1: Assessment */}
+            <div className="relative group">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 hover:shadow-md hover:border-teal-300 transition flex items-start sm:items-center gap-3 sm:gap-3.5 shadow-2xs min-h-[105px]">
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#007A64] text-white text-xs sm:text-[13px] font-black flex items-center justify-center shrink-0 shadow-2xs self-start mt-0.5 sm:self-center sm:mt-0">
                   1
                 </span>
-                <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                  <ClipboardList className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">
+                    Assessment
+                  </h3>
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">
+                    Detailed evaluation of your condition
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                  Assessment
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
-                  Detailed evaluation of your condition
-                </p>
+              {/* Chevron connecting to Step 2 */}
+              <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-[#007A64]">
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
               </div>
             </div>
 
-            {/* Step 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
-              <div className="flex items-center justify-between mb-3.5">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+            {/* Step 2: Personalized Plan */}
+            <div className="relative group">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 hover:shadow-md hover:border-teal-300 transition flex items-start sm:items-center gap-3 sm:gap-3.5 shadow-2xs min-h-[105px]">
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#007A64] text-white text-xs sm:text-[13px] font-black flex items-center justify-center shrink-0 shadow-2xs self-start mt-0.5 sm:self-center sm:mt-0">
                   2
                 </span>
-                <Target className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]">
+                    <path d="M12 2.5a9.5 9.5 0 1 0 9.5 9.5" />
+                    <path d="M12 6.5a5.5 5.5 0 1 0 5.5 5.5" />
+                    <circle cx="12" cy="12" r="1.8" />
+                    <path d="m21.5 2.5-8 8" />
+                    <path d="M21.5 6.5V2.5h-4" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">
+                    Personalized Plan
+                  </h3>
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">
+                    A customized therapy plan for you
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                  Personalized Plan
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
-                  A customized therapy plan for you
-                </p>
+              {/* Chevron connecting to Step 3 */}
+              <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-[#007A64]">
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
               </div>
             </div>
 
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
-              <div className="flex items-center justify-between mb-3.5">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+            {/* Step 3: Therapy Sessions */}
+            <div className="relative group">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 hover:shadow-md hover:border-teal-300 transition flex items-start sm:items-center gap-3 sm:gap-3.5 shadow-2xs min-h-[105px]">
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#007A64] text-white text-xs sm:text-[13px] font-black flex items-center justify-center shrink-0 shadow-2xs self-start mt-0.5 sm:self-center sm:mt-0">
                   3
                 </span>
-                <Activity className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
+                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]">
+                    <circle cx="15.5" cy="7" r="2" />
+                    <path d="M8 15c.5-3 2.5-4.5 5-4.5 1.5 0 2.5.5 3 2.5" />
+                    <path d="M12.5 11l-3 4" />
+                    <rect x="2" y="15" width="20" height="3" rx="1.5" />
+                    <rect x="2" y="19" width="20" height="2.5" rx="1" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">
+                    Therapy Sessions
+                  </h3>
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">
+                    Guided sessions with expert care
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                  Therapy Sessions
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
-                  Guided sessions with expert care
-                </p>
+              {/* Chevron connecting to Step 4 */}
+              <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-[#007A64]">
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
               </div>
             </div>
 
-            {/* Step 4 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 relative hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between min-h-[145px] sm:min-h-[160px]">
-              <div className="flex items-center justify-between mb-3.5">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#007A64] text-white text-xs sm:text-sm font-black flex items-center justify-center shadow-2xs">
+            {/* Step 4: Progress & Recovery */}
+            <div className="relative group">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 hover:shadow-md hover:border-teal-300 transition flex items-start sm:items-center gap-3 sm:gap-3.5 shadow-2xs min-h-[105px]">
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#007A64] text-white text-xs sm:text-[13px] font-black flex items-center justify-center shrink-0 shadow-2xs self-start mt-0.5 sm:self-center sm:mt-0">
                   4
                 </span>
-                <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-[#007A64] stroke-[2.2]" />
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                  Progress &amp; Recovery
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1.5 leading-relaxed">
-                  Track improvement and get long-term support
-                </p>
+                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]">
+                    <rect x="3.5" y="13.5" width="4" height="7.5" rx="1.5" />
+                    <rect x="10" y="8" width="4" height="13" rx="1.5" />
+                    <rect x="16.5" y="3" width="4" height="18" rx="1.5" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm sm:text-base font-black text-[#0F172A] leading-tight">
+                    Progress &amp; Recovery
+                  </h3>
+                  <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-snug">
+                    Track improvement and get long-term support
+                  </p>
+                </div>
               </div>
             </div>
 
