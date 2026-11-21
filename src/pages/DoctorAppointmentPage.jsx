@@ -935,10 +935,10 @@ export default function DoctorAppointmentPage() {
             How to Book a Doctor Appointment?
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4 items-center">
             
             {/* Left: 4-Step Interactive Flow - Balanced Typography & Proportions */}
-            <div className="lg:col-span-9 grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-5 items-start">
+            <div className="lg:col-span-10 grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4 xl:gap-6 items-start">
               
               {/* Step 1 */}
               <div className="flex flex-col items-start relative text-left">
@@ -948,10 +948,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <Search className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
                   Search Doctor
                 </h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
                   Find by specialty, location or name
                 </p>
               </div>
@@ -964,10 +964,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <Calendar className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
                   Select Date & Time
                 </h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
                   Choose a convenient slot
                 </p>
               </div>
@@ -980,10 +980,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <UserCheck className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
                   Book Appointment
                 </h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
                   Confirm your details and book
                 </p>
               </div>
@@ -996,10 +996,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <CheckCircle2 className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
                   Get Confirmation
                 </h4>
-                <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
                   Receive instant booking confirmation
                 </p>
               </div>
@@ -1007,8 +1007,8 @@ export default function DoctorAppointmentPage() {
             </div>
 
             {/* Right: Desk Calendar 3D Graphic - Balanced & Aligned */}
-            <div className="lg:col-span-3 flex justify-center lg:justify-end">
-              <div className="relative w-36 sm:w-44 lg:w-48 h-36 sm:h-44 lg:h-48 flex items-center justify-center">
+            <div className="lg:col-span-2 flex justify-center lg:justify-end">
+              <div className="relative w-28 sm:w-32 lg:w-36 h-28 sm:h-32 lg:h-36 flex items-center justify-center">
                 {/* Ambient glow behind calendar */}
                 <div className="absolute inset-0 bg-teal-300/30 rounded-full blur-2xl pointer-events-none" />
                 
