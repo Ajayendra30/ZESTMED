@@ -265,6 +265,137 @@ export const DETAILED_SURGERY_PACKAGES = [
   },
 
   {
+    id: 'surg-orthopedic',
+    slug: 'orthopedic-surgery-package',
+    title: 'Orthopedic Surgery Package',
+    shortTitle: 'Orthopedic Surgery Package',
+    subtitle: 'Knee, Hip, Shoulder, Joint Replacement',
+    category: 'Orthopedic & Joint',
+    startingPrice: 75000,
+    priceFormatted: '₹75,000',
+    mrp: 100000,
+    discountPercent: 25,
+    stay: '3–5 Days (Hospital Stay)',
+    anesthesia: 'Spinal / Epidural Anesthesia',
+    incision: 'Minimally Invasive Joint Reconstruction',
+    recoveryTime: 'Walking in 48 Hours, Normal Walk in 3-4 Weeks',
+    hospitalLocation: 'Dispur Ortho Care & Premier Super Specialty Hospital, Guwahati',
+    image: '/surgery-orthopedic-knee.png',
+    thumbImage: '/surgery-pkg-orthopedic.png',
+    seniorPickUpIncluded: true,
+    cashlessInsurance: 'Full Cashless Pre-Authorization with All Major Health Insurance Policies',
+
+    overview: 'Get advanced orthopedic care for joint and bone problems with our specialized surgery package. Our expert surgeons and modern technology ensure better mobility and faster recovery.',
+
+    description: 'Advanced orthopedic joint conditions cause cartilage erosion, bone friction, stiffness, and severe pain. Our comprehensive orthopedic surgery package provides precision joint reconstruction, modern modular OT facilities, and dedicated rehabilitation care ensuring swift recovery and enhanced long-term mobility.',
+
+    whatsIncluded: [
+      'Pre-surgery Consultation',
+      'Surgery Charges',
+      'Room Charges (3–5 Days)',
+      'Medicines & Consumables',
+      'Post-operative Care',
+      'Follow-up Consultation'
+    ],
+
+    whyChooseUs: [
+      {
+        title: 'Experienced Orthopedic Surgeons',
+        desc: 'Highly qualified, board-certified joint replacement specialists with decades of surgical expertise.'
+      },
+      {
+        title: 'Advanced Technology',
+        desc: 'High-definition robotic and computer-navigated surgical systems for sub-millimeter precision.'
+      },
+      {
+        title: 'Shorter Hospital Stay',
+        desc: 'Fast-track recovery protocols enabling accelerated discharge in 3 to 5 days.'
+      },
+      {
+        title: 'Better Recovery Outcomes',
+        desc: 'Personalized physiotherapy and continuous rehabilitation support for pain-free mobility.'
+      }
+    ],
+
+    faqs: [
+      {
+        q: 'What is included in the orthopedic surgery package?',
+        a: 'The package includes comprehensive pre-surgery evaluation, surgical procedure charges, OT consumables, 3 to 5 days room charges, routine in-hospital medications, post-operative nursing care, and follow-up consultations.'
+      },
+      {
+        q: 'How long is the hospital stay?',
+        a: 'The typical hospital stay is 3 to 5 days depending on the procedure and patient recovery progress. Our care team monitors vital milestones daily before discharge.'
+      },
+      {
+        q: 'Is the package covered by insurance?',
+        a: 'Yes, our orthopedic surgery packages are 100% eligible for cashless insurance with all leading health insurance companies and TPAs. Our dedicated insurance desk coordinates complete pre-authorization.'
+      },
+      {
+        q: 'Can I choose my surgeon?',
+        a: 'Yes, you can select and consult with your preferred senior orthopedic specialist from our accredited surgical panel for your evaluation and procedure.'
+      }
+    ],
+
+    procedureSteps: [
+      {
+        step: 1,
+        title: 'Pre-Operative Assessment & 3D Imaging',
+        description: 'Complete joint x-rays, CT mapping, cardiology fitness, and routine hematology workup.'
+      },
+      {
+        step: 2,
+        title: 'Minimally Invasive Joint Reconstruction',
+        description: 'Under gentle spinal anesthesia, diseased joint surfaces are precisely resurfaced and aligned.'
+      },
+      {
+        step: 3,
+        title: 'Precision Biocompatible Implant Placement',
+        description: 'High-flexion titanium and cobalt-chromium components are secured with bone cement.'
+      },
+      {
+        step: 4,
+        title: 'Fast-Track In-Hospital Rehabilitation',
+        description: 'Dedicated physiotherapy begins within 24-48 hours to restore mobility and weight-bearing.'
+      }
+    ],
+
+    benefits: [
+      'Permanent relief from chronic joint pain and structural deformity',
+      'Minimally invasive approach preserving natural ligaments and muscles',
+      'Walk comfortably with support within 48 hours',
+      'High-durability implants with lifespan exceeding 20+ years',
+      'Transparent package with zero hidden hospital costs'
+    ],
+
+    inclusions: [
+      'Pre-surgery Consultation',
+      'Surgery Charges',
+      'Room Charges (3–5 Days)',
+      'Medicines & Consumables',
+      'Post-operative Care',
+      'Follow-up Consultation'
+    ],
+
+    surgeon: {
+      name: 'Dr. Arindam Borah, MPT (Ortho)',
+      qualification: 'MBBS, MS (Orthopedics), Joint Replacement Fellow',
+      role: 'Chief Joint Replacement & Orthopedic Surgeon',
+      experience: '16+ Years Experience',
+      surgeriesCount: '2,200+ Successful Procedures',
+      hospitalAffiliation: 'Dispur Ortho Care & Premier Super Specialty Hospital, Guwahati',
+      rating: '4.9/5'
+    },
+
+    recoveryGuide: {
+      hospitalStay: '3–5 Days',
+      walking: 'Walking with support on Day 2; independent walking in 2-3 weeks',
+      diet: 'High-protein, calcium and vitamin D enriched recovery diet',
+      returnToWork: 'Desk work in 3-4 weeks; driving in 4-6 weeks',
+      followUp: 'First review on Day 7, stitch inspection on Day 14'
+    }
+  },
+
+  {
     id: 'surg-knee',
     slug: 'knee-replacement',
     title: 'Total Knee Replacement (TKR - Fast-Track Robotic/Navigated)',
