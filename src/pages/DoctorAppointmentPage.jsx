@@ -229,15 +229,6 @@ export default function DoctorAppointmentPage() {
     return () => { isMounted = false; };
   }, []);
 
-  // Dynamic live specialty counts (NE Health Hub Feature)
-  const specialtyCounts = useMemo(() => {
-    const counts = { All: doctorsList.length };
-    SPECIALTY_LIST.forEach((spec) => {
-      counts[spec.name] = doctorsList.filter((doc) => matchesSpecialty(doc, spec.name)).length;
-    });
-    return counts;
-  }, [doctorsList]);
-
   // Booking Modal States
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingDoctor, setBookingDoctor] = useState(null);
@@ -652,6 +643,19 @@ export default function DoctorAppointmentPage() {
               <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">
                 Consult experienced, accredited medical specialists and senior consultants across Guwahati and the North-East.
               </p>
+              {activeSpecialtyFilter !== 'All' && (
+                <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-[#007A64] border border-teal-200 text-xs font-bold">
+                  <span>Showing: <strong>{activeSpecialtyFilter}</strong></span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveSpecialtyFilter('All')}
+                    className="text-[#007A64] hover:text-slate-700 font-black ml-1 text-sm cursor-pointer"
+                    title="Clear filter"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* View Toggle */}
@@ -667,65 +671,6 @@ export default function DoctorAppointmentPage() {
                 <span>{showAllDoctors ? 'Show Top 6 Doctors' : `View All Doctors (${doctorsList.length})`}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-            </div>
-          </div>
-
-          {/* NE Health Hub Style: Specialty Filter Pills Bar with Live Counters */}
-          <div className="overflow-x-auto pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
-            <div className="flex items-center gap-2 min-w-max">
-              {/* All Specialists Pill */}
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveSpecialtyFilter('All');
-                  setSelectedDoctor('');
-                }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeSpecialtyFilter === 'All'
-                    ? 'bg-[#007A64] text-white shadow-xs'
-                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs'
-                }`}
-              >
-                <span>All Specialists</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                  activeSpecialtyFilter === 'All' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
-                }`}>
-                  {specialtyCounts.All || doctorsList.length}
-                </span>
-              </button>
-
-              {/* Individual Specialty Counter Pills */}
-              {SPECIALTY_LIST.map((spec) => {
-                const count = specialtyCounts[spec.name] || 0;
-                const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
-
-                return (
-                  <button
-                    key={spec.id}
-                    type="button"
-                    onClick={() => {
-                      if (isSelected) {
-                        setActiveSpecialtyFilter('All');
-                      } else {
-                        setActiveSpecialtyFilter(spec.name);
-                        setSelectedDoctor('');
-                      }
-                    }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-[#007A64] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs'
-                    }`}
-                  >
-                    <span>{spec.name}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                      isSelected ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
             </div>
           </div>
 
