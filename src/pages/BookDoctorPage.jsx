@@ -5,7 +5,7 @@ import {
   MapPin, ChevronDown, ShieldCheck, Clock, 
   CheckCircle2, User, Phone, Mail, FileText, 
   CalendarCheck, Bookmark, ArrowLeft, Printer, 
-  MessageSquare, Sparkles, AlertCircle, Building2
+  MessageSquare, AlertCircle, Building2
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
@@ -332,7 +332,7 @@ export default function BookDoctorPage() {
         <div className="text-center mb-6 sm:mb-8 space-y-2">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#E6F4F1] text-[#007A64] border border-teal-200/60 text-[11px] sm:text-xs font-black tracking-wider uppercase shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#007A64]" />
+            <Calendar className="w-3.5 h-3.5 text-[#007A64]" />
             <span>CLINICAL CONSULTATION SCHEDULER</span>
           </div>
 
