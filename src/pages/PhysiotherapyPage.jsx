@@ -189,10 +189,10 @@ export default function PhysiotherapyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Booking Form States
+  // Booking Form States - Only prefill if user is logged in
   const [formData, setFormData] = useState({
-    fullName: user?.name || 'Rahul Verma',
-    mobileNumber: user?.contact || user?.phone || '9279125091',
+    fullName: user?.name || '',
+    mobileNumber: user?.contact || user?.phone || '',
     preferredDate: new Date().toISOString().split('T')[0],
     preferredTime: '11:00 AM - 01:00 PM',
     selectedService: 'Back & Neck Pain Therapy',
@@ -203,7 +203,13 @@ export default function PhysiotherapyPage() {
       setFormData((prev) => ({
         ...prev,
         fullName: user.name,
-        mobileNumber: user.contact || user.phone || prev.mobileNumber
+        mobileNumber: user.contact || user.phone || prev.mobileNumber || ''
+      }));
+    } else if (!user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: '',
+        mobileNumber: ''
       }));
     }
   }, [user]);

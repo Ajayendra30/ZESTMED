@@ -291,9 +291,9 @@ export default function DoctorAppointmentPage() {
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   const [patientForm, setPatientForm] = useState({
-    name: user?.name || 'Rahul Verma',
-    phone: user?.contact || user?.phone || '9279125091',
-    age: user?.age || '34',
+    name: user?.name || '',
+    phone: user?.contact || user?.phone || '',
+    age: user?.age || '',
     gender: user?.gender || 'Male',
     symptoms: '',
     freeSeniorCab: false
@@ -307,6 +307,16 @@ export default function DoctorAppointmentPage() {
         phone: user.contact || user.phone || prev.phone,
         age: user.age || prev.age,
         gender: user.gender || prev.gender
+      }));
+    } else if (!user) {
+      setPatientForm((prev) => ({
+        ...prev,
+        name: '',
+        phone: '',
+        age: '',
+        gender: 'Male',
+        symptoms: '',
+        freeSeniorCab: false
       }));
     }
   }, [user]);
@@ -1640,7 +1650,7 @@ export default function DoctorAppointmentPage() {
                         value={patientForm.name}
                         onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
-                        placeholder="e.g. Rahul Verma"
+                        placeholder="Enter your name"
                       />
                     </div>
 
