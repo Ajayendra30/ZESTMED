@@ -295,11 +295,11 @@ export default function SurgeryPackagesPage() {
               >
                 <Link to={`/surgery-packages/${pkg.slug}`} className="block group-hover:opacity-95 transition">
                   {/* Visual Illustration */}
-                  <div className="h-24 sm:h-28 w-full flex items-center justify-center mb-3 overflow-hidden rounded-2xl bg-slate-50/70 p-1.5">
+                  <div className="h-28 sm:h-32 lg:h-32 xl:h-36 w-full flex items-center justify-center mb-3 overflow-hidden rounded-2xl bg-slate-50/70 p-1">
                     <img
                       src={pkg.image}
                       alt={pkg.title}
-                      className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
 

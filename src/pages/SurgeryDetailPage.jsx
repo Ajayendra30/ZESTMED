@@ -354,7 +354,7 @@ export default function SurgeryDetailPage() {
               <div className="w-full max-w-sm bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xl space-y-4">
                 
                 {/* Visual Image */}
-                <div className="h-32 w-full flex items-center justify-center rounded-2xl bg-slate-50 p-2 overflow-hidden border border-slate-100">
+                <div className="h-40 sm:h-44 w-full flex items-center justify-center rounded-2xl bg-slate-50/80 p-2 overflow-hidden border border-slate-100">
                   <img
                     src={surgery.image}
                     alt={surgery.title}
