@@ -16,15 +16,29 @@ import {
 export default function DoctorHero({
   selectedSpecialty,
   setSelectedSpecialty,
+  selectedDoctor,
+  setSelectedDoctor,
   selectedLocation,
   setSelectedLocation,
   selectedDate,
   setSelectedDate,
   specialties = [],
+  doctors = [],
   onSearchSubmit,
   onBookAppointment,
   onOnlineConsultation
 }) {
+  // Filter doctors based on selected specialty for dynamic dropdown
+  const filteredDoctorsForDropdown = React.useMemo(() => {
+    if (!selectedSpecialty || selectedSpecialty === 'All' || selectedSpecialty === 'All Specialties') {
+      return doctors;
+    }
+    return doctors.filter(doc => {
+      const s = (doc.specialty || '').toLowerCase();
+      const sel = selectedSpecialty.toLowerCase();
+      return s.includes(sel) || sel.includes(s);
+    });
+  }, [doctors, selectedSpecialty]);
   return (
     <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-gradient-to-r from-[#EFFBF8] via-[#E2F2F8] to-[#D5EBF8]">
       
@@ -113,11 +127,14 @@ export default function DoctorHero({
                     <Stethoscope className="w-4 h-4 text-[#007A64] shrink-0" />
                     <select
                       value={selectedSpecialty}
-                      onChange={(e) => setSelectedSpecialty(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedSpecialty(e.target.value);
+                        if (setSelectedDoctor) setSelectedDoctor('');
+                      }}
                       className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
                     >
-                      <option value="">Select Speciality</option>
-                      {specialties.filter(s => s !== 'All Specialties').map((spec) => (
+                      <option value="">All Specialities</option>
+                      {specialties.filter(s => s !== 'All Specialties' && s !== 'All').map((spec) => (
                         <option key={spec} value={spec}>{spec}</option>
                       ))}
                     </select>
@@ -126,7 +143,29 @@ export default function DoctorHero({
                 </div>
               </div>
 
-              {/* Field 2: Select Location */}
+              {/* Field 2: Select Doctor (NE Health Hub dynamic selector) */}
+              <div className="relative">
+                <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-[13px] font-semibold hover:border-[#007A64] transition">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <Search className="w-4 h-4 text-[#007A64] shrink-0" />
+                    <select
+                      value={selectedDoctor || ''}
+                      onChange={(e) => setSelectedDoctor && setSelectedDoctor(e.target.value)}
+                      className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
+                    >
+                      <option value="">Any Specialist / Doctor</option>
+                      {filteredDoctorsForDropdown.map((doc) => (
+                        <option key={doc.id} value={doc.name}>
+                          {doc.name} ({doc.specialty})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Field 3: Select Location */}
               <div className="relative">
                 <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-[13px] font-semibold hover:border-[#007A64] transition">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -136,20 +175,18 @@ export default function DoctorHero({
                       onChange={(e) => setSelectedLocation(e.target.value)}
                       className="w-full bg-transparent outline-none cursor-pointer text-slate-800 text-xs sm:text-[13px] truncate appearance-none pr-2"
                     >
-                      <option value="">Select Location</option>
-                      <option value="Guwahati - GS Road Hub">Guwahati - GS Road Hub</option>
-                      <option value="Dispur Polyclinic">Dispur Polyclinic</option>
+                      <option value="">All Clinic Hubs</option>
+                      <option value="Guwahati - GS Road Hub">Zestmed Hub - GS Road, Guwahati</option>
+                      <option value="Dispur Polyclinic">Dispur Polyclinic & Diagnostic Hub</option>
                       <option value="Panbazar Medical Hub">Panbazar Medical Hub</option>
-                      <option value="Jorhat Center">Jorhat Center</option>
-                      <option value="Silpukhuri Polyclinic">Silpukhuri Polyclinic</option>
-                      <option value="Ulubari Child & Family Care">Ulubari Child & Family Care</option>
+                      <option value="Beltola Clinic">Beltola Clinic Hub</option>
                     </select>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 pointer-events-none" />
                 </div>
               </div>
 
-              {/* Field 3: Preferred Date */}
+              {/* Field 4: Preferred Date */}
               <div className="relative">
                 <div className="flex items-center justify-between w-full px-3 py-2 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-[13px] font-semibold hover:border-[#007A64] transition">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -170,13 +207,13 @@ export default function DoctorHero({
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button - NE Health Hub Find Doctor Style */}
               <button
                 type="submit"
-                className="w-full mt-1 bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full mt-1.5 bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
-                <span>Search Doctors</span>
-                <ArrowRight className="w-4 h-4" />
+                <Search className="w-4 h-4 stroke-[2.5]" />
+                <span>Find Doctor</span>
               </button>
             </form>
 

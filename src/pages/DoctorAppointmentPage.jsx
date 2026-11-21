@@ -5,7 +5,8 @@ import {
   MapPin, ChevronDown, ShieldCheck, Clock, CreditCard, 
   Star, CheckCircle2, User, Phone, X, Award, AlertCircle,
   CalendarCheck, FileText, Sparkles, Heart, Activity,
-  ChevronLeft, ChevronRight, UserCheck, Banknote, Lock
+  ChevronLeft, ChevronRight, UserCheck, Banknote, Lock,
+  PhoneCall, MessageSquare
 } from 'lucide-react';
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
@@ -153,18 +154,60 @@ export default function DoctorAppointmentPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Search card form states
+  // Search card form states (NE Health Hub style)
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
 
-  // Active filters and views
+  // Active filters, expandable profiles and views
   const [activeSpecialtyFilter, setActiveSpecialtyFilter] = useState('All');
   const [showAllDoctors, setShowAllDoctors] = useState(false);
+  const [expandedDoctorId, setExpandedDoctorId] = useState(null);
 
   // Doctors catalog state fetched from database
   const [doctorsList, setDoctorsList] = useState(MOCK_DOCTORS);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
+
+  // Modal Tabs & User Appointments History
+  const [modalTab, setModalTab] = useState('schedule'); // 'schedule' | 'my-appointments'
+  const [patientAppointments, setPatientAppointments] = useState([]);
+
+  // Load user's booked appointments from localStorage
+  const loadAppointments = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      const filtered = (stored || []).filter(item => 
+        item.type === 'Doctor Appointment' || item.category === 'doctor' || item.doctor
+      );
+      setPatientAppointments(filtered);
+    } catch {
+      setPatientAppointments([]);
+    }
+  };
+
+  useEffect(() => {
+    loadAppointments();
+    window.addEventListener('storage', loadAppointments);
+    window.addEventListener('zestmed_booking_updated', loadAppointments);
+    return () => {
+      window.removeEventListener('storage', loadAppointments);
+      window.removeEventListener('zestmed_booking_updated', loadAppointments);
+    };
+  }, []);
+
+  // Cancel an appointment
+  const handleCancelAppointment = (id) => {
+    try {
+      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+      const updated = existing.map(item => (item.id === id || item.bookingId === id) ? { ...item, status: 'Cancelled' } : item);
+      localStorage.setItem('patient_appointments', JSON.stringify(updated));
+      loadAppointments();
+      addToast('Appointment cancelled successfully', 'info');
+    } catch {
+      addToast('Unable to cancel appointment', 'error');
+    }
+  };
 
   // Load doctors from database on component mount
   useEffect(() => {
@@ -185,6 +228,15 @@ export default function DoctorAppointmentPage() {
     loadDoctors();
     return () => { isMounted = false; };
   }, []);
+
+  // Dynamic live specialty counts (NE Health Hub Feature)
+  const specialtyCounts = useMemo(() => {
+    const counts = { All: doctorsList.length };
+    SPECIALTY_LIST.forEach((spec) => {
+      counts[spec.name] = doctorsList.filter((doc) => matchesSpecialty(doc, spec.name)).length;
+    });
+    return counts;
+  }, [doctorsList]);
 
   // Booking Modal States
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -217,7 +269,7 @@ export default function DoctorAppointmentPage() {
     }
   }, [user]);
 
-  // Filtered doctors list based on user search or specialty pills
+  // Filtered doctors list based on user search, doctor selection, or specialty pills
   const displayedDoctors = useMemo(() => {
     let list = doctorsList;
 
@@ -225,12 +277,16 @@ export default function DoctorAppointmentPage() {
       list = list.filter((doc) => matchesSpecialty(doc, activeSpecialtyFilter));
     }
 
-    if (!showAllDoctors && activeSpecialtyFilter === 'All') {
-      return list.slice(0, 3);
+    if (selectedDoctor) {
+      list = list.filter((doc) => doc.name.toLowerCase().includes(selectedDoctor.toLowerCase()));
+    }
+
+    if (!showAllDoctors && activeSpecialtyFilter === 'All' && !selectedDoctor) {
+      return list.slice(0, 6);
     }
 
     return list;
-  }, [doctorsList, activeSpecialtyFilter, showAllDoctors]);
+  }, [doctorsList, activeSpecialtyFilter, selectedDoctor, showAllDoctors]);
 
   // Auto-open doctor booking when user logs in on the same page
   useEffect(() => {
@@ -276,11 +332,21 @@ export default function DoctorAppointmentPage() {
   // Submit search from "Find a Doctor" widget
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (selectedSpecialty) {
+    if (selectedDoctor) {
+      const found = doctorsList.find(d => d.name.toLowerCase().includes(selectedDoctor.toLowerCase()));
+      if (found) {
+        setActiveSpecialtyFilter(found.specialty || 'All');
+        setShowAllDoctors(true);
+        addToast(`Found ${found.name}`, 'success');
+      } else {
+        setShowAllDoctors(true);
+      }
+    } else if (selectedSpecialty) {
       setActiveSpecialtyFilter(selectedSpecialty);
       addToast(`Filtered doctors for ${selectedSpecialty}`, 'info');
+      setShowAllDoctors(true);
     } else {
-      addToast('Showing all top specialist doctors', 'info');
+      addToast('Showing all specialist doctors', 'info');
       setActiveSpecialtyFilter('All');
       setShowAllDoctors(true);
     }
@@ -424,11 +490,14 @@ export default function DoctorAppointmentPage() {
       <DoctorHero
         selectedSpecialty={selectedSpecialty}
         setSelectedSpecialty={setSelectedSpecialty}
+        selectedDoctor={selectedDoctor}
+        setSelectedDoctor={setSelectedDoctor}
         selectedLocation={selectedLocation}
         setSelectedLocation={setSelectedLocation}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         specialties={DOCTOR_SPECIALTIES}
+        doctors={doctorsList}
         onSearchSubmit={handleSearchSubmit}
         onBookAppointment={handleOpenBooking}
         onOnlineConsultation={handleOpenBooking}
@@ -564,37 +633,103 @@ export default function DoctorAppointmentPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 4. TOP DOCTORS SECTION (Exact Cards with User's Uploaded Photos)         */}
+        {/* 4. MEET OUR SPECIALIST DOCTORS (NE Health Hub Architecture & Design)     */}
         {/* ========================================================================= */}
-        <section id="top-doctors-section" className="space-y-4 pt-1">
+        <section id="top-doctors-section" className="space-y-5 pt-2">
           
-          {/* Header Row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl sm:text-3xl font-black text-[#0F1E36] tracking-tight">
-                Top Doctors
+          {/* Section Header matching NE Health Hub Structure */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              {/* Eyebrow Pill Tag */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E0F3ED] text-[#007A64] border border-[#BCE8DD] text-[11px] sm:text-xs font-black uppercase tracking-wider mb-2">
+                <Stethoscope className="w-3.5 h-3.5 text-[#007A64]" />
+                <span>SENIOR SPECIALISTS</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F1E36] tracking-tight">
+                Meet Our Specialist Doctors
               </h2>
-              {activeSpecialtyFilter !== 'All' && (
-                <span className="text-xs sm:text-sm font-extrabold bg-[#DCFCE7] text-[#047857] px-3 py-1 rounded-full border border-teal-200">
-                  {activeSpecialtyFilter}
-                </span>
-              )}
+              <div className="w-16 h-1 bg-[#007A64] rounded-full mt-2.5 mb-2" />
+              <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">
+                Consult experienced, accredited medical specialists and senior consultants across Guwahati and the North-East.
+              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setShowAllDoctors(!showAllDoctors);
-                setActiveSpecialtyFilter('All');
-              }}
-              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
-            >
-              <span>{showAllDoctors ? 'Show Top 3 Doctors' : 'View All Doctors'}</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            {/* View Toggle */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAllDoctors(!showAllDoctors);
+                  if (activeSpecialtyFilter !== 'All') setActiveSpecialtyFilter('All');
+                }}
+                className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-[#007A64] font-extrabold text-xs sm:text-sm flex items-center gap-1.5 shadow-2xs hover:shadow-xs transition cursor-pointer"
+              >
+                <span>{showAllDoctors ? 'Show Top 6 Doctors' : `View All Doctors (${doctorsList.length})`}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* Doctors Grid: Displays Dr. Amit Sharma, Dr. Neha Verma, Dr. Rohan Das */}
+          {/* NE Health Hub Style: Specialty Filter Pills Bar with Live Counters */}
+          <div className="overflow-x-auto pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
+            <div className="flex items-center gap-2 min-w-max">
+              {/* All Specialists Pill */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSpecialtyFilter('All');
+                  setSelectedDoctor('');
+                }}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeSpecialtyFilter === 'All'
+                    ? 'bg-[#007A64] text-white shadow-xs'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs'
+                }`}
+              >
+                <span>All Specialists</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                  activeSpecialtyFilter === 'All' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {specialtyCounts.All || doctorsList.length}
+                </span>
+              </button>
+
+              {/* Individual Specialty Counter Pills */}
+              {SPECIALTY_LIST.map((spec) => {
+                const count = specialtyCounts[spec.name] || 0;
+                const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
+
+                return (
+                  <button
+                    key={spec.id}
+                    type="button"
+                    onClick={() => {
+                      if (isSelected) {
+                        setActiveSpecialtyFilter('All');
+                      } else {
+                        setActiveSpecialtyFilter(spec.name);
+                        setSelectedDoctor('');
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#007A64] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs'
+                    }`}
+                  >
+                    <span>{spec.name}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                      isSelected ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Doctors Grid matching NE Health Hub Card Architecture */}
           {displayedDoctors.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-8 sm:p-12 text-center space-y-3">
               <div className="w-14 h-14 bg-teal-50 text-[#007A64] rounded-2xl flex items-center justify-center mx-auto">
@@ -608,94 +743,212 @@ export default function DoctorAppointmentPage() {
                 type="button"
                 onClick={() => {
                   setActiveSpecialtyFilter('All');
+                  setSelectedDoctor('');
                   setShowAllDoctors(true);
                 }}
                 className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white text-xs sm:text-sm font-bold shadow-2xs hover:shadow-md transition cursor-pointer"
               >
-                <span>View All Doctors</span>
+                <span>View All Specialists</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {displayedDoctors.map((doc) => {
+                const isExpanded = expandedDoctorId === doc.id;
+
                 return (
                   <div
                     key={doc.id}
-                    className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-5 sm:p-6 flex flex-col justify-between group relative overflow-hidden"
+                    className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group overflow-hidden"
                   >
-                    <div className="flex items-start gap-4 sm:gap-4.5">
+                    {/* 1. Visual Header / Portrait Banner with Overlay Badges */}
+                    <div className="relative h-56 sm:h-60 w-full overflow-hidden bg-slate-100 select-none">
+                      <img
+                        src={doc.avatar}
+                        alt={doc.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/contact-doctor.png';
+                        }}
+                      />
                       
-                      {/* Doctor Avatar - Uses provided image with light grey background */}
-                      <div className="w-22 h-22 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100 relative">
-                        <img
-                          src={doc.avatar}
-                          alt={doc.name}
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                        />
+                      {/* Vignette Gradient at base of image */}
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
+
+                      {/* Floating Specialty Badge (Top-Left) */}
+                      <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black text-[#007A64] border border-teal-100 shadow-sm flex items-center gap-1.5">
+                        <Stethoscope className="w-3.5 h-3.5 text-[#007A64]" />
+                        <span>{doc.specialty}</span>
                       </div>
 
-                      {/* Doctor Details */}
-                      <div className="min-w-0 flex-1">
-                        
-                        {/* Name & Experience Badge in Top Row */}
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h3 className="text-base sm:text-lg font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
-                              {doc.name}
-                            </h3>
-                            <p className="text-xs sm:text-sm font-bold text-slate-700 mt-0.5">
-                              {doc.designation || doc.specialty}
-                            </p>
-                          </div>
+                      {/* Floating Rating Badge (Top-Right) */}
+                      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-black text-amber-600 border border-amber-100 shadow-sm flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{doc.ratingScore || '4.8'}</span>
+                        <span className="text-[10px] text-slate-400 font-semibold">
+                          ({String(doc.reviewsCount || '1000').split(' ')[0]})
+                        </span>
+                      </div>
 
-                          {/* Experience Badge matching reference pill */}
-                          <div className="shrink-0 text-center px-2.5 py-1 rounded-xl bg-[#E6F4F1] text-[#007A64] border border-teal-200/50 leading-none">
-                            <p className="text-xs sm:text-[13px] font-black">{doc.experience.split(' ')[0]}</p>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Experience</p>
-                          </div>
+                      {/* Experience Pill overlaid inside bottom of image */}
+                      <div className="absolute bottom-2.5 left-3 text-white text-xs font-bold drop-shadow-md flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5 text-teal-300" />
+                        <span>{doc.experience}</span>
+                      </div>
+                    </div>
+
+                    {/* 2. Doctor Clinical Information Body */}
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        {/* Name & Sub-Designation */}
+                        <div>
+                          <h3 className="text-lg sm:text-xl font-black text-[#0F1E36] group-hover:text-[#007A64] transition-colors leading-tight">
+                            {doc.name}
+                          </h3>
+                          <p className="text-xs sm:text-[13px] font-bold text-[#007A64] mt-0.5">
+                            {doc.designation || `Senior Consultant • ${doc.specialty}`}
+                          </p>
                         </div>
 
-                        {/* Qualification */}
-                        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 truncate">
+                        {/* Qualifications */}
+                        <p className="text-xs text-slate-600 font-medium leading-relaxed truncate">
                           {doc.degree}
                         </p>
 
-                        {/* Rating & Reviews */}
-                        <div className="flex items-center gap-1.5 mt-2.5 text-xs sm:text-sm">
-                          <div className="flex items-center gap-1 text-amber-500 font-extrabold">
-                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                            <span>{doc.ratingScore || '4.8'}</span>
-                          </div>
-                          <span className="text-slate-400 text-xs">
-                            ({doc.reviewsCount || '1,000+'} reviews)
-                          </span>
+                        {/* Hospital / Clinic Hub */}
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                          <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                          <span className="truncate">{doc.hospital}</span>
                         </div>
 
+                        {/* Next Available Slot Pill */}
+                        <div className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-xl bg-teal-50/70 border border-teal-100 text-slate-700">
+                          <span className="font-semibold text-slate-600 flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-[#007A64]" />
+                            <span>Next Available Slot:</span>
+                          </span>
+                          <span className="font-bold text-[#007A64]">{doc.nextSlot || 'Today, 04:30 PM'}</span>
+                        </div>
+
+                        {/* NE Health Hub Inline Expandable Accordion ("View Profile v") */}
+                        <button
+                          type="button"
+                          onClick={() => setExpandedDoctorId(isExpanded ? null : doc.id)}
+                          className="w-full pt-2 pb-1 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 hover:text-[#007A64] transition cursor-pointer"
+                        >
+                          <span>{isExpanded ? 'Hide Clinical Profile' : 'View Profile & Timings'}</span>
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#007A64]' : 'text-slate-400'}`} />
+                        </button>
+
+                        {/* Expandable Clinical Profile Details */}
+                        {isExpanded && (
+                          <div className="space-y-2.5 pt-2 text-xs border-t border-dashed border-teal-200 animate-in fade-in duration-200">
+                            {/* Doctor Biography */}
+                            <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                              <p className="text-slate-600 leading-relaxed font-normal">
+                                {doc.bio || 'Senior medical consultant with specialized clinical focus on patient-centric diagnosis, modern clinical therapeutics, and continuous care.'}
+                              </p>
+                            </div>
+
+                            {/* Consulting Days & Schedule */}
+                            <div>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                                Available Consulting Schedule:
+                              </span>
+                              <div className="flex flex-wrap items-center gap-1">
+                                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                                  <span key={day} className="px-1.5 py-0.5 rounded bg-teal-50 text-[#007A64] border border-teal-200/60 font-semibold text-[10px]">
+                                    {day}
+                                  </span>
+                                ))}
+                                <span className="text-[10px] text-slate-500 font-semibold ml-1">04:00 PM – 08:00 PM</span>
+                              </div>
+                            </div>
+
+                            {/* Modes */}
+                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-700">
+                              <span className="flex items-center gap-1 text-[#007A64]">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Clinic Visit
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1 text-[#007A64]">
+                                <Video className="w-3.5 h-3.5" /> Video Consult
+                              </span>
+                            </div>
+
+                            {/* Verified Registration */}
+                            <div className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Medical Registration: AMC / NMC Verified</span>
+                            </div>
+                          </div>
+                        )}
+
                       </div>
-                    </div>
 
-                    {/* Bottom Action Bar: Fee & Book Button */}
-                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
-                      <div>
-                        <span className="text-xs text-slate-500 font-medium">Consultation Fee</span>
-                        <p className="text-base sm:text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
+                      {/* 3. Card Action Footer */}
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <div>
+                          <span className="text-[11px] text-slate-400 font-medium block">Consultation Fee</span>
+                          <p className="text-lg font-black text-[#0F1E36]">₹{doc.fee || 600}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
+                            className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                          >
+                            <Calendar className="w-4 h-4" />
+                            <span>Book Slot</span>
+                          </button>
+                        </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenBooking(doc, 'Clinic Visit')}
-                        className="bg-[#007A64] hover:bg-[#006852] text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-xl shadow-2xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-                      >
-                        Book Appointment
-                      </button>
                     </div>
-
                   </div>
                 );
               })}
             </div>
           )}
+
+          {/* NE Health Hub Style: Direct Hotline & WhatsApp Booking Strip */}
+          <div className="mt-6 bg-gradient-to-r from-teal-50 via-emerald-50 to-teal-50 rounded-2xl border border-teal-200/80 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5 text-left">
+              <div className="w-10 h-10 rounded-xl bg-[#007A64] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <PhoneCall className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36]">
+                  Need Assistance Finding the Right Doctor?
+                </h4>
+                <p className="text-xs text-slate-600 font-medium mt-0.5">
+                  Speak directly with our clinical care coordinators or chat on WhatsApp for priority doctor appointment booking.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+              <a
+                href="tel:+919279125091"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#007A64] border border-teal-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition shadow-2xs"
+              >
+                <PhoneCall className="w-4 h-4 text-[#007A64]" />
+                <span>Call +91 9279125091</span>
+              </a>
+              <a
+                href="https://wa.me/919279125091?text=Hi%2C%20I%20would%20like%20to%20book%20a%20doctor%20appointment%20at%20ZESTMED"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-[#22C55E] hover:bg-[#16A34A] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition shadow-2xs"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>WhatsApp Booking</span>
+              </a>
+            </div>
+          </div>
 
         </section>
 
@@ -1063,33 +1316,156 @@ export default function DoctorAppointmentPage() {
             onClick={(e) => e.stopPropagation()}
           >
             
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50/70 to-white sticky top-0 z-10">
-              <div className="flex items-center gap-3">
-                <div className="shrink-0 flex items-center justify-center text-[#007A64]">
-                  <Stethoscope className="w-6 h-6 text-[#007A64]" />
+            {/* Modal Header with NE Health Hub Style Tabs */}
+            <div className="px-4 sm:px-6 pt-4 pb-0 border-b border-slate-100 bg-gradient-to-r from-teal-50/70 to-white sticky top-0 z-10">
+              <div className="flex items-center justify-between pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-100/70 text-[#007A64] flex items-center justify-center shrink-0">
+                    <Stethoscope className="w-5 h-5 text-[#007A64]" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black text-[#0F1E36]">
+                      {confirmedBooking ? 'Appointment Confirmed!' : 'Clinical Consultation Scheduler'}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium">
+                      {confirmedBooking ? 'Your slot is secured. Summary below.' : 'Verified Specialists at Zestmed Polyclinic Hub'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-[#0F1E36]">
-                    {confirmedBooking ? 'Appointment Confirmed!' : 'Book Doctor Appointment'}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {confirmedBooking ? 'Your slot is secured. Summary below.' : 'Verified Specialists at Zestmed Polyclinic Hub'}
-                  </p>
-                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsBookingModalOpen(false);
+                    setConfirmedBooking(null);
+                  }}
+                  className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsBookingModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              {/* NE Health Hub Tabs: Schedule Appointment vs My Appointments */}
+              {!confirmedBooking && (
+                <div className="flex items-center gap-4 text-xs font-bold border-t border-slate-100/80 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setModalTab('schedule')}
+                    className={`pb-2.5 border-b-2 font-black transition cursor-pointer flex items-center gap-1.5 ${
+                      modalTab === 'schedule'
+                        ? 'border-[#007A64] text-[#007A64]'
+                        : 'border-transparent text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>Schedule Appointment</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      loadAppointments();
+                      setModalTab('my-appointments');
+                    }}
+                    className={`pb-2.5 border-b-2 font-black transition cursor-pointer flex items-center gap-1.5 ${
+                      modalTab === 'my-appointments'
+                        ? 'border-[#007A64] text-[#007A64]'
+                        : 'border-transparent text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>My Appointments ({patientAppointments.length})</span>
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Modal Body: Confirmation View or Booking Form */}
-            {confirmedBooking ? (
+            {/* Modal Body: My Appointments Tab View */}
+            {modalTab === 'my-appointments' && !confirmedBooking ? (
+              <div className="p-4 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-black text-[#0F1E36]">
+                    Your Scheduled Consultations
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setModalTab('schedule')}
+                    className="text-xs font-bold text-[#007A64] hover:underline"
+                  >
+                    + Book New Slot
+                  </button>
+                </div>
+
+                {patientAppointments.length === 0 ? (
+                  <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
+                    <CalendarCheck className="w-10 h-10 text-slate-300 mx-auto" />
+                    <h5 className="text-sm font-bold text-slate-700">No Appointments Booked Yet</h5>
+                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                      You haven't scheduled any doctor consultations yet. Select a doctor to book your slot in seconds.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('schedule')}
+                      className="mt-2 px-5 py-2.5 bg-[#007A64] hover:bg-[#006852] text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
+                    >
+                      Book An Appointment
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {patientAppointments.map((appt) => (
+                      <div key={appt.id || appt.bookingId} className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] font-mono font-bold text-slate-400 block">{appt.id || appt.bookingId}</span>
+                            <h5 className="text-sm font-black text-[#0F1E36]">{appt.doctor || appt.doctorName || appt.title}</h5>
+                            <p className="text-xs text-[#007A64] font-bold">{appt.specialty || appt.doctorSpecialty}</p>
+                          </div>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                            appt.status === 'Cancelled'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          }`}>
+                            {appt.status || 'Confirmed'}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                          <div>
+                            <span className="text-[10px] text-slate-400 block font-semibold">Slot Date & Time</span>
+                            <span className="font-bold text-slate-800">{appt.date} • {appt.time}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block font-semibold">Mode</span>
+                            <span className="font-bold text-slate-800">{appt.mode}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block font-semibold">Patient</span>
+                            <span className="font-bold text-slate-800">{appt.patientName}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-400 block font-semibold">Payment</span>
+                            <span className="font-bold text-slate-800">{appt.paymentStatus || (appt.paymentId ? 'Paid' : 'Pay at Clinic')}</span>
+                          </div>
+                        </div>
+
+                        {appt.status !== 'Cancelled' && (
+                          <div className="flex justify-end pt-1">
+                            <button
+                              type="button"
+                              onClick={() => handleCancelAppointment(appt.id || appt.bookingId)}
+                              className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:underline cursor-pointer"
+                            >
+                              Cancel Appointment
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : confirmedBooking ? (
               <div className="p-6 space-y-6">
                 
                 {/* Success Card */}
