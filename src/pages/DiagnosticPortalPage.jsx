@@ -384,7 +384,7 @@ export default function DiagnosticPortalPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
             
             {/* Left Content */}
-            <div className="lg:col-span-6 xl:col-span-6 z-10 space-y-3.5 sm:space-y-4 max-w-xl">
+            <div className="lg:col-span-5 xl:col-span-5 2xl:col-span-5 z-10 space-y-3.5 sm:space-y-4 max-w-xl">
               <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-tight">
                 Lab Tests & <span className="text-[#008F83]">Diagnostics</span>
               </h1>
@@ -426,11 +426,11 @@ export default function DiagnosticPortalPage() {
             </div>
 
             {/* Right Image: Scientist with Microscope & Laboratory Equipment - Increased size to fill empty space without cropping */}
-            <div className="flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-4 sm:-mb-6 lg:-mb-9">
+            <div className="w-full flex lg:flex lg:col-span-7 xl:col-span-7 2xl:col-span-7 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-7 sm:-mb-8 lg:-mb-9">
               <img
                 src="/lab-tests-hero.png"
                 alt="Lab Diagnostics Scientist with Microscope"
-                className="h-auto max-h-[250px] sm:max-h-[300px] md:max-h-[340px] lg:max-h-[370px] xl:max-h-[410px] 2xl:max-h-[450px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none"
+                className="h-auto max-h-[290px] sm:max-h-[350px] md:max-h-[400px] lg:max-h-[450px] xl:max-h-[500px] 2xl:max-h-[550px] w-auto max-w-full object-contain object-bottom drop-shadow-md select-none pointer-events-none transition-all duration-300"
               />
             </div>
 
