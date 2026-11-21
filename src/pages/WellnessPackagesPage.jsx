@@ -199,7 +199,7 @@ export default function WellnessPackagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans select-none pb-12">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans select-none">
       
       {/* ========================================================================= */}
       {/* 1. HERO SECTION matching exact Reference Image                            */}
