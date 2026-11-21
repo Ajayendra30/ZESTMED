@@ -16,101 +16,105 @@ import { launchRazorpayCheckout } from '../services/razorpayClient';
 // Custom Medical Vector Icons matching Reference Design
 // =========================================================================
 
-function SpineIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function SpineIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 2v20" />
-      <path d="M8 5h8" />
+      <path d="M8 5.5h8" />
       <path d="M7 9h10" />
-      <path d="M6 13h12" />
-      <path d="M7 17h10" />
-      <path d="M8 21h8" />
-      <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="9" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="13" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="17" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="21" r="1.5" fill="currentColor" />
+      <path d="M6.5 12.5h11" />
+      <path d="M7 16h10" />
+      <path d="M8 19.5h8" />
+      <rect x="10.5" y="4.5" width="3" height="2" rx="0.5" fill="currentColor" />
+      <rect x="10.5" y="8" width="3" height="2" rx="0.5" fill="currentColor" />
+      <rect x="10.5" y="11.5" width="3" height="2" rx="0.5" fill="currentColor" />
+      <rect x="10.5" y="15" width="3" height="2" rx="0.5" fill="currentColor" />
+      <rect x="10.5" y="18.5" width="3" height="2" rx="0.5" fill="currentColor" />
     </svg>
   );
 }
 
-function NeckIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function NeckIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="5" r="3" />
-      <path d="M9 10v4c0 1.5-1 2.5-3 3" />
-      <path d="M15 10v4c0 1.5 1 2.5 3 3" />
-      <path d="M10 13h4" />
-      <path d="M10 16h4" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="6" r="3.2" />
+      <path d="M10 9.5v2.2c0 .6-.4 1.1-.9 1.3L4.5 15.5c-.9.4-1.5 1.3-1.5 2.3v3.2" />
+      <path d="M14 9.5v2.2c0 .6.4 1.1.9 1.3l4.6 2.5c.9.4 1.5 1.3 1.5 2.3v3.2" />
+      <path d="M9.5 13.5c1.5 1 3.5 1 5 0" />
     </svg>
   );
 }
 
-function KneeJointIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function KneeJointIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M8 3c-1.5 0-2.5 1-2.5 2.5 0 1.2.7 2 1.8 2.3L8 12l-.7 4.2c-1.1.3-1.8 1.1-1.8 2.3 0 1.5 1 2.5 2.5 2.5s2.5-1 2.5-2.5c0-.8-.4-1.5-1-1.9L10 12l.5-4.6c-.6-.4-1-1.1-1-1.9C9.5 4 8.5 3 8 3z" />
-      <path d="M16 3c-1.5 0-2.5 1-2.5 2.5 0 .8.4 1.5 1 1.9l.5 4.6-.5 4.6c-.6.4-1 1.1-1 1.9 0 1.5 1 2.5 2.5 2.5s2.5-1 2.5-2.5c0-1.2-.7-2-1.8-2.3L16 12l.7-4.2c1.1-.3 1.8-1.1 1.8-2.3C18.5 4 17.5 3 16 3z" />
-      <line x1="8" y1="12" x2="16" y2="12" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {/* Upper Femur bone */}
+      <path d="M10 2v5.5c0 1.2-1.2 2-2 2.8-.8.8-1 1.7-.5 2.2h9c.5-.5.3-1.4-.5-2.2-.8-.8-2-1.6-2-2.8V2" />
+      {/* Patella Kneecap */}
+      <circle cx="12" cy="12" r="2.2" />
+      {/* Lower Tibia bone */}
+      <path d="M7.5 12.5c-.5.5-.3 1.4.5 2.2.8.8 2 1.6 2 2.8V22h4v-4.5c0-1.2 1.2-2 2-2.8.8-.8 1-1.7.5-2.2" />
     </svg>
   );
 }
 
-function ShoulderIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function ShoulderIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 19v-4c0-2 2-4 4-5l3-2" />
-      <path d="M18 19v-4c0-2-2-4-4-5l-3-2" />
-      <circle cx="12" cy="7" r="2.5" />
-      <circle cx="7" cy="14" r="1.5" fill="currentColor" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="14.5" cy="5.5" r="2.8" />
+      <path d="M12.5 8.5c-1 .8-2.2 1.3-3.8 1.3-2 0-3.4 1.1-4 2.8l-1.2 7.4" />
+      <path d="M16.5 8.5c1 .8 2.2 1.3 3.8 1.3 1.8 0 2.8 1 3.2 2.6l.5 7.6" />
+      {/* 3 radiating pain lines on left shoulder */}
+      <path d="M4 5.5l2 2" />
+      <path d="M1.5 9h3" />
+      <path d="M3 13l2.5-1.5" />
     </svg>
   );
 }
 
-function SportsInjuryIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function SportsInjuryIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="17" cy="4" r="2" />
-      <path d="M15 7l-4 3-3-2-4 2" />
-      <path d="M11 10l-2 5 4 4" />
-      <path d="M14 13l3 2 4-2" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="16.5" cy="4" r="2" />
+      <path d="M15 6.8l-3.2 3.8-3.6-.8-3.2 2" />
+      <path d="M13.2 8.5l2.8 2 4.2-.8" />
+      <path d="M11.8 10.6l-2.2 5.2 4.2 4.2" />
+      <path d="M13.8 12.8l3 3.2 4.2-2" />
     </svg>
   );
 }
 
-function PostSurgeryIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function PostSurgeryIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M12 2v20" />
-      <path d="M9 5h6" />
-      <path d="M8 9h8" />
-      <path d="M7 13h10" />
-      <path d="M8 17h8" />
-      <path d="M9 21h6" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="8" y="2.5" width="8" height="4" rx="2" />
+      <rect x="7.5" y="7.5" width="9" height="4" rx="2" />
+      <rect x="7" y="12.5" width="10" height="4" rx="2" />
+      <rect x="7.5" y="17.5" width="9" height="4" rx="2" />
     </svg>
   );
 }
 
-function ElderlyCareIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function ElderlyCareIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="9" cy="5" r="2" />
-      <path d="M9 7v6l3 3" />
-      <path d="M6 11l3-1 3 2" />
-      <path d="M8 17v4" />
-      <path d="M15 11v10" strokeWidth="2.2" />
-      <path d="M13 11h4" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="10" cy="5" r="2.2" />
+      <path d="M10 7.5c-2 2-3 5-3 8 0 2 1 3.5 1.5 5.5" />
+      <path d="M8.5 15.5l3 5.5" />
+      <path d="M8 11.5c1.5 1 3.5 2 6 2" />
+      <path d="M15 11c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v10" />
     </svg>
   );
 }
 
-function PostureIcon({ className = "w-6 h-6 text-[#007A64]" }) {
+function PostureIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="4" r="2" />
-      <path d="M12 6v14" />
-      <path d="M9 10c1.5-1 4.5-1 6 0" />
-      <path d="M9 15c1.5 1 4.5 1 6 0" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="5.5" r="3" />
+      <path d="M12 8.5v12.5" />
+      <path d="M8.5 9.8c-2.5.5-4 2-5 5l-1 5.2" />
+      <path d="M15.5 9.8c2.5.5 4 2 5 5l1 5.2" />
+      <path d="M7 14h10" />
     </svg>
   );
 }
@@ -167,16 +171,16 @@ const PHYSIO_SERVICES = [
   },
 ];
 
-// 8 Conditions data
+// 8 Conditions data matching Reference Design
 const CONDITIONS_LIST = [
-  { id: 'c1', name: 'Back Pain', icon: SpineIcon },
-  { id: 'c2', name: 'Neck Pain', icon: NeckIcon },
-  { id: 'c3', name: 'Knee Pain', icon: KneeJointIcon },
-  { id: 'c4', name: 'Shoulder Pain', icon: ShoulderIcon },
-  { id: 'c5', name: 'Sports Injuries', icon: SportsInjuryIcon },
-  { id: 'c6', name: 'Post-Surgery Recovery', icon: PostSurgeryIcon },
-  { id: 'c7', name: 'Age-Related Mobility Issues', icon: ElderlyCareIcon },
-  { id: 'c8', name: 'Posture Problems', icon: PostureIcon },
+  { id: 'c1', name: 'Back Pain', lines: ['Back Pain'], icon: SpineIcon },
+  { id: 'c2', name: 'Neck Pain', lines: ['Neck Pain'], icon: NeckIcon },
+  { id: 'c3', name: 'Knee Pain', lines: ['Knee Pain'], icon: KneeJointIcon },
+  { id: 'c4', name: 'Shoulder Pain', lines: ['Shoulder Pain'], icon: ShoulderIcon },
+  { id: 'c5', name: 'Sports Injuries', lines: ['Sports Injuries'], icon: SportsInjuryIcon },
+  { id: 'c6', name: 'Post-Surgery Recovery', lines: ['Post-Surgery', 'Recovery'], icon: PostSurgeryIcon },
+  { id: 'c7', name: 'Age-Related Mobility Issues', lines: ['Age-Related', 'Mobility Issues'], icon: ElderlyCareIcon },
+  { id: 'c8', name: 'Posture Problems', lines: ['Posture', 'Problems'], icon: PostureIcon },
 ];
 
 export default function PhysiotherapyPage() {
@@ -840,20 +844,29 @@ export default function PhysiotherapyPage() {
             Conditions We Treat
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-3.5">
             {CONDITIONS_LIST.map((cond) => {
               const IconComp = cond.icon;
               return (
                 <div
                   key={cond.id}
                   onClick={() => scrollToForm(cond.name)}
-                  className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-4.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[115px] sm:min-h-[125px] select-none"
+                  className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[110px] sm:min-h-[120px] select-none"
                 >
-                  <div className="h-10 w-10 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-                    <IconComp className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
+                  <div className="h-10 w-10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform text-[#007A64]">
+                    <IconComp className="w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" />
                   </div>
-                  <span className="text-xs sm:text-sm font-extrabold text-slate-800 group-hover:text-[#007A64] transition-colors leading-tight">
-                    {cond.name}
+                  <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] group-hover:text-[#007A64] transition-colors leading-tight">
+                    {cond.lines ? (
+                      cond.lines.map((l, i) => (
+                        <React.Fragment key={i}>
+                          {l}
+                          {i < cond.lines.length - 1 && <br />}
+                        </React.Fragment>
+                      ))
+                    ) : (
+                      cond.name
+                    )}
                   </span>
                 </div>
               );
