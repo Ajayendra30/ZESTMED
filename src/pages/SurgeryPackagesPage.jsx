@@ -568,7 +568,7 @@ export default function SurgeryPackagesPage() {
               </button>
 
               {/* 3D Clipboard Graphic */}
-              <div className="w-18 h-16 sm:w-22 sm:h-18 lg:w-26 lg:h-22 shrink-0 flex items-center justify-center select-none pointer-events-none">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 shrink-0 flex items-center justify-center select-none pointer-events-none">
                 <img
                   src="/surgery-cta-clipboard.png"
                   alt="Surgery Planning & Protection"
