@@ -629,8 +629,8 @@ export default function DoctorAppointmentPage() {
             </button>
           </div>
 
-          {/* 10 Specialty Cards Grid - Compact sizing with no cut-off text */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-2.5 lg:gap-3">
+          {/* 10 Specialty Cards Grid - Increased sizing with single-line text and zero cut-off */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-2.5 lg:gap-2.5 xl:gap-3">
             {SPECIALTY_LIST.map((spec) => {
               const IconComp = spec.icon;
               const isSelected = activeSpecialtyFilter.toLowerCase() === spec.name.toLowerCase();
@@ -645,21 +645,30 @@ export default function DoctorAppointmentPage() {
                       setActiveSpecialtyFilter(spec.name);
                     }
                   }}
-                  className={`bg-white rounded-xl sm:rounded-2xl border px-1.5 py-2.5 sm:px-2 sm:py-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[92px] sm:min-h-[102px] select-none overflow-hidden ${
+                  className={`bg-white rounded-xl sm:rounded-2xl border px-1 py-3 sm:px-1.5 sm:py-3.5 lg:py-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 group min-h-[102px] sm:min-h-[112px] lg:min-h-[116px] xl:min-h-[122px] select-none ${
                     isSelected
                       ? 'border-[#007A64] ring-2 ring-[#007A64]/20 shadow-md bg-teal-50/20 scale-102'
                       : 'border-slate-200/80 hover:border-teal-200 hover:shadow-md shadow-2xs hover:scale-102'
                   }`}
                 >
-                  {/* Clean Vector Icon - Sized slightly smaller */}
-                  <div className="h-7 sm:h-8 w-7 sm:w-8 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform shrink-0">
-                    <IconComp className={`w-5.5 h-5.5 sm:w-6 sm:h-6 ${spec.color}`} />
+                  {/* Clean Vector Icon - Sized slightly larger */}
+                  <div className="h-8 sm:h-9 lg:h-9 w-8 sm:w-9 lg:w-9 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-105 transition-transform shrink-0">
+                    <IconComp className={`w-6 h-6 sm:w-6.5 sm:h-6.5 lg:w-7 lg:h-7 ${spec.color}`} />
                   </div>
 
-                  {/* Title Label - Balanced font size & tracking so 'Gastroenterology' is never cut off */}
-                  <span className={`text-[10px] sm:text-[11px] xl:text-[11.5px] font-bold leading-tight tracking-tight transition-colors w-full px-0.5 text-center break-words hyphens-auto ${
-                    isSelected ? 'text-[#007A64] font-black' : 'text-slate-800 group-hover:text-[#007A64]'
-                  }`}>
+                  {/* Title Label - Balanced single-line text sizing so nothing is ever cut off */}
+                  <span
+                    title={spec.name}
+                    className={`font-bold leading-tight transition-colors w-full px-0.5 text-center whitespace-nowrap ${
+                      spec.name === 'Gastroenterology'
+                        ? 'text-[10px] sm:text-[11px] lg:text-[10px] xl:text-[11px] 2xl:text-[11.5px] tracking-tighter'
+                        : spec.name === 'General Physician'
+                        ? 'text-[10.5px] sm:text-[11.5px] lg:text-[10.5px] xl:text-[11.5px] 2xl:text-xs tracking-tight'
+                        : 'text-[11px] sm:text-xs lg:text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] tracking-tight'
+                    } ${
+                      isSelected ? 'text-[#007A64] font-black' : 'text-slate-800 group-hover:text-[#007A64]'
+                    }`}
+                  >
                     {spec.name}
                   </span>
                 </div>
