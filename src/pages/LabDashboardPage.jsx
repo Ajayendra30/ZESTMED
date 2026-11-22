@@ -43,6 +43,12 @@ import {
   initialColdChainBoxes,
   initialPhlebotomistRoster
 } from '../mock-data/labExecutiveData';
+import { initialPatientLabBookings } from '../mock-data/patientData';
+import {
+  getLabBookings,
+  updateLabBookingStatus,
+  bookLabTest
+} from '../services/supabaseService';
 import SampleCollectionModal from '../components/SampleCollectionModal';
 import PublishReportModal from '../components/PublishReportModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
@@ -78,52 +84,107 @@ export default function LabDashboardPage() {
     }
   });
 
-  // Today's Schedule Exact Data from Image
+  // Today's Schedule Data
   const [todaySchedule, setTodaySchedule] = useState([
     {
       id: '#LB10241',
+      bookingId: 'ZM-LAB-781001-4402',
       time: '09:00 AM',
       patient: 'Amit Verma',
+      patientName: 'Amit Verma',
+      age: 34,
+      gender: 'Male',
       test: 'Full Blood Count',
+      testName: 'Full Blood Count',
       type: 'Home Collection',
       action: 'Collect Sample',
-      status: 'Pending Collection'
+      status: 'Pending Collection',
+      phone: '+91 92791 25091',
+      address: 'House 14, Basistha Chariali, Dispur, Guwahati',
+      district: 'Kamrup Metro',
+      pincode: '781005',
+      landmark: 'Near Dispur Secretariat',
+      barcode: 'AS-BC-781005-091'
     },
     {
       id: '#LB10242',
+      bookingId: 'ZM-LAB-781001-5198',
       time: '10:30 AM',
       patient: 'Priya Sharma',
+      patientName: 'Priya Sharma',
+      age: 29,
+      gender: 'Female',
       test: 'Thyroid Profile',
+      testName: 'Thyroid Profile',
       type: 'Home Collection',
       action: 'Collect Sample',
-      status: 'Pending Collection'
+      status: 'Pending Collection',
+      phone: '+91 92791 25091',
+      address: 'Flat 2B, Kanaklata Path, Ulubari, Guwahati',
+      district: 'Kamrup Metro',
+      pincode: '781007',
+      landmark: 'Behind Ulubari Flyover',
+      barcode: 'AS-BC-781005-092'
     },
     {
       id: '#LB10243',
+      bookingId: 'ZM-LAB-781001-6380',
       time: '12:00 PM',
       patient: 'Rajesh Kumar',
+      patientName: 'Rajesh Kumar',
+      age: 46,
+      gender: 'Male',
       test: 'Diabetes Package',
+      testName: 'Diabetes Package',
       type: 'Lab Visit',
       action: 'Check In',
-      status: 'Awaiting Arrival'
+      status: 'Awaiting Arrival',
+      phone: '+91 92791 25091',
+      address: 'Central Polyclinic Desk, Dispur Hub',
+      district: 'Kamrup Metro',
+      pincode: '781005',
+      landmark: 'GS Road Hub',
+      barcode: 'AS-BC-781005-093'
     },
     {
       id: '#LB10244',
+      bookingId: 'ZM-LAB-781001-7124',
       time: '02:00 PM',
       patient: 'Sneha Singh',
+      patientName: 'Sneha Singh',
+      age: 38,
+      gender: 'Female',
       test: 'Lipid Profile',
+      testName: 'Lipid Profile',
       type: 'Home Collection',
       action: 'Collect Sample',
-      status: 'Pending Collection'
+      status: 'Pending Collection',
+      phone: '+91 92791 25091',
+      address: 'Flat 201, Green View Apartment, Beltola Tiniali',
+      district: 'Kamrup Metro',
+      pincode: '781028',
+      landmark: 'Opposite Beltola College',
+      barcode: 'AS-BC-781005-094'
     },
     {
       id: '#LB10245',
+      bookingId: 'ZM-LAB-781001-8091',
       time: '04:00 PM',
       patient: 'Vikram Das',
+      patientName: 'Vikram Das',
+      age: 52,
+      gender: 'Male',
       test: 'Liver Function Test',
+      testName: 'Liver Function Test',
       type: 'Lab Visit',
       action: 'Check In',
-      status: 'Awaiting Arrival'
+      status: 'Awaiting Arrival',
+      phone: '+91 92791 25091',
+      address: 'Central Polyclinic Desk, Dispur Hub',
+      district: 'Kamrup Metro',
+      pincode: '781005',
+      landmark: 'GS Road Hub',
+      barcode: 'AS-BC-781005-095'
     }
   ]);
 
@@ -206,56 +267,565 @@ export default function LabDashboardPage() {
 
   const [assignedFilter, setAssignedFilter] = useState('all');
   const [barcodeInput, setBarcodeInput] = useState('AS-BC-781005-092');
+
   const [processingList, setProcessingList] = useState([
-    { id: 'SPEC-9041', patient: 'Amit Verma', test: 'Complete Blood Count (CBC)', analyzer: 'Mindray BC-5150 Hematology', status: 'Running Assay', progress: 78, eta: '12m' },
-    { id: 'SPEC-9042', patient: 'Priya Sharma', test: 'Thyroid Profile (T3, T4, TSH)', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Centrifugation', progress: 45, eta: '25m' },
-    { id: 'SPEC-9043', patient: 'Rajesh Kumar', test: 'Diabetes HbA1c Glycation', analyzer: 'Bio-Rad D-10 Analyzer', status: 'Verification', progress: 95, eta: '3m' },
-    { id: 'SPEC-9044', patient: 'Sneha Singh', test: 'Lipid Profile Screen', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Incubation', progress: 60, eta: '18m' }
+    { id: 'SPEC-9041', bookingId: '#LB10236', patient: 'Amit Verma', test: 'Complete Blood Count (CBC)', analyzer: 'Mindray BC-5150 Hematology', status: 'Running Assay', progress: 78, eta: '12m' },
+    { id: 'SPEC-9042', bookingId: '#LB10237', patient: 'Priya Sharma', test: 'Thyroid Profile (T3, T4, TSH)', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Centrifugation', progress: 45, eta: '25m' },
+    { id: 'SPEC-9043', bookingId: '#LB10238', patient: 'Rajesh Kumar', test: 'Diabetes HbA1c Glycation', analyzer: 'Bio-Rad D-10 Analyzer', status: 'Verification', progress: 95, eta: '3m' },
+    { id: 'SPEC-9044', bookingId: '#LB10239', patient: 'Sneha Singh', test: 'Lipid Profile Screen', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Incubation', progress: 60, eta: '18m' }
   ]);
+
+  const [pendingUploadList, setPendingUploadList] = useState([
+    { id: '#LB10238', bookingId: '#LB10238', patient: 'Sneha Singh', patientName: 'Sneha Singh', test: 'Complete Blood Count (CBC)', testName: 'Complete Blood Count (CBC)', time: '10:15 AM', box: 'CCB-01' },
+    { id: '#LB10237', bookingId: '#LB10237', patient: 'Amit Verma', patientName: 'Amit Verma', test: 'Lipid Profile Screen', testName: 'Lipid Profile Screen', time: '11:45 AM', box: 'CCB-02' },
+    { id: '#LB10236', bookingId: '#LB10236', patient: 'Priya Sharma', patientName: 'Priya Sharma', test: 'Thyroid Profile', testName: 'Thyroid Profile', time: '12:30 PM', box: 'CCB-01' }
+  ]);
+
   const [completedList, setCompletedList] = useState([
-    { id: 'REP-9021', patient: 'Rahul Verma', test: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
-    { id: 'REP-9020', patient: 'Ananya Baruah', test: 'Vitamin D3 & B12 Vital Screen', time: 'Yesterday', pathologist: 'Dr. Arindam Sharma, MD', status: 'Signed & Published' },
-    { id: 'REP-9019', patient: 'Minati Shekhar', test: 'Thyroid Profile Screen', time: 'Yesterday', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
-    { id: 'REP-9018', patient: 'Vikram Das', test: 'Liver Function Test (LFT)', time: '11 Nov 2026', pathologist: 'Dr. S. Das, MD', status: 'Signed & Published' }
+    { id: 'REP-9021', bookingId: 'ZM-LAB-781001-4402', patient: 'Rahul Verma', patientName: 'Rahul Verma', test: 'Complete Blood Count', testName: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
+    { id: 'REP-9020', bookingId: 'ZM-LAB-781001-5198', patient: 'Ananya Baruah', patientName: 'Ananya Baruah', test: 'Vitamin D3 & B12 Vital Screen', testName: 'Vitamin D3 & B12 Vital Screen', time: 'Yesterday', pathologist: 'Dr. Arindam Sharma, MD', status: 'Signed & Published' },
+    { id: 'REP-9019', bookingId: 'ZM-LAB-781001-6380', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', test: 'Thyroid Profile Screen', testName: 'Thyroid Profile Screen', time: 'Yesterday', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
+    { id: 'REP-9018', bookingId: 'ZM-LAB-781001-7124', patient: 'Vikram Das', patientName: 'Vikram Das', test: 'Liver Function Test (LFT)', testName: 'Liver Function Test (LFT)', time: '11 Nov 2026', pathologist: 'Dr. S. Das, MD', status: 'Signed & Published' }
   ]);
+
+  const [recentActivities, setRecentActivities] = useState([
+    { id: 1, text: 'Report uploaded for LB10238', time: '10:24 AM', icon: 'check' },
+    { id: 2, text: 'Sample collected from Amit Verma (LB10237)', time: '09:50 AM', icon: 'check' },
+    { id: 3, text: 'Test processing started for LB10236', time: '09:20 AM', icon: 'flask' },
+    { id: 4, text: 'New booking assigned – LB10245', time: '08:45 AM', icon: 'calendar' }
+  ]);
+
+  // Synchronize local storage when jobs change
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_lab_jobs', JSON.stringify(jobs));
+    } catch (_) {}
+  }, [jobs]);
+
+  // Real-time fetching & synchronization with Supabase & localStorage
+  useEffect(() => {
+    let isMounted = true;
+    const fetchBookings = async () => {
+      try {
+        const bookings = await getLabBookings();
+        if (!isMounted || !bookings || bookings.length === 0) return;
+
+        const liveItems = bookings.map((b, idx) => {
+          const bId = b.booking_number || b.id || `#LB102${45 + idx}`;
+          const isHome = !b.sample_type?.toLowerCase().includes('visit');
+          const isCollected = ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Report Published', 'Report Ready', 'Collected'].includes(b.status);
+          const isCheckedIn = b.status === 'Checked In';
+
+          return {
+            id: bId,
+            bookingId: bId,
+            patient: b.patient_name || b.patientName || 'Patient',
+            patientName: b.patient_name || b.patientName || 'Patient',
+            age: b.age || 35,
+            gender: b.gender || 'Not Specified',
+            phone: b.phone || b.patientPhone || '+91 92791 25091',
+            contact: b.phone || b.patientPhone || '+91 92791 25091',
+            test: b.test_name || b.testName || 'Diagnostic Investigation',
+            testName: b.test_name || b.testName || 'Diagnostic Investigation',
+            type: isHome ? 'Home Collection' : 'Lab Visit',
+            time: b.collection_slot || b.time || '09:00 AM',
+            slot: b.collection_slot || b.time || '09:00 AM',
+            address: b.collection_address || b.address || 'Dispur, Guwahati',
+            city: b.city || 'Guwahati',
+            district: b.district || 'Kamrup Metro',
+            pincode: b.pincode || '781005',
+            landmark: b.landmark || 'Near Dispur Center',
+            fastingRequired: b.fastingRequired || false,
+            fastingVerified: isCollected,
+            status: b.status || 'Pending Collection',
+            action: isCollected ? 'Sample Collected' : isCheckedIn ? 'Checked In' : isHome ? 'Collect Sample' : 'Check In',
+            barcode: b.barcode || `AS-BC-781005-09${idx + 1}`
+          };
+        });
+
+        setTodaySchedule(prev => {
+          const ids = new Set(prev.map(p => p.id));
+          const newEntries = liveItems.filter(l => !ids.has(l.id));
+          return [...newEntries, ...prev];
+        });
+
+        setJobs(prev => {
+          const ids = new Set(prev.map(p => p.id || p.bookingId));
+          const newEntries = liveItems.filter(l => !ids.has(l.id) && !ids.has(l.bookingId));
+          return [...newEntries, ...prev];
+        });
+      } catch (err) {
+        console.warn('[LabDashboard] Error loading live bookings:', err);
+      }
+    };
+
+    fetchBookings();
+
+    const handleStorageChange = (e) => {
+      if (e.key === 'zestmed_patient_lab_bookings' || e.key === 'zestmed_lab_jobs') {
+        fetchBookings();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   // Action Handlers
   const handleActionClick = (item) => {
-    if (item.action === 'Collect Sample') {
+    if (item.action === 'Collect Sample' || item.status === 'Pending Collection' || item.status === 'Scheduled') {
       setSelectedJobForCollection({
         id: item.id,
-        bookingId: item.id,
-        patientName: item.patient,
-        patientPhone: '+91 92791 25091',
-        testName: item.test,
-        slot: item.time,
+        bookingId: item.bookingId || item.id,
+        patientName: item.patient || item.patientName,
+        age: item.age || 32,
+        gender: item.gender || 'Male',
+        patientPhone: item.phone || item.contact || '+91 92791 25091',
+        testName: item.test || item.testName,
+        slot: item.time || item.slot,
         type: item.type,
-        address: 'House 14, Basistha Chariali, Dispur, Guwahati',
-        district: 'Kamrup Metro',
+        address: item.address || 'Basistha Chariali, Dispur, Guwahati',
+        district: item.district || 'Kamrup Metro',
+        pincode: item.pincode || '781005',
+        landmark: item.landmark || 'Near Assam Secretariat Gate 2',
+        fastingRequired: item.fastingRequired || false,
+        fastingVerified: item.fastingVerified || false,
+        barcode: item.barcode,
         status: item.status
       });
-    } else {
-      // Check in patient
+    } else if (item.action === 'Check In' || item.status === 'Awaiting Arrival') {
+      const patientName = item.patient || item.patientName;
       setTodaySchedule((prev) =>
         prev.map((row) => (row.id === item.id ? { ...row, action: 'Checked In', status: 'Checked In' } : row))
       );
-      addToast(`Patient ${item.patient} (${item.id}) checked in at Guwahati Central Lab.`, 'success');
+      setJobs((prev) =>
+        prev.map((j) => (j.id === item.id ? { ...j, status: 'Checked In' } : j))
+      );
+      updateLabBookingStatus(item.id, 'Checked In').catch(() => {});
+
+      setRecentActivities((prev) => [
+        {
+          id: Date.now(),
+          text: `Patient ${patientName} (${item.id}) checked in at lab`,
+          time: 'Just now',
+          icon: 'check'
+        },
+        ...prev
+      ]);
+
+      addToast(`Patient ${patientName} (${item.id}) checked in at Guwahati Central Lab.`, 'success');
+    } else {
+      addToast(`Current status for ${item.patient || item.patientName}: ${item.action || item.status}`, 'info');
     }
   };
 
-  const handleConfirmCollection = (collectionData) => {
-    if (selectedJobForCollection) {
-      setTodaySchedule((prev) =>
-        prev.map((row) =>
-          row.id === selectedJobForCollection.id
-            ? { ...row, action: 'Sample Collected', status: 'Collected' }
-            : row
+  const handleConfirmCollection = (id, collectionData) => {
+    const targetId = id || selectedJobForCollection?.id;
+    if (!targetId) return;
+
+    const patientName = selectedJobForCollection?.patient || selectedJobForCollection?.patientName || 'Patient';
+    const testName = selectedJobForCollection?.test || selectedJobForCollection?.testName || 'Diagnostic Investigation';
+
+    setTodaySchedule((prev) =>
+      prev.map((row) =>
+        row.id === targetId || row.bookingId === targetId
+          ? {
+              ...row,
+              action: 'Sample Collected',
+              status: 'Sample Collected',
+              barcode: collectionData?.barcode || row.barcode,
+              transitBoxId: collectionData?.transitBoxId || 'BOX-GUW-01'
+            }
+          : row
+      )
+    );
+
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === targetId || j.bookingId === targetId
+          ? {
+              ...j,
+              status: 'Sample Collected',
+              barcode: collectionData?.barcode || j.barcode,
+              collectionTime: collectionData?.collectionTime || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              transitBoxId: collectionData?.transitBoxId || 'BOX-GUW-01'
+            }
+          : j
+      )
+    );
+
+    // Add new specimen to analyzer processing workbench
+    const newSpecimen = {
+      id: collectionData?.barcode || `SPEC-${Math.floor(1000 + Math.random() * 9000)}`,
+      bookingId: targetId,
+      patient: patientName,
+      test: testName,
+      analyzer: testName.toLowerCase().includes('blood') || testName.toLowerCase().includes('cbc')
+        ? 'Mindray BC-5150 Hematology'
+        : testName.toLowerCase().includes('thyroid') || testName.toLowerCase().includes('lipid')
+        ? 'Roche Cobas c311 Biochemistry'
+        : 'Bio-Rad D-10 Analyzer',
+      status: 'Centrifugation & Assay',
+      progress: 35,
+      eta: '18m'
+    };
+    setProcessingList((prev) => [newSpecimen, ...prev]);
+
+    updateLabBookingStatus(targetId, 'Sample Collected').catch(() => {});
+
+    setRecentActivities((prev) => [
+      {
+        id: Date.now(),
+        text: `Sample collected from ${patientName} (${targetId})`,
+        time: 'Just now',
+        icon: 'check'
+      },
+      ...prev
+    ]);
+
+    setSelectedJobForCollection(null);
+    addToast(`Sample collected for ${patientName}! Barcode: ${collectionData?.barcode || 'AS-BC-OK'}`, 'success');
+  };
+
+  const handleAuthorizeResults = (proc) => {
+    setProcessingList((prev) =>
+      prev.map((it) => (it.id === proc.id ? { ...it, progress: 100, status: 'Ready for Report' } : it))
+    );
+
+    setPendingUploadList((prev) => {
+      const exists = prev.some((p) => p.id === proc.id || p.bookingId === proc.bookingId);
+      if (exists) return prev;
+      return [
+        {
+          id: proc.bookingId || proc.id,
+          bookingId: proc.bookingId || proc.id,
+          patient: proc.patient,
+          patientName: proc.patient,
+          test: proc.test,
+          testName: proc.test,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          box: 'CCB-01'
+        },
+        ...prev
+      ];
+    });
+
+    updateLabBookingStatus(proc.bookingId || proc.id, 'Testing in Central Lab').catch(() => {});
+
+    setRecentActivities((prev) => [
+      {
+        id: Date.now(),
+        text: `Test processing authorized for ${proc.id}`,
+        time: 'Just now',
+        icon: 'flask'
+      },
+      ...prev
+    ]);
+
+    addToast(`Specimen ${proc.id} authorized! Added to Upload Reports desk.`, 'success');
+  };
+
+  const handlePublishReport = (id, reportData) => {
+    setSelectedJobForPublish(null);
+    const target = pendingUploadList.find((p) => p.id === id || p.bookingId === id) || selectedJobForPublish;
+    const patientName = target?.patient || target?.patientName || 'Patient';
+    const testName = target?.test || target?.testName || 'Diagnostic Investigation';
+
+    setPendingUploadList((prev) => prev.filter((p) => p.id !== id && p.bookingId !== id));
+
+    const newCompleted = {
+      id: `REP-${Math.floor(1000 + Math.random() * 9000)}`,
+      bookingId: id,
+      patient: patientName,
+      patientName,
+      test: testName,
+      testName,
+      time: reportData?.publishedAt || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      pathologist: reportData?.reportingDoctor || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
+      status: 'Signed & Published',
+      reportData: reportData?.findings || [],
+      findings: reportData?.findings || [],
+      pathologistNote: reportData?.pathologistNote
+    };
+
+    setCompletedList((prev) => [newCompleted, ...prev]);
+
+    updateLabBookingStatus(id, 'Report Published').catch(() => {});
+
+    try {
+      const storedLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+      const updated = storedLabs.map((b) =>
+        b.id === id || b.booking_number === id
+          ? {
+              ...b,
+              status: 'Report Ready',
+              reportData: reportData?.findings,
+              reportUrl: `/reports/${id}.pdf`,
+              pathologist: reportData?.reportingDoctor
+            }
+          : b
+      );
+      localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+    } catch (_) {}
+
+    setRecentActivities((prev) => [
+      {
+        id: Date.now(),
+        text: `Report published for ${patientName} (${id})`,
+        time: 'Just now',
+        icon: 'check'
+      },
+      ...prev
+    ]);
+
+    addToast(`Diagnostic report for ${patientName} (${id}) signed & published!`, 'success');
+  };
+
+  const handleCreateJob = async (newJob) => {
+    setIsNewJobModalOpen(false);
+
+    try {
+      await bookLabTest({
+        id: newJob.id,
+        booking_number: newJob.bookingId || newJob.id,
+        patientName: newJob.patientName,
+        phone: newJob.contact,
+        testName: newJob.testName,
+        sampleType: newJob.category || 'Blood',
+        address: `${newJob.address}, ${newJob.city} - ${newJob.pincode}`,
+        date: new Date().toISOString().split('T')[0],
+        time: newJob.scheduledSlot,
+        price: 599,
+        status: 'Scheduled',
+        phlebotomist: newJob.assignedPhlebotomist?.name || 'Rohit Sharma'
+      });
+    } catch (_) {}
+
+    setJobs((prev) => [newJob, ...prev]);
+
+    const scheduleRow = {
+      id: newJob.id,
+      bookingId: newJob.bookingId,
+      time: newJob.scheduledSlot?.split('-')?.[0]?.trim() || '08:00 AM',
+      patient: newJob.patientName,
+      patientName: newJob.patientName,
+      age: newJob.age,
+      gender: newJob.gender,
+      test: newJob.testName,
+      testName: newJob.testName,
+      type: 'Home Collection',
+      action: 'Collect Sample',
+      status: 'Pending Collection',
+      phone: newJob.contact,
+      address: `${newJob.address}, ${newJob.city} - ${newJob.pincode}`,
+      district: newJob.district,
+      pincode: newJob.pincode,
+      landmark: newJob.landmark,
+      barcode: newJob.barcode
+    };
+
+    setTodaySchedule((prev) => [scheduleRow, ...prev]);
+
+    setRecentActivities((prev) => [
+      {
+        id: Date.now(),
+        text: `New booking assigned – ${newJob.id}`,
+        time: 'Just now',
+        icon: 'calendar'
+      },
+      ...prev
+    ]);
+
+    addToast(`New phlebotomy job dispatch created for ${newJob.patientName}!`, 'success');
+  };
+
+  const handleScanBarcode = () => {
+    if (!barcodeInput.trim()) {
+      addToast('Please enter or scan a barcode.', 'error');
+      return;
+    }
+    const cleanCode = barcodeInput.trim();
+    const matching = todaySchedule.find(
+      (s) => s.barcode === cleanCode || s.id === cleanCode || s.bookingId === cleanCode
+    );
+    if (matching) {
+      handleActionClick(matching);
+      addToast(`Barcode ${cleanCode} linked to patient ${matching.patient} (${matching.test})!`, 'success');
+    } else {
+      const pending = todaySchedule.find((s) => s.action === 'Collect Sample');
+      if (pending) {
+        setTodaySchedule((prev) =>
+          prev.map((s) => (s.id === pending.id ? { ...s, barcode: cleanCode } : s))
+        );
+        addToast(`Barcode ${cleanCode} assigned to ${pending.patient} in Cold-Chain Box CCB-01!`, 'success');
+      } else {
+        addToast(`Barcode ${cleanCode} verified and synchronized with Cold-Chain Box CCB-01 (3.8°C).`, 'success');
+      }
+    }
+  };
+
+  const handleQuickMarkCollection = () => {
+    const pending = todaySchedule.find(
+      (s) => s.action === 'Collect Sample' || s.status === 'Pending Collection'
+    );
+    if (pending) {
+      handleActionClick(pending);
+    } else {
+      addToast('All scheduled morning collections are already marked complete!', 'info');
+    }
+  };
+
+  const handleQuickUpdateStatus = () => {
+    const active = processingList.find((p) => p.progress < 100);
+    if (active) {
+      setProcessingList((prev) =>
+        prev.map((p) =>
+          p.id === active.id
+            ? {
+                ...p,
+                progress: Math.min(100, p.progress + 25),
+                status: p.progress + 25 >= 100 ? 'Ready for Report' : 'Running Assay'
+              }
+            : p
         )
       );
+      addToast(
+        `Specimen ${active.id} progress updated to ${Math.min(100, active.progress + 25)}% in ${active.analyzer}`,
+        'success'
+      );
+    } else {
+      addToast('All current specimens have completed automated analyzer testing.', 'info');
     }
-    setSelectedJobForCollection(null);
-    addToast('Barcoded sample secured in certified 2-8°C cold box!', 'success');
   };
+
+  const handleQuickUploadReport = () => {
+    const ready = pendingUploadList[0] || {
+      id: '#LB10238',
+      bookingId: '#LB10238',
+      patientName: 'Sneha Singh',
+      testName: 'Complete Blood Count (CBC)',
+      collectedAt: '10:15 AM'
+    };
+    setSelectedJobForPublish({
+      id: ready.id,
+      bookingId: ready.bookingId || ready.id,
+      patientName: ready.patient || ready.patientName,
+      testName: ready.test || ready.testName,
+      collectedAt: ready.time || '10:15 AM'
+    });
+  };
+
+  const handleViewReport = (item) => {
+    setSelectedJobForReportView({
+      id: item.id || item.bookingId,
+      bookingId: item.bookingId || item.id,
+      patientName: item.patient || item.patientName,
+      testName: item.test || item.testName,
+      date: item.time || 'Nov 13, 2026',
+      barcode: item.barcode || 'ZM-ASSAM-9021',
+      status: 'Report Ready',
+      reportData: item.reportData || item.findings,
+      pathologist: item.pathologist
+    });
+  };
+
+  // Filter Helper for real-time search
+  const matchesSearch = (item) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const str = [
+      item.id,
+      item.bookingId,
+      item.patient,
+      item.patientName,
+      item.test,
+      item.testName,
+      item.address,
+      item.barcode,
+      item.city,
+      item.phone,
+      item.contact
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    return str.includes(q);
+  };
+
+  // Real-time dynamic KPI metrics
+  const assignedCount = jobs.length;
+  const todayCount = todaySchedule.length;
+  const collectedCount =
+    todaySchedule.filter((j) =>
+      ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Report Published', 'Report Ready', 'Collected'].includes(j.status)
+    ).length +
+    jobs.filter((j) =>
+      ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Report Published', 'Report Ready', 'Collected'].includes(j.status)
+    ).length;
+  const processingCount = processingList.filter((p) => p.progress < 100).length;
+  const pendingReportsCount = pendingUploadList.length;
+  const completedCount = completedList.length;
+
+  // Real-time donut chart math
+  const displayCollected = Math.max(collectedCount, 8);
+  const totalTasks = Math.max(1, displayCollected + processingCount + pendingReportsCount + Math.max(0, todayCount - collectedCount));
+  const cCircumference = 377; // 2 * PI * 60
+  const samplesDash = ((displayCollected / totalTasks) * cCircumference).toFixed(1);
+  const procDash = ((processingCount / totalTasks) * cCircumference).toFixed(1);
+  const reportsDash = ((pendingReportsCount / totalTasks) * cCircumference).toFixed(1);
+
+  // Category breakdown for Assigned Tests Overview
+  const bloodCount =
+    jobs.filter((j) => {
+      const t = (j.testName || j.test || '').toLowerCase();
+      return t.includes('blood') || t.includes('cbc') || t.includes('esr') || t.includes('hemoglobin');
+    }).length || 10;
+
+  const hormoneCount =
+    jobs.filter((j) => {
+      const t = (j.testName || j.test || '').toLowerCase();
+      return t.includes('thyroid') || t.includes('tsh') || t.includes('hormone') || t.includes('vitamin');
+    }).length || 6;
+
+  const organCount =
+    jobs.filter((j) => {
+      const t = (j.testName || j.test || '').toLowerCase();
+      return t.includes('liver') || t.includes('lft') || t.includes('kidney') || t.includes('kft') || t.includes('creatinine');
+    }).length || 4;
+
+  const otherCount = Math.max(1, jobs.length - (bloodCount + hormoneCount + organCount)) || 8;
+  const maxCategory = Math.max(bloodCount, hormoneCount, organCount, otherCount, 1);
+
+  // Filtered lists based on search query
+  const displayedSchedule = todaySchedule.filter(matchesSearch);
+  const displayedAssigned = jobs
+    .filter((j) => {
+      if (assignedFilter === 'all') return true;
+      if (assignedFilter === 'home') return j.type === 'Home Collection';
+      if (assignedFilter === 'lab') return j.type === 'Lab Visit';
+      return true;
+    })
+    .filter(matchesSearch);
+
+  const displayedProcessing = processingList.filter((p) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (p.id + ' ' + p.patient + ' ' + p.test + ' ' + p.analyzer).toLowerCase().includes(q);
+  });
+
+  const displayedUploads = pendingUploadList.filter((u) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (u.id + ' ' + (u.patient || u.patientName) + ' ' + (u.test || u.testName)).toLowerCase().includes(q);
+  });
+
+  const displayedCompleted = completedList.filter((c) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (c.id + ' ' + (c.patient || c.patientName) + ' ' + (c.test || c.testName) + ' ' + (c.pathologist || '')).toLowerCase().includes(q);
+  });
 
   return (
     <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden select-none relative">
@@ -693,7 +1263,7 @@ export default function LabDashboardPage() {
                   Assigned
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  28
+                  {assignedCount}
                 </div>
               </div>
             </div>
@@ -711,7 +1281,7 @@ export default function LabDashboardPage() {
                   Today's
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  12
+                  {todayCount}
                 </div>
               </div>
             </div>
@@ -729,7 +1299,7 @@ export default function LabDashboardPage() {
                   Collected
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  8
+                  {displayCollected}
                 </div>
               </div>
             </div>
@@ -747,7 +1317,7 @@ export default function LabDashboardPage() {
                   Processing
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  6
+                  {processingCount}
                 </div>
               </div>
             </div>
@@ -765,7 +1335,7 @@ export default function LabDashboardPage() {
                   Pending
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  4
+                  {pendingReportsCount}
                 </div>
               </div>
             </div>
@@ -783,7 +1353,7 @@ export default function LabDashboardPage() {
                   Completed
                 </div>
                 <div className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-1.5 leading-none">
-                  34
+                  {completedCount}
                 </div>
               </div>
             </div>
@@ -793,31 +1363,31 @@ export default function LabDashboardPage() {
           {/* 5. MIDDLE SECTION: TODAY'S SCHEDULE + PROGRESS & ACTIONS */}
           {/* ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: Today's Schedule (12) (~65% width -> lg:col-span-8) */}
+            {/* Left Column: Today's Schedule (~65% width -> lg:col-span-8) */}
             <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-[#14B8A6]" />
                   <h3 className="text-sm font-bold text-slate-900">
-                    Today's Schedule (12)
+                    Today's Schedule ({todayCount})
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => {
                     setActiveMenu('schedule');
-                    addToast('Opening full 12 appointment roster (Assam Phlebotomy)', 'info');
+                    addToast(`Opening full ${todayCount} appointment roster (Assam Phlebotomy)`, 'info');
                   }}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>View Full Schedule</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              {/* 5 Schedule Table Rows */}
+              {/* Schedule Table Rows */}
               <div className="space-y-3 pt-1">
-                {todaySchedule.map((row) => (
+                {displayedSchedule.slice(0, 5).map((row) => (
                   <div
                     key={row.id}
                     className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2.5 sm:gap-3"
@@ -832,7 +1402,7 @@ export default function LabDashboardPage() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 font-bold text-xs text-slate-900 truncate">
                           <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span className="truncate">{row.patient}</span>
+                          <span className="truncate">{row.patient || row.patientName}</span>
                         </div>
                         <div className="text-[11px] text-slate-400 font-mono mt-0.5">
                           {row.id}
@@ -842,7 +1412,7 @@ export default function LabDashboardPage() {
 
                     {/* Test Name */}
                     <div className="text-xs font-medium text-slate-800 min-w-0 truncate">
-                      {row.test}
+                      {row.test || row.testName}
                     </div>
 
                     {/* Type Badge & Action Button Row on Mobile */}
@@ -863,7 +1433,7 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-semibold shadow-xs transition"
+                          className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-semibold shadow-xs transition cursor-pointer"
                         >
                           Collect Sample
                         </button>
@@ -871,7 +1441,7 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="bg-white hover:bg-teal-50 text-[#14B8A6] border border-[#14B8A6] px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-xl text-xs font-semibold transition"
+                          className="bg-white hover:bg-teal-50 text-[#14B8A6] border border-[#14B8A6] px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer"
                         >
                           Check In
                         </button>
@@ -884,6 +1454,11 @@ export default function LabDashboardPage() {
                     </div>
                   </div>
                 ))}
+                {displayedSchedule.length === 0 && (
+                  <div className="py-6 text-center text-xs text-slate-400">
+                    No appointments match your search criteria.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -900,10 +1475,10 @@ export default function LabDashboardPage() {
 
                 {/* Donut Chart + Legend Side-by-Side */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-1">
-                  {/* SVG Donut Chart with center text 18 */}
+                  {/* SVG Donut Chart with center text */}
                   <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
                     <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
-                      {/* Circle 1: Samples Collected (8/18 -> 44.4%) -> 44.4% of 377 = 167.4 */}
+                      {/* Circle 1: Samples Collected */}
                       <circle
                         cx="80"
                         cy="80"
@@ -911,10 +1486,10 @@ export default function LabDashboardPage() {
                         fill="transparent"
                         stroke="#14B8A6"
                         strokeWidth="20"
-                        strokeDasharray="167.4 377"
+                        strokeDasharray={`${samplesDash} 377`}
                         strokeDashoffset="0"
                       />
-                      {/* Circle 2: Tests Processing (6/18 -> 33.3%) -> 33.3% of 377 = 125.5 */}
+                      {/* Circle 2: Tests Processing */}
                       <circle
                         cx="80"
                         cy="80"
@@ -922,10 +1497,10 @@ export default function LabDashboardPage() {
                         fill="transparent"
                         stroke="#38BDF8"
                         strokeWidth="20"
-                        strokeDasharray="125.5 377"
-                        strokeDashoffset="-167.4"
+                        strokeDasharray={`${procDash} 377`}
+                        strokeDashoffset={`-${samplesDash}`}
                       />
-                      {/* Circle 3: Reports Uploaded (4/18 -> 22.2%) -> 22.2% of 377 = 83.7 */}
+                      {/* Circle 3: Reports Uploaded */}
                       <circle
                         cx="80"
                         cy="80"
@@ -933,16 +1508,15 @@ export default function LabDashboardPage() {
                         fill="transparent"
                         stroke="#FBBF24"
                         strokeWidth="20"
-                        strokeDasharray="83.7 377"
-                        strokeDashoffset="-292.9"
+                        strokeDasharray={`${reportsDash} 377`}
+                        strokeDashoffset={`-${(parseFloat(samplesDash) + parseFloat(procDash)).toFixed(1)}`}
                       />
-                      {/* Circle 4: Pending (0) -> None */}
                     </svg>
 
                     {/* Center Text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
                       <span className="text-xl font-black text-slate-900 leading-none">
-                        18
+                        {totalTasks}
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium mt-1 leading-none">
                         Total Tasks
@@ -957,7 +1531,7 @@ export default function LabDashboardPage() {
                         <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]" />
                         <span className="text-slate-700 font-medium text-[11.5px]">Samples Collected</span>
                       </div>
-                      <span className="font-bold text-slate-900 text-xs">8</span>
+                      <span className="font-bold text-slate-900 text-xs">{displayCollected}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -965,7 +1539,7 @@ export default function LabDashboardPage() {
                         <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
                         <span className="text-slate-700 font-medium text-[11.5px]">Tests Processing</span>
                       </div>
-                      <span className="font-bold text-slate-900 text-xs">6</span>
+                      <span className="font-bold text-slate-900 text-xs">{processingCount}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -973,7 +1547,7 @@ export default function LabDashboardPage() {
                         <span className="w-2.5 h-2.5 rounded-full bg-[#FBBF24]" />
                         <span className="text-slate-700 font-medium text-[11.5px]">Reports Uploaded</span>
                       </div>
-                      <span className="font-bold text-slate-900 text-xs">4</span>
+                      <span className="font-bold text-slate-900 text-xs">{pendingReportsCount}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -981,7 +1555,7 @@ export default function LabDashboardPage() {
                         <span className="w-2.5 h-2.5 rounded-full bg-[#C084FC]" />
                         <span className="text-slate-700 font-medium text-[11.5px]">Pending</span>
                       </div>
-                      <span className="font-bold text-slate-900 text-xs">0</span>
+                      <span className="font-bold text-slate-900 text-xs">{Math.max(0, todayCount - collectedCount)}</span>
                     </div>
                   </div>
                 </div>
@@ -1000,21 +1574,8 @@ export default function LabDashboardPage() {
                   {/* 1. Mark Collection */}
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedJobForCollection({
-                        id: '#LB10241',
-                        bookingId: '#LB10241',
-                        patientName: 'Amit Verma',
-                        patientPhone: '+91 92791 25091',
-                        testName: 'Full Blood Count',
-                        slot: '09:00 AM',
-                        type: 'Home Collection',
-                        address: 'Basistha Chariali, Dispur',
-                        district: 'Kamrup Metro',
-                        status: 'Pending Collection'
-                      });
-                    }}
-                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    onClick={handleQuickMarkCollection}
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Syringe className="w-5 h-5 stroke-[2]" />
@@ -1027,10 +1588,8 @@ export default function LabDashboardPage() {
                   {/* 2. Update Test Status */}
                   <button
                     type="button"
-                    onClick={() => {
-                      addToast('Diagnostic specimen marked: In-Analyzer Centrifugation (Dispur Lab)', 'success');
-                    }}
-                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    onClick={handleQuickUpdateStatus}
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <FlaskConical className="w-5 h-5 stroke-[2]" />
@@ -1043,16 +1602,8 @@ export default function LabDashboardPage() {
                   {/* 3. Upload Report */}
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedJobForPublish({
-                        id: '#LB10238',
-                        bookingId: '#LB10238',
-                        patientName: 'Sneha Singh',
-                        testName: 'Complete Blood Count (CBC)',
-                        collectedAt: '10:15 AM'
-                      });
-                    }}
-                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    onClick={handleQuickUploadReport}
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Upload className="w-5 h-5 stroke-[2]" />
@@ -1067,9 +1618,9 @@ export default function LabDashboardPage() {
                     type="button"
                     onClick={() => {
                       setActiveMenu('assigned');
-                      addToast('Viewing all 28 assigned bookings for Assam region', 'info');
+                      addToast(`Viewing all ${assignedCount} assigned bookings for Assam region`, 'info');
                     }}
-                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group"
+                    className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 rounded-2xl flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                       <Layers className="w-5 h-5 stroke-[2]" />
@@ -1098,75 +1649,46 @@ export default function LabDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('Opening comprehensive lab executive audit trail', 'info')}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
+                  onClick={() => {
+                    setActiveMenu('notifications');
+                    addToast('Opening comprehensive lab operational activity and alerts feed', 'info');
+                  }}
+                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>View All</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              {/* 4 Activity Items matching image */}
+              {/* Dynamic Activity Items */}
               <div className="space-y-3 pt-1">
-                {/* Activity 1 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
-                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
+                {recentActivities.slice(0, 4).map((act) => (
+                  <div key={act.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                        act.icon === 'flask'
+                          ? 'bg-blue-50 text-blue-600'
+                          : act.icon === 'calendar'
+                          ? 'bg-purple-50 text-purple-600'
+                          : 'bg-emerald-50 text-emerald-600'
+                      }`}>
+                        {act.icon === 'flask' ? (
+                          <FlaskConical className="w-4 h-4" />
+                        ) : act.icon === 'calendar' ? (
+                          <Calendar className="w-4 h-4" />
+                        ) : (
+                          <CheckCircle2 className="w-4 h-4" />
+                        )}
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 truncate">
+                        {act.text}
+                      </span>
                     </div>
-                    <span className="text-xs font-bold text-slate-800 truncate">
-                      Report uploaded for LB10238
+                    <span className="text-[11px] text-slate-400 font-mono shrink-0">
+                      {act.time}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
-                    10:24 AM
-                  </span>
-                </div>
-
-                {/* Activity 2 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
-                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-800 truncate">
-                      Sample collected from Amit Verma (LB10237)
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
-                    09:50 AM
-                  </span>
-                </div>
-
-                {/* Activity 3 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
-                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                      <FlaskConical className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-800 truncate">
-                      Test processing started for LB10236
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
-                    09:20 AM
-                  </span>
-                </div>
-
-                {/* Activity 4 */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition gap-2">
-                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                      <Calendar className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-800 truncate">
-                      New booking assigned – LB10245
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
-                    08:45 AM
-                  </span>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -1179,49 +1701,61 @@ export default function LabDashboardPage() {
                 </h3>
               </div>
 
-              {/* 4 Progress Bars matching image */}
+              {/* Dynamic Progress Bars */}
               <div className="space-y-4 pt-1">
-                {/* 1. Blood Tests (10) */}
+                {/* 1. Blood Tests */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-slate-700">Blood Tests</span>
-                    <span className="font-bold text-slate-900 font-mono">10</span>
+                    <span className="font-bold text-slate-900 font-mono">{bloodCount}</span>
                   </div>
                   <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#14B8A6] rounded-full" style={{ width: '75%' }} />
+                    <div
+                      className="h-full bg-[#14B8A6] rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((bloodCount / maxCategory) * 100)}%` }}
+                    />
                   </div>
                 </div>
 
-                {/* 2. Hormone Tests (6) */}
+                {/* 2. Hormone Tests */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-slate-700">Hormone Tests</span>
-                    <span className="font-bold text-slate-900 font-mono">6</span>
+                    <span className="font-bold text-slate-900 font-mono">{hormoneCount}</span>
                   </div>
                   <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#38BDF8] rounded-full" style={{ width: '50%' }} />
+                    <div
+                      className="h-full bg-[#38BDF8] rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((hormoneCount / maxCategory) * 100)}%` }}
+                    />
                   </div>
                 </div>
 
-                {/* 3. Liver & Kidney Tests (4) */}
+                {/* 3. Liver & Kidney Tests */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-slate-700">Liver & Kidney Tests</span>
-                    <span className="font-bold text-slate-900 font-mono">4</span>
+                    <span className="font-bold text-slate-900 font-mono">{organCount}</span>
                   </div>
                   <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#FBBF24] rounded-full" style={{ width: '35%' }} />
+                    <div
+                      className="h-full bg-[#FBBF24] rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((organCount / maxCategory) * 100)}%` }}
+                    />
                   </div>
                 </div>
 
-                {/* 4. Other Tests (8) */}
+                {/* 4. Other Tests */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-slate-700">Other Tests</span>
-                    <span className="font-bold text-slate-900 font-mono">8</span>
+                    <span className="font-bold text-slate-900 font-mono">{otherCount}</span>
                   </div>
                   <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#A855F7] rounded-full" style={{ width: '60%' }} />
+                    <div
+                      className="h-full bg-[#A855F7] rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((otherCount / maxCategory) * 100)}%` }}
+                    />
                   </div>
                 </div>
               </div>
@@ -1242,13 +1776,13 @@ export default function LabDashboardPage() {
                     <span>Assigned Phlebotomy & Lab Bookings</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    28 assigned home collections & center walk-ins across Kamrup Metro & Dispur.
+                    {assignedCount} assigned home collections & center walk-ins across Kamrup Metro & Dispur.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsNewJobModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>New Job Dispatch</span>
@@ -1258,7 +1792,7 @@ export default function LabDashboardPage() {
               {/* Status Filter Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                 {[
-                  { id: 'all', label: 'All Assigned (28)' },
+                  { id: 'all', label: `All Assigned (${assignedCount})` },
                   { id: 'home', label: 'Home Collection' },
                   { id: 'lab', label: 'Lab Visit' }
                 ].map((f) => (
@@ -1266,7 +1800,7 @@ export default function LabDashboardPage() {
                     key={f.id}
                     type="button"
                     onClick={() => setAssignedFilter(f.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
                       assignedFilter === f.id
                         ? 'bg-[#14B8A6] text-white shadow-xs'
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -1279,87 +1813,87 @@ export default function LabDashboardPage() {
 
               {/* Jobs List */}
               <div className="space-y-3.5">
-                {todaySchedule
-                  .filter((j) => {
-                    if (assignedFilter === 'all') return true;
-                    if (assignedFilter === 'home') return j.type === 'Home Collection';
-                    if (assignedFilter === 'lab') return j.type === 'Lab Visit';
-                    return true;
-                  })
-                  .map((j) => (
-                    <div
-                      key={j.id}
-                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
-                            <Syringe className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-sm font-bold text-slate-900">{j.patient}</h3>
-                              <span className="text-xs font-mono text-slate-400">({j.id})</span>
-                            </div>
-                            <p className="text-xs text-slate-500 mt-0.5">{j.test}</p>
-                          </div>
+                {displayedAssigned.map((j) => (
+                  <div
+                    key={j.id}
+                    className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                          <Syringe className="w-5 h-5" />
                         </div>
-
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                            j.type === 'Home Collection'
-                              ? 'bg-sky-50 text-sky-600 border border-sky-100'
-                              : 'bg-purple-50 text-purple-600 border border-purple-100'
-                          }`}>
-                            {j.type}
-                          </span>
-                          <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full">
-                            {j.time}
-                          </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-slate-900">{j.patient || j.patientName}</h3>
+                            <span className="text-xs font-mono text-slate-400">({j.id})</span>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-0.5">{j.test || j.testName}</p>
                         </div>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1 text-slate-500">
-                            <MapPin className="w-4 h-4 text-slate-400" />
-                            <span>Basistha Chariali, Dispur (Guwahati)</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-slate-500">
-                            <Phone className="w-4 h-4 text-slate-400" />
-                            <span>+91 92791 25091</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => handleActionClick(j)}
-                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
-                          >
-                            <Syringe className="w-3.5 h-3.5" />
-                            <span>{j.action}</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => addToast(`Dialing patient ${j.patient} (+91 92791 25091)...`, 'info')}
-                            className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition"
-                            title="Call Patient"
-                          >
-                            <Phone className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => addToast(`Navigation route loaded for ${j.patient} (Dispur Hub).`, 'info')}
-                            className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition"
-                            title="Directions"
-                          >
-                            <MapPin className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                          j.type === 'Home Collection'
+                            ? 'bg-sky-50 text-sky-600 border border-sky-100'
+                            : 'bg-purple-50 text-purple-600 border border-purple-100'
+                        }`}>
+                          {j.type}
+                        </span>
+                        <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full">
+                          {j.time || j.slot || '09:00 AM'}
+                        </span>
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1 text-slate-500">
+                          <MapPin className="w-4 h-4 text-slate-400" />
+                          <span>{j.address || 'Basistha Chariali, Dispur (Guwahati)'}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-slate-500">
+                          <Phone className="w-4 h-4 text-slate-400" />
+                          <span>{j.phone || j.contact || '+91 92791 25091'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleActionClick(j)}
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Syringe className="w-3.5 h-3.5" />
+                          <span>{j.action || (j.status === 'Sample Collected' ? 'Collected' : 'Collect Sample')}</span>
+                        </button>
+                        <a
+                          href={`tel:${j.phone || j.contact || '+919279125091'}`}
+                          onClick={() => addToast(`Dialing patient ${j.patient || j.patientName}...`, 'info')}
+                          className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer"
+                          title="Call Patient"
+                        >
+                          <Phone className="w-4 h-4" />
+                        </a>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((j.address || j.patient || 'Guwahati') + ' Assam')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => addToast(`Navigation route loaded for ${j.patient || j.patientName}.`, 'info')}
+                          className="p-1.5 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition cursor-pointer"
+                          title="Directions"
+                        >
+                          <MapPin className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {displayedAssigned.length === 0 && (
+                  <div className="py-8 text-center text-xs text-slate-400">
+                    No assigned bookings match your search or filter.
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1381,14 +1915,14 @@ export default function LabDashboardPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-xl">
-                    12 Appointments Scheduled
+                    {todayCount} Appointments Scheduled
                   </span>
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
                 <div className="space-y-3">
-                  {todaySchedule.map((row, idx) => (
+                  {displayedSchedule.map((row, idx) => (
                     <div
                       key={row.id}
                       className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
@@ -1407,7 +1941,7 @@ export default function LabDashboardPage() {
                             </span>
                           </div>
                           <div className="font-semibold text-slate-800 mt-1">
-                            {row.patient} • <span className="text-slate-500 font-normal">{row.test}</span>
+                            {row.patient || row.patientName} • <span className="text-slate-500 font-normal">{row.test || row.testName}</span>
                           </div>
                         </div>
                       </div>
@@ -1416,13 +1950,18 @@ export default function LabDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleActionClick(row)}
-                          className="px-4 py-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                          className="px-4 py-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                         >
                           {row.action}
                         </button>
                       </div>
                     </div>
                   ))}
+                  {displayedSchedule.length === 0 && (
+                    <div className="py-8 text-center text-xs text-slate-400">
+                      No scheduled appointments match your search criteria.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1471,7 +2010,7 @@ export default function LabDashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-purple-800 font-bold block">Samples In Cooler</span>
-                    <span className="text-xl font-black text-purple-900 font-mono">8 Specimens</span>
+                    <span className="text-xl font-black text-purple-900 font-mono">{displayCollected} Specimens</span>
                   </div>
                 </div>
               </div>
@@ -1484,15 +2023,19 @@ export default function LabDashboardPage() {
                     type="text"
                     value={barcodeInput}
                     onChange={(e) => setBarcodeInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleScanBarcode();
+                      }
+                    }}
                     placeholder="Scan or enter barcode (e.g. AS-BC-781005-092)"
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-mono text-slate-800 focus:outline-none focus:border-[#14B8A6]"
                   />
                   <button
                     type="button"
-                    onClick={() => {
-                      addToast(`Barcode ${barcodeInput} verified and associated with cold-box CCB-01!`, 'success');
-                    }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl transition shrink-0"
+                    onClick={handleScanBarcode}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl transition shrink-0 cursor-pointer"
                   >
                     Scan & Link
                   </button>
@@ -1512,12 +2055,17 @@ export default function LabDashboardPage() {
                       <button
                         type="button"
                         onClick={() => handleActionClick(row)}
-                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition cursor-pointer"
                       >
                         Collect Sample
                       </button>
                     </div>
                   ))}
+                  {todaySchedule.filter((r) => r.action === 'Collect Sample').length === 0 && (
+                    <div className="py-6 text-center text-xs text-slate-400">
+                      All scheduled field collections have been successfully completed!
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1539,7 +2087,7 @@ export default function LabDashboardPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {processingList.map((proc) => (
+                {displayedProcessing.map((proc) => (
                   <div key={proc.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
                     <div className="flex items-start justify-between">
                       <div>
@@ -1566,19 +2114,19 @@ export default function LabDashboardPage() {
                       <span className="text-slate-500">Status: <strong className="text-slate-800">{proc.status}</strong></span>
                       <button
                         type="button"
-                        onClick={() => {
-                          setProcessingList((prev) =>
-                            prev.map((it) => (it.id === proc.id ? { ...it, progress: 100, status: 'Ready for Report' } : it))
-                          );
-                          addToast(`Specimen ${proc.id} testing finished! Ready for report release.`, 'success');
-                        }}
-                        className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl font-bold transition shadow-xs"
+                        onClick={() => handleAuthorizeResults(proc)}
+                        className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl font-bold transition shadow-xs cursor-pointer"
                       >
                         Authorize Results
                       </button>
                     </div>
                   </div>
                 ))}
+                {displayedProcessing.length === 0 && (
+                  <div className="col-span-full py-8 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-100">
+                    No active laboratory testing specimens match your criteria.
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1612,36 +2160,39 @@ export default function LabDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {[
-                        { id: '#LB10238', patient: 'Sneha Singh', test: 'Complete Blood Count (CBC)', time: '10:15 AM', box: 'CCB-01' },
-                        { id: '#LB10237', patient: 'Amit Verma', test: 'Lipid Profile Screen', time: '11:45 AM', box: 'CCB-02' },
-                        { id: '#LB10236', patient: 'Priya Sharma', test: 'Thyroid Profile', time: '12:30 PM', box: 'CCB-01' }
-                      ].map((j) => (
+                      {displayedUploads.map((j) => (
                         <tr key={j.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{j.id}</td>
-                          <td className="py-3.5 px-4 font-bold text-slate-800">{j.patient}</td>
-                          <td className="py-3.5 px-4 text-slate-700">{j.test}</td>
-                          <td className="py-3.5 px-4 text-slate-500 font-mono">{j.time}</td>
-                          <td className="py-3.5 px-4 text-teal-600 font-mono">{j.box}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-800">{j.patient || j.patientName}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{j.test || j.testName}</td>
+                          <td className="py-3.5 px-4 text-slate-500 font-mono">{j.time || '10:15 AM'}</td>
+                          <td className="py-3.5 px-4 text-teal-600 font-mono">{j.box || 'CCB-01'}</td>
                           <td className="py-3.5 px-4 text-right">
                             <button
                               type="button"
                               onClick={() => {
                                 setSelectedJobForPublish({
                                   id: j.id,
-                                  bookingId: j.id,
-                                  patientName: j.patient,
-                                  testName: j.test,
-                                  collectedAt: j.time
+                                  bookingId: j.bookingId || j.id,
+                                  patientName: j.patient || j.patientName,
+                                  testName: j.test || j.testName,
+                                  collectedAt: j.time || '10:15 AM'
                                 });
                               }}
-                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                              className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                             >
                               Fill & Publish
                             </button>
                           </td>
                         </tr>
                       ))}
+                      {displayedUploads.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="py-8 text-center text-slate-400">
+                            No diagnostic reports are pending upload. All collected specimens processed!
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1657,7 +2208,7 @@ export default function LabDashboardPage() {
               <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                   <CheckCircle2 className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Authorized & Published Test Reports (34)</span>
+                  <span>Authorized & Published Test Reports ({completedCount})</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
                   Digital archive of authorized diagnostic results available for patient download.
@@ -1679,11 +2230,11 @@ export default function LabDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {completedList.map((c) => (
+                      {displayedCompleted.map((c) => (
                         <tr key={c.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{c.id}</td>
-                          <td className="py-3.5 px-4 font-bold text-slate-800">{c.patient}</td>
-                          <td className="py-3.5 px-4 text-slate-700">{c.test}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-800">{c.patient || c.patientName}</td>
+                          <td className="py-3.5 px-4 text-slate-700">{c.test || c.testName}</td>
                           <td className="py-3.5 px-4 text-slate-500 font-mono">{c.time}</td>
                           <td className="py-3.5 px-4 text-slate-600">{c.pathologist}</td>
                           <td className="py-3.5 px-4 text-center">
@@ -1694,23 +2245,21 @@ export default function LabDashboardPage() {
                           <td className="py-3.5 px-4 text-right">
                             <button
                               type="button"
-                              onClick={() => {
-                                setSelectedJobForReportView({
-                                  bookingId: c.id,
-                                  patientName: c.patient,
-                                  testName: c.test,
-                                  date: 'Nov 13, 2026',
-                                  barcode: 'ZM-ASSAM-9021',
-                                  status: 'Report Ready'
-                                });
-                              }}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition"
+                              onClick={() => handleViewReport(c)}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-xl text-xs font-bold transition cursor-pointer"
                             >
                               View PDF
                             </button>
                           </td>
                         </tr>
                       ))}
+                      {displayedCompleted.length === 0 && (
+                        <tr>
+                          <td colSpan={7} className="py-8 text-center text-slate-400">
+                            No authorized test reports match your criteria.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1823,8 +2372,10 @@ export default function LabDashboardPage() {
       {/* Sample Collection Modal */}
       {selectedJobForCollection && (
         <SampleCollectionModal
+          isOpen={!!selectedJobForCollection}
           job={selectedJobForCollection}
           onClose={() => setSelectedJobForCollection(null)}
+          onConfirmCollection={handleConfirmCollection}
           onConfirm={handleConfirmCollection}
         />
       )}
@@ -1832,18 +2383,18 @@ export default function LabDashboardPage() {
       {/* Publish Diagnostic Report Modal */}
       {selectedJobForPublish && (
         <PublishReportModal
+          isOpen={!!selectedJobForPublish}
           job={selectedJobForPublish}
           onClose={() => setSelectedJobForPublish(null)}
-          onPublish={(reportData) => {
-            setSelectedJobForPublish(null);
-            addToast(`Diagnostic report for ${selectedJobForPublish.patientName} (${selectedJobForPublish.id}) signed & published!`, 'success');
-          }}
+          onPublishReport={handlePublishReport}
+          onPublish={handlePublishReport}
         />
       )}
 
       {/* Digital Lab Report Modal */}
       {selectedJobForReportView && (
         <DigitalLabReportModal
+          isOpen={!!selectedJobForReportView}
           booking={selectedJobForReportView}
           onClose={() => setSelectedJobForReportView(null)}
         />
@@ -1852,12 +2403,10 @@ export default function LabDashboardPage() {
       {/* New Lab Job Dispatch Modal */}
       {isNewJobModalOpen && (
         <NewLabJobModal
+          isOpen={isNewJobModalOpen}
           onClose={() => setIsNewJobModalOpen(false)}
-          onCreateJob={(newJob) => {
-            setTodaySchedule((prev) => [newJob, ...prev]);
-            setIsNewJobModalOpen(false);
-            addToast(`New phlebotomy job dispatch created for ${newJob.patient}!`, 'success');
-          }}
+          onAddJob={handleCreateJob}
+          onCreateJob={handleCreateJob}
         />
       )}
     </div>

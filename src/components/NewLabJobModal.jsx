@@ -4,7 +4,7 @@ import { X, CalendarPlus, User, MapPin, Syringe } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { DEFAULT_LOCATIONS } from '../context/LocationContext';
 
-export default function NewLabJobModal({ isOpen, onClose, onAddJob }) {
+export default function NewLabJobModal({ isOpen = true, onClose, onAddJob, onCreateJob }) {
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     patientName: '',
@@ -78,7 +78,10 @@ export default function NewLabJobModal({ isOpen, onClose, onAddJob }) {
       findings: []
     };
 
-    onAddJob(newJob);
+    const handler = onAddJob || onCreateJob;
+    if (handler) {
+      handler(newJob);
+    }
     addToast(`Scheduled new collection job for ${newJob.patientName} (${newJob.id})!`, 'success');
     onClose();
 

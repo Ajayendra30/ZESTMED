@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, FileText, CheckCircle2, AlertTriangle, ShieldCheck, Check } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function PublishReportModal({ isOpen, onClose, job, onPublishReport }) {
+export default function PublishReportModal({ isOpen = true, onClose, job, onPublishReport, onPublish }) {
   const { addToast } = useToast();
 
   // Initial parameters based on test type
@@ -65,12 +65,15 @@ export default function PublishReportModal({ isOpen, onClose, job, onPublishRepo
       return;
     }
 
-    onPublishReport(job.id, {
-      findings: parameters,
-      pathologistNote,
-      reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
-      publishedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
+    const handler = onPublishReport || onPublish;
+    if (handler) {
+      handler(job.id, {
+        findings: parameters,
+        pathologistNote,
+        reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
+        publishedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }
 
     addToast(`Clinical Diagnostic Report published for ${job.patientName} (${job.id})!`, 'success');
     onClose();

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, CheckCircle2, QrCode, Thermometer, ShieldCheck, AlertCircle, Syringe } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-export default function SampleCollectionModal({ isOpen, onClose, job, onConfirmCollection }) {
+export default function SampleCollectionModal({ isOpen = true, onClose, job, onConfirmCollection, onConfirm }) {
   const { addToast } = useToast();
   const [fastingConfirmed, setFastingConfirmed] = useState(job?.fastingVerified || false);
   const [barcode, setBarcode] = useState(job?.barcode || `AS-BC-${job?.pincode || '781001'}-${Math.floor(1000 + Math.random() * 9000)}`);
@@ -13,7 +13,7 @@ export default function SampleCollectionModal({ isOpen, onClose, job, onConfirmC
   if (!isOpen || !job) return null;
 
   const handleGenerateBarcode = () => {
-    const randomCode = `AS-BC-${job.pincode}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const randomCode = `AS-BC-${job.pincode || '781001'}-${Math.floor(1000 + Math.random() * 9000)}`;
     setBarcode(randomCode);
     addToast(`Barcode ${randomCode} generated and assigned.`, 'info');
   };
@@ -30,13 +30,16 @@ export default function SampleCollectionModal({ isOpen, onClose, job, onConfirmC
       return;
     }
 
-    onConfirmCollection(job.id, {
-      barcode: barcode.trim(),
-      fastingVerified: fastingConfirmed,
-      transitBoxId: selectedBox,
-      notes: phleboNotes,
-      collectionTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
+    const handler = onConfirmCollection || onConfirm;
+    if (handler) {
+      handler(job.id, {
+        barcode: barcode.trim(),
+        fastingVerified: fastingConfirmed,
+        transitBoxId: selectedBox,
+        notes: phleboNotes,
+        collectionTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }
 
     addToast(`Sample collected for ${job.patientName}! Barcode: ${barcode}`, 'success');
     onClose();
