@@ -108,8 +108,9 @@ export default function AdminDashboardPage() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab') || urlParams.get('menu');
-      if (tabParam) return tabParam;
-      return sessionStorage.getItem('zestmed_admin_active_tab') || 'dashboard';
+      if (tabParam && tabParam !== 'notifications') return tabParam;
+      const saved = sessionStorage.getItem('zestmed_admin_active_tab');
+      return saved && saved !== 'notifications' ? saved : 'dashboard';
     } catch {
       return 'dashboard';
     }
@@ -2282,28 +2283,6 @@ export default function AdminDashboardPage() {
           >
             <BarChart2 className="w-4 h-4" />
             <span>Reports & Analytics</span>
-          </button>
-
-          {/* Notifications with red dot */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveMenu('notifications');
-              setIsSidebarOpen(false);
-              addToast('Opening Admin Real-Time Operations Alerts', 'info');
-            }}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-              activeMenu === 'notifications'
-                ? 'bg-[#14B8A6] text-white shadow-sm'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <Bell className="w-4 h-4" />
-              <span>Notifications</span>
-            </div>
-            {/* Red indicator dot */}
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
           </button>
 
           {/* Settings */}
@@ -5151,44 +5130,6 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* NOTIFICATIONS FEED                                       */}
-          {/* ======================================================== */}
-          {activeMenu === 'notifications' && (
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-xs">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-5 h-5 text-[#008F83]" />
-                    <span>System Alerts & Operations Feed</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Live operational notifications across laboratory bookings, cold-chain logistics, and medicine inventory.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAdminNotifications((prev) => prev.map((n) => ({ ...n, read: true, status: 'Resolved' })));
-                    addToast('All system notifications marked as resolved.', 'success');
-                  }}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Mark All Resolved</span>
-                </button>
-              </div>
-
-              {/* Exact Notification Card & Settings matching User Dashboard System */}
-              <NotificationPopover
-                inline={true}
-                isOpen={true}
-                onClose={() => {}}
-                notifications={adminNotifications}
-                onNotificationClick={handleAdminNotificationClick}
-              />
-            </div>
-          )}
 
           {/* ======================================================== */}
           {/* SETTINGS                                                 */}

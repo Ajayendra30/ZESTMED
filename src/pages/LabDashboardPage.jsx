@@ -65,8 +65,9 @@ export default function LabDashboardPage() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab') || urlParams.get('menu');
-      if (tabParam) return tabParam;
-      return sessionStorage.getItem('zestmed_lab_active_tab') || 'dashboard';
+      if (tabParam && tabParam !== 'notifications') return tabParam;
+      const saved = sessionStorage.getItem('zestmed_lab_active_tab');
+      return saved && saved !== 'notifications' ? saved : 'dashboard';
     } catch {
       return 'dashboard';
     }
@@ -1076,27 +1077,6 @@ export default function LabDashboardPage() {
               <span>Completed Tests</span>
             </button>
 
-            {/* Notifications with red indicator dot */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveMenu('notifications');
-                setIsSidebarOpen(false);
-                addToast('Viewing real-time lab dispatch alerts', 'info');
-              }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-                activeMenu === 'notifications'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Bell className="w-4 h-4" />
-                <span>Notifications</span>
-              </div>
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            </button>
-
             {/* My Profile */}
             <button
               type="button"
@@ -1728,10 +1708,7 @@ export default function LabDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setActiveMenu('notifications');
-                    addToast('Opening comprehensive lab operational activity and alerts feed', 'info');
-                  }}
+                  onClick={() => setIsNotificationsOpen(true)}
                   className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>View All</span>
@@ -2346,41 +2323,6 @@ export default function LabDashboardPage() {
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* 7. NOTIFICATIONS VIEW                                    */}
-          {/* ======================================================== */}
-          {activeMenu === 'notifications' && (
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-xs">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-5 h-5 text-[#008F83]" />
-                    <span>Phlebotomy Dispatch & Field Alerts</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Live operational notifications across cold-chain logistics, specimen processing, and published reports.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => addToast('All field dispatch notifications marked as resolved.', 'success')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Mark All Resolved</span>
-                </button>
-              </div>
-
-              {/* Exact Notification Card & Settings matching User Dashboard System */}
-              <NotificationPopover
-                inline={true}
-                isOpen={true}
-                onClose={() => {}}
-                notifications={labNotifications}
-                onNotificationClick={handleLabNotificationClick}
-              />
-            </div>
-          )}
 
           {/* ======================================================== */}
           {/* 8. MY PROFILE VIEW                                       */}
