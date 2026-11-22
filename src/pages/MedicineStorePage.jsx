@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
+import ProductDetailModal from '../components/ProductDetailModal';
 import { 
   Search, ShieldCheck, Truck, Tag, RotateCcw,
   Heart, Star, ShoppingCart, ChevronDown, 
@@ -13,113 +14,246 @@ import {
 const STORE_MEDICINES = [
   {
     id: 'store-1',
-    name: 'Paracetamol 500 mg',
-    pack: '(10 Tablets)',
-    brand: 'Cipla',
+    name: 'Crocin 500 mg Tablet',
+    genericName: 'Paracetamol 500 mg',
+    composition: 'Paracetamol 500 mg',
+    compositionLong: 'Paracetamol (Acetaminophen) 500 mg',
+    dosageType: 'Tablet',
+    pack: '(15 Tablets)',
+    packSize: 'Strip of 15 Tablets',
+    brand: 'GlaxoSmithKline (GSK)',
+    manufacturer: 'GlaxoSmithKline (GSK)',
     category: 'general',
-    price: 32,
-    mrp: 40,
-    discountPercent: 20,
+    categoryLong: 'Pain Relief / Fever Reducer',
+    price: 35,
+    mrp: 42,
+    discountPercent: 17,
     rating: 4.6,
     reviewsCount: '2,418',
-    image: '/medicines/paracetamol.png',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '50 strips',
+    expiry: 'Apr 2028',
+    storage: 'Store below 30°C, in a dry place',
+    description: 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
+    usesText: 'Relieves fever, headache, body ache, and mild to moderate pain.',
+    dosageText: '1 tablet (500 mg) every 4–6 hours as needed. (Max 4 tablets in 24 hours)',
+    image: '/medicines/crocin-main.png',
+    images: [
+      '/medicines/crocin-main.png',
+      '/medicines/crocin-thumb2.png',
+      '/medicines/crocin-thumb3.png'
+    ],
     popularityRank: 1
   },
   {
     id: 'store-2',
-    name: 'Amoxicillin 500 mg',
-    pack: '(10 Capsules)',
-    brand: 'Sun Pharma',
+    name: 'Disprin Tablet',
+    genericName: 'Aspirin 350 mg',
+    composition: 'Aspirin 350 mg',
+    compositionLong: 'Acetylsalicylic Acid (Aspirin) 350 mg',
+    dosageType: 'Tablet',
+    pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
+    brand: 'Reckitt Benckiser',
+    manufacturer: 'Reckitt Benckiser',
     category: 'general',
+    categoryLong: 'Pain Relief / Headache',
+    price: 28,
+    mrp: 32,
+    discountPercent: 12,
+    rating: 4.5,
+    reviewsCount: '1,540',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '35 strips',
+    expiry: 'Dec 2027',
+    storage: 'Store below 25°C, away from moisture',
+    description: 'Disprin is an effervescent tablet used for fast relief from headache, toothache, period pain, and muscular pain.',
+    usesText: 'Relieves pain, fever, and inflammation.',
+    dosageText: '1 to 2 tablets dissolved in water every 4–6 hours as needed.',
+    image: '/medicines/paracetamol.png',
+    popularityRank: 2
+  },
+  {
+    id: 'store-3',
+    name: 'Amoxicillin 500 mg',
+    genericName: 'Amoxicillin 500 mg',
+    composition: 'Amoxicillin Trihydrate 500 mg',
+    compositionLong: 'Amoxicillin Trihydrate IP 500 mg',
+    dosageType: 'Capsule',
+    pack: '(10 Capsules)',
+    packSize: 'Strip of 10 Capsules',
+    brand: 'Sun Pharma',
+    manufacturer: 'Sun Pharma',
+    category: 'general',
+    categoryLong: 'Antibiotics / Bacterial Infections',
     price: 78,
     mrp: 98,
     discountPercent: 25,
     rating: 4.5,
     reviewsCount: '1,936',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '40 strips',
+    expiry: 'Jun 2027',
+    storage: 'Store below 25°C in a dry place',
+    description: 'Amoxicillin 500 mg is a penicillin antibiotic used to treat bacterial infections of the respiratory tract, ear, nose, throat, skin, and urinary tract.',
+    usesText: 'Treatment of bacterial infections.',
+    dosageText: '1 capsule every 8 hours or as prescribed by your physician.',
     image: '/medicines/amoxicillin.png',
-    popularityRank: 2
+    popularityRank: 3
   },
   {
-    id: 'store-3',
+    id: 'store-4',
     name: 'Omeprazole 20 mg',
+    genericName: 'Omeprazole 20 mg',
+    composition: 'Omeprazole 20 mg',
+    compositionLong: 'Omeprazole Gastro-resistant 20 mg',
+    dosageType: 'Capsule',
     pack: '(10 Capsules)',
+    packSize: 'Strip of 10 Capsules',
     brand: "Dr. Reddy's",
+    manufacturer: "Dr. Reddy's",
     category: 'digestive',
+    categoryLong: 'Antacid / Acid Reflux',
     price: 62,
     mrp: 75,
     discountPercent: 17,
     rating: 4.4,
     reviewsCount: '1,278',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '60 strips',
+    expiry: 'Mar 2028',
+    storage: 'Store below 30°C, protected from light',
+    description: 'Omeprazole 20 mg decreases the amount of acid made in the stomach. Used for treating heartburn, acid reflux, and stomach ulcers.',
+    usesText: 'Relief from acidity, GERD, and stomach ulcers.',
+    dosageText: '1 capsule daily in the morning before food.',
     image: '/medicines/omeprazole.png',
-    popularityRank: 3
+    popularityRank: 4
   },
   {
-    id: 'store-4',
+    id: 'store-5',
     name: 'Vitamin D3 600 IU',
+    genericName: 'Cholecalciferol 600 IU',
+    composition: 'Cholecalciferol 600 IU',
+    compositionLong: 'Cholecalciferol (Vitamin D3) 600 IU',
+    dosageType: 'Tablet',
     pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
     brand: 'Alkem',
+    manufacturer: 'Alkem Laboratories',
     category: 'vitamins',
+    categoryLong: 'Vitamins & Bone Health',
     price: 140,
     mrp: 200,
     discountPercent: 30,
     rating: 4.7,
     reviewsCount: '964',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '80 strips',
+    expiry: 'Aug 2028',
+    storage: 'Store below 25°C, away from direct sunlight',
+    description: 'Vitamin D3 is essential for bone density, calcium absorption, and maintaining a healthy immune system.',
+    usesText: 'Supports bone strength, calcium absorption, and immune health.',
+    dosageText: '1 tablet daily after food or as directed by doctor.',
     image: '/medicines/vitamind3.png',
-    popularityRank: 4
+    popularityRank: 5
   },
   {
-    id: 'store-5',
+    id: 'store-6',
     name: 'Cetirizine 10 mg',
+    genericName: 'Cetirizine Dihydrochloride 10 mg',
+    composition: 'Cetirizine Dihydrochloride 10 mg',
+    compositionLong: 'Cetirizine Dihydrochloride IP 10 mg',
+    dosageType: 'Tablet',
     pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
     brand: 'Cipla',
+    manufacturer: 'Cipla Ltd',
     category: 'respiratory',
+    categoryLong: 'Antiallergic / Cold & Flu',
     price: 46,
     mrp: 54,
     discountPercent: 15,
     rating: 4.5,
     reviewsCount: '812',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '45 strips',
+    expiry: 'Nov 2027',
+    storage: 'Store below 30°C in a dry place',
+    description: 'Cetirizine provides fast relief from allergic symptoms such as runny nose, sneezing, watery eyes, and itching.',
+    usesText: 'Relieves allergy, hay fever, and hives.',
+    dosageText: '1 tablet once daily at bedtime.',
     image: '/medicines/cetirizine.png',
-    popularityRank: 5
+    popularityRank: 6
   },
   {
-    id: 'store-6',
+    id: 'store-7',
     name: 'Amlodipine 5 mg',
+    genericName: 'Amlodipine Besylate 5 mg',
+    composition: 'Amlodipine Besylate 5 mg',
+    compositionLong: 'Amlodipine Besylate IP 5 mg',
+    dosageType: 'Tablet',
     pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
     brand: "Dr. Reddy's",
+    manufacturer: "Dr. Reddy's Laboratories",
     category: 'heart',
+    categoryLong: 'Cardiovascular / Blood Pressure',
     price: 48,
     mrp: 60,
     discountPercent: 20,
     rating: 4.6,
     reviewsCount: '1,083',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '30 strips',
+    expiry: 'May 2028',
+    storage: 'Store below 25°C, away from light and moisture',
+    description: 'Amlodipine relaxes blood vessels so blood can flow more easily, helping lower high blood pressure and prevent angina attacks.',
+    usesText: 'Controls high blood pressure and chest pain (angina).',
+    dosageText: '1 tablet daily as advised by your doctor.',
     image: '/medicines/amlodipine.png',
-    popularityRank: 6
-  },
-  {
-    id: 'store-7',
-    name: 'Atorvastatin 10 mg',
-    pack: '(10 Tablets)',
-    brand: 'Sun Pharma',
-    category: 'heart',
-    price: 82,
-    mrp: 100,
-    discountPercent: 18,
-    rating: 4.4,
-    reviewsCount: '739',
-    image: '/medicines/atorvastatin.png',
     popularityRank: 7
   },
   {
     id: 'store-8',
     name: 'Pantoprazole 40 mg',
+    genericName: 'Pantoprazole Sodium 40 mg',
+    composition: 'Pantoprazole Sodium 40 mg',
+    compositionLong: 'Pantoprazole Gastro-resistant 40 mg',
+    dosageType: 'Tablet',
     pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
     brand: 'Torrent Pharma',
+    manufacturer: 'Torrent Pharmaceuticals',
     category: 'digestive',
+    categoryLong: 'Antacid / Acid Reflux',
     price: 70,
     mrp: 90,
     discountPercent: 22,
     rating: 4.5,
     reviewsCount: '691',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '55 strips',
+    expiry: 'Sep 2028',
+    storage: 'Store below 30°C in a cool dry place',
+    description: 'Pantoprazole is a proton pump inhibitor that reduces excess acid production in the stomach, healing acidity and heartburn.',
+    usesText: 'Treats acid reflux, acidity, and peptic ulcers.',
+    dosageText: '1 tablet daily in the morning on an empty stomach.',
     image: '/medicines/pantoprazole.png',
     popularityRank: 8
   }
@@ -154,6 +288,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const toggleWishlist = (id) => {
     setWishlist((prev) => ({
@@ -218,7 +353,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
     return STORE_MEDICINES.filter((item) => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchesName = item.name.toLowerCase().includes(q);
+        const matchesName = item.name.toLowerCase().includes(q) || (item.genericName && item.genericName.toLowerCase().includes(q));
         const matchesBrand = item.brand.toLowerCase().includes(q);
         if (!matchesName && !matchesBrand) return false;
       }
@@ -632,7 +767,8 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                   return (
                     <div
                       key={item.id}
-                      className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-3.5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group relative"
+                      onClick={() => setSelectedProduct(item)}
+                      className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-3.5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group relative cursor-pointer"
                     >
                       <div>
                         {/* Top Row: Discount badge & Wishlist Heart */}
@@ -643,7 +779,10 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
 
                           <button
                             type="button"
-                            onClick={() => toggleWishlist(item.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleWishlist(item.id);
+                            }}
                             className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
                               isLiked
                                 ? 'text-rose-500 bg-rose-50'
@@ -704,7 +843,10 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                       {/* Add to Cart Button */}
                       <button
                         type="button"
-                        onClick={() => handleAddToCart(item)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(item);
+                        }}
                         className="w-full mt-2.5 py-2 sm:py-2.5 px-3 bg-[#008F83] hover:bg-[#00786E] text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer"
                       >
                         <ShoppingCart className="w-3.5 h-3.5" />
@@ -768,6 +910,12 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
 
         </div>
       </div>
+
+      {/* Product Detail Pop-up Modal */}
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </div>
   );
 }
