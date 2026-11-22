@@ -9,7 +9,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Targeted relief from chronic cervical, lumbar, and posture-related pain.',
     fullDesc: 'Our Back & Neck Pain Therapy program provides an evidence-based clinical approach for cervical spondylosis, lumbar disc bulge, sciatica, and postural tension. Every 60-minute session combines hands-on spinal mobilization, digital TENS/IFT electro-analgesia, targeted decompression, and customized strengthening to restore full spinal mobility and eliminate radiating pain.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -60,7 +60,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Specialized therapy for knee osteoarthritis, hip stiffness, and joint mobility.',
     fullDesc: 'Tailored for individuals experiencing knee osteoarthritis, frozen shoulder, hip stiffness, and ankle pain. We utilize joint traction, gentle glides, ultrasound phonophoresis, and low-impact quadricep/glute strengthening to restore fluid joint motion.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -108,7 +108,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Rapid recovery from ligament sprains, muscle tears, and athletic conditioning.',
     fullDesc: 'Accelerated protocols for ACL/PCL tears, hamstring pulls, meniscus tears, tennis elbow, and rotator cuff strains. We combine cryo-compression, eccentric loading, plyometrics, and functional agility drills to return you to your peak sport performance safely.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -156,7 +156,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Structured recovery for joint replacements, spine surgeries, and fractures.',
     fullDesc: 'Comprehensive post-surgical rehabilitation following Total Knee Replacement (TKR), Total Hip Replacement (THR), arthroscopic ACL repairs, fracture ORIF, and spinal laminectomies. We focus on scar tissue mobilization, progressive weight-bearing, edema control, and functional independence.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -203,7 +203,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Gentle mobility exercises, gait retraining, and balance support for seniors.',
     fullDesc: 'Specially created for seniors facing age-related sarcopenia, balance instability, fear of falling, Parkinson’s, and generalized weakness. Our compassionate geriatric physiotherapists deliver seated or supported exercises, vestibular balance retraining, and home hazard modifications.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -251,7 +251,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Correction of rounded shoulders, tech-neck, and desk-related strain.',
     fullDesc: 'Tailored for corporate professionals, students, and remote workers struggling with forward head posture, rounded shoulders, upper crossed syndrome, and chronic work fatigue. We pair myofascial chest opening with scapular retractor strengthening and comprehensive workstation ergonomic adjustments.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -299,7 +299,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Neuro-physiotherapy for stroke recovery, Parkinson’s, paralysis, and neuropathy.',
     fullDesc: 'Intensive rehabilitation based on the Bobath and PNF (Proprioceptive Neuromuscular Facilitation) concepts for individuals recovering from ischemic/hemorrhagic stroke, hemiplegia, Bell’s palsy, Guillain-Barré syndrome (GBS), and spinal cord injuries. Focused on stimulating neuro-plasticity and functional recovery.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -347,7 +347,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Breathing exercises, endurance recovery, and lung capacity improvement.',
     fullDesc: 'Dedicated pulmonary and cardiac rehabilitation for patients recovering from pneumonia, COPD, asthma, post-COVID fibrosis, or CABG heart surgeries. Combining postural drainage, chest percussions, incentive spirometry, and sub-maximal endurance training under continuous pulse-oximetry monitoring.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -395,7 +395,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Developmental milestone therapy for children, posture, and motor coordination.',
     fullDesc: 'Gentle, play-based physical rehabilitation for infants, toddlers, and adolescents facing delayed motor milestones (crawling/walking), congenital muscular torticollis, cerebral palsy, clubfoot rehabilitation, and developmental coordination disorder (DCD). Conducted in a comforting, child-friendly atmosphere.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -443,7 +443,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Pelvic floor conditioning, prenatal back pain relief, and postpartum recovery.',
     fullDesc: 'Tailored specifically for women navigating prenatal joint laxity, sacroiliac (SI) joint pain during pregnancy, postpartum diastasis recti (abdominal separation), and pelvic floor weakness or stress urinary incontinence. Safe, confidential, and scientifically guided.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -491,7 +491,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Deep tissue therapy, cupping, and dry needling for stubborn muscular knots.',
     fullDesc: 'Targeted clinical intervention for chronic muscular knots, myofascial pain syndrome, and stubborn tension in the traps, calves, piriformis, and shoulder blades. Uses sterile filament needles to elicit a local twitch response, instantly deactivating pain points and restoring muscle elasticity.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -539,7 +539,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Therapeutic resistance training to restore muscle mass, core, and stamina.',
     fullDesc: 'Tailored for individuals ready to progress beyond basic rehabilitation into high-level functional resilience. Using free weights, resistance bands, kettlebells, and functional movement patterns to build injury-proof joints, athletic stamina, and permanent muscular balance.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -587,7 +587,7 @@ export const ALL_PHYSIO_SERVICES = [
     shortDesc: 'Complete diagnostic physical evaluation and customized manual therapy for daily aches and movement restrictions.',
     fullDesc: 'Our General Physiotherapy program delivers an all-inclusive clinical approach to alleviate acute or recurring pain, restore joint biomechanics, and rebuild functional movement. Every session begins with a comprehensive postural and musculoskeletal assessment by our certified physiotherapist, followed by evidence-based manual therapy, targeted therapeutic exercise routines, and advanced modalities to help you resume daily activities pain-free.',
     price: 1200,
-    mrp: 1600,
+    mrp: 1500,
     discount: '20% OFF',
     duration: '60 mins',
     sessionTypes: ['In-Clinic Session', 'At-Home Session'],
@@ -634,11 +634,62 @@ export const ALL_PHYSIO_SERVICES = [
 ];
 
 export function getPhysioServiceById(id) {
-  if (!id) return ALL_PHYSIO_SERVICES[0];
+  const defaultService = ALL_PHYSIO_SERVICES[0];
+  if (!id) return enrichPhysioService(defaultService);
   const normalized = id.toLowerCase().trim();
-  return (
+  const found = (
     ALL_PHYSIO_SERVICES.find(s => s.id === normalized) ||
     ALL_PHYSIO_SERVICES.find(s => s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').includes(normalized)) ||
-    ALL_PHYSIO_SERVICES[0]
+    defaultService
   );
+  return enrichPhysioService(found);
+}
+
+function enrichPhysioService(s) {
+  if (!s) return null;
+  const price = s.price || 1200;
+  const mrp = s.mrp || Math.round(price / 0.8) || 1500;
+  
+  const standardWhatsIncluded = [
+    'Comprehensive 1-on-1 Musculoskeletal Assessment',
+    'Hands-on Joint & Myofascial Mobilization',
+    'Advanced Electrotherapy / TENS / Ultrasound',
+    'Targeted Range-of-Motion & Core Exercises',
+    'Postural & Ergonomic Workstation Guidance',
+    'Personalized Home Exercise & Follow-up Plan'
+  ];
+
+  const standardFaqs = [
+    {
+      q: 'What is included in this physiotherapy session?',
+      a: 'Each 60-minute session includes a 1-on-1 biomechanical assessment by a certified physiotherapist, hands-on joint and muscle mobilization, digital electrotherapy/ultrasound modalities for pain relief, active corrective exercises, and a personalized home exercise plan.'
+    },
+    {
+      q: 'Can the physiotherapist visit my home in Guwahati?',
+      a: 'Yes, we provide doorstep home visits across Guwahati including Zoo Road, GS Road, Dispur, Ulubari, Jalukbari, and surrounding areas. Our physiotherapists carry portable electrotherapy and mobilization equipment.'
+    },
+    {
+      q: 'How many sessions will I need for full recovery?',
+      a: 'Most patients experience noticeable pain reduction within 2 to 3 sessions. A typical rehabilitative cycle ranges between 3 to 6 sessions depending on symptom duration and chronic severity.'
+    },
+    {
+      q: 'Are your physiotherapists certified and experienced?',
+      a: 'All ZESTMED physiotherapists hold accredited BPT/MPT degrees with MIAP certifications and specialized clinical experience in orthopedics, neurology, sports medicine, and geriatric rehabilitation.'
+    }
+  ];
+
+  return {
+    ...s,
+    price,
+    mrp,
+    priceFormatted: s.priceFormatted || `₹${price.toLocaleString('en-IN')}`,
+    discount: '20% OFF',
+    subtitle: s.tagline || s.subtitle || s.shortDesc || '',
+    overview: s.fullDesc || s.overview || s.shortDesc || '',
+    shortTitle: s.shortTitle || s.title,
+    stay: s.stay || '60 Mins Dedicated Session',
+    hospitalLocation: s.expert?.hospital || 'ZESTMED Physiotherapy & Rehabilitation Center, Guwahati',
+    whatsIncluded: (s.keyBenefits && s.keyBenefits.length >= 6) ? s.keyBenefits.slice(0, 6) : (s.whatsIncluded || standardWhatsIncluded),
+    faqs: (s.faqs && s.faqs.length >= 3) ? s.faqs : standardFaqs
+  };
 }
