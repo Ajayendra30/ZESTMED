@@ -423,7 +423,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={srv.id}
-                  onClick={() => handleBookSession(srv.title)}
+                  onClick={() => navigate(`/physiotherapy/${srv.id}`)}
                   className="bg-white rounded-2xl border border-slate-200/90 hover:border-teal-300 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none"
                 >
                   <div>
@@ -450,10 +450,17 @@ export default function PhysiotherapyPage() {
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64]">
-                    <span>Book Session</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/physiotherapy/${srv.id}`);
+                    }}
+                    className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64] w-full text-left cursor-pointer group-hover:text-[#005c4b] transition-colors"
+                  >
+                    <span>View Details and book</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
+                  </button>
                 </div>
               );
             })}
@@ -543,7 +550,10 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={cond.id}
-                  onClick={() => handleBookSession(cond.name)}
+                  onClick={() => {
+                    const match = PHYSIO_SERVICES.find(s => s.title.toLowerCase().includes(cond.name.toLowerCase().split(' ')[0])) || PHYSIO_SERVICES[0];
+                    navigate(`/physiotherapy/${match.id}`);
+                  }}
                   className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[110px] sm:min-h-[120px] select-none"
                 >
                   <div className="h-10 w-10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform text-[#007A64]">
@@ -811,7 +821,7 @@ export default function PhysiotherapyPage() {
             
             <button
               type="button"
-              onClick={() => handleBookSession()}
+              onClick={() => navigate('/book-physiotherapy')}
               className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <Calendar className="w-5 h-5 text-[#007A64]" />
