@@ -1,19 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { 
-  Search, ShieldCheck, Truck, Tag, RotateCcw,
-  Heart, Star, ShoppingCart, ChevronDown, 
-  Home, Filter, Layers, ArrowLeft, ArrowRight
+  Search, ShieldCheck, Truck, RotateCcw, Tag,
+  ShoppingCart, SlidersHorizontal
 } from 'lucide-react';
 
 const STORE_MEDICINES = [
   {
-    id: 'store-1',
+    id: 'med-crocin',
     name: 'Crocin 500 mg Tablet',
     genericName: 'Paracetamol 500 mg',
     composition: 'Paracetamol 500 mg',
@@ -23,10 +22,11 @@ const STORE_MEDICINES = [
     packSize: 'Strip of 15 Tablets',
     brand: 'GlaxoSmithKline (GSK)',
     manufacturer: 'GlaxoSmithKline (GSK)',
-    category: 'general',
+    category: 'fever',
+    categories: ['fever', 'pain'],
     categoryLong: 'Pain Relief / Fever Reducer',
-    price: 35,
-    mrp: 42,
+    price: 35.00,
+    mrp: 42.00,
     discountPercent: 17,
     rating: 4.6,
     reviewsCount: '2,418',
@@ -39,18 +39,18 @@ const STORE_MEDICINES = [
     description: 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
     usesText: 'Relieves fever, headache, body ache, and mild to moderate pain.',
     dosageText: '1 tablet (500 mg) every 4–6 hours as needed. (Max 4 tablets in 24 hours)',
-    image: '/medicines/crocin-main.png',
+    image: '/medicines/crocin-500.png',
     images: [
-      '/medicines/crocin-main.png',
+      '/medicines/crocin-500.png',
       '/medicines/crocin-thumb2.png',
       '/medicines/crocin-thumb3.png'
     ],
     popularityRank: 1
   },
   {
-    id: 'store-2',
+    id: 'med-disprin',
     name: 'Disprin Tablet',
-    genericName: 'Aspirin 350 mg',
+    genericName: 'Pain Relief / Headache',
     composition: 'Aspirin 350 mg',
     compositionLong: 'Acetylsalicylic Acid (Aspirin) 350 mg',
     dosageType: 'Tablet',
@@ -58,10 +58,11 @@ const STORE_MEDICINES = [
     packSize: 'Strip of 10 Tablets',
     brand: 'Reckitt Benckiser',
     manufacturer: 'Reckitt Benckiser',
-    category: 'general',
+    category: 'pain',
+    categories: ['pain', 'fever'],
     categoryLong: 'Pain Relief / Headache',
-    price: 28,
-    mrp: 32,
+    price: 28.00,
+    mrp: 32.00,
     discountPercent: 12,
     rating: 4.5,
     reviewsCount: '1,540',
@@ -72,105 +73,240 @@ const STORE_MEDICINES = [
     expiry: 'Dec 2027',
     storage: 'Store below 25°C, away from moisture',
     description: 'Disprin is an effervescent tablet used for fast relief from headache, toothache, period pain, and muscular pain.',
-    usesText: 'Relieves pain, fever, and inflammation.',
-    dosageText: '1 to 2 tablets dissolved in water every 4–6 hours as needed.',
-    image: '/medicines/paracetamol.png',
+    usesText: 'Fast relief from headache, muscular pain, toothache, and inflammation.',
+    dosageText: '1 to 2 tablets dissolved in a glass of water every 4–6 hours as needed.',
+    image: '/medicines/disprin.png',
+    images: ['/medicines/disprin.png'],
     popularityRank: 2
   },
   {
-    id: 'store-3',
-    name: 'Amoxicillin 500 mg',
-    genericName: 'Amoxicillin 500 mg',
-    composition: 'Amoxicillin Trihydrate 500 mg',
-    compositionLong: 'Amoxicillin Trihydrate IP 500 mg',
-    dosageType: 'Capsule',
-    pack: '(10 Capsules)',
-    packSize: 'Strip of 10 Capsules',
-    brand: 'Sun Pharma',
-    manufacturer: 'Sun Pharma',
-    category: 'general',
-    categoryLong: 'Antibiotics / Bacterial Infections',
-    price: 78,
-    mrp: 98,
-    discountPercent: 25,
-    rating: 4.5,
-    reviewsCount: '1,936',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '40 strips',
-    expiry: 'Jun 2027',
-    storage: 'Store below 25°C in a dry place',
-    description: 'Amoxicillin 500 mg is a penicillin antibiotic used to treat bacterial infections of the respiratory tract, ear, nose, throat, skin, and urinary tract.',
-    usesText: 'Treatment of bacterial infections.',
-    dosageText: '1 capsule every 8 hours or as prescribed by your physician.',
-    image: '/medicines/amoxicillin.png',
-    popularityRank: 3
-  },
-  {
-    id: 'store-4',
-    name: 'Omeprazole 20 mg',
-    genericName: 'Omeprazole 20 mg',
-    composition: 'Omeprazole 20 mg',
-    compositionLong: 'Omeprazole Gastro-resistant 20 mg',
-    dosageType: 'Capsule',
-    pack: '(10 Capsules)',
-    packSize: 'Strip of 10 Capsules',
-    brand: "Dr. Reddy's",
-    manufacturer: "Dr. Reddy's",
-    category: 'digestive',
-    categoryLong: 'Antacid / Acid Reflux',
-    price: 62,
-    mrp: 75,
-    discountPercent: 17,
-    rating: 4.4,
-    reviewsCount: '1,278',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '60 strips',
-    expiry: 'Mar 2028',
-    storage: 'Store below 30°C, protected from light',
-    description: 'Omeprazole 20 mg decreases the amount of acid made in the stomach. Used for treating heartburn, acid reflux, and stomach ulcers.',
-    usesText: 'Relief from acidity, GERD, and stomach ulcers.',
-    dosageText: '1 capsule daily in the morning before food.',
-    image: '/medicines/omeprazole.png',
-    popularityRank: 4
-  },
-  {
-    id: 'store-5',
-    name: 'Vitamin D3 600 IU',
-    genericName: 'Cholecalciferol 600 IU',
-    composition: 'Cholecalciferol 600 IU',
-    compositionLong: 'Cholecalciferol (Vitamin D3) 600 IU',
+    id: 'med-augovin',
+    name: 'Augovin 625 mg Tablet',
+    genericName: 'Antibiotic',
+    composition: 'Amoxicillin 500 mg + Clavulanic Acid 125 mg',
+    compositionLong: 'Amoxicillin Trihydrate IP 500 mg + Diluted Potassium Clavulanate IP 125 mg',
     dosageType: 'Tablet',
     pack: '(10 Tablets)',
     packSize: 'Strip of 10 Tablets',
-    brand: 'Alkem',
-    manufacturer: 'Alkem Laboratories',
-    category: 'vitamins',
-    categoryLong: 'Vitamins & Bone Health',
-    price: 140,
-    mrp: 200,
-    discountPercent: 30,
+    brand: 'GlaxoSmithKline (GSK)',
+    manufacturer: 'GlaxoSmithKline (GSK)',
+    category: 'antibiotics',
+    categories: ['antibiotics'],
+    categoryLong: 'Antibiotic / Bacterial Infections',
+    price: 210.00,
+    mrp: 232.00,
+    discountPercent: 9,
     rating: 4.7,
-    reviewsCount: '964',
+    reviewsCount: '1,820',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '30 strips',
+    expiry: 'Aug 2027',
+    storage: 'Store below 25°C in a dry place',
+    description: 'Augovin 625 mg is a broad-spectrum penicillin antibiotic combined with a beta-lactamase inhibitor to treat severe bacterial infections.',
+    usesText: 'Bacterial infections of the respiratory tract, ear, nose, throat, skin, and urinary tract.',
+    dosageText: '1 tablet twice daily with food or as advised by your doctor.',
+    image: '/medicines/augovin-625.png',
+    images: ['/medicines/augovin-625.png'],
+    popularityRank: 3
+  },
+  {
+    id: 'med-evion',
+    name: 'Evion 400 mg Capsule',
+    genericName: 'Vitamin E Supplement',
+    composition: 'Tocopheryl Acetate 400 mg',
+    compositionLong: 'Tocopheryl Acetate IP (Vitamin E) 400 mg',
+    dosageType: 'Capsule',
+    pack: '(10 Capsules)',
+    packSize: 'Strip of 10 Capsules',
+    brand: 'Procter & Gamble / Merck',
+    manufacturer: 'Merck Healthcare / P&G',
+    category: 'vitamins',
+    categories: ['vitamins', 'skin'],
+    categoryLong: 'Vitamin E Supplement / Antioxidant',
+    price: 110.00,
+    mrp: 132.00,
+    discountPercent: 17,
+    rating: 4.8,
+    reviewsCount: '3,120',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '65 strips',
+    expiry: 'May 2028',
+    storage: 'Store below 25°C, away from direct sunlight',
+    description: 'Evion 400 contains Vitamin E, an essential fat-soluble antioxidant that protects cells from damage, promotes healthy skin, and supports muscular health.',
+    usesText: 'Nourishes glowing skin, prevents cellular aging, strengthens hair, and boosts immunity.',
+    dosageText: '1 capsule daily after a meal or as directed by a healthcare professional.',
+    image: '/medicines/evion-400.png',
+    images: ['/medicines/evion-400.png'],
+    popularityRank: 4
+  },
+  {
+    id: 'med-becosules',
+    name: 'Becosules Capsule',
+    genericName: 'Multivitamin Supplement',
+    composition: 'B-Complex + Vitamin C',
+    compositionLong: 'Vitamin B1, B2, B6, B12, Niacinamide, Calcium Pantothenate, Folic Acid + Vitamin C',
+    dosageType: 'Capsule',
+    pack: '(20 Capsules)',
+    packSize: 'Strip of 20 Capsules',
+    brand: 'Pfizer',
+    manufacturer: 'Pfizer Limited',
+    category: 'vitamins',
+    categories: ['vitamins'],
+    categoryLong: 'Multivitamin & Mineral Supplement',
+    price: 125.00,
+    mrp: 149.00,
+    discountPercent: 16,
+    rating: 4.6,
+    reviewsCount: '2,850',
     prescriptionRequired: false,
     inStock: true,
     stockText: 'In Stock',
     stockCount: '80 strips',
-    expiry: 'Aug 2028',
-    storage: 'Store below 25°C, away from direct sunlight',
-    description: 'Vitamin D3 is essential for bone density, calcium absorption, and maintaining a healthy immune system.',
-    usesText: 'Supports bone strength, calcium absorption, and immune health.',
-    dosageText: '1 tablet daily after food or as directed by doctor.',
-    image: '/medicines/vitamind3.png',
+    expiry: 'Jul 2028',
+    storage: 'Store below 30°C in a dry place',
+    description: 'Becosules capsules provide an optimal balance of Vitamin B-complex and Vitamin C to treat vitamin deficiencies, mouth ulcers, and physical fatigue.',
+    usesText: 'Treats mouth ulcers, heals tissue damage, boosts cellular metabolism, and improves vitality.',
+    dosageText: '1 capsule daily after food or as recommended by physician.',
+    image: '/medicines/becosules.png',
+    images: ['/medicines/becosules.png'],
     popularityRank: 5
   },
   {
-    id: 'store-6',
-    name: 'Cetirizine 10 mg',
-    genericName: 'Cetirizine Dihydrochloride 10 mg',
+    id: 'med-pantop',
+    name: 'Pantop 40 mg Tablet',
+    genericName: 'Acidity / GERD',
+    composition: 'Pantoprazole Sodium 40 mg',
+    compositionLong: 'Pantoprazole Sodium Gastro-resistant IP 40 mg',
+    dosageType: 'Tablet',
+    pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
+    brand: 'Aristo Pharma',
+    manufacturer: 'Aristo Pharmaceuticals',
+    category: 'digestive',
+    categories: ['digestive'],
+    categoryLong: 'Antacid / GERD & Acidity',
+    price: 98.00,
+    mrp: 112.00,
+    discountPercent: 12,
+    rating: 4.6,
+    reviewsCount: '1,420',
+    prescriptionRequired: false,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '55 strips',
+    expiry: 'Sep 2028',
+    storage: 'Store below 25°C in a cool, dry place',
+    description: 'Pantop 40 mg is a proton pump inhibitor that suppresses stomach acid secretion, relieving severe acid reflux, heartburn, and peptic ulcers.',
+    usesText: 'Treats gastroesophageal reflux disease (GERD), heartburn, stomach ulcers, and acid indigestion.',
+    dosageText: '1 tablet daily in the morning, 30–60 minutes before breakfast.',
+    image: '/medicines/pantop-40.png',
+    images: ['/medicines/pantop-40.png'],
+    popularityRank: 6
+  },
+  {
+    id: 'med-amlong',
+    name: 'Amlong 5 mg Tablet',
+    genericName: 'Blood Pressure Control',
+    composition: 'Amlodipine Besylate 5 mg',
+    compositionLong: 'Amlodipine Besylate IP 5 mg',
+    dosageType: 'Tablet',
+    pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
+    brand: 'Micro Labs',
+    manufacturer: 'Micro Labs Limited',
+    category: 'heart',
+    categories: ['heart'],
+    categoryLong: 'Cardiovascular / Blood Pressure',
+    price: 72.00,
+    mrp: 88.00,
+    discountPercent: 18,
+    rating: 4.7,
+    reviewsCount: '1,640',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '45 strips',
+    expiry: 'Jan 2028',
+    storage: 'Store below 25°C, protected from light',
+    description: 'Amlong 5 contains Amlodipine, which widens blood vessels to improve blood flow, lower arterial pressure, and prevent coronary chest pain.',
+    usesText: 'Manages high blood pressure (hypertension) and prevents stable angina attacks.',
+    dosageText: '1 tablet daily at the same time every day, or as advised by your physician.',
+    image: '/medicines/amlong-5.png',
+    images: ['/medicines/amlong-5.png'],
+    popularityRank: 7
+  },
+  {
+    id: 'med-metformin',
+    name: 'Metformin 500 mg Tablet',
+    genericName: 'Diabetes Care',
+    composition: 'Metformin Hydrochloride 500 mg',
+    compositionLong: 'Metformin Hydrochloride Prolonged-Release IP 500 mg',
+    dosageType: 'Tablet',
+    pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
+    brand: 'USV Limited',
+    manufacturer: 'USV Private Limited',
+    category: 'diabetes',
+    categories: ['diabetes'],
+    categoryLong: 'Diabetes Care / Blood Sugar Control',
+    price: 56.00,
+    mrp: 68.00,
+    discountPercent: 18,
+    rating: 4.5,
+    reviewsCount: '2,110',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '70 strips',
+    expiry: 'Oct 2027',
+    storage: 'Store below 30°C in a dry place',
+    description: 'Metformin 500 mg is the gold standard oral anti-diabetic medication, helping the body respond better to insulin and decreasing liver glucose production.',
+    usesText: 'Lowers high blood sugar levels in Type 2 Diabetes Mellitus and prevents diabetic complications.',
+    dosageText: '1 tablet twice daily with or immediately after meals.',
+    image: '/medicines/metformin-500.png',
+    images: ['/medicines/metformin-500.png'],
+    popularityRank: 8
+  },
+  {
+    id: 'med-atorva',
+    name: 'Atorva 10 mg Tablet',
+    genericName: 'Cholesterol Control',
+    composition: 'Atorvastatin Calcium 10 mg',
+    compositionLong: 'Atorvastatin Calcium IP 10 mg',
+    dosageType: 'Tablet',
+    pack: '(10 Tablets)',
+    packSize: 'Strip of 10 Tablets',
+    brand: 'Zydus Cadila',
+    manufacturer: 'Zydus Healthcare',
+    category: 'heart',
+    categories: ['heart'],
+    categoryLong: 'Cardiovascular / Lipid Lowering',
+    price: 135.00,
+    mrp: 158.00,
+    discountPercent: 15,
+    rating: 4.6,
+    reviewsCount: '1,980',
+    prescriptionRequired: true,
+    inStock: true,
+    stockText: 'In Stock',
+    stockCount: '40 strips',
+    expiry: 'Feb 2028',
+    storage: 'Store below 25°C in a dry place',
+    description: 'Atorva 10 mg is a lipid-lowering medication (statin) that blocks the enzyme needed to produce cholesterol, protecting against heart attacks and strokes.',
+    usesText: 'Lowers LDL ("bad") cholesterol, reduces triglycerides, and elevates HDL ("good") cholesterol.',
+    dosageText: '1 tablet once daily, preferably at bedtime.',
+    image: '/medicines/atorva-10.png',
+    images: ['/medicines/atorva-10.png'],
+    popularityRank: 9
+  },
+  {
+    id: 'med-cetirizine',
+    name: 'Cetirizine 10 mg Tablet',
+    genericName: 'Allergy Relief',
     composition: 'Cetirizine Dihydrochloride 10 mg',
     compositionLong: 'Cetirizine Dihydrochloride IP 10 mg',
     dosageType: 'Tablet',
@@ -178,99 +314,41 @@ const STORE_MEDICINES = [
     packSize: 'Strip of 10 Tablets',
     brand: 'Cipla',
     manufacturer: 'Cipla Ltd',
-    category: 'respiratory',
-    categoryLong: 'Antiallergic / Cold & Flu',
-    price: 46,
-    mrp: 54,
-    discountPercent: 15,
+    category: 'skin',
+    categories: ['skin', 'fever', 'pain'],
+    categoryLong: 'Antiallergic / Skin & Cold Relief',
+    price: 28.00,
+    mrp: 32.00,
+    discountPercent: 12,
     rating: 4.5,
-    reviewsCount: '812',
+    reviewsCount: '1,750',
     prescriptionRequired: false,
     inStock: true,
     stockText: 'In Stock',
-    stockCount: '45 strips',
+    stockCount: '85 strips',
     expiry: 'Nov 2027',
     storage: 'Store below 30°C in a dry place',
-    description: 'Cetirizine provides fast relief from allergic symptoms such as runny nose, sneezing, watery eyes, and itching.',
-    usesText: 'Relieves allergy, hay fever, and hives.',
+    description: 'Cetirizine 10 mg provides fast, 24-hour relief from allergies, allergic rhinitis, watery eyes, sneezing, and itchy skin rashes or hives.',
+    usesText: 'Relieves allergy symptoms, allergic rhinitis, hay fever, hives, and pruritus.',
     dosageText: '1 tablet once daily at bedtime.',
-    image: '/medicines/cetirizine.png',
-    popularityRank: 6
-  },
-  {
-    id: 'store-7',
-    name: 'Amlodipine 5 mg',
-    genericName: 'Amlodipine Besylate 5 mg',
-    composition: 'Amlodipine Besylate 5 mg',
-    compositionLong: 'Amlodipine Besylate IP 5 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: "Dr. Reddy's",
-    manufacturer: "Dr. Reddy's Laboratories",
-    category: 'heart',
-    categoryLong: 'Cardiovascular / Blood Pressure',
-    price: 48,
-    mrp: 60,
-    discountPercent: 20,
-    rating: 4.6,
-    reviewsCount: '1,083',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '30 strips',
-    expiry: 'May 2028',
-    storage: 'Store below 25°C, away from light and moisture',
-    description: 'Amlodipine relaxes blood vessels so blood can flow more easily, helping lower high blood pressure and prevent angina attacks.',
-    usesText: 'Controls high blood pressure and chest pain (angina).',
-    dosageText: '1 tablet daily as advised by your doctor.',
-    image: '/medicines/amlodipine.png',
-    popularityRank: 7
-  },
-  {
-    id: 'store-8',
-    name: 'Pantoprazole 40 mg',
-    genericName: 'Pantoprazole Sodium 40 mg',
-    composition: 'Pantoprazole Sodium 40 mg',
-    compositionLong: 'Pantoprazole Gastro-resistant 40 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Torrent Pharma',
-    manufacturer: 'Torrent Pharmaceuticals',
-    category: 'digestive',
-    categoryLong: 'Antacid / Acid Reflux',
-    price: 70,
-    mrp: 90,
-    discountPercent: 22,
-    rating: 4.5,
-    reviewsCount: '691',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '55 strips',
-    expiry: 'Sep 2028',
-    storage: 'Store below 30°C in a cool dry place',
-    description: 'Pantoprazole is a proton pump inhibitor that reduces excess acid production in the stomach, healing acidity and heartburn.',
-    usesText: 'Treats acid reflux, acidity, and peptic ulcers.',
-    dosageText: '1 tablet daily in the morning on an empty stomach.',
-    image: '/medicines/pantoprazole.png',
-    popularityRank: 8
+    image: '/medicines/cetirizine-10.png',
+    images: ['/medicines/cetirizine-10.png'],
+    popularityRank: 10
   }
 ];
 
-const CATEGORIES_LIST = [
-  { id: 'general', name: 'General Medicines', count: '1,234' },
-  { id: 'vitamins', name: 'Vitamins & Supplements', count: '456' },
-  { id: 'diabetes', name: 'Diabetes Care', count: '328' },
-  { id: 'heart', name: 'Heart Care', count: '217' },
-  { id: 'respiratory', name: 'Respiratory Care', count: '184' },
-  { id: 'digestive', name: 'Digestive Care', count: '162' },
-  { id: 'personal', name: 'Personal Care', count: '398' },
-  { id: 'baby', name: 'Baby Care', count: '145' },
+const SIDEBAR_CATEGORIES = [
+  { id: 'pain', name: 'Pain Relief' },
+  { id: 'fever', name: 'Fever' },
+  { id: 'antibiotics', name: 'Antibiotics' },
+  { id: 'diabetes', name: 'Diabetes' },
+  { id: 'heart', name: 'Heart Care' },
+  { id: 'digestive', name: 'Digestive Care' },
+  { id: 'skin', name: 'Skin Care' },
+  { id: 'vitamins', name: 'Vitamins & Supplements' }
 ];
 
-export default function MedicineStorePage({ onOpenPrescriptionModal }) {
+export default function MedicineStorePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, openAuth } = useAuth();
@@ -278,40 +356,15 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
   const { addToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchInputVal, setSearchInputVal] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [priceMax, setPriceMax] = useState(5000);
-  const [selectedDiscounts, setSelectedDiscounts] = useState([]);
-  const [brandSearch, setBrandSearch] = useState('');
-  const [sortBy, setSortBy] = useState('Popularity');
-  const [wishlist, setWishlist] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isViewMoreCategories, setIsViewMoreCategories] = useState(false);
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [priceMax, setPriceMax] = useState(2000);
+  const [stockFilter, setStockFilter] = useState('in_stock');
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const toggleWishlist = (id) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-    const isNowLiked = !wishlist[id];
-    if (isNowLiked) {
-      addToast('Added to wishlist!', 'success');
-    } else {
-      addToast('Removed from wishlist', 'info');
-    }
-  };
 
   const toggleCategory = (catId) => {
     setSelectedCategories((prev) =>
       prev.includes(catId) ? prev.filter((id) => id !== catId) : [...prev, catId]
-    );
-  };
-
-  const toggleDiscount = (pct) => {
-    setSelectedDiscounts((prev) =>
-      prev.includes(pct) ? prev.filter((p) => p !== pct) : [...prev, pct]
     );
   };
 
@@ -324,7 +377,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
       type: 'medicine',
       quantity: 1,
       image: product.image,
-      pack: product.pack
+      pack: product.pack || product.packSize
     };
 
     if (!user) {
@@ -343,49 +396,36 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
     addItem(itemData, 'medicine');
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setSearchQuery(searchInputVal);
-  };
-
-  // Filtered Products
+  // Filter products based on search, categories, price range, and availability
   const filteredProducts = useMemo(() => {
     return STORE_MEDICINES.filter((item) => {
+      // Search input filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchesName = item.name.toLowerCase().includes(q) || (item.genericName && item.genericName.toLowerCase().includes(q));
-        const matchesBrand = item.brand.toLowerCase().includes(q);
-        if (!matchesName && !matchesBrand) return false;
+        const matchesName = item.name.toLowerCase().includes(q) || item.genericName.toLowerCase().includes(q);
+        const matchesBrand = item.brand && item.brand.toLowerCase().includes(q);
+        const matchesDesc = item.description && item.description.toLowerCase().includes(q);
+        if (!matchesName && !matchesBrand && !matchesDesc) return false;
       }
 
-      if (brandSearch.trim()) {
-        const b = brandSearch.toLowerCase().trim();
-        if (!item.brand.toLowerCase().includes(b)) return false;
+      // Categories filter
+      if (selectedCategories.length > 0) {
+        const matchesCategory = selectedCategories.some((cat) =>
+          item.categories ? item.categories.includes(cat) : item.category === cat
+        );
+        if (!matchesCategory) return false;
       }
 
-      if (selectedCategories.length > 0 && !selectedCategories.includes(item.category)) {
-        return false;
-      }
-
+      // Price filter
       if (item.price > priceMax) return false;
 
-      if (selectedDiscounts.length > 0) {
-        const matchesAnyDiscount = selectedDiscounts.some(
-          (pct) => item.discountPercent >= pct
-        );
-        if (!matchesAnyDiscount) return false;
-      }
+      // Stock filter
+      if (stockFilter === 'in_stock' && !item.inStock) return false;
+      if (stockFilter === 'out_of_stock' && item.inStock) return false;
 
       return true;
-    }).sort((a, b) => {
-      if (sortBy === 'Popularity') return a.popularityRank - b.popularityRank;
-      if (sortBy === 'Price: Low to High') return a.price - b.price;
-      if (sortBy === 'Price: High to Low') return b.price - a.price;
-      if (sortBy === 'Discount') return b.discountPercent - a.discountPercent;
-      if (sortBy === 'Rating') return b.rating - a.rating;
-      return 0;
-    });
-  }, [searchQuery, selectedCategories, priceMax, selectedDiscounts, brandSearch, sortBy]);
+    }).sort((a, b) => a.popularityRank - b.popularityRank);
+  }, [searchQuery, selectedCategories, priceMax, stockFilter]);
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen font-sans pb-16">
@@ -394,7 +434,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           1. HERO BANNER WITH HOMEPAGE HERO STYLING & MEDICINES VISUAL - FULL WIDTH
           ========================================================================= */}
       <section className="relative w-full min-w-full overflow-hidden bg-gradient-to-r from-[#F0F9FB] via-[#E8F6F8] to-[#DEF3F6] border-b border-teal-100/60 select-none">
-        {/* 1. Medical Plus (+) Symbols matching Homepage Hero */}
+        {/* Medical Plus (+) Symbols matching Homepage Hero */}
         <div className="absolute top-6 left-[16%] opacity-20 text-teal-400 font-bold text-5xl pointer-events-none select-none">
           +
         </div>
@@ -405,7 +445,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
           +
         </div>
 
-        {/* 2. Bottom-Left Soft Cyan Wave Arc sweeping from corner */}
+        {/* Bottom-Left Soft Cyan Wave Arc */}
         <div className="absolute -bottom-10 -left-10 w-[360px] sm:w-[440px] h-[320px] sm:h-[380px] pointer-events-none select-none opacity-40">
           <svg viewBox="0 0 400 400" className="w-full h-full fill-current text-teal-200/50">
             <path d="M0,160 C130,150 230,240 270,400 L0,400 Z" />
@@ -413,7 +453,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
         </div>
         <div className="absolute -bottom-16 -left-16 w-[380px] h-[380px] bg-gradient-to-tr from-cyan-100/50 via-teal-100/30 to-transparent rounded-full blur-2xl pointer-events-none" />
 
-        {/* 3. Distinctive Organic Mint-Cyan Curved Backdrop Wave */}
+        {/* Organic Mint-Cyan Curved Backdrop Wave */}
         <div className="absolute top-0 right-0 w-[64%] sm:w-[58%] lg:w-[50%] xl:w-[46%] h-full pointer-events-none select-none overflow-hidden">
           <svg
             viewBox="0 0 500 400"
@@ -447,7 +487,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 md:pt-8 lg:pt-9 pb-7 md:pb-8 lg:pb-9 relative z-10 min-h-[320px] sm:min-h-[360px] lg:min-h-[390px] xl:min-h-[420px] 2xl:min-h-[450px] flex items-center">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
             
-            {/* Left Column */}
+            {/* Left Content */}
             <div className="lg:col-span-6 xl:col-span-6 z-10 space-y-3.5 sm:space-y-4 max-w-xl">
               <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black text-slate-900 tracking-tight leading-tight">
                 Medicines <span className="text-[#008F83]">Store</span>
@@ -457,7 +497,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
                 Order genuine medicines online with fast & safe delivery at your doorstep.
               </p>
 
-              {/* 4 Trust Badges in a 2x2 Grid: Best Prices placed directly under Express Delivery */}
+              {/* 4 Trust Badges in a 2x2 Grid */}
               <div className="pt-3 sm:pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-8 lg:gap-x-10 gap-y-3 sm:gap-y-3.5 max-w-xl text-sm sm:text-base text-slate-800 font-bold">
                 <div className="flex items-center gap-3">
                   <div className="shrink-0 flex items-center justify-center text-[#008F83]">
@@ -489,7 +529,7 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
               </div>
             </div>
 
-            {/* Right Column: Visual with Bottles and First Aid Box - Increased size to fill empty space without cropping */}
+            {/* Right Column Visual */}
             <div className="w-full flex lg:flex lg:col-span-6 xl:col-span-6 relative items-end justify-center lg:justify-end self-end mt-4 lg:mt-0 -mb-4 sm:-mb-6 lg:-mb-9">
               <img
                 src="/medicines-hero.png"
@@ -503,413 +543,240 @@ export default function MedicineStorePage({ onOpenPrescriptionModal }) {
       </section>
 
       {/* =========================================================================
-          2. BREADCRUMBS
+          2. MEDICINES CATALOG SECTION (MATCHING EXACT REFERENCE IMAGE 1)
           ========================================================================= */}
-      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-2.5 sm:py-3.5">
-        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 font-semibold">
-          <Link to="/" className="flex items-center gap-1 hover:text-[#008F83] transition">
-            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#008F83]" />
-            <span>Home</span>
-          </Link>
-          <span className="text-slate-400">&gt;</span>
-          <span className="text-slate-800 font-bold">Medicines</span>
-        </div>
-      </div>
+      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6 sm:py-8">
+        
+        {/* Top Header Row: Left Title/Subtitle & Right Search Bar + Filter Button */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          {/* Title & Subtitle on Left */}
+          <div>
+            <h2 className="text-2xl sm:text-[26px] font-bold text-[#0B1E3F] tracking-tight">
+              Medicines
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+              Order genuine medicines online with fast and reliable delivery.
+            </p>
+          </div>
 
-      {/* =========================================================================
-          3. MAIN STORE LAYOUT (SIDEBAR + PRODUCTS GRID) - FULL WIDTH
-          ========================================================================= */}
-      <div className="w-full max-w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 pb-12">
-        {/* Mobile Filter Toggle Button */}
-        <div className="lg:hidden mb-4">
-          <button
-            type="button"
-            onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl font-bold text-xs sm:text-sm text-slate-800 shadow-2xs cursor-pointer"
-          >
-            <span className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-[#008F83]" />
-              <span>Filter Medicines & Categories</span>
-            </span>
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isMobileFiltersOpen ? 'rotate-180' : ''}`} />
-          </button>
+          {/* Search & Filter on Right */}
+          <div className="flex items-center gap-2.5 w-full md:w-auto">
+            <div className="relative flex-1 md:w-80 lg:w-96">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search medicines (e.g., Crocin, Disprin, Augovin...)"
+                className="w-full pl-9 pr-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#007A64] shadow-2xs"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-medium"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowMobileFilter(!showMobileFilter)}
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs shrink-0 cursor-pointer"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600" />
+              <span>Filter</span>
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-6 xl:gap-8 items-start w-full">
+        {/* 2-Column Layout: Left Filter Sidebar + Right 10-Card Catalog Grid */}
+        <div className="flex flex-col lg:flex-row gap-5 lg:gap-6 items-start">
           
           {/* ================== LEFT FILTER SIDEBAR ================== */}
-          <aside className={`lg:col-span-3 space-y-4 sm:space-y-5 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
-            
-            {/* Box 1: Categories */}
-            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
-              <div className="flex items-center gap-2 mb-3.5 pb-2.5 border-b border-slate-100">
-                <Layers className="w-4 h-4 text-[#008F83]" />
-                <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">Categories</h3>
-              </div>
-
-              <div className="space-y-2.5 text-xs sm:text-sm">
-                {CATEGORIES_LIST.slice(0, isViewMoreCategories ? CATEGORIES_LIST.length : 8).map((cat) => {
-                  const isChecked = selectedCategories.includes(cat.id);
-                  return (
-                    <label
-                      key={cat.id}
-                      className="flex items-center justify-between cursor-pointer text-slate-700 hover:text-slate-900 select-none group"
-                    >
-                      <div className="flex items-center gap-2.5">
+          <aside
+            className={`w-full lg:w-56 xl:w-60 shrink-0 ${
+              showMobileFilter ? 'block' : 'hidden lg:block'
+            }`}
+          >
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-5">
+              
+              {/* 1. Categories */}
+              <div>
+                <h3 className="text-sm font-bold text-[#0B1E3F] mb-3 tracking-tight">
+                  Categories
+                </h3>
+                <div className="space-y-2">
+                  {SIDEBAR_CATEGORIES.map((cat) => {
+                    const isChecked = selectedCategories.includes(cat.id);
+                    return (
+                      <label
+                        key={cat.id}
+                        className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm"
+                      >
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleCategory(cat.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
+                          className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
                         />
-                        <span className={`text-xs sm:text-sm ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
+                        <span className={isChecked ? 'text-[#007A64] font-semibold' : 'font-normal'}>
                           {cat.name}
                         </span>
-                      </div>
-                      <span className="text-slate-400 text-[11px] sm:text-xs font-medium">({cat.count})</span>
-                    </label>
-                  );
-                })}
-
-                <button
-                  type="button"
-                  onClick={() => setIsViewMoreCategories(!isViewMoreCategories)}
-                  className="flex items-center gap-1 text-xs sm:text-sm font-bold text-[#008F83] hover:underline pt-1.5 cursor-pointer"
-                >
-                  <span>{isViewMoreCategories ? 'View Less' : 'View More'}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isViewMoreCategories ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
-            </div>
-
-            {/* Box 2: Filter by (Price Range, Discount, Brand) */}
-            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-5">
-              <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                <Filter className="w-4 h-4 text-[#008F83]" />
-                <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">Filter by</h3>
-              </div>
-
-              {/* Price Range Slider */}
-              <div>
-                <span className="text-xs sm:text-sm font-bold text-slate-900 block mb-2">Price Range</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="5000"
-                  step="50"
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-[#008F83] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-                />
-                <div className="flex items-center justify-between text-xs sm:text-sm text-slate-700 font-bold mt-2">
-                  <span>₹0</span>
-                  <span className="text-slate-400">—</span>
-                  <span className="text-slate-900 font-black">₹{priceMax.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Discount Checkboxes */}
-              <div className="pt-3 border-t border-slate-100">
-                <span className="text-xs sm:text-sm font-bold text-slate-900 block mb-2">Discount</span>
-                <div className="space-y-2.5 text-xs sm:text-sm">
-                  {[
-                    { val: 10, label: '10% and above', count: 632 },
-                    { val: 20, label: '20% and above', count: 348 },
-                    { val: 30, label: '30% and above', count: 156 },
-                  ].map((d) => {
-                    const isChecked = selectedDiscounts.includes(d.val);
-                    return (
-                      <label
-                        key={d.val}
-                        className="flex items-center justify-between cursor-pointer text-slate-700 hover:text-slate-900 select-none"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleDiscount(d.val)}
-                            className="w-4 h-4 rounded border-slate-300 text-[#008F83] focus:ring-[#008F83] cursor-pointer"
-                          />
-                          <span className={`text-xs sm:text-sm ${isChecked ? 'text-[#008F83] font-bold' : 'font-medium'}`}>
-                            {d.label}
-                          </span>
-                        </div>
-                        <span className="text-slate-400 text-[11px] sm:text-xs font-medium">({d.count})</span>
                       </label>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Brand Search */}
-              <div className="pt-3 border-t border-slate-100">
-                <span className="text-xs sm:text-sm font-bold text-slate-900 block mb-2">Brand</span>
-                <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={brandSearch}
-                    onChange={(e) => setBrandSearch(e.target.value)}
-                    placeholder="Search brand..."
-                    className="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] transition"
-                  />
+              {/* 2. Price Range */}
+              <div className="pt-4 border-t border-slate-100">
+                <h3 className="text-sm font-bold text-[#0B1E3F] mb-2.5 tracking-tight">
+                  Price Range
+                </h3>
+                <input
+                  type="range"
+                  min="0"
+                  max="2000"
+                  step="10"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(Number(e.target.value))}
+                  className="w-full accent-[#007A64] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                />
+                <div className="text-xs text-slate-600 font-medium mt-1.5">
+                  ₹0 – ₹{priceMax >= 2000 ? '2,000' : priceMax.toLocaleString()}
+                </div>
+              </div>
+
+              {/* 3. Availability */}
+              <div className="pt-4 border-t border-slate-100">
+                <h3 className="text-sm font-bold text-[#0B1E3F] mb-2.5 tracking-tight">
+                  Availability
+                </h3>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm">
+                    <input
+                      type="checkbox"
+                      checked={stockFilter === 'in_stock' || stockFilter === 'all'}
+                      onChange={() => setStockFilter(stockFilter === 'in_stock' ? 'all' : 'in_stock')}
+                      className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
+                    />
+                    <span className="font-normal text-slate-800">In Stock (328)</span>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm">
+                    <input
+                      type="checkbox"
+                      checked={stockFilter === 'out_of_stock'}
+                      onChange={() => setStockFilter(stockFilter === 'out_of_stock' ? 'all' : 'out_of_stock')}
+                      className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
+                    />
+                    <span className="font-normal text-slate-800">Out of Stock (12)</span>
+                  </label>
                 </div>
               </div>
 
               {/* Reset Filters */}
-              {(selectedCategories.length > 0 || selectedDiscounts.length > 0 || priceMax < 5000 || brandSearch || searchQuery) && (
+              {(selectedCategories.length > 0 || priceMax < 2000 || searchQuery || stockFilter !== 'in_stock') && (
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedCategories([]);
-                    setSelectedDiscounts([]);
-                    setPriceMax(5000);
-                    setBrandSearch('');
+                    setPriceMax(2000);
                     setSearchQuery('');
-                    setSearchInputVal('');
+                    setStockFilter('in_stock');
                   }}
-                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold rounded-lg transition cursor-pointer"
+                  className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer"
                 >
-                  Clear All Filters
+                  Reset Filters
                 </button>
               )}
-            </div>
 
+            </div>
           </aside>
 
-          {/* ================== RIGHT PRODUCT GRID AREA ================== */}
-          <main className="lg:col-span-9 space-y-4 sm:space-y-4.5">
-            
-            {/* Top Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs flex items-center p-1 sm:p-1.5 pl-4 focus-within:border-[#008F83] focus-within:ring-2 focus-within:ring-[#008F83]/20 transition">
-                <Search className="w-4.5 h-4.5 text-slate-400 shrink-0 mr-2.5" />
-                <input
-                  type="text"
-                  value={searchInputVal}
-                  onChange={(e) => {
-                    setSearchInputVal(e.target.value);
-                    if (!e.target.value) setSearchQuery('');
-                  }}
-                  placeholder="Search for medicines, brands, or health concerns..."
-                  className="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none"
-                />
-                {searchInputVal && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchInputVal('');
-                      setSearchQuery('');
-                    }}
-                    className="text-xs text-slate-400 hover:text-slate-600 px-2.5 py-1 mr-1 font-medium"
-                  >
-                    Clear
-                  </button>
-                )}
-                <button
-                  type="submit"
-                  className="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#008F83] hover:bg-[#00786E] text-white text-xs sm:text-sm font-bold rounded-lg transition shrink-0 cursor-pointer shadow-2xs"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
-
-            {/* Sub-header row: Count & Sort */}
-            <div className="flex items-center justify-between text-xs sm:text-sm py-1">
-              <span className="font-bold text-slate-900">
-                Showing 1 – {filteredProducts.length} of 3,456 medicines
-              </span>
-
-              <div className="flex items-center gap-2">
-                <span className="text-slate-500 font-medium">Sort by:</span>
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#008F83] cursor-pointer shadow-2xs"
-                  >
-                    <option value="Popularity">Popularity</option>
-                    <option value="Price: Low to High">Price: Low to High</option>
-                    <option value="Price: High to Low">Price: High to Low</option>
-                    <option value="Discount">Highest Discount</option>
-                    <option value="Rating">Customer Rating</option>
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
-              </div>
-            </div>
-
-            {/* Product Grid: 4 Columns x 2 Rows = 8 Cards */}
+          {/* ================== RIGHT 10-CARD GRID ================== */}
+          <main className="flex-1 min-w-0">
             {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
-                <p className="text-slate-600 font-bold mb-3 text-base">No medicines match your filter criteria.</p>
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <p className="text-slate-600 font-bold mb-3 text-sm sm:text-base">No medicines match your filter criteria.</p>
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedCategories([]);
-                    setSelectedDiscounts([]);
-                    setPriceMax(5000);
-                    setBrandSearch('');
+                    setPriceMax(2000);
                     setSearchQuery('');
-                    setSearchInputVal('');
+                    setStockFilter('in_stock');
                   }}
-                  className="px-5 py-2.5 bg-[#008F83] text-white text-sm font-bold rounded-xl mt-2 cursor-pointer shadow-xs"
+                  className="px-4 py-2 bg-[#007A64] text-white text-xs font-bold rounded-xl cursor-pointer shadow-xs"
                 >
                   Reset Filters
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 xl:gap-4.5">
-                {filteredProducts.map((item) => {
-                  const isLiked = wishlist[item.id];
-
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => setSelectedProduct(item)}
-                      className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-3.5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group relative cursor-pointer"
-                    >
-                      <div>
-                        {/* Top Row: Discount badge & Wishlist Heart */}
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] sm:text-[11px] font-bold">
-                            {item.discountPercent}% OFF
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleWishlist(item.id);
-                            }}
-                            className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
-                              isLiked
-                                ? 'text-rose-500 bg-rose-50'
-                                : 'text-slate-300 hover:text-rose-500 hover:bg-slate-50'
-                            }`}
-                            title="Add to Wishlist"
-                          >
-                            <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-rose-500' : ''}`} />
-                          </button>
-                        </div>
-
-                        {/* Medicine Packaging Image */}
-                        <div className="w-full h-22 sm:h-26 flex items-center justify-center p-1.5 my-0.5 overflow-hidden group-hover:scale-105 transition-transform">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="max-h-full max-w-full object-contain"
-                            onError={(e) => {
-                              // Fallback if image path fails
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        </div>
-
-                        {/* Product Title & Pack */}
-                        <div className="space-y-0.5 mt-2">
-                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#008F83] transition leading-snug line-clamp-1">
-                            {item.name}
-                          </h4>
-                          <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                            {item.pack}
-                          </p>
-
-                          {/* Brand & Star Rating Row */}
-                          <div className="flex items-center justify-between pt-0.5">
-                            <span className="text-[11px] sm:text-xs font-semibold text-slate-600">
-                              {item.brand}
-                            </span>
-                            <div className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-slate-700">
-                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              <span>{item.rating}</span>
-                              <span className="text-slate-400 text-[10px]">({item.reviewsCount})</span>
-                            </div>
-                          </div>
-
-                          {/* Pricing Row */}
-                          <div className="flex items-baseline gap-1.5 pt-1.5">
-                            <span className="text-base sm:text-lg font-black text-slate-900">
-                              ₹{item.price}
-                            </span>
-                            <span className="text-[11px] sm:text-xs text-slate-400 line-through">
-                              ₹{item.mrp}
-                            </span>
-                          </div>
-                        </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3 sm:gap-3.5">
+                {filteredProducts.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedProduct(item)}
+                    className="bg-white rounded-xl border border-slate-200/80 p-2.5 sm:p-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer group"
+                  >
+                    <div>
+                      {/* Image Container with Light Grey Background */}
+                      <div className="w-full h-28 sm:h-32 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 mb-2.5 overflow-hidden">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
                       </div>
 
-                      {/* Add to Cart Button */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(item);
-                        }}
-                        className="w-full mt-2.5 py-2 sm:py-2.5 px-3 bg-[#008F83] hover:bg-[#00786E] text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer"
-                      >
-                        <ShoppingCart className="w-3.5 h-3.5" />
-                        <span>Add to Cart</span>
-                      </button>
+                      {/* Title & Subtitle */}
+                      <div className="space-y-0.5">
+                        <h4 className="text-xs sm:text-sm font-bold text-[#0B1E3F] leading-snug line-clamp-1 group-hover:text-[#007A64] transition">
+                          {item.name}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 font-medium leading-snug line-clamp-1">
+                          {item.genericName}
+                        </p>
+
+                        {/* Pricing */}
+                        <div className="flex items-baseline gap-1.5 pt-1.5">
+                          <span className="text-sm sm:text-base font-bold text-[#0B1E3F]">
+                            ₹{item.price.toFixed(2)}
+                          </span>
+                          <span className="text-[11px] text-slate-400 line-through">
+                            ₹{item.mrp.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  );
-                })}
+
+                    {/* Outline Green Add to Cart Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(item);
+                      }}
+                      className="w-full mt-2.5 py-1.5 px-2 rounded-lg border border-[#007A64] text-[#007A64] hover:bg-[#007A64] hover:text-white transition font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5" />
+                      <span>Add to Cart</span>
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
-
-            {/* Pagination Row */}
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2 pt-8 select-none">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center text-xs font-bold transition cursor-pointer shadow-2xs"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-
-              {[1, 2, 3, 4, 5].map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer shadow-2xs ${
-                    currentPage === page
-                      ? 'bg-[#008F83] text-white shadow-2xs'
-                      : 'border border-slate-200 text-slate-700 hover:bg-slate-100'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <span className="px-1 text-slate-400 text-xs font-bold">...</span>
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage(144)}
-                className={`min-w-[36px] sm:min-w-[40px] h-8 sm:h-9 px-2 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer shadow-2xs ${
-                  currentPage === 144
-                    ? 'bg-[#008F83] text-white shadow-2xs'
-                    : 'border border-slate-200 text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                144
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.min(144, p + 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center text-xs font-bold transition cursor-pointer shadow-2xs"
-              >
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
           </main>
 
         </div>
-      </div>
+      </section>
 
       {/* Product Detail Pop-up Modal */}
       <ProductDetailModal
