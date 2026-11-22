@@ -233,7 +233,7 @@ export default function NotificationPopover({
                 Notifications
               </h3>
               <span className="text-[10px] font-bold text-[#008F83] bg-teal-50 border border-teal-200/60 px-1.5 py-0.2 rounded-full">
-                5 New
+                {notifications?.length || 0} New
               </span>
             </div>
             <button

@@ -80,6 +80,7 @@ import UploadInventoryModal from '../components/UploadInventoryModal';
 import UploadPackagesModal from '../components/UploadPackagesModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import OrderInvoiceModal from '../components/OrderInvoiceModal';
+import NotificationPopover from '../components/NotificationPopover';
 import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf, downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function AdminDashboardPage() {
@@ -1096,12 +1097,82 @@ export default function AdminDashboardPage() {
   const pathD = `M 35 172 C 80 160, 95 142, 120 142 C 150 142, 175 152, 205 150 C 235 148, 260 136, 290 136 C 320 136, 345 122, 375 122 C 405 122, 430 134, 460 134 C 490 134, 515 112, 545 108 C 585 102, 605 60, 635 55`;
   const areaD = `${pathD} L 635 200 L 35 200 Z`;
 
-  // Notifications List Demo
-  const notificationsList = [
-    { id: 1, text: 'New home collection booking #LB10234 confirmed in Dispur.', time: '5m ago' },
-    { id: 2, text: 'Stock alert: Cetirizine 10 mg reached critical low (15 units).', time: '22m ago' },
-    { id: 3, text: 'Phlebotomist Bikash Das logged 4.2°C cold-chain arrival.', time: '1h ago' }
+  // Admin Notifications List matching NotificationPopover schema
+  const adminNotifications = [
+    {
+      id: 1,
+      sender: 'Diagnostic Operations Hub',
+      avatar: 'LB',
+      avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+      actionText: 'booking confirmed: #LB10234',
+      time: '5m ago',
+      desc: 'New home collection booking #LB10234 confirmed in Dispur. Assigned to phlebotomist team.',
+      category: 'Diagnostic Lab Booking',
+      status: 'Confirmed',
+      statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      linkType: 'lab-bookings'
+    },
+    {
+      id: 2,
+      sender: 'Central Inventory Sentinel',
+      avatar: 'RX',
+      avatarBg: 'bg-rose-50 text-rose-700 border border-rose-200/80',
+      actionText: 'critical low stock: Cetirizine 10 mg',
+      time: '22m ago',
+      desc: 'Stock alert: Cetirizine 10 mg reached critical low threshold (15 units remaining). Restock recommended.',
+      category: 'Medicine Inventory',
+      status: 'Critical Low',
+      statusBadge: 'bg-rose-50 text-rose-700 border border-rose-200',
+      linkType: 'inventory'
+    },
+    {
+      id: 3,
+      sender: 'Cold-Chain Telemetry',
+      avatar: 'CC',
+      avatarBg: 'bg-sky-50 text-sky-700 border border-sky-200/80',
+      actionText: 'arrival verified: 4.2°C logged',
+      time: '1h ago',
+      desc: 'Phlebotomist Bikash Das logged 4.2°C cold-chain arrival at Dispur central processing lab.',
+      category: 'Cold-Chain Logistics',
+      status: 'Verified Safe',
+      statusBadge: 'bg-sky-50 text-sky-700 border border-sky-200',
+      linkType: 'users-executives'
+    },
+    {
+      id: 4,
+      sender: 'OPD Clinical Scheduling',
+      avatar: 'DR',
+      avatarBg: 'bg-teal-50 text-[#008F83] border border-teal-200/80',
+      actionText: 'slots updated: Dr. Amit Sharma',
+      time: '2h ago',
+      desc: 'Dr. Amit Sharma opened 12 additional evening consultation slots at Zestmed Polyclinic Hub.',
+      category: 'Doctor Appointment',
+      status: 'Updated',
+      statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      linkType: 'appointments-doctor'
+    },
+    {
+      id: 5,
+      sender: 'Razorpay Gateway & Billing',
+      avatar: 'RZ',
+      avatarBg: 'bg-purple-50 text-purple-700 border border-purple-200/80',
+      actionText: 'settlement completed: ₹48,250',
+      time: '4h ago',
+      desc: 'Daily payment auto-settlement completed successfully for 34 lab, medicine & consultation transactions.',
+      category: 'Payment Settlement',
+      status: 'Settled',
+      statusBadge: 'bg-purple-50 text-purple-700 border border-purple-200',
+      linkType: 'payments'
+    }
   ];
+
+  const handleAdminNotificationClick = (item) => {
+    setIsNotificationsOpen(false);
+    if (item?.linkType) {
+      setActiveMenu(item.linkType);
+      addToast(`Navigating to ${item.category}`, 'info');
+    }
+  };
 
   return (
     <div className="flex h-screen bg-[#F4F7FB] font-sans antialiased overflow-hidden select-none relative">
@@ -1673,28 +1744,13 @@ export default function AdminDashboardPage() {
                 <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
               </button>
 
-              {/* Notifications Popover */}
-              {isNotificationsOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-30"
-                  onMouseLeave={() => setIsNotificationsOpen(false)}
-                >
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-900">Notifications</span>
-                    <span className="text-[10px] font-bold text-[#14B8A6] bg-teal-50 px-2 py-0.5 rounded-full">
-                      3 New
-                    </span>
-                  </div>
-                  <div className="space-y-2 pt-2 max-h-60 overflow-y-auto">
-                    {notificationsList.map((n) => (
-                      <div key={n.id} className="text-xs p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
-                        <p className="text-slate-700 leading-snug">{n.text}</p>
-                        <span className="text-[10px] text-slate-400 font-mono mt-1 block">{n.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Notifications Popover matching User Dashboard System */}
+              <NotificationPopover
+                isOpen={isNotificationsOpen}
+                onClose={() => setIsNotificationsOpen(false)}
+                notifications={adminNotifications}
+                onNotificationClick={handleAdminNotificationClick}
+              />
             </div>
 
             {/* User Profile Info */}
@@ -4049,37 +4105,35 @@ export default function AdminDashboardPage() {
           {/* NOTIFICATIONS FEED                                       */}
           {/* ======================================================== */}
           {activeMenu === 'notifications' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-xs">
                 <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-[#14B8A6]" />
+                  <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <Bell className="w-5 h-5 text-[#008F83]" />
                     <span>System Alerts & Operations Feed</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Live notifications across cold-chain, delivery riders, and laboratory testing.
+                    Live operational notifications across laboratory bookings, cold-chain logistics, and medicine inventory.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => addToast('All system notifications marked as resolved.', 'success')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 self-start sm:self-auto"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
                 >
-                  Mark All Resolved
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Mark All Resolved</span>
                 </button>
               </div>
 
-              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
-                {notificationsList.map((n) => (
-                  <div key={n.id} className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition flex items-start justify-between gap-3 text-xs">
-                    <div>
-                      <p className="font-bold text-slate-900">{n.text}</p>
-                      <span className="text-slate-400 font-mono text-[10px] mt-1 block">{n.time}</span>
-                    </div>
-                    <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
-                  </div>
-                ))}
-              </div>
+              {/* Exact Notification Card & Settings matching User Dashboard System */}
+              <NotificationPopover
+                inline={true}
+                isOpen={true}
+                onClose={() => {}}
+                notifications={adminNotifications}
+                onNotificationClick={handleAdminNotificationClick}
+              />
             </div>
           )}
 
