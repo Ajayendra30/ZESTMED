@@ -8,9 +8,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { bookPhysiotherapy } from '../services/supabaseService';
-import { enforceAuth } from '../utils/authGuard';
-import { launchRazorpayCheckout } from '../services/razorpayClient';
+import BookPhysioModal from '../components/BookPhysioModal';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -189,32 +187,15 @@ export default function PhysiotherapyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Booking Form States - Only prefill if user is logged in
-  const [formData, setFormData] = useState({
-    fullName: user?.name || '',
-    mobileNumber: user?.contact || user?.phone || '',
-    preferredDate: new Date().toISOString().split('T')[0],
-    preferredTime: '11:00 AM - 01:00 PM',
-    selectedService: 'Back & Neck Pain Therapy',
-  });
+  const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
+  const [selectedCondition, setSelectedCondition] = useState('All Conditions');
 
-  useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient') {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: user.name,
-        mobileNumber: user.contact || user.phone || prev.mobileNumber || ''
-      }));
-    } else if (!user) {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: '',
-        mobileNumber: ''
-      }));
-    }
-  }, [user]);
+  const openBookingModal = (conditionOrService = 'All Conditions') => {
+    setSelectedCondition(conditionOrService || 'All Conditions');
+    setIsPhysioModalOpen(true);
+  };
 
-  // Auto-scroll to form when user completes login on the same page
+  // Open modal if user returns from auth with a pending physio booking action
   useEffect(() => {
     if (user) {
       try {
@@ -223,165 +204,13 @@ export default function PhysiotherapyPage() {
           const parsed = JSON.parse(pendingRaw);
           if (parsed?.type === 'book_physio') {
             sessionStorage.removeItem('zestmed_pending_action');
-            if (parsed.service) {
-              setFormData((prev) => ({ ...prev, selectedService: parsed.service }));
-            }
-            const formElement = document.getElementById('physio-booking-form-card');
-            if (formElement) {
-              setTimeout(() => {
-                formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 250);
-            }
+            setSelectedCondition(parsed.service || 'All Conditions');
+            setIsPhysioModalOpen(true);
           }
         }
       } catch (_) {}
     }
-  }, [user, location.state]);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [confirmedBooking, setConfirmedBooking] = useState(null);
-  const [paymentMode, setPaymentMode] = useState('online'); // 'online' (Razorpay) or 'clinic'
-
-  // Smooth scroll helper to form
-  const scrollToForm = (serviceTitle = null) => {
-    if (!user) {
-      enforceAuth({
-        user,
-        navigate,
-        location,
-        openAuth,
-        toastMessage: 'Please login to book a physiotherapy session',
-        pendingAction: { type: 'book_physio', service: serviceTitle || formData.selectedService },
-        addToast
-      });
-      return;
-    }
-
-    if (serviceTitle) {
-      setFormData(prev => ({ ...prev, selectedService: serviceTitle }));
-    }
-    const formElement = document.getElementById('physio-booking-form-card');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  // Save Confirmed Physio Booking
-  const saveConfirmedPhysioBooking = async (apptId, paymentDetails = null) => {
-    const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
-    const isPaidOnline = Boolean(paymentDetails && pid && pid !== 'PAY_POST_SESSION');
-    const newBooking = {
-      id: apptId,
-      bookingId: apptId,
-      booking_number: apptId,
-      type: 'Physiotherapy',
-      category: 'physiotherapy',
-      title: 'Dr. Arindam Borah, MPT (Ortho)',
-      doctor: 'Dr. Arindam Borah, MPT (Ortho)',
-      doctorName: 'Dr. Arindam Borah, MPT (Ortho)',
-      doctorSpecialty: formData.selectedService,
-      specialty: formData.selectedService,
-      doctorDegree: 'BPT, MPT, Certified Clinical Physiotherapist',
-      doctorHospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
-      hospital: 'Zestmed Physiotherapy & Rehabilitation Center, Guwahati',
-      date: formData.preferredDate,
-      time: formData.preferredTime,
-      slot: `${formData.preferredDate}, ${formData.preferredTime}`,
-      mode: 'Home & Clinic Session',
-      fee: 850,
-      price: 850,
-      totalAmount: 850,
-      patientName: formData.fullName,
-      patientPhone: formData.mobileNumber,
-      phone: formData.mobileNumber,
-      userId: user?.id || null,
-      userEmail: user?.email || '',
-      symptoms: `${formData.selectedService} - Specialized rehabilitation session`,
-      status: 'Confirmed',
-      paymentStatus: isPaidOnline ? 'Paid (UPI / Razorpay Verified)' : 'Pay Post-Session',
-      paymentMethod: isPaidOnline ? (paymentDetails?.paymentMethod || 'Razorpay (UPI - Verified)') : 'Pay Post-Session (Cash/UPI)',
-      paymentId: pid && pid !== 'PAY_POST_SESSION' ? pid : '',
-      orderId: paymentDetails?.orderId || paymentDetails?.razorpay_order_id || '',
-      createdAt: new Date().toISOString(),
-    };
-
-    // Persist to localStorage so it syncs with Patient Dashboard
-    try {
-      const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
-
-      // Save to Supabase PostgreSQL database
-      await bookPhysiotherapy(newBooking);
-    } catch (err) {
-      console.error('Failed to save booking to storage', err);
-    }
-
-    setConfirmedBooking(newBooking);
-    setIsSubmitting(false);
-    addToast(`Physiotherapy session scheduled successfully! (ID: ${apptId})`, 'success');
-  };
-
-  // Form Submission
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-
-    if (!user) {
-      enforceAuth({
-        user,
-        navigate,
-        location,
-        openAuth,
-        toastMessage: 'Please login to book a physiotherapy session',
-        pendingAction: { type: 'book_physio', service: formData.selectedService },
-        addToast
-      });
-      return;
-    }
-
-    if (!formData.fullName.trim()) {
-      addToast('Please enter your full name', 'error');
-      return;
-    }
-    if (!formData.mobileNumber.trim() || formData.mobileNumber.replace(/\D/g, '').length < 10) {
-      addToast('Please enter a valid 10-digit mobile number', 'error');
-      return;
-    }
-
-    const apptId = `ZM-PHY-${Math.floor(10000 + Math.random() * 90000)}`;
-
-    if (paymentMode === 'online') {
-      setIsSubmitting(true);
-      launchRazorpayCheckout({
-        amount: 850,
-        bookingId: apptId,
-        bookingType: 'physiotherapy',
-        serviceTitle: `Physiotherapy: ${formData.selectedService}`,
-        customer: {
-          name: formData.fullName,
-          phone: formData.mobileNumber,
-          email: user?.email || 'patient@zestmed.in'
-        },
-        onSuccess: (verifiedTxn) => {
-          saveConfirmedPhysioBooking(apptId, verifiedTxn);
-        },
-        onFailure: (err) => {
-          setIsSubmitting(false);
-          addToast(err?.message || 'Payment not completed.', 'error');
-        },
-        onDismiss: () => {
-          setIsSubmitting(false);
-          addToast('Payment cancelled. You can choose Pay Post-Session.', 'info');
-        }
-      });
-    } else {
-      setIsSubmitting(true);
-      setTimeout(() => {
-        saveConfirmedPhysioBooking(apptId, { paymentId: 'PAY_POST_SESSION' });
-      }, 400);
-    }
-  };
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans select-none">
@@ -432,7 +261,7 @@ export default function PhysiotherapyPage() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2 w-full">
               <button
                 type="button"
-                onClick={() => scrollToForm()}
+                onClick={() => openBookingModal()}
                 className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2.5 group cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Calendar className="w-5 h-5" />
@@ -442,7 +271,7 @@ export default function PhysiotherapyPage() {
 
               <button
                 type="button"
-                onClick={() => scrollToForm()}
+                onClick={() => openBookingModal()}
                 className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#0F172A] border-2 border-slate-300 font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Stethoscope className="w-5 h-5 text-[#007A64]" />
@@ -523,253 +352,70 @@ export default function PhysiotherapyPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 3. SERVICES (Left) + APPOINTMENT BOOKING FORM (Right)                     */}
+        {/* 3. OUR PHYSIOTHERAPY SERVICES (6 Cards in Balanced Grid)                  */}
         {/* ========================================================================= */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+        <section className="space-y-6">
           
-          {/* Left Column: Our Physiotherapy Services (6 Cards in 3x2 Grid) */}
-          <div className="lg:col-span-8 space-y-4">
-            
-            {/* Header Row */}
-            <div className="flex items-center justify-between">
+          {/* Header Row */}
+          <div className="flex items-center justify-between">
+            <div>
               <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
                 Our Physiotherapy Services
               </h2>
-              <button
-                type="button"
-                onClick={() => scrollToForm()}
-                className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
-              >
-                <span>View All Services</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
+              <div className="w-12 h-1 bg-[#007A64] rounded-full mt-2" />
             </div>
-
-            {/* 6 Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4.5 sm:gap-5">
-              {PHYSIO_SERVICES.map((srv) => {
-                const IconComp = srv.icon;
-                const isSelected = formData.selectedService === srv.title;
-
-                return (
-                  <div
-                    key={srv.id}
-                    onClick={() => scrollToForm(srv.title)}
-                    className={`bg-white rounded-2xl border p-4 sm:p-4.5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none ${
-                      isSelected
-                        ? 'border-[#007A64] ring-2 ring-[#007A64]/20'
-                        : 'border-slate-200/90 hover:border-teal-200'
-                    }`}
-                  >
-                    <div>
-                      {/* Image Thumbnail with Floating Badge */}
-                      <div className="relative w-full h-36 sm:h-40 rounded-xl overflow-hidden bg-slate-100">
-                        <img
-                          src={srv.image}
-                          onError={(e) => { e.currentTarget.src = srv.fallback; }}
-                          alt={srv.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        {/* Circular Icon Overlay */}
-                        <div className="absolute bottom-2.5 left-2.5 w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white text-[#007A64] shadow-md flex items-center justify-center border border-teal-100">
-                          <IconComp className="w-5 sm:w-5.5 h-5 sm:h-5.5 text-[#007A64]" />
-                        </div>
-                      </div>
-
-                      {/* Card Content */}
-                      <h3 className="text-base sm:text-lg font-black text-[#0F172A] mt-3.5 group-hover:text-[#007A64] transition-colors leading-snug">
-                        {srv.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed mt-1">
-                        {srv.desc}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64]">
-                      <span>Book Session</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
+            <button
+              type="button"
+              onClick={() => openBookingModal()}
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
+            >
+              <span>View All Services</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
           </div>
 
-          {/* Right Column: Appointment Booking Form Card */}
-          <div className="lg:col-span-4" id="physio-booking-form-card">
-            <div className="bg-white rounded-[28px] border border-slate-200/90 shadow-xl p-6 sm:p-7 space-y-4.5 sticky top-24">
-              
-              {/* Form Title & Icon */}
-              <div className="flex items-start gap-3.5 border-b border-slate-100 pb-3.5">
-                <div className="shrink-0 flex items-center justify-center text-[#007A64] pt-0.5">
-                  <Calendar className="w-7 h-7 text-[#007A64]" />
-                </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-tight">
-                    Book a Physiotherapy Session
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-                    Schedule your session with our expert physiotherapist.
-                  </p>
-                </div>
-              </div>
+          {/* 6 Cards Grid in 3 Columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {PHYSIO_SERVICES.map((srv) => {
+              const IconComp = srv.icon;
 
-              {/* Form Body */}
-              <form onSubmit={handleBookingSubmit} className="space-y-3.5">
-                
-                {/* 1. Full Name */}
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <User className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="Full Name"
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium placeholder:text-slate-400"
-                    />
-                  </div>
-                </div>
-
-                {/* 2. Mobile Number */}
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Phone className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
-                    <input
-                      type="tel"
-                      required
-                      maxLength={10}
-                      placeholder="Mobile Number"
-                      value={formData.mobileNumber}
-                      onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium placeholder:text-slate-400"
-                    />
-                  </div>
-                </div>
-
-                {/* 3. Preferred Date */}
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Calendar className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
-                    <input
-                      type="date"
-                      required
-                      value={formData.preferredDate}
-                      onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
-                    />
-                  </div>
-                </div>
-
-                {/* 4. Preferred Time */}
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Clock className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
-                    <select
-                      value={formData.preferredTime}
-                      onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
-                    >
-                      <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM (Morning)</option>
-                      <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM (Midday)</option>
-                      <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM (Afternoon)</option>
-                      <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM (Evening)</option>
-                      <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM (Evening)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* 5. Select Service */}
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-slate-700 text-xs sm:text-sm font-semibold focus-within:border-[#007A64] focus-within:ring-1 focus-within:ring-[#007A64] transition">
-                    <Activity className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
-                    <select
-                      value={formData.selectedService}
-                      onChange={(e) => setFormData({ ...formData, selectedService: e.target.value })}
-                      className="w-full bg-transparent outline-none text-slate-900 text-xs sm:text-sm font-medium cursor-pointer"
-                    >
-                      {PHYSIO_SERVICES.map(s => (
-                        <option key={s.id} value={s.title}>{s.title}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* 6. Payment Method */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Payment Method
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMode('online')}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
-                        paymentMode === 'online'
-                          ? 'border-[#007A64] bg-teal-50/80 text-[#007A64] ring-1 ring-[#007A64]'
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700 bg-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-[#007A64]" />
-                        <div className="text-left">
-                          <span className="block font-bold">Pay Online (Razorpay)</span>
-                          <span className="text-[10px] text-slate-500 font-normal">UPI, Cards, NetBanking</span>
-                        </div>
-                      </div>
-                      {paymentMode === 'online' && <CheckCircle2 className="w-4 h-4 text-[#007A64]" />}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMode('clinic')}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between transition cursor-pointer ${
-                        paymentMode === 'clinic'
-                          ? 'border-[#007A64] bg-teal-50/80 text-[#007A64] ring-1 ring-[#007A64]'
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700 bg-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Banknote className="w-4 h-4 text-emerald-600" />
-                        <div className="text-left">
-                          <span className="block font-bold">Pay Post-Session</span>
-                          <span className="text-[10px] text-slate-500 font-normal">Cash / UPI during visit</span>
-                        </div>
-                      </div>
-                      {paymentMode === 'clinic' && <CheckCircle2 className="w-4 h-4 text-[#007A64]" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Submit Action */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-2.5 bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 disabled:opacity-50"
+              return (
+                <div
+                  key={srv.id}
+                  onClick={() => openBookingModal(srv.title)}
+                  className="bg-white rounded-2xl border border-slate-200/90 hover:border-teal-300 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none"
                 >
-                  {isSubmitting ? (
-                    <span>Processing Payment...</span>
-                  ) : paymentMode === 'online' ? (
-                    <>
-                      <Lock className="w-4 h-4" />
-                      <span>Pay ₹850 via Razorpay & Confirm</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Book Appointment • ₹850 Post-Session</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
+                  <div>
+                    {/* Image Thumbnail with Floating Badge */}
+                    <div className="relative w-full h-40 sm:h-44 rounded-xl overflow-hidden bg-slate-100">
+                      <img
+                        src={srv.image}
+                        onError={(e) => { e.currentTarget.src = srv.fallback; }}
+                        alt={srv.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      {/* Circular Icon Overlay */}
+                      <div className="absolute bottom-2.5 left-2.5 w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white text-[#007A64] shadow-md flex items-center justify-center border border-teal-100">
+                        <IconComp className="w-5 sm:w-5.5 h-5 sm:h-5.5 text-[#007A64]" />
+                      </div>
+                    </div>
 
-                <p className="text-xs text-slate-400 text-center mt-1">
-                  Guwahati Certified Physiotherapists • Home & Clinic Visits
-                </p>
-              </form>
+                    {/* Card Content */}
+                    <h3 className="text-base sm:text-lg font-black text-[#0F172A] mt-3.5 group-hover:text-[#007A64] transition-colors leading-snug">
+                      {srv.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed mt-1">
+                      {srv.desc}
+                    </p>
+                  </div>
 
-            </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64]">
+                    <span>Book Session</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
         </section>
@@ -856,7 +502,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={cond.id}
-                  onClick={() => scrollToForm(cond.name)}
+                  onClick={() => openBookingModal(cond.name)}
                   className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[110px] sm:min-h-[120px] select-none"
                 >
                   <div className="h-10 w-10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform text-[#007A64]">
@@ -1124,7 +770,7 @@ export default function PhysiotherapyPage() {
             
             <button
               type="button"
-              onClick={() => scrollToForm()}
+              onClick={() => openBookingModal()}
               className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <Calendar className="w-5 h-5 text-[#007A64]" />
@@ -1167,85 +813,12 @@ export default function PhysiotherapyPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 9. CONFIRMATION MODAL                                                     */}
-      {/* ========================================================================= */}
-      {confirmedBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-lg p-6 space-y-5 animate-scale-up">
-            
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="shrink-0 flex items-center justify-center text-[#16A34A]">
-                  <CheckCircle2 className="w-7 h-7 text-[#16A34A]" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-[#0F172A]">Physiotherapy Session Confirmed!</h3>
-                  <p className="text-xs text-slate-500">Booking ID: <span className="font-mono font-bold text-[#0F172A]">{confirmedBooking.id}</span></p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setConfirmedBooking(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5 text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Service</span>
-                <span className="font-bold text-[#007A64]">{confirmedBooking.doctorSpecialty}</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Date & Slot</span>
-                <span className="font-bold text-slate-900">{confirmedBooking.date} • {confirmedBooking.time}</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Patient</span>
-                <span className="font-bold text-slate-900">{confirmedBooking.patientName}</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Mobile Number</span>
-                <span className="font-bold text-slate-900">{confirmedBooking.patientPhone}</span>
-              </div>
-              <div className="flex justify-between items-center pt-1 text-sm font-extrabold text-[#0F172A]">
-                <span>Session Fee</span>
-                {confirmedBooking.paymentId ? (
-                  <div className="text-right">
-                    <span className="text-emerald-700 font-bold block">₹{confirmedBooking.fee} (Paid via Razorpay)</span>
-                    <span className="text-[10px] text-slate-500 font-mono block">Txn: {confirmedBooking.paymentId}</span>
-                  </div>
-                ) : (
-                  <span className="text-[#007A64]">₹{confirmedBooking.fee} (Pay post session)</span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setConfirmedBooking(null);
-                  navigate('/patient-dashboard');
-                }}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
-              >
-                View in Patient Dashboard
-              </button>
-              <button
-                type="button"
-                onClick={() => setConfirmedBooking(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white text-xs font-bold transition shadow-xs"
-              >
-                Done
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
+      {/* Book Physiotherapy Modal */}
+      <BookPhysioModal
+        isOpen={isPhysioModalOpen}
+        onClose={() => setIsPhysioModalOpen(false)}
+        initialCondition={selectedCondition}
+      />
     </div>
   );
 }

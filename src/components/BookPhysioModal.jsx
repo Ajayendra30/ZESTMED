@@ -13,13 +13,19 @@ import { bookPhysiotherapy } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
 
-export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup }) {
+export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, initialCondition = 'All Conditions' }) {
   const navigate = useNavigate();
   const { user, openAuth } = useAuth();
   const { addToast } = useToast();
   const { currentLocation } = useLocation();
 
-  const [selectedCondition, setSelectedCondition] = useState('All Conditions');
+  const [selectedCondition, setSelectedCondition] = useState(initialCondition || 'All Conditions');
+
+  useEffect(() => {
+    if (initialCondition) {
+      setSelectedCondition(initialCondition);
+    }
+  }, [initialCondition]);
   const [selectedPhysio, setSelectedPhysio] = useState(null);
   const [serviceType, setServiceType] = useState('Home Visit');
   const [sessionDate, setSessionDate] = useState(new Date().toISOString().split('T')[0]);
