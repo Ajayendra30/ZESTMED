@@ -27,22 +27,22 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const getDisplayName = () => {
-    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Patient') {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Patient' && user.name !== 'Rahul Verma') {
       return user.name;
     }
     try {
       const saved = localStorage.getItem('zestmed_patient_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Patient') {
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Patient' && parsed.name !== 'Rahul Verma') {
           return parsed.name;
         }
       }
     } catch (_) {}
-    return 'Rahul Verma';
+    return 'Ajayendra Shekhar';
   };
   const displayName = getDisplayName();
-  const displayInitial = (displayName.charAt(0) || 'R').toUpperCase();
+  const displayInitial = (displayName.charAt(0) || 'A').toUpperCase();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -5,9 +5,9 @@ import { savePatientProfile } from '../services/supabaseService';
 export const DEFAULT_REGISTERED_PATIENTS = [
   {
     id: 'ZM-PAT-101',
-    name: 'Rahul Verma',
+    name: 'Ajayendra Shekhar',
     phone: '9279125091',
-    email: 'rahul.verma@demo.zestmed.com',
+    email: 'ajayendra.shekhar@zestmed.com',
     city: 'Guwahati (Dispur)',
     age: 34,
     gender: 'Male',
@@ -77,6 +77,73 @@ export function normalizePhone(phone) {
   return digits.length > 10 ? digits.slice(-10) : digits;
 }
 
+export function purgeRahulVermaFromStorage() {
+  try {
+    // 1. Clean zestmed_user
+    const storedUser = localStorage.getItem('zestmed_user');
+    if (storedUser) {
+      const u = JSON.parse(storedUser);
+      if (u?.name === 'Rahul Verma' || (u?.email && u.email.includes('rahul.verma'))) {
+        u.name = 'Ajayendra Shekhar';
+        u.email = u.email ? u.email.replace(/rahul\.verma/gi, 'ajayendra.shekhar') : 'ajayendra.shekhar@zestmed.com';
+        localStorage.setItem('zestmed_user', JSON.stringify(u));
+      }
+    }
+
+    // 2. Clean zestmed_patient_profile
+    const storedProfile = localStorage.getItem('zestmed_patient_profile');
+    if (storedProfile) {
+      const p = JSON.parse(storedProfile);
+      if (p?.name === 'Rahul Verma' || (p?.email && p.email.includes('rahul.verma'))) {
+        p.name = 'Ajayendra Shekhar';
+        p.email = p.email ? p.email.replace(/rahul\.verma/gi, 'ajayendra.shekhar') : 'ajayendra.shekhar@zestmed.com';
+        localStorage.setItem('zestmed_patient_profile', JSON.stringify(p));
+      }
+    }
+
+    // 3. Clean zestmed_patient_registry
+    const storedReg = localStorage.getItem('zestmed_patient_registry');
+    if (storedReg) {
+      const reg = JSON.parse(storedReg);
+      let changed = false;
+      Object.keys(reg).forEach((k) => {
+        if (reg[k]?.name === 'Rahul Verma' || (reg[k]?.email && reg[k].email.includes('rahul.verma'))) {
+          reg[k].name = 'Ajayendra Shekhar';
+          reg[k].email = 'ajayendra.shekhar@zestmed.com';
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('zestmed_patient_registry', JSON.stringify(reg));
+      }
+    }
+
+    // 4. Clean zestmed_admin_patients
+    const storedAdmin = localStorage.getItem('zestmed_admin_patients');
+    if (storedAdmin) {
+      const list = JSON.parse(storedAdmin);
+      if (Array.isArray(list)) {
+        let changed = false;
+        list.forEach((pat) => {
+          if (pat?.name === 'Rahul Verma' || (pat?.email && pat.email.includes('rahul.verma'))) {
+            pat.name = 'Ajayendra Shekhar';
+            pat.email = 'ajayendra.shekhar@zestmed.com';
+            changed = true;
+          }
+        });
+        if (changed) {
+          localStorage.setItem('zestmed_admin_patients', JSON.stringify(list));
+        }
+      }
+    }
+  } catch (_) {}
+}
+
+// Automatically purge any stale Rahul Verma entries on initial script execution
+if (typeof window !== 'undefined') {
+  purgeRahulVermaFromStorage();
+}
+
 export function getRegisteredPatient(phone) {
   const cleanPhone = normalizePhone(phone);
   if (!cleanPhone) return null;
@@ -86,7 +153,7 @@ export function getRegisteredPatient(phone) {
     const storedRegistry = localStorage.getItem('zestmed_patient_registry');
     if (storedRegistry) {
       const registryMap = JSON.parse(storedRegistry);
-      if (registryMap && registryMap[cleanPhone] && registryMap[cleanPhone].name && registryMap[cleanPhone].name !== 'Verified Patient') {
+      if (registryMap && registryMap[cleanPhone] && registryMap[cleanPhone].name && registryMap[cleanPhone].name !== 'Verified Patient' && registryMap[cleanPhone].name !== 'Rahul Verma') {
         return registryMap[cleanPhone];
       }
     }
@@ -96,7 +163,7 @@ export function getRegisteredPatient(phone) {
     if (adminSaved) {
       const adminPatients = JSON.parse(adminSaved);
       if (Array.isArray(adminPatients)) {
-        const found = adminPatients.find(p => normalizePhone(p.phone) === cleanPhone && p.name && p.name !== 'Verified Patient');
+        const found = adminPatients.find(p => normalizePhone(p.phone) === cleanPhone && p.name && p.name !== 'Verified Patient' && p.name !== 'Rahul Verma');
         if (found) return found;
       }
     }
@@ -105,7 +172,7 @@ export function getRegisteredPatient(phone) {
     const savedProfile = localStorage.getItem('zestmed_patient_profile');
     if (savedProfile) {
       const profile = JSON.parse(savedProfile);
-      if (profile && normalizePhone(profile.phone) === cleanPhone && profile.name && profile.name !== 'Verified Patient') {
+      if (profile && normalizePhone(profile.phone) === cleanPhone && profile.name && profile.name !== 'Verified Patient' && profile.name !== 'Rahul Verma') {
         return profile;
       }
     }
@@ -128,7 +195,7 @@ export function getRegisteredPatient(phone) {
 
 export function saveRegisteredPatient(phone, name, extraData = {}) {
   const cleanPhone = normalizePhone(phone);
-  if (!cleanPhone || !name || name === 'Verified Patient') return null;
+  if (!cleanPhone || !name || name === 'Verified Patient' || name === 'Rahul Verma') return null;
 
   try {
     // 1. Update patient registry map

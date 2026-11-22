@@ -270,10 +270,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         // Initialize default verified patient profile if none exists so dashboard stays open on reload
         const defaultPatient = {
           id: 'usr_patient_default',
-          name: 'Rahul Verma',
+          name: 'Ajayendra Shekhar',
           contact: '+91 92791 25091',
           phone: '+91 92791 25091',
-          email: 'rahul.verma@demo.zestmed.com',
+          email: 'ajayendra.shekhar@zestmed.com',
           role: 'patient',
           uhid: 'ZM-PAT-501284',
           bloodGroup: 'B+',
@@ -514,15 +514,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     } catch (e) {
       console.error(e);
     }
-    const currentName = (user?.name && user.name !== 'Verified Patient') 
+    const currentName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') 
       ? user.name 
-      : (saved?.name && saved.name !== 'Verified Patient') 
+      : (saved?.name && saved.name !== 'Verified Patient' && saved.name !== 'Rahul Verma') 
       ? saved.name 
-      : 'Rahul Verma';
+      : 'Ajayendra Shekhar';
     return {
       name: currentName,
       uhid: user?.uhid || saved?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284'),
-      email: user?.email || saved?.email || 'rahul.verma@gmail.com',
+      email: (user?.email && !user.email.includes('rahul.verma')) ? user.email : (saved?.email && !saved.email.includes('rahul.verma')) ? saved.email : 'ajayendra.shekhar@zestmed.com',
       phone: user?.contact || user?.phone || saved?.phone || '+91 92791 25091',
       age: user?.age || saved?.age || '34',
       gender: user?.gender || saved?.gender || 'Male',
@@ -533,12 +533,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   });
 
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient') {
+    if (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') {
       setProfileForm((prev) => ({
         ...prev,
         name: user.name,
         phone: user.contact || user.phone || prev.phone,
-        email: user.email || prev.email,
+        email: (user.email && !user.email.includes('rahul.verma')) ? user.email : prev.email,
         uhid: user.uhid || prev.uhid
       }));
     }

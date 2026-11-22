@@ -333,7 +333,7 @@ export default function AdminDashboardPage() {
     const patientMap = new Map();
 
     const basePatients = [
-      { id: 'ZM-PAT-101', name: 'Rahul Verma', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', status: 'Active' },
+      { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', status: 'Active' },
       { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', status: 'Active' },
       { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', status: 'Active' },
       { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', status: 'Active' },

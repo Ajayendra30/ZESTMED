@@ -12,7 +12,7 @@ export default function Testimonials() {
         'Very convenient service. I booked a lab test and the sample collection was done at my home on time. Got the report quickly too!'
     },
     {
-      name: 'Rahul Verma',
+      name: 'Rupam Sharma',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
       rating: 5,
       comment:

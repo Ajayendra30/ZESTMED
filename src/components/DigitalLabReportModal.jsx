@@ -154,7 +154,7 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs">
             <div>
               <span className="block text-[10.5px] font-semibold text-slate-500 uppercase">Patient Name</span>
-              <span className="font-bold text-slate-900">{booking.patientName || 'Rahul Verma'}</span>
+              <span className="font-bold text-slate-900">{booking.patientName || 'Ajayendra Shekhar'}</span>
             </div>
             <div>
               <span className="block text-[10.5px] font-semibold text-slate-500 uppercase">Age / Gender</span>

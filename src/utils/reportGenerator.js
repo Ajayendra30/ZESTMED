@@ -71,7 +71,7 @@ export const getMockReportDetails = (testName, dateStr, reportId, pathologist) =
     id: reportId || 'ZM-REP-9041',
     bookingId: reportId || 'ZM-REP-9041',
     testName: testName,
-    patientName: 'Rahul Verma',
+    patientName: 'Ajayendra Shekhar',
     uhid: 'ZM-PAT-1082',
     collectionDate: dateStr || 'Nov 07, 2026',
     date: dateStr || 'Nov 07, 2026',

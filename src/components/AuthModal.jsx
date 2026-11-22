@@ -47,14 +47,14 @@ export default function AuthModal() {
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState(() => {
-    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ')) {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
       return user.name;
     }
     try {
       const saved = localStorage.getItem('zestmed_patient_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ')) {
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Rahul Verma') {
           return parsed.name;
         }
       }
@@ -69,7 +69,7 @@ export default function AuthModal() {
   const [detectedPatient, setDetectedPatient] = useState(null);
 
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ')) {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
       setFullName(user.name);
       if (user.contact || user.phone) {
         setPhoneNumber(normalizePhone(user.contact || user.phone));
@@ -82,7 +82,7 @@ export default function AuthModal() {
     if (clean.length === 10) {
       const found = getRegisteredPatient(clean);
       setDetectedPatient(found);
-      if (found?.name && found.name !== 'Verified Patient' && !found.name.startsWith('Patient ')) {
+      if (found?.name && found.name !== 'Verified Patient' && !found.name.startsWith('Patient ') && found.name !== 'Rahul Verma') {
         setFullName(found.name);
       }
     } else {
@@ -182,7 +182,8 @@ export default function AuthModal() {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || 'Rahul Verma').trim();
+    const rawResolved = (fullName.trim() || user?.name || detectedPatient?.name || 'Ajayendra Shekhar').trim();
+    const resolvedName = rawResolved === 'Rahul Verma' ? 'Ajayendra Shekhar' : rawResolved;
     loginWithPhoneOtp(phoneNumber, resolvedName);
     handlePostLoginFlow();
   };

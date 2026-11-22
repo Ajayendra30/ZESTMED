@@ -253,7 +253,7 @@ export default function LabDashboardPage() {
       avatarBg: 'bg-purple-50 text-purple-700 border border-purple-200/80',
       actionText: 'report ready for signature: CBC #REP-9021',
       time: '2h ago',
-      desc: 'Dr. N. Bora, MD (Pathology) completed analysis for Rahul Verma. Ready for digital signature & dispatch.',
+      desc: 'Dr. N. Bora, MD (Pathology) completed analysis for Ajayendra Shekhar. Ready for digital signature & dispatch.',
       category: 'Clinical Report Verification',
       status: 'Ready to Sign',
       statusBadge: 'bg-purple-50 text-purple-700 border border-purple-200',
@@ -362,7 +362,7 @@ export default function LabDashboardPage() {
   ]);
 
   const [completedList, setCompletedList] = useState([
-    { id: 'REP-9021', bookingId: 'ZM-LAB-781001-4402', patient: 'Rahul Verma', patientName: 'Rahul Verma', test: 'Complete Blood Count', testName: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
+    { id: 'REP-9021', bookingId: 'ZM-LAB-781001-4402', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', test: 'Complete Blood Count', testName: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
     { id: 'REP-9020', bookingId: 'ZM-LAB-781001-5198', patient: 'Ananya Baruah', patientName: 'Ananya Baruah', test: 'Vitamin D3 & B12 Vital Screen', testName: 'Vitamin D3 & B12 Vital Screen', time: 'Yesterday', pathologist: 'Dr. Arindam Sharma, MD', status: 'Signed & Published' },
     { id: 'REP-9019', bookingId: 'ZM-LAB-781001-6380', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', test: 'Thyroid Profile Screen', testName: 'Thyroid Profile Screen', time: 'Yesterday', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
     { id: 'REP-9018', bookingId: 'ZM-LAB-781001-7124', patient: 'Vikram Das', patientName: 'Vikram Das', test: 'Liver Function Test (LFT)', testName: 'Liver Function Test (LFT)', time: '11 Nov 2026', pathologist: 'Dr. S. Das, MD', status: 'Signed & Published' }

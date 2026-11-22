@@ -111,7 +111,7 @@ export function createClinicalReportPdfBlob(report) {
   const doc = new SimplePdfDocument();
   const testName = report.test || report.testName || 'Diagnostic Investigation';
   const reportId = report.id || report.bookingId || 'ZM-REP-9041';
-  const patientName = report.patientName || report.patient || 'Rahul Verma';
+  const patientName = report.patientName || report.patient || 'Ajayendra Shekhar';
   const uhid = report.uhid || 'ZM-PAT-1082';
   const dateStr = report.collectionDate || report.date || 'Nov 13, 2026';
   const specimen = report.specimen || 'EDTA Whole Blood / Serum';
@@ -215,7 +215,7 @@ export function createOrderInvoicePdfBlob(order) {
   const doc = new SimplePdfDocument();
   const invoiceId = order.id || 'ZM-ORD-9821';
   const orderDate = order.date || 'Nov 14, 2026';
-  const patientName = order.patientName || order.patient || 'Rahul Verma';
+  const patientName = order.patientName || order.patient || 'Ajayendra Shekhar';
   const address = order.address || order.deliveryAddress || 'Flat 4B, Brahmaputra Enclave, Dispur, Guwahati - 781005';
   const phone = order.phone || '+91 92791 25091';
   const total = order.total || order.amount || 1199;

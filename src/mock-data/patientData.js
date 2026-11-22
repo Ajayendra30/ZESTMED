@@ -4,12 +4,12 @@
 
 export const initialPatientProfile = {
   id: 'ZM-PAT-781001-9041',
-  name: 'Rahul Verma',
+  name: 'Ajayendra Shekhar',
   age: 34,
   gender: 'Male',
   bloodGroup: 'B+',
   contact: '+91 92791 25091',
-  email: 'rahul.verma@demo.zestmed.com',
+  email: 'ajayendra.shekhar@zestmed.com',
   hub: 'Guwahati Central Laboratory (Dispur)',
   emergencyContact: {
     name: 'Meena Verma (Mother)',
@@ -175,7 +175,7 @@ export const initialPatientLabBookings = [
     category: 'Hematology',
     bookedDate: '07 Nov 2026',
     collectionDate: '08 Nov 2026, 07:30 AM',
-    patientName: 'Rahul Verma (Self)',
+    patientName: 'Ajayendra Shekhar (Self)',
     status: 'Report Published',
     specimen: 'EDTA Whole Blood (2.5 mL)',
     collectionAddress: 'GS Road, Dispur, Guwahati - 781005',
@@ -211,7 +211,7 @@ export const initialPatientLabBookings = [
     category: 'Vitamins & Metabolism',
     bookedDate: '01 Nov 2026',
     collectionDate: '02 Nov 2026, 08:00 AM',
-    patientName: 'Rahul Verma (Self)',
+    patientName: 'Ajayendra Shekhar (Self)',
     status: 'Report Published',
     specimen: 'Serum (3.0 mL)',
     collectionAddress: 'GS Road, Dispur, Guwahati - 781005',
@@ -267,7 +267,7 @@ export const initialPatientPrescriptions = [
     dateOfIssue: '01 Nov 2026',
     expiryDate: '01 May 2027',
     status: 'Active & Verified',
-    patientName: 'Rahul Verma',
+    patientName: 'Ajayendra Shekhar',
     notes: 'Long-term maintenance therapy for blood pressure management. Review after 6 months.',
     medicines: [
       {
@@ -327,7 +327,7 @@ export const initialPatientPrescriptions = [
     dateOfIssue: '10 Aug 2026',
     expiryDate: '10 Sep 2026',
     status: 'Expired / Completed',
-    patientName: 'Rahul Verma',
+    patientName: 'Ajayendra Shekhar',
     notes: 'Short course for acute seasonal bronchitis and allergic cough.',
     medicines: [
       {
@@ -346,7 +346,7 @@ export const initialAssamAddresses = [
   {
     id: 'addr-1',
     label: 'Home (Dispur)',
-    recipientName: 'Rahul Verma',
+    recipientName: 'Ajayendra Shekhar',
     phone: '+91 92791 25091',
     street: 'Flat 4B, Brahmaputra Enclave, Near Assam Secretariat, GS Road',
     city: 'Guwahati',
@@ -358,7 +358,7 @@ export const initialAssamAddresses = [
   {
     id: 'addr-2',
     label: 'Office (Christian Basti)',
-    recipientName: 'Rahul Verma',
+    recipientName: 'Ajayendra Shekhar',
     phone: '+91 92791 25091',
     street: 'Tech Park Tower, 3rd Floor, Christian Basti, GS Road',
     city: 'Guwahati',
@@ -401,7 +401,7 @@ export const initialPatientAppointments = [
     mode: 'Clinic Visit',
     fee: 600,
     price: 600,
-    patientName: 'Rahul Verma (Self)',
+    patientName: 'Ajayendra Shekhar (Self)',
     patientPhone: '+91 92791 25091',
     patientAge: '34',
     patientGender: 'Male',
@@ -428,7 +428,7 @@ export const initialPatientAppointments = [
     mode: 'Home Visit',
     fee: 850,
     price: 850,
-    patientName: 'Rahul Verma (Self)',
+    patientName: 'Ajayendra Shekhar (Self)',
     patientPhone: '+91 92791 25091',
     patientAge: '34',
     patientGender: 'Male',
