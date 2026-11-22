@@ -42,11 +42,12 @@ export default function DoctorHero({
               <span>Doctor Appointment</span>
             </div>
 
-            {/* Main Headline - High contrast & fully visible */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[44px] 2xl:text-[48px] font-black text-[#0F1E36] leading-[1.18] tracking-tight">
-              Book Doctor Appointment<br />
-              <span className="font-extrabold text-[#0F1E36]">with </span>
-              <span className="text-[#007A64] font-black">Trusted Specialists</span>
+            {/* Main Headline - High contrast, perfectly spaced & fully legible with zero overlap */}
+            <h1 className="text-2xl sm:text-3xl md:text-3.5xl lg:text-4xl xl:text-[42px] 2xl:text-[46px] font-black text-[#0F1E36] tracking-tight leading-[1.3] sm:leading-[1.32] lg:leading-[1.34]">
+              <span className="block">Book Doctor Appointment</span>
+              <span className="block mt-1 sm:mt-1.5 lg:mt-2 text-[#0F1E36]">
+                with <span className="text-[#007A64]">Trusted Specialists</span>
+              </span>
             </h1>
 
             {/* Subheading text */}
