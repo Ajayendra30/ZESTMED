@@ -1,11 +1,13 @@
 // src/components/PrescriptionDetailModal.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, FileText, CheckCircle2, ShoppingBag, ShieldCheck, Calendar, User, Building, AlertCircle } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
 import { medicines } from '../mock-data/medicines';
 
 export default function PrescriptionDetailModal({ isOpen = true, onClose, prescription }) {
+  const navigate = useNavigate();
   const { addToast } = useToast();
   const { addToCart, openCart } = useCart();
 
@@ -182,8 +184,11 @@ export default function PrescriptionDetailModal({ isOpen = true, onClose, prescr
           ) : (
             <button
               type="button"
-              disabled
-              className="px-4 py-2 rounded-xl bg-slate-200 text-slate-500 text-xs font-bold cursor-not-allowed"
+              onClick={() => {
+                onClose();
+                navigate('/doctor-appointment');
+              }}
+              className="px-4 py-2 rounded-xl bg-teal-50 text-[#007A64] border border-[#007A64]/30 text-xs font-bold hover:bg-[#007A64] hover:text-white transition cursor-pointer"
             >
               Prescription Expired (Consult Doctor)
             </button>

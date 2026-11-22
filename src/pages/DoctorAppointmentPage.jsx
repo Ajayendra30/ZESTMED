@@ -199,6 +199,45 @@ function getDoctorSpecialityFocus(doc) {
   return [doc?.specialty || 'Clinical Specialist', 'Consultation'];
 }
 
+const DOCTOR_TESTIMONIALS = [
+  {
+    name: 'Ankit Kumar',
+    rating: 5,
+    text: 'Very easy to book an appointment. The doctor was highly professional and explained everything clearly.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
+  },
+  {
+    name: 'Priya Sharma',
+    rating: 5,
+    text: 'Great experience! I booked an online consultation and got the guidance I needed without visiting the clinic.',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80'
+  },
+  {
+    name: 'Rohit Das',
+    rating: 5,
+    text: 'Zestmed makes it so convenient to find and consult the right doctor. Highly recommended!',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
+  },
+  {
+    name: 'Sneha Patel',
+    rating: 5,
+    text: 'Found a senior cardiologist within minutes. The consultation was thorough, punctual, and very reassuring.',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
+  },
+  {
+    name: 'Vikram Sengupta',
+    rating: 5,
+    text: 'Excellent pediatric advice for my child late in the evening. Quick video call and clear digital prescription.',
+    image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80'
+  },
+  {
+    name: 'Meera Iyer',
+    rating: 5,
+    text: 'Booking confirmed instantly and zero waiting time at the clinic. Really happy with the entire process.',
+    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80'
+  }
+];
+
 export default function DoctorAppointmentPage() {
   const { addToast } = useToast();
   const { user, openAuth } = useAuth();
@@ -223,6 +262,7 @@ export default function DoctorAppointmentPage() {
   // Modal Tabs & User Appointments History
   const [modalTab, setModalTab] = useState('schedule'); // 'schedule' | 'my-appointments'
   const [patientAppointments, setPatientAppointments] = useState([]);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   // Load user's booked appointments from localStorage
   const loadAppointments = () => {
@@ -1145,15 +1185,17 @@ export default function DoctorAppointmentPage() {
             <div className="flex items-center gap-2">
               <button 
                 type="button" 
+                onClick={() => setTestimonialIndex(i => (i === 0 ? DOCTOR_TESTIMONIALS.length - 1 : i - 1))}
                 aria-label="Previous Testimonial"
-                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer active:scale-95"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button 
                 type="button" 
+                onClick={() => setTestimonialIndex(i => (i + 1) % DOCTOR_TESTIMONIALS.length)}
                 aria-label="Next Testimonial"
-                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer"
+                className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#007A64] hover:bg-teal-50 text-slate-600 hover:text-[#007A64] flex items-center justify-center transition cursor-pointer active:scale-95"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -1161,79 +1203,33 @@ export default function DoctorAppointmentPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            
-            {/* Testimonial 1 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" 
-                    alt="Ankit Kumar"
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-                <div>
-                  <h4 className="text-base font-black text-[#0F1E36]">Ankit Kumar</h4>
-                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+            {[0, 1, 2].map((offset) => {
+              const item = DOCTOR_TESTIMONIALS[(testimonialIndex + offset) % DOCTOR_TESTIMONIALS.length];
+              return (
+                <div key={item.name + offset} className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-[#0F1E36]">{item.name}</h4>
+                      <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
+                        {[...Array(item.rating || 5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
+                    "{item.text}"
+                  </p>
                 </div>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                "Very easy to book an appointment. The doctor was highly professional and explained everything clearly."
-              </p>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" 
-                    alt="Priya Sharma"
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-                <div>
-                  <h4 className="text-base font-black text-[#0F1E36]">Priya Sharma</h4>
-                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                "Great experience! I booked an online consultation and got the guidance I needed without visiting the clinic."
-              </p>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" 
-                    alt="Rohit Das"
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-                <div>
-                  <h4 className="text-base font-black text-[#0F1E36]">Rohit Das</h4>
-                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed italic">
-                "Zestmed makes it so convenient to find and consult the right doctor. Highly recommended!"
-              </p>
-            </div>
-
+              );
+            })}
           </div>
         </section>
 

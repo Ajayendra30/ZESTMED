@@ -111,8 +111,28 @@ export default function SurgeryDetailPage() {
 
   // Schedule State (default: 24 November 2026 matching reference image)
   const [selectedDay, setSelectedDay] = useState(24);
-  const [selectedMonth] = useState('November');
-  const [selectedYear] = useState(2026);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const [monthIndex, setMonthIndex] = useState(10); // November
+  const [selectedYear, setSelectedYear] = useState(2026);
+  const selectedMonth = MONTHS[monthIndex];
+
+  const handlePrevMonth = () => {
+    if (monthIndex === 0) {
+      setMonthIndex(11);
+      setSelectedYear(y => y - 1);
+    } else {
+      setMonthIndex(m => m - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (monthIndex === 11) {
+      setMonthIndex(0);
+      setSelectedYear(y => y + 1);
+    } else {
+      setMonthIndex(m => m + 1);
+    }
+  };
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('12:00 PM');
 
   // Payment Method State
@@ -780,13 +800,23 @@ export default function SurgeryDetailPage() {
               {/* Left Column: Interactive Calendar matching reference */}
               <div className="lg:col-span-6 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <button type="button" className="p-1 rounded-lg text-slate-400 hover:text-slate-800 transition">
+                  <button
+                    type="button"
+                    onClick={handlePrevMonth}
+                    aria-label="Previous Month"
+                    className="p-1 rounded-lg text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                  >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <span className="text-base sm:text-lg font-black text-[#0B1E3F]">
                     {selectedMonth} {selectedYear}
                   </span>
-                  <button type="button" className="p-1 rounded-lg text-slate-400 hover:text-slate-800 transition">
+                  <button
+                    type="button"
+                    onClick={handleNextMonth}
+                    aria-label="Next Month"
+                    className="p-1 rounded-lg text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                  >
                     <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -802,24 +832,9 @@ export default function SurgeryDetailPage() {
                   <span>Sun</span>
                 </div>
 
-                {/* Days Grid matching November 2026 */}
+                {/* Days Grid */}
                 <div className="grid grid-cols-7 text-center gap-y-2 text-sm font-semibold">
-                  {[1, 2, 3, 4, 5, 6, 7].map(d => (
-                    <button key={d} type="button" onClick={() => setSelectedDay(d)} className="py-2 hover:bg-slate-100 rounded-full text-slate-700">
-                      {d}
-                    </button>
-                  ))}
-                  {[8, 9, 10, 11, 12, 13, 14].map(d => (
-                    <button key={d} type="button" onClick={() => setSelectedDay(d)} className="py-2 hover:bg-slate-100 rounded-full text-slate-700">
-                      {d}
-                    </button>
-                  ))}
-                  {[15, 16, 17, 18, 19, 20, 21].map(d => (
-                    <button key={d} type="button" onClick={() => setSelectedDay(d)} className="py-2 hover:bg-slate-100 rounded-full text-slate-700">
-                      {d}
-                    </button>
-                  ))}
-                  {[22, 23, 24, 25, 26, 27, 28].map(d => {
+                  {Array.from({ length: new Date(selectedYear, monthIndex + 1, 0).getDate() }, (_, i) => i + 1).map(d => {
                     const isSelected = selectedDay === d;
                     return (
                       <div key={d} className="flex items-center justify-center">
@@ -837,17 +852,6 @@ export default function SurgeryDetailPage() {
                       </div>
                     );
                   })}
-                  {[29, 30].map(d => (
-                    <button key={d} type="button" onClick={() => setSelectedDay(d)} className="py-2 hover:bg-slate-100 rounded-full text-slate-700">
-                      {d}
-                    </button>
-                  ))}
-                  {/* Next month days dimmed */}
-                  {[1, 2, 3, 4, 5].map(d => (
-                    <span key={`next-${d}`} className="py-2 text-slate-300">
-                      {d}
-                    </span>
-                  ))}
                 </div>
 
                 <div className="pt-4 flex items-center justify-between border-t border-slate-100">
