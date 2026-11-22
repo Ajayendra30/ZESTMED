@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import BookPhysioModal from '../components/BookPhysioModal';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -187,30 +186,19 @@ export default function PhysiotherapyPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
-  const [selectedCondition, setSelectedCondition] = useState('All Conditions');
-
-  const openBookingModal = (conditionOrService = 'All Conditions') => {
-    setSelectedCondition(conditionOrService || 'All Conditions');
-    setIsPhysioModalOpen(true);
+  const scrollToServices = () => {
+    const el = document.getElementById('physio-services-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
-  // Open modal if user returns from auth with a pending physio booking action
-  useEffect(() => {
-    if (user) {
-      try {
-        const pendingRaw = sessionStorage.getItem('zestmed_pending_action');
-        if (pendingRaw) {
-          const parsed = JSON.parse(pendingRaw);
-          if (parsed?.type === 'book_physio') {
-            sessionStorage.removeItem('zestmed_pending_action');
-            setSelectedCondition(parsed.service || 'All Conditions');
-            setIsPhysioModalOpen(true);
-          }
-        }
-      } catch (_) {}
-    }
-  }, [user]);
+  const handleBookSession = (serviceTitle = '') => {
+    const text = encodeURIComponent(
+      `Hi Zestmed, I would like to book a Physiotherapy session${serviceTitle ? ` for ${serviceTitle}` : ''}. Please provide available slots and details.`
+    );
+    window.open(`https://wa.me/919279125091?text=${text}`, '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans select-none">
@@ -261,7 +249,7 @@ export default function PhysiotherapyPage() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2 w-full">
               <button
                 type="button"
-                onClick={() => openBookingModal()}
+                onClick={scrollToServices}
                 className="w-full sm:w-auto bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2.5 group cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Calendar className="w-5 h-5" />
@@ -271,7 +259,7 @@ export default function PhysiotherapyPage() {
 
               <button
                 type="button"
-                onClick={() => openBookingModal()}
+                onClick={() => handleBookSession('Physiotherapy Consultation')}
                 className="w-full sm:w-auto bg-white hover:bg-slate-50 text-[#0F172A] border-2 border-slate-300 font-black text-sm sm:text-base px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 min-h-[48px]"
               >
                 <Stethoscope className="w-5 h-5 text-[#007A64]" />
@@ -354,7 +342,7 @@ export default function PhysiotherapyPage() {
         {/* ========================================================================= */}
         {/* 3. OUR PHYSIOTHERAPY SERVICES (6 Cards in Balanced Grid)                  */}
         {/* ========================================================================= */}
-        <section className="space-y-6">
+        <section id="physio-services-section" className="space-y-6">
           
           {/* Header Row */}
           <div className="flex items-center justify-between">
@@ -366,7 +354,7 @@ export default function PhysiotherapyPage() {
             </div>
             <button
               type="button"
-              onClick={() => openBookingModal()}
+              onClick={scrollToServices}
               className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-sm sm:text-base flex items-center gap-1.5 hover:underline cursor-pointer"
             >
               <span>View All Services</span>
@@ -382,7 +370,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={srv.id}
-                  onClick={() => openBookingModal(srv.title)}
+                  onClick={() => handleBookSession(srv.title)}
                   className="bg-white rounded-2xl border border-slate-200/90 hover:border-teal-300 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none"
                 >
                   <div>
@@ -502,7 +490,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={cond.id}
-                  onClick={() => openBookingModal(cond.name)}
+                  onClick={() => handleBookSession(cond.name)}
                   className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[110px] sm:min-h-[120px] select-none"
                 >
                   <div className="h-10 w-10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform text-[#007A64]">
@@ -770,7 +758,7 @@ export default function PhysiotherapyPage() {
             
             <button
               type="button"
-              onClick={() => openBookingModal()}
+              onClick={() => handleBookSession()}
               className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <Calendar className="w-5 h-5 text-[#007A64]" />
@@ -813,12 +801,7 @@ export default function PhysiotherapyPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* Book Physiotherapy Modal */}
-      <BookPhysioModal
-        isOpen={isPhysioModalOpen}
-        onClose={() => setIsPhysioModalOpen(false)}
-        initialCondition={selectedCondition}
-      />
+
     </div>
   );
 }
