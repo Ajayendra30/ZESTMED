@@ -4,14 +4,23 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
+  getDoctorAppointments,
+  getPhysioBookings,
+  getSurgeryBookings,
+  getWellnessBookings,
+  getLabBookings,
+  getMedicineOrders,
+  getPaymentTransactions,
+  getLabExecutives,
+  getAllPatients,
   updateDoctorAppointmentStatus,
   updatePhysioStatus,
   updateSurgeryStatus,
   updateWellnessStatus,
   updateLabBookingStatus,
-  updateOrderStatus,
-  getPaymentTransactions
+  updateOrderStatus
 } from '../services/supabaseService';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import {
   Menu,
   Search,
@@ -80,6 +89,12 @@ import UploadInventoryModal from '../components/UploadInventoryModal';
 import UploadPackagesModal from '../components/UploadPackagesModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import OrderInvoiceModal from '../components/OrderInvoiceModal';
+import EditDiagnosticTestModal from '../components/EditDiagnosticTestModal';
+import AddAdminModal from '../components/AddAdminModal';
+import EditAdminModal from '../components/EditAdminModal';
+import EditMedicineModal from '../components/EditMedicineModal';
+import AddCategoryModal from '../components/AddCategoryModal';
+import AuditPrescriptionModal from '../components/AuditPrescriptionModal';
 import NotificationPopover from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
 import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf, downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
@@ -99,8 +114,23 @@ export default function AdminDashboardPage() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookingModal, setSelectedBookingModal] = useState(null);
-  const [testsList, setTestsList] = useState(MOCK_DIAGNOSTIC_TESTS);
+  const [testsList, setTestsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_diagnostic_tests');
+      return saved ? JSON.parse(saved) : MOCK_DIAGNOSTIC_TESTS;
+    } catch {
+      return MOCK_DIAGNOSTIC_TESTS;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(testsList));
+    } catch (_) {}
+  }, [testsList]);
+
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false);
+  const [editingTest, setEditingTest] = useState(null);
   const [isRegisterPatientModalOpen, setIsRegisterPatientModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
   const [deletingPatient, setDeletingPatient] = useState(null);
@@ -108,10 +138,39 @@ export default function AdminDashboardPage() {
   const [isAddExecutiveModalOpen, setIsAddExecutiveModalOpen] = useState(false);
   const [editingExecutive, setEditingExecutive] = useState(null);
   const [deletingExecutive, setDeletingExecutive] = useState(null);
+  const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState(null);
+  const [deletingAdmin, setDeletingAdmin] = useState(null);
+  const [editingMedicine, setEditingMedicine] = useState(null);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [auditingRx, setAuditingRx] = useState(null);
+  const [medicineFilterCategory, setMedicineFilterCategory] = useState('all');
+  const [medicineSearchQuery, setMedicineSearchQuery] = useState('');
 
   // Bulk Upload Modals for Inventory & Packages
   const [isUploadInventoryOpen, setIsUploadInventoryOpen] = useState(false);
   const [isUploadPackagesOpen, setIsUploadPackagesOpen] = useState(false);
+
+  // Generic CSV Downloader
+  const downloadCsv = (filename, headers, rows) => {
+    try {
+      const csvContent = 'data:text/csv;charset=utf-8,' + [
+        headers.join(','),
+        ...rows.map(r => r.map(field => `"${String(field ?? '').replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      addToast(`Exported ${rows.length} records to ${filename}`, 'success');
+    } catch (err) {
+      console.error('CSV Export Error:', err);
+      addToast('Failed to export CSV', 'error');
+    }
+  };
 
   // Razorpay Gateway Setup & Mandatory Statutory Business Documents
   const [isRazorpayLiveMode, setIsRazorpayLiveMode] = useState(false);
@@ -208,7 +267,20 @@ export default function AdminDashboardPage() {
   const [viewingOrderModal, setViewingOrderModal] = useState(null);
   const [viewingReportBooking, setViewingReportBooking] = useState(null);
 
-  const [adminMedicines, setAdminMedicines] = useState(initialInventoryMedicines);
+  const [adminMedicines, setAdminMedicines] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_inventory_medicines');
+      return saved ? JSON.parse(saved) : initialInventoryMedicines;
+    } catch {
+      return initialInventoryMedicines;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_inventory_medicines', JSON.stringify(adminMedicines));
+    } catch (_) {}
+  }, [adminMedicines]);
 
   // 1. Clinical Appointments (Doctor Consultations, Physiotherapy, Surgery Packages)
   const [appointmentsList, setAppointmentsList] = useState(() => {
@@ -399,8 +471,255 @@ export default function AdminDashboardPage() {
     return computeMergedPatients(rawAppts, rawLabs, rawOrds);
   });
 
-  // Real-time synchronization across patient/user activities
+  // Real-time synchronization across patient/user activities & live Supabase backend
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchAllLiveAdminData = async () => {
+      try {
+        const [docAppts, physioAppts, surgBookings, labBookings, wellBookings, medOrders, liveExecutives, livePatients] = await Promise.allSettled([
+          getDoctorAppointments(),
+          getPhysioBookings(),
+          getSurgeryBookings(),
+          getLabBookings(),
+          getWellnessBookings(),
+          getMedicineOrders(),
+          getLabExecutives(),
+          getAllPatients()
+        ]);
+
+        if (!isMounted) return;
+
+        // 1. Merge Appointments
+        const freshAppointments = [];
+        if (docAppts.status === 'fulfilled' && Array.isArray(docAppts.value)) {
+          docAppts.value.forEach((a) => {
+            freshAppointments.push({
+              id: a.appointment_number || a.id || `DOC-${Date.now()}`,
+              bookingId: a.appointment_number || a.id,
+              patientName: a.patient_name || a.patientName || 'Patient',
+              patientPhone: a.phone || a.patientPhone || '',
+              doctor: a.doctor_name || a.doctorName || 'Doctor',
+              doctorName: a.doctor_name || a.doctorName || 'Doctor',
+              specialty: a.department || a.specialty || 'General Medicine',
+              hospital: a.hospital || a.clinic || 'Zestmed Polyclinic Hub, Dispur',
+              date: a.appointment_date || a.date || 'Today',
+              time: a.appointment_time || a.time || a.slot || '10:00 AM',
+              mode: a.consultation_type || a.mode || 'Clinic Visit',
+              fee: a.fees || a.fee || a.price || 600,
+              symptoms: a.notes || a.symptoms || 'General Consultation',
+              status: a.status || 'Confirmed',
+              category: 'doctor',
+              type: 'Doctor Consultation'
+            });
+          });
+        }
+
+        if (physioAppts.status === 'fulfilled' && Array.isArray(physioAppts.value)) {
+          physioAppts.value.forEach((a) => {
+            freshAppointments.push({
+              id: a.booking_number || a.id || `PHY-${Date.now()}`,
+              bookingId: a.booking_number || a.id,
+              patientName: a.patient_name || a.patientName || 'Patient',
+              patientPhone: a.phone || a.patientPhone || '',
+              doctor: a.specialist_name || a.doctor_name || a.doctor || 'Dr. Arindam Borah, MPT',
+              doctorName: a.specialist_name || a.doctor_name || a.doctor || 'Dr. Arindam Borah, MPT',
+              specialty: a.therapy_type || a.specialty || 'Post-Surgery & Spine Rehab',
+              doctorDegree: a.degree || 'MPT (Ortho), Certified Physio',
+              date: a.session_date || a.date || 'Today',
+              time: a.session_time || a.time || a.slot || '11:00 AM',
+              mode: a.session_mode || a.mode || 'Home Visit',
+              fee: a.fees || a.fee || a.price || 850,
+              symptoms: a.condition || a.symptoms || 'Joint Mobility Rehab',
+              status: a.status || 'Confirmed',
+              category: 'physiotherapy',
+              type: 'Physiotherapy',
+              isPhysio: true
+            });
+          });
+        }
+
+        if (surgBookings.status === 'fulfilled' && Array.isArray(surgBookings.value)) {
+          surgBookings.value.forEach((a) => {
+            freshAppointments.push({
+              id: a.booking_number || a.id || `SUR-${Date.now()}`,
+              bookingId: a.booking_number || a.id,
+              patientName: a.patient_name || a.patientName || 'Patient',
+              patientPhone: a.phone || a.patientPhone || '',
+              title: a.surgery_name || a.title || a.surgeryName || 'Surgical Care Package',
+              surgeryName: a.surgery_name || a.title || a.surgeryName || 'Surgical Care Package',
+              hospital: a.hospital_name || a.hospital || 'Dispur Partner Hospital, Guwahati',
+              careManager: a.care_manager || a.doctor || 'Dr. Anupam Sarma (Surgery Lead)',
+              date: a.preferred_date || a.date || 'Within 48 Hours',
+              time: a.time || a.slot || 'Pre-Op',
+              fee: a.estimated_cost || a.fee || a.price || 35000,
+              symptoms: a.insurance_status || a.symptoms || 'Cashless TPA / Ayushman Bharat',
+              status: a.status || 'Confirmed',
+              category: 'surgery',
+              type: 'Surgery Package',
+              isSurgery: true
+            });
+          });
+        }
+
+        if (freshAppointments.length > 0) {
+          setAppointmentsList((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id || p.bookingId));
+            const newOnes = freshAppointments.filter((f) => !existingIds.has(f.id));
+            if (newOnes.length > 0) {
+              const merged = [...newOnes, ...prev];
+              try {
+                localStorage.setItem('patient_appointments', JSON.stringify(merged));
+              } catch (_) {}
+              return merged;
+            }
+            return prev;
+          });
+        }
+
+        // 2. Merge Lab & Wellness Bookings
+        const freshLabs = [];
+        if (labBookings.status === 'fulfilled' && Array.isArray(labBookings.value)) {
+          labBookings.value.forEach((b) => {
+            freshLabs.push({
+              id: b.booking_number || b.id || `#LB${Date.now()}`,
+              bookingId: b.booking_number || b.id,
+              patientName: b.patient_name || b.patientName || 'Patient',
+              patientPhone: b.phone || b.patientPhone || '',
+              testName: b.test_name || b.testName || 'Diagnostic Investigation',
+              testCode: b.test_code || b.testCode || 'DX-LAB',
+              type: b.sample_type || b.type || 'Home Collection',
+              specimen: b.specimen || 'Blood Sample',
+              collectionAddress: b.collection_address || b.address || 'Guwahati Home Collection',
+              collectionDate: b.collection_date || b.date || 'Today',
+              time: b.collection_slot || b.time || '08:00 AM',
+              price: b.price || b.total_price || 350,
+              status: b.status || 'Confirmed',
+              phlebotomist: b.phlebotomist || { name: 'Bikash Das', phone: '+91 92791 25091' },
+              category: 'lab'
+            });
+          });
+        }
+
+        if (wellBookings.status === 'fulfilled' && Array.isArray(wellBookings.value)) {
+          wellBookings.value.forEach((b) => {
+            freshLabs.push({
+              id: b.booking_number || b.id || `#WEL${Date.now()}`,
+              bookingId: b.booking_number || b.id,
+              patientName: b.patient_name || b.patientName || 'Patient',
+              patientPhone: b.phone || b.patientPhone || '',
+              testName: b.package_name || b.testName || 'Comprehensive Health Package',
+              testCode: b.package_code || b.testCode || 'WEL-PKG',
+              collectionAddress: b.address || b.collectionAddress || 'Guwahati Home Collection',
+              collectionDate: b.booking_date || b.collectionDate || b.date || 'Today',
+              time: b.time_slot || b.time || '07:30 AM',
+              price: b.total_amount || b.price || 1899,
+              status: b.status || 'Confirmed',
+              phlebotomist: b.phlebotomist || { name: 'Bikash Das', phone: '+91 92791 25091' },
+              type: 'Wellness Package',
+              category: 'wellness'
+            });
+          });
+        }
+
+        if (freshLabs.length > 0) {
+          setLabBookingsList((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id || p.bookingId));
+            const newOnes = freshLabs.filter((f) => !existingIds.has(f.id));
+            if (newOnes.length > 0) {
+              const merged = [...newOnes, ...prev];
+              try {
+                localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(merged));
+              } catch (_) {}
+              return merged;
+            }
+            return prev;
+          });
+        }
+
+        // 3. Merge Orders
+        if (medOrders.status === 'fulfilled' && Array.isArray(medOrders.value) && medOrders.value.length > 0) {
+          const freshOrders = medOrders.value.map((o) => ({
+            id: o.order_number || o.id || `#ORD${Date.now()}`,
+            orderId: o.order_number || o.id,
+            customer: o.customer_name || o.customer || o.patientName || 'Customer',
+            phone: o.customer_phone || o.phone || '',
+            deliveryAddress: o.delivery_address || o.address || 'Dispur, Guwahati',
+            items: o.items || 'Prescription Medicines',
+            paymentMethod: o.payment_method || o.payment || 'UPI Paid',
+            total: o.total_amount || o.total || 0,
+            status: o.status || 'Processing',
+            date: o.order_date || o.date || 'Today',
+            time: o.order_time || o.time || '10:00 AM'
+          }));
+
+          setOrdersList((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id || p.orderId));
+            const newOnes = freshOrders.filter((f) => !existingIds.has(f.id));
+            if (newOnes.length > 0) {
+              const merged = [...newOnes, ...prev];
+              try {
+                localStorage.setItem('zestmed_patient_orders', JSON.stringify(merged));
+              } catch (_) {}
+              return merged;
+            }
+            return prev;
+          });
+        }
+
+        // 4. Merge Executives
+        if (liveExecutives.status === 'fulfilled' && Array.isArray(liveExecutives.value) && liveExecutives.value.length > 0) {
+          const mappedExecs = liveExecutives.value.map((e) => ({
+            id: e.employee_id || e.id || `ZM-EXEC-${Date.now()}`,
+            name: e.name || e.full_name || 'Phlebotomist',
+            phone: e.phone || '+91 92791 25091',
+            zone: e.zone || e.city || 'Dispur & GS Road Hub',
+            tasksToday: e.tasks_today || 3,
+            temp: e.temp || '3.8°C',
+            rating: e.rating || '4.9 ★',
+            status: e.status || 'Active'
+          }));
+
+          setExecutivesList((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const newOnes = mappedExecs.filter((f) => !existingIds.has(f.id));
+            if (newOnes.length > 0) {
+              const merged = [...newOnes, ...prev];
+              try {
+                localStorage.setItem('zestmed_admin_executives', JSON.stringify(merged));
+              } catch (_) {}
+              return merged;
+            }
+            return prev;
+          });
+        }
+
+        // 5. Merge Patients
+        if (livePatients.status === 'fulfilled' && Array.isArray(livePatients.value) && livePatients.value.length > 0) {
+          const mappedPatients = livePatients.value.map((p) => ({
+            id: p.uhid || p.id || `ZM-PAT-${(p.phone || '').slice(-4)}`,
+            name: p.full_name || p.name || 'Patient',
+            phone: p.phone ? (p.phone.startsWith('+91') ? p.phone : `+91 ${p.phone}`) : '+91 92791 25091',
+            city: p.city ? `${p.city}, Assam` : 'Guwahati, Assam',
+            status: p.status || 'Active'
+          }));
+
+          setPatientsList((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const newOnes = mappedPatients.filter((f) => !existingIds.has(f.id));
+            if (newOnes.length > 0) {
+              return [...newOnes, ...prev];
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.warn('Admin live backend sync notice:', err);
+      }
+    };
+
+    fetchAllLiveAdminData();
+
     const handleSync = () => {
       try {
         const sAppts = localStorage.getItem('patient_appointments');
@@ -423,9 +742,54 @@ export default function AdminDashboardPage() {
 
     window.addEventListener('storage', handleSync);
     window.addEventListener('zestmed_booking_updated', handleSync);
+    window.addEventListener('zestmed_lab_updated', handleSync);
+    window.addEventListener('zestmed_new_notification', handleSync);
+
+    // Supabase real-time channel
+    let subscription = null;
+    if (isSupabaseConfigured()) {
+      try {
+        subscription = supabase
+          .channel('admin-dashboard-realtime')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'doctor_appointments' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'physiotherapy_bookings' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'surgery_bookings' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'test_bookings' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'wellness_bookings' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+            fetchAllLiveAdminData();
+            playNotificationSound();
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('Realtime channel error:', err);
+      }
+    }
+
     return () => {
+      isMounted = false;
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('zestmed_booking_updated', handleSync);
+      window.removeEventListener('zestmed_lab_updated', handleSync);
+      window.removeEventListener('zestmed_new_notification', handleSync);
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
     };
   }, []);
 
@@ -760,6 +1124,7 @@ export default function AdminDashboardPage() {
       });
       addToast(`Surgery package status updated`, 'success');
     } else if (item.type === 'wellness' || item.type === 'lab') {
+      let finalStatus = 'Sample Collected';
       setLabBookingsList((prev) => {
         const updated = prev.map((it) => {
           if (it.id === id || it.bookingId === id) {
@@ -769,20 +1134,29 @@ export default function AdminDashboardPage() {
             else if (it.status === 'In Process') next = 'Report Ready';
             else if (it.status === 'Report Ready') next = 'Report Published';
             else if (it.status === 'Report Published') next = 'Confirmed';
-            const nextStatus = next;
-            updateLabBookingStatus(id, nextStatus).catch(() => {});
+            finalStatus = next;
+            updateLabBookingStatus(id, next).catch(() => {});
             return { ...it, status: next };
           }
           return it;
         });
         try {
           localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+          // Synchronize with Lab Dashboard jobs in real-time
+          const sJobs = localStorage.getItem('zestmed_lab_jobs');
+          if (sJobs) {
+            const parsedJobs = JSON.parse(sJobs);
+            const updatedJobs = parsedJobs.map((j) => (j.id === id || j.bookingId === id ? { ...j, status: finalStatus } : j));
+            localStorage.setItem('zestmed_lab_jobs', JSON.stringify(updatedJobs));
+          }
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+          window.dispatchEvent(new CustomEvent('zestmed_lab_updated'));
+          window.dispatchEvent(new CustomEvent('zestmed_new_notification'));
         } catch (e) {}
         return updated;
       });
-      addToast(`Diagnostic booking status updated`, 'success');
+      addToast(`Diagnostic booking status updated to ${finalStatus}`, 'success');
     } else if (item.type === 'order') {
       setOrdersList((prev) => {
         const updated = prev.map((it) => {
@@ -829,8 +1203,16 @@ export default function AdminDashboardPage() {
         const updated = prev.map((b) => (b.id === id || b.bookingId === id ? { ...b, status: 'Cancelled' } : b));
         try {
           localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+          const sJobs = localStorage.getItem('zestmed_lab_jobs');
+          if (sJobs) {
+            const parsedJobs = JSON.parse(sJobs);
+            const updatedJobs = parsedJobs.map((j) => (j.id === id || j.bookingId === id ? { ...j, status: 'Cancelled' } : j));
+            localStorage.setItem('zestmed_lab_jobs', JSON.stringify(updatedJobs));
+          }
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+          window.dispatchEvent(new CustomEvent('zestmed_lab_updated'));
+          window.dispatchEvent(new CustomEvent('zestmed_new_notification'));
         } catch (e) {}
         return updated;
       });
@@ -869,12 +1251,52 @@ export default function AdminDashboardPage() {
       });
       try {
         localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
+        const sJobs = localStorage.getItem('zestmed_lab_jobs');
+        if (sJobs) {
+          const parsedJobs = JSON.parse(sJobs);
+          const updatedJobs = parsedJobs.map((j) => (j.id === bookingId || j.bookingId === bookingId ? { ...j, phlebotomist: execName } : j));
+          localStorage.setItem('zestmed_lab_jobs', JSON.stringify(updatedJobs));
+        }
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        window.dispatchEvent(new CustomEvent('zestmed_lab_updated'));
+        window.dispatchEvent(new CustomEvent('zestmed_new_notification'));
       } catch (e) {}
       return updated;
     });
-    addToast(`Phlebotomist ${execName} assigned`, 'success');
+    addToast(`Phlebotomist ${execName} assigned to #${bookingId}`, 'success');
+  };
+
+  const handleApprovePrescription = (rxId, remarks) => {
+    const rx = prescriptionsList.find((p) => p.id === rxId);
+    setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Approved', remarks } : p)));
+
+    if (rx) {
+      const generatedOrder = {
+        id: `#ORD-RX-${rxId.replace(/\D/g, '') || Date.now()}`,
+        orderId: `#ORD-RX-${rxId.replace(/\D/g, '') || Date.now()}`,
+        customer: rx.patient || rx.patientName || 'Patient',
+        patientName: rx.patient || rx.patientName || 'Patient',
+        phone: rx.phone || '+91 92791 25091',
+        deliveryAddress: 'Guwahati Express Delivery Hub, Dispur',
+        items: rx.items || 'Prescribed Medications (Verified)',
+        paymentMethod: 'Cash / UPI on Delivery',
+        total: 650,
+        status: 'Verified',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setOrdersList((prev) => {
+        const nextOrders = [generatedOrder, ...prev];
+        try {
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(nextOrders));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+        } catch (_) {}
+        return nextOrders;
+      });
+    }
+    addToast(`Prescription ${rxId} approved! Medicine order dispatched to pharmacy inventory.`, 'success');
   };
 
   const handleDownloadSlip = (item) => {
@@ -971,16 +1393,103 @@ export default function AdminDashboardPage() {
       console.error(e);
     }
   }, [executivesList]);
-  const [adminsList, setAdminsList] = useState([
-    { id: 'ADM-01', name: 'Dr. Arindam Sharma', email: 'arindam@zestmed.com', role: 'Super Admin & Medical Director', access: 'All Privileges', status: 'Active' },
-    { id: 'ADM-02', name: 'Pankaj Barman', email: 'pankaj.pharma@zestmed.com', role: 'Chief Pharmacist Lead', access: 'Inventory & Prescriptions', status: 'Active' },
-    { id: 'ADM-03', name: 'Dr. N. Bora', email: 'n.bora@zestmed.com', role: 'Chief of Pathology & Diagnostics', access: 'Lab & Diagnostic Approvals', status: 'Active' }
-  ]);
-  const [prescriptionsList, setPrescriptionsList] = useState([
-    { id: 'RX-9821', patient: 'Ajayendra Shekhar', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
-    { id: 'RX-9822', patient: 'Minati Shekhar', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
-    { id: 'RX-9823', patient: 'Priya Sharma', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
-  ]);
+  const [adminsList, setAdminsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_admin_users');
+      return saved ? JSON.parse(saved) : [
+        { id: 'ADM-01', name: 'Dr. Arindam Sharma', email: 'arindam@zestmed.com', role: 'Super Admin & Medical Director', access: 'All Privileges', status: 'Active' },
+        { id: 'ADM-02', name: 'Pankaj Barman', email: 'pankaj.pharma@zestmed.com', role: 'Chief Pharmacist Lead', access: 'Inventory & Prescriptions', status: 'Active' },
+        { id: 'ADM-03', name: 'Dr. N. Bora', email: 'n.bora@zestmed.com', role: 'Chief of Pathology & Diagnostics', access: 'Lab & Diagnostic Approvals', status: 'Active' }
+      ];
+    } catch {
+      return [
+        { id: 'ADM-01', name: 'Dr. Arindam Sharma', email: 'arindam@zestmed.com', role: 'Super Admin & Medical Director', access: 'All Privileges', status: 'Active' },
+        { id: 'ADM-02', name: 'Pankaj Barman', email: 'pankaj.pharma@zestmed.com', role: 'Chief Pharmacist Lead', access: 'Inventory & Prescriptions', status: 'Active' },
+        { id: 'ADM-03', name: 'Dr. N. Bora', email: 'n.bora@zestmed.com', role: 'Chief of Pathology & Diagnostics', access: 'Lab & Diagnostic Approvals', status: 'Active' }
+      ];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_admin_users', JSON.stringify(adminsList));
+    } catch (_) {}
+  }, [adminsList]);
+
+  const [prescriptionsList, setPrescriptionsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_prescriptions');
+      return saved ? JSON.parse(saved) : [
+        { id: 'RX-9821', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', phone: '+91 92791 25091', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
+        { id: 'RX-9822', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', phone: '+91 98765 43210', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
+        { id: 'RX-9823', patient: 'Priya Sharma', patientName: 'Priya Sharma', phone: '+91 94350 12345', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
+      ];
+    } catch {
+      return [
+        { id: 'RX-9821', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', phone: '+91 92791 25091', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
+        { id: 'RX-9822', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', phone: '+91 98765 43210', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
+        { id: 'RX-9823', patient: 'Priya Sharma', patientName: 'Priya Sharma', phone: '+91 94350 12345', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
+      ];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_prescriptions', JSON.stringify(prescriptionsList));
+    } catch (_) {}
+  }, [prescriptionsList]);
+
+  const [medicineCategories, setMedicineCategories] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_medicine_categories');
+      return saved ? JSON.parse(saved) : [
+        { name: 'General Medicines', count: 420, valuation: '₹4,85,000', icon: Pill },
+        { name: 'Diabetes Care', count: 185, valuation: '₹3,20,000', icon: Activity },
+        { name: 'Cardiac & BP', count: 210, valuation: '₹5,40,000', icon: ShieldCheck },
+        { name: 'Vitamins & Supplements', count: 340, valuation: '₹2,90,000', icon: Package },
+        { name: 'Antibiotics & Anti-Infectives', count: 120, valuation: '₹3,80,000', icon: FileCheck },
+        { name: 'Diagnostic Devices', count: 45, valuation: '₹1,50,000', icon: FlaskConical }
+      ];
+    } catch {
+      return [
+        { name: 'General Medicines', count: 420, valuation: '₹4,85,000', icon: Pill },
+        { name: 'Diabetes Care', count: 185, valuation: '₹3,20,000', icon: Activity },
+        { name: 'Cardiac & BP', count: 210, valuation: '₹5,40,000', icon: ShieldCheck },
+        { name: 'Vitamins & Supplements', count: 340, valuation: '₹2,90,000', icon: Package },
+        { name: 'Antibiotics & Anti-Infectives', count: 120, valuation: '₹3,80,000', icon: FileCheck },
+        { name: 'Diagnostic Devices', count: 45, valuation: '₹1,50,000', icon: FlaskConical }
+      ];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('zestmed_medicine_categories', JSON.stringify(medicineCategories));
+    } catch (_) {}
+  }, [medicineCategories]);
+
+  const [platformSettings, setPlatformSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_platform_settings');
+      return saved ? JSON.parse(saved) : {
+        companyName: 'ZESTMED Health Private Limited',
+        gstin: '18AAACZ9901M1ZT',
+        drugLicense: 'AS-KAM-DL-88421 / 88422',
+        centralLabHub: 'GS Road, Dispur, Guwahati - 781005',
+        supportPhone: '+91 92791 25091',
+        supportEmail: 'support@zestmed.in'
+      };
+    } catch {
+      return {
+        companyName: 'ZESTMED Health Private Limited',
+        gstin: '18AAACZ9901M1ZT',
+        drugLicense: 'AS-KAM-DL-88421 / 88422',
+        centralLabHub: 'GS Road, Dispur, Guwahati - 781005',
+        supportPhone: '+91 92791 25091',
+        supportEmail: 'support@zestmed.in'
+      };
+    }
+  });
   const [paymentsList, setPaymentsList] = useState([
     { id: 'TXN-9081', ref: '#LB10234', customer: 'Rajesh Kumar', method: 'Razorpay UPI', amount: 349, date: '13 Nov 2026, 09:12 AM', status: 'Success' },
     { id: 'TXN-9080', ref: '#ORD5487', customer: 'Ajayendra Shekhar', method: 'UPI Instant', amount: 980, date: '12 Nov 2026, 10:45 AM', status: 'Success' },
@@ -2374,14 +2883,28 @@ export default function AdminDashboardPage() {
                     4,892 patient accounts registered across Guwahati Hubs (Dispur, Panbazar, Ulubari, Jalukbari & Khanapara).
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsRegisterPatientModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Register Patient</span>
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['UHID', 'Patient Name', 'Contact Phone', 'Regional City', 'Lab Bookings', 'Medicine Orders', 'Status'];
+                      const rows = patientsList.map((p) => [p.id, p.name, p.phone, p.city, p.bookingsCount || 0, p.ordersCount || 0, p.status || 'Active']);
+                      downloadCsv('ZESTMED_Patients_Directory.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsRegisterPatientModalOpen(true)}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Register Patient</span>
+                  </button>
+                </div>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -2400,7 +2923,18 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {patientsList.map((p) => (
+                      {patientsList
+                        .filter((p) => {
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (
+                            (p.id || '').toLowerCase().includes(q) ||
+                            (p.name || '').toLowerCase().includes(q) ||
+                            (p.phone || '').toLowerCase().includes(q) ||
+                            (p.city || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((p) => (
                         <tr key={p.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">{p.id}</td>
                           <td className="py-3.5 px-4 font-bold text-slate-900">{p.name}</td>
@@ -2465,18 +2999,43 @@ export default function AdminDashboardPage() {
                     Live status tracking, cold-chain temperature telemetry & home sample collection dispatch.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddExecutiveModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Executive</span>
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Employee ID', 'Name', 'Phone', 'Operating Zone', 'Status', 'Cold Box Temp', 'Tasks Today', 'Rating'];
+                      const rows = executivesList.map((e) => [e.id, e.name, e.phone, e.zone, e.status, e.temp, e.tasksToday, e.rating]);
+                      downloadCsv('ZESTMED_Lab_Executives_Roster.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddExecutiveModalOpen(true)}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Executive</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {executivesList.map((ex) => (
+                {executivesList
+                  .filter((ex) => {
+                    if (!searchQuery.trim()) return true;
+                    const q = searchQuery.toLowerCase();
+                    return (
+                      (ex.id || '').toLowerCase().includes(q) ||
+                      (ex.name || '').toLowerCase().includes(q) ||
+                      (ex.zone || '').toLowerCase().includes(q) ||
+                      (ex.phone || '').toLowerCase().includes(q)
+                    );
+                  })
+                  .map((ex) => (
                   <div key={ex.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
@@ -2548,35 +3107,98 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {activeMenu === 'users-admins' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <ShieldCheck className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Administrative Staff & Access Roles</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  System administrators, chief pharmacists, and laboratory directors with cryptographic access keys.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <ShieldCheck className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Administrative Staff & Access Roles</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    System administrators, chief pharmacists, and laboratory directors with cryptographic access keys.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Admin ID', 'Name', 'Email', 'Role', 'Access Privileges', 'Status'];
+                      const rows = adminsList.map((a) => [a.id, a.name, a.email, a.role, a.access, a.status]);
+                      downloadCsv('ZESTMED_Admins_Directory.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddAdminModalOpen(true)}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Staff / Admin</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {adminsList.map((adm) => (
-                  <div key={adm.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 font-black flex items-center justify-center">
-                        {adm.name.charAt(0)}
+                {adminsList
+                  .filter((adm) => {
+                    if (!searchQuery.trim()) return true;
+                    const q = searchQuery.toLowerCase();
+                    return (
+                      (adm.id || '').toLowerCase().includes(q) ||
+                      (adm.name || '').toLowerCase().includes(q) ||
+                      (adm.email || '').toLowerCase().includes(q) ||
+                      (adm.role || '').toLowerCase().includes(q)
+                    );
+                  })
+                  .map((adm) => (
+                    <div key={adm.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 font-black flex items-center justify-center">
+                            {adm.name.charAt(0)}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900">{adm.name}</h3>
+                            <p className="text-xs text-teal-600 font-semibold">{adm.role}</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
+                          {adm.id}
+                        </span>
                       </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-slate-900">{adm.name}</h3>
-                        <p className="text-xs text-teal-600 font-semibold">{adm.role}</p>
+                      <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
+                        <div>Email: <strong className="text-slate-800">{adm.email}</strong></div>
+                        <div>Privileges: <strong className="text-slate-800">{adm.access}</strong></div>
+                        <div className="text-emerald-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => setEditingAdmin(adm)}
+                          className="flex-1 py-1.5 bg-teal-50 hover:bg-teal-100 text-[#14B8A6] rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Privileges</span>
+                        </button>
+                        {adm.id !== 'ADM-01' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAdminsList((prev) => prev.filter((a) => a.id !== adm.id));
+                              addToast(`Admin user "${adm.name}" removed`, 'info');
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                            title="Remove Administrator"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </div>
-                    <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
-                      <div>Email: <strong className="text-slate-800">{adm.email}</strong></div>
-                      <div>Privileges: <strong className="text-slate-800">{adm.access}</strong></div>
-                      <div className="text-emerald-600 font-semibold mt-1">✓ 2FA Hardware Key Active</div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           )}
@@ -2597,6 +3219,18 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Appointment ID', 'Patient Name', 'Phone', 'Doctor', 'Specialty', 'Hospital', 'Date', 'Time', 'Mode', 'Fee', 'Status'];
+                      const rows = doctorAppointments.map((a) => [a.id || a.bookingId, a.patientName, a.patientPhone || a.phone, a.doctor || a.doctorName, a.specialty || a.doctorSpecialty, a.hospital || a.doctorHospital, a.date, a.time || a.slot, a.mode, a.fee || a.price, a.status]);
+                      downloadCsv('ZESTMED_Doctor_Appointments.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-teal-50 border border-teal-200 text-teal-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {doctorAppointments.length}
                   </div>
@@ -2730,6 +3364,18 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Booking ID', 'Patient Name', 'Phone', 'Physiotherapist', 'Degree', 'Rehabilitation Area', 'Date', 'Slot', 'Mode', 'Fee', 'Status'];
+                      const rows = physioAppointments.map((a) => [a.id || a.bookingId, a.patientName, a.patientPhone || a.phone, a.doctor || a.doctorName, a.doctorDegree, a.specialty || a.doctorSpecialty, a.date, a.time || a.slot, a.mode, a.fee || a.price, a.status]);
+                      downloadCsv('ZESTMED_Physiotherapy_Bookings.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-purple-50 border border-purple-200 text-purple-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {physioAppointments.length}
                   </div>
@@ -2862,6 +3508,18 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Booking ID', 'Patient Name', 'Phone', 'Surgery Package', 'Partner Hospital', 'Surgeon / Care Lead', 'Pre-Op Date', 'Slot', 'Cost', 'Insurance', 'Status'];
+                      const rows = surgeryBookings.map((a) => [a.id || a.bookingId, a.patientName, a.patientPhone || a.phone, a.title || a.surgeryName, a.hospital, a.careManager || a.doctor, a.date, a.time || a.slot, a.fee || a.price, a.symptoms, a.status]);
+                      downloadCsv('ZESTMED_Surgery_Bookings.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {surgeryBookings.length}
                   </div>
@@ -2987,6 +3645,18 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Booking ID', 'Patient Name', 'Phone', 'Package Name', 'Package Code', 'Address', 'Phlebotomist', 'Date', 'Time', 'Price', 'Status'];
+                      const rows = wellnessBookings.map((b) => [b.id || b.bookingId, b.patientName, b.patientPhone || b.phone, b.testName, b.testCode, b.collectionAddress, b.phlebotomist?.name, b.collectionDate || b.date, b.time, b.price, b.status]);
+                      downloadCsv('ZESTMED_Wellness_Packages.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {wellnessBookings.length}
                   </div>
@@ -3125,8 +3795,20 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2.5">
                   <button
                     type="button"
+                    onClick={() => {
+                      const headers = ['Medicine ID', 'Brand Name', 'Generic Composition', 'Category', 'Current Stock', 'Threshold', 'Price', 'Batch', 'Expiry'];
+                      const rows = adminMedicines.map((m) => [m.id, m.name, m.genericName, m.categoryName, m.stock, m.threshold || 50, m.price, m.batchNo || 'B-902', m.expiry]);
+                      downloadCsv('ZESTMED_Pharmacy_Inventory.csv', headers, rows);
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setIsUploadInventoryOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs cursor-pointer"
                   >
                     <UploadCloud className="w-4 h-4" />
                     <span>Upload Inventory (CSV)</span>
@@ -3134,11 +3816,41 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setActiveMenu('medicines-add')}
-                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New Medicine</span>
                   </button>
+                </div>
+              </div>
+
+              {/* Medicine Filter Controls */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={medicineSearchQuery}
+                    onChange={(e) => setMedicineSearchQuery(e.target.value)}
+                    placeholder="Search brand or salt composition..."
+                    className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#14B8A6]"
+                  />
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <span className="text-xs text-slate-500 font-semibold shrink-0">Category:</span>
+                  <select
+                    value={medicineFilterCategory}
+                    onChange={(e) => setMedicineFilterCategory(e.target.value)}
+                    className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+                  >
+                    <option value="all">All Categories ({adminMedicines.length})</option>
+                    <option value="General Medicines">General Medicines</option>
+                    <option value="Diabetes Care">Diabetes Care</option>
+                    <option value="Cardiac & BP">Cardiac & BP</option>
+                    <option value="Vitamins & Supplements">Vitamins & Supplements</option>
+                    <option value="Antibiotics">Antibiotics</option>
+                    <option value="Digestive Health">Digestive Health</option>
+                  </select>
                 </div>
               </div>
 
@@ -3157,7 +3869,19 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {adminMedicines.map((m) => (
+                      {adminMedicines
+                        .filter((m) => {
+                          if (medicineFilterCategory !== 'all' && m.categoryName !== medicineFilterCategory) return false;
+                          const q = (medicineSearchQuery || searchQuery).trim().toLowerCase();
+                          if (!q) return true;
+                          return (
+                            (m.name || '').toLowerCase().includes(q) ||
+                            (m.genericName || '').toLowerCase().includes(q) ||
+                            (m.categoryName || '').toLowerCase().includes(q) ||
+                            (m.batchNo || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((m) => (
                         <tr key={m.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
                           <td className="py-3 px-4 text-slate-600">{m.genericName}</td>
@@ -3176,13 +3900,21 @@ export default function AdminDashboardPage() {
                           <td className="py-3 px-4 text-right">
                             <button
                               type="button"
+                              onClick={() => setEditingMedicine(m)}
+                              className="px-2 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded-lg text-xs font-bold transition mr-1.5 cursor-pointer"
+                              title="Edit Medicine Details"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => {
                                 setAdminMedicines((prev) =>
                                   prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
                                 );
                                 addToast(`Restocked +100 units for ${m.name}`, 'success');
                               }}
-                              className="px-2.5 py-1 bg-teal-50 text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-bold transition mr-2"
+                              className="px-2.5 py-1 bg-teal-50 text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-bold transition mr-1.5 cursor-pointer"
                             >
                               +100 Stock
                             </button>
@@ -3192,7 +3924,8 @@ export default function AdminDashboardPage() {
                                 setAdminMedicines((prev) => prev.filter((it) => it.id !== m.id));
                                 addToast(`Removed ${m.name} from active inventory`, 'info');
                               }}
-                              className="p-1 text-slate-400 hover:text-rose-600 transition"
+                              className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                              title="Delete Item"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -3211,48 +3944,54 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {activeMenu === 'medicines-categories' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Layers className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Pharmaceutical Categories</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Manage inventory classifications, prescription enforcement & storage temperatures.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <Layers className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Pharmaceutical Categories</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage inventory classifications, prescription enforcement & storage temperatures.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddCategoryModalOpen(true)}
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Category</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  { name: 'General Medicines', count: 420, valuation: '₹4,85,000', icon: Pill },
-                  { name: 'Diabetes Care', count: 185, valuation: '₹3,20,000', icon: Activity },
-                  { name: 'Cardiac & BP', count: 210, valuation: '₹5,40,000', icon: ShieldCheck },
-                  { name: 'Vitamins & Supplements', count: 340, valuation: '₹2,90,000', icon: Package },
-                  { name: 'Antibiotics & Anti-Infectives', count: 120, valuation: '₹3,80,000', icon: FileCheck },
-                  { name: 'Diagnostic Devices', count: 45, valuation: '₹1,50,000', icon: FlaskConical }
-                ].map((c, i) => {
-                  const Icon = c.icon;
+                {medicineCategories.map((c, i) => {
+                  const Icon = c.icon || Pill;
                   return (
-                    <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3">
+                    <div key={c.id || i} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="text-sm font-bold text-slate-900">{c.name}</h3>
-                          <span className="text-xs text-slate-400 font-mono">{c.count} items in stock</span>
+                          <span className="text-xs text-slate-400 font-mono">{c.count || 0} items in stock</span>
                         </div>
                       </div>
                       <div className="flex justify-between text-xs bg-slate-50 p-2.5 rounded-xl">
                         <span className="text-slate-500">Inventory Valuation:</span>
-                        <strong className="text-slate-900 font-bold">{c.valuation}</strong>
+                        <strong className="text-slate-900 font-bold">{c.valuation || '₹1,50,000'}</strong>
                       </div>
                       <button
                         type="button"
                         onClick={() => {
+                          setMedicineFilterCategory(c.name);
                           setActiveMenu('medicines-all');
                           addToast(`Filtered inventory by ${c.name}`, 'info');
                         }}
-                        className="w-full py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 rounded-xl text-xs font-bold transition text-center"
+                        className="w-full py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 rounded-xl text-xs font-bold transition text-center cursor-pointer"
                       >
                         View Category Items
                       </button>
@@ -3404,11 +4143,32 @@ export default function AdminDashboardPage() {
                     Manage 56+ diagnostic tests, home collection parameters, and NABL pricing across Assam.
                   </p>
                 </div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Test ID', 'Test Name', 'Sample Type', 'Category', 'Turnaround', 'Fasting Required', 'Price (INR)'];
+                      const rows = testsList.map((t) => [
+                        t.id,
+                        t.name,
+                        t.sampleType,
+                        t.categoryName || t.category || '',
+                        t.turnaroundTime || '24 Hours',
+                        t.fastingRequired ? 'Yes' : 'No',
+                        t.price
+                      ]);
+                      downloadCsv('ZESTMED_Diagnostic_Tests_Catalog.csv', headers, rows);
+                      addToast('Exported diagnostic test catalog to CSV', 'success');
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export Tests CSV</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => setIsUploadPackagesOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs cursor-pointer"
                   >
                     <UploadCloud className="w-4 h-4" />
                     <span>Upload Packages (CSV)</span>
@@ -3416,7 +4176,7 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddTestModalOpen(true)}
-                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
+                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add New Test</span>
@@ -3455,13 +4215,24 @@ export default function AdminDashboardPage() {
                             )}
                           </td>
                           <td className="py-3 px-4 font-black text-slate-900">₹{t.price}</td>
-                          <td className="py-3 px-4 text-right">
+                          <td className="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
                             <button
                               type="button"
-                              onClick={() => addToast(`Price configuration for ${t.name} updated.`, 'success')}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-semibold transition"
+                              onClick={() => setEditingTest(t)}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-[#14B8A6] hover:text-white rounded-lg text-xs font-semibold transition cursor-pointer"
                             >
-                              Edit Price
+                              Edit Test
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTestsList((prev) => prev.filter((item) => item.id !== t.id));
+                                addToast(`Test "${t.name}" removed from catalog`, 'info');
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition inline-flex items-center cursor-pointer"
+                              title="Delete Test"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </td>
                         </tr>
@@ -3489,6 +4260,30 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Booking ID', 'Patient Name', 'Phone', 'Test Name', 'Collection Type', 'Phlebotomist', 'Specimen', 'Slot', 'Amount', 'Status'];
+                      const rows = diagnosticLabBookings.map((b) => [
+                        b.id || b.bookingId,
+                        b.patientName || '',
+                        b.patientPhone || '',
+                        b.testName || '',
+                        b.collectionType || 'Home Collection',
+                        b.phlebotomist?.name || 'Unassigned',
+                        b.sampleType || 'Blood Specimen',
+                        b.slot || '',
+                        b.amount || '',
+                        b.status || ''
+                      ]);
+                      downloadCsv('ZESTMED_Lab_Bookings.csv', headers, rows);
+                      addToast('Exported lab bookings to CSV', 'success');
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-teal-50 border border-teal-200 text-teal-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {diagnosticLabBookings.length}
                   </div>
@@ -3632,6 +4427,29 @@ export default function AdminDashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Order ID', 'Customer', 'Phone', 'Delivery Address', 'Items', 'Payment Method', 'Total (INR)', 'Status', 'Date'];
+                      const rows = medicineOrders.map((o) => [
+                        o.id || o.orderId,
+                        o.customer || o.patientName || '',
+                        o.phone || '',
+                        o.deliveryAddress || '',
+                        o.items || '',
+                        o.paymentMethod || '',
+                        o.total || '',
+                        o.status || '',
+                        o.date || ''
+                      ]);
+                      downloadCsv('ZESTMED_Customer_Orders.csv', headers, rows);
+                      addToast('Exported customer pharmacy orders to CSV', 'success');
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
                   <div className="bg-indigo-50 border border-indigo-200 text-indigo-800 px-3 py-1.5 rounded-xl font-bold text-xs">
                     Total: {medicineOrders.length}
                   </div>
@@ -3754,14 +4572,41 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {activeMenu === 'prescriptions' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <FileText className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Chief Pharmacist Prescription Verification</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Mandatory regulatory review of digital doctor prescriptions before pharmacy fulfillment.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <FileText className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Chief Pharmacist Prescription Verification</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Mandatory regulatory review of digital doctor prescriptions before pharmacy fulfillment.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ['Prescription ID', 'Patient', 'Doctor', 'Date', 'Prescribed Medicines', 'Status'];
+                      const rows = prescriptionsList.map((rx) => [
+                        rx.id,
+                        rx.patient,
+                        rx.doctor,
+                        rx.date,
+                        rx.items,
+                        rx.status
+                      ]);
+                      downloadCsv('ZESTMED_Prescriptions_Queue.csv', headers, rows);
+                      addToast('Exported prescriptions queue to CSV', 'success');
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export CSV</span>
+                  </button>
+                  <div className="bg-teal-50 border border-teal-200 text-teal-800 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    Pending: {prescriptionsList.filter(p => p.status === 'Pending' || p.status === 'In Review').length}
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -3773,7 +4618,7 @@ export default function AdminDashboardPage() {
                         <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient}</h3>
                       </div>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                        rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : rx.status === 'Rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
                       }`}>
                         {rx.status}
                       </span>
@@ -3788,26 +4633,33 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center gap-2 pt-1">
                       <button
                         type="button"
-                        onClick={() => {
-                          setPrescriptionsList((prev) =>
-                            prev.map((it) => (it.id === rx.id ? { ...it, status: 'Approved' } : it))
-                          );
-                          addToast(`Prescription ${rx.id} approved! Order created for ${rx.patient}.`, 'success');
-                        }}
-                        className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs"
+                        onClick={() => setAuditingRx(rx)}
+                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition cursor-pointer"
+                        title="Audit prescription and verify medications"
                       >
-                        Approve & Dispense
+                        Audit / View
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPrescriptionsList((prev) => prev.filter((it) => it.id !== rx.id));
-                          addToast(`Prescription ${rx.id} rejected with notice to patient.`, 'info');
-                        }}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl text-xs font-semibold transition"
-                      >
-                        Reject
-                      </button>
+                      {rx.status !== 'Approved' && (
+                        <button
+                          type="button"
+                          onClick={() => handleApprovePrescription(rx.id)}
+                          className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs cursor-pointer"
+                        >
+                          Approve & Dispense
+                        </button>
+                      )}
+                      {rx.status !== 'Rejected' && rx.status !== 'Approved' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPrescriptionsList((prev) => prev.map((it) => (it.id === rx.id ? { ...it, status: 'Rejected' } : it)));
+                            addToast(`Prescription ${rx.id} marked as rejected.`, 'info');
+                          }}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl text-xs font-semibold transition cursor-pointer"
+                        >
+                          Reject
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -3818,89 +4670,123 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {/* INVENTORY WAREHOUSE MANAGER                              */}
           {/* ======================================================== */}
-          {activeMenu === 'inventory' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Layers className="w-6 h-6 text-[#14B8A6]" />
-                    <span>Central Warehouse Stock & Reorder Levels</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Automated low-stock threshold monitoring for Assam regional hubs.
-                  </p>
+          {activeMenu === 'inventory' && (() => {
+            const lowStockItems = adminMedicines.filter((m) => (m.stock || 0) < (m.threshold || 50));
+            return (
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                      <Layers className="w-6 h-6 text-[#14B8A6]" />
+                      <span>Central Warehouse Stock & Reorder Levels</span>
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Automated low-stock threshold monitoring for Assam regional hubs.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const headers = ['Medicine Name', 'Rack Location', 'Current Stock', 'Safety Threshold', 'Batch', 'Expiry Date'];
+                        const rows = adminMedicines.map((m) => [
+                          m.name,
+                          m.rackLocation || 'WH-GUW-01',
+                          m.stock,
+                          m.threshold || 50,
+                          m.batch || 'BT-2026',
+                          m.expiry || 'Dec 2027'
+                        ]);
+                        downloadCsv('ZESTMED_Warehouse_Inventory.csv', headers, rows);
+                        addToast('Exported warehouse inventory to CSV', 'success');
+                      }}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Export Stock CSV</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsUploadInventoryOpen(true)}
+                      className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs cursor-pointer"
+                    >
+                      <UploadCloud className="w-4 h-4" />
+                      <span>Upload Inventory (CSV)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
+                        addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
+                      }}
+                      className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto cursor-pointer"
+                    >
+                      Bulk Restock All
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setIsUploadInventoryOpen(true)}
-                    className="bg-teal-50 hover:bg-teal-100 text-[#008F83] border border-teal-200/80 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
-                  >
-                    <UploadCloud className="w-4 h-4" />
-                    <span>Upload Inventory (CSV)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdminMedicines((prev) => prev.map((m) => ({ ...m, stock: m.stock + 200 })));
-                      addToast('Bulk Restock purchase order issued to manufacturers (+200 all items)!', 'success');
-                    }}
-                    className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition shrink-0 self-start sm:self-auto"
-                  >
-                    Bulk Restock All
-                  </button>
-                </div>
-              </div>
 
-              {/* Alert box */}
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-amber-800">
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
-                  <span><strong>Stock Warning:</strong> 3 medicines have dropped below safe threshold (Cetirizine 10mg, Metformin 500mg, Amoxicillin 250mg).</span>
-                </div>
-              </div>
+                {/* Dynamic Alert box */}
+                {lowStockItems.length > 0 ? (
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-amber-800">
+                    <div className="flex items-center gap-2.5">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+                      <span>
+                        <strong>Stock Warning:</strong> {lowStockItems.length} medicine{lowStockItems.length > 1 ? 's' : ''} dropped below safe threshold: {lowStockItems.slice(0, 3).map(m => `${m.name} (${m.stock} units)`).join(', ')}{lowStockItems.length > 3 ? `, +${lowStockItems.length - 3} more` : ''}.
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between gap-3 text-xs text-emerald-800">
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <span><strong>Stock Optimal:</strong> All pharmaceuticals and diagnostics are operating safely above minimum reserve thresholds.</span>
+                    </div>
+                  </div>
+                )}
 
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
-                      <tr>
-                        <th className="py-3 px-4 font-bold">Item Name</th>
-                        <th className="py-3 px-4 font-bold">Rack Location</th>
-                        <th className="py-3 px-4 font-bold text-center">Current Stock</th>
-                        <th className="py-3 px-4 font-bold text-center">Safety Threshold</th>
-                        <th className="py-3 px-4 font-bold text-right">Quick Restock</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {adminMedicines.map((m) => (
-                        <tr key={m.id} className="hover:bg-slate-50/50 transition">
-                          <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
-                          <td className="py-3 px-4 font-mono text-slate-500">{m.rackLocation || 'WH-GUW-01'}</td>
-                          <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">{m.stock}</td>
-                          <td className="py-3 px-4 text-center font-mono text-slate-500">{m.threshold || 50}</td>
-                          <td className="py-3 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAdminMedicines((prev) =>
-                                  prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
-                                );
-                                addToast(`+100 units added to ${m.name}`, 'success');
-                              }}
-                              className="px-3 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs"
-                            >
-                              Restock +100
-                            </button>
-                          </td>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                        <tr>
+                          <th className="py-3 px-4 font-bold">Item Name</th>
+                          <th className="py-3 px-4 font-bold">Rack Location</th>
+                          <th className="py-3 px-4 font-bold text-center">Current Stock</th>
+                          <th className="py-3 px-4 font-bold text-center">Safety Threshold</th>
+                          <th className="py-3 px-4 font-bold text-right">Quick Restock</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {adminMedicines.map((m) => (
+                          <tr key={m.id} className="hover:bg-slate-50/50 transition">
+                            <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
+                            <td className="py-3 px-4 font-mono text-slate-500">{m.rackLocation || 'WH-GUW-01'}</td>
+                            <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">{m.stock}</td>
+                            <td className="py-3 px-4 text-center font-mono text-slate-500">{m.threshold || 50}</td>
+                            <td className="py-3 px-4 text-right">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAdminMedicines((prev) =>
+                                    prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
+                                  );
+                                  addToast(`+100 units added to ${m.name}`, 'success');
+                                }}
+                                className="px-3 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
+                              >
+                                Restock +100
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ======================================================== */}
           {/* PAYMENTS & RAZORPAY GATEWAY LEDGER                       */}
@@ -3941,8 +4827,21 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => addToast('Downloading GST audited financial statement CSV...', 'info')}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+                    onClick={() => {
+                      const headers = ['Transaction ID', 'Reference', 'Customer', 'Payment Mode', 'Date & Time', 'Amount (INR)', 'Status'];
+                      const rows = paymentsList.map((tx) => [
+                        tx.id,
+                        tx.ref,
+                        tx.customer,
+                        tx.method,
+                        tx.date,
+                        tx.amount,
+                        tx.status
+                      ]);
+                      downloadCsv('ZESTMED_Financial_Ledger.csv', headers, rows);
+                      addToast('Exported GST financial ledger to CSV', 'success');
+                    }}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
                   >
                     <Download className="w-4 h-4" />
                     <span>Export Statement</span>
@@ -4114,14 +5013,36 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {activeMenu === 'analytics' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <BarChart2 className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Executive Clinical & Revenue Analytics</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Quarterly performance review for Guwahati Central Diagnostics & Polyclinic Hub operations.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <BarChart2 className="w-6 h-6 text-[#14B8A6]" />
+                    <span>Executive Clinical & Revenue Analytics</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Quarterly performance review for Guwahati Central Diagnostics & Polyclinic Hub operations.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const headers = ['Executive Metric', 'Value', 'Growth / Status', 'Region / Scope'];
+                    const rows = [
+                      ['Average Order Value', '₹742.50', '+14.8% vs last month', 'Guwahati Central'],
+                      ['Diagnostic Fulfillment Rate', '99.2%', 'Cold chain compliance 100%', 'Assam Hubs'],
+                      ['Active Assam Pin Codes', '142', '8 Dedicated Hubs Online', 'Assam State'],
+                      ['Total Registered Patients', patientsList.length.toString(), 'Active verified accounts', 'All Regions'],
+                      ['Total Diagnostic Bookings', diagnosticLabBookings.length.toString(), 'Processed', 'All Labs'],
+                      ['Total Medicine Orders', medicineOrders.length.toString(), 'Fulfilled / In Transit', 'Guwahati Central Pharmacy']
+                    ];
+                    downloadCsv('ZESTMED_Executive_Analytics.csv', headers, rows);
+                    addToast('Executive Analytics summary exported to CSV', 'success');
+                  }}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export Analytics CSV</span>
+                </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -4161,7 +5082,10 @@ export default function AdminDashboardPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addToast('All system notifications marked as resolved.', 'success')}
+                  onClick={() => {
+                    setAdminNotifications((prev) => prev.map((n) => ({ ...n, read: true, status: 'Resolved' })));
+                    addToast('All system notifications marked as resolved.', 'success');
+                  }}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
                 >
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -4201,7 +5125,8 @@ export default function AdminDashboardPage() {
                     <label className="block text-slate-500 font-bold mb-1">Company Legal Entity</label>
                     <input
                       type="text"
-                      defaultValue="ZESTMED Health Private Limited"
+                      value={platformSettings.companyName || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, companyName: e.target.value }))}
                       className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium"
                     />
                   </div>
@@ -4209,7 +5134,8 @@ export default function AdminDashboardPage() {
                     <label className="block text-slate-500 font-bold mb-1">Assam GSTIN</label>
                     <input
                       type="text"
-                      defaultValue="18AAACZ9901M1ZT"
+                      value={platformSettings.gstin || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, gstin: e.target.value }))}
                       className="w-full px-3 py-2 border border-slate-200 rounded-xl font-mono text-slate-800"
                     />
                   </div>
@@ -4217,7 +5143,8 @@ export default function AdminDashboardPage() {
                     <label className="block text-slate-500 font-bold mb-1">Drug License Numbers</label>
                     <input
                       type="text"
-                      defaultValue="AS-KAM-DL-88421 / 88422"
+                      value={platformSettings.drugLicense || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, drugLicense: e.target.value }))}
                       className="w-full px-3 py-2 border border-slate-200 rounded-xl font-mono text-slate-800"
                     />
                   </div>
@@ -4225,7 +5152,26 @@ export default function AdminDashboardPage() {
                     <label className="block text-slate-500 font-bold mb-1">Central Laboratory Hub</label>
                     <input
                       type="text"
-                      defaultValue="GS Road, Dispur, Guwahati - 781005"
+                      value={platformSettings.centralLabHub || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, centralLabHub: e.target.value }))}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Support Phone Helpline</label>
+                    <input
+                      type="text"
+                      value={platformSettings.supportPhone || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, supportPhone: e.target.value }))}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl font-mono text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold mb-1">Support Email</label>
+                    <input
+                      type="text"
+                      value={platformSettings.supportEmail || ''}
+                      onChange={(e) => setPlatformSettings((prev) => ({ ...prev, supportEmail: e.target.value }))}
                       className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800"
                     />
                   </div>
@@ -4234,8 +5180,15 @@ export default function AdminDashboardPage() {
                 <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => addToast('Platform and regional operational settings saved!', 'success')}
-                    className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
+                    onClick={() => {
+                      try {
+                        localStorage.setItem('zestmed_platform_settings', JSON.stringify(platformSettings));
+                        addToast('Platform and regional operational settings saved successfully!', 'success');
+                      } catch (_) {
+                        addToast('Failed to save settings', 'error');
+                      }
+                    }}
+                    className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition cursor-pointer"
                   >
                     Save Platform Settings
                   </button>
@@ -4383,6 +5336,87 @@ export default function AdminDashboardPage() {
           isOpen={!!viewingReportBooking}
           onClose={() => setViewingReportBooking(null)}
           booking={viewingReportBooking}
+        />
+      )}
+
+      {/* Edit Diagnostic Test Modal */}
+      {editingTest && (
+        <EditDiagnosticTestModal
+          isOpen={!!editingTest}
+          onClose={() => setEditingTest(null)}
+          test={editingTest}
+          onSaveTest={(updated) => {
+            setTestsList((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+            setEditingTest(null);
+          }}
+        />
+      )}
+
+      {/* Add Administrator Modal */}
+      {isAddAdminModalOpen && (
+        <AddAdminModal
+          isOpen={isAddAdminModalOpen}
+          onClose={() => setIsAddAdminModalOpen(false)}
+          onAddAdmin={(newAdmin) => {
+            setAdminsList((prev) => [newAdmin, ...prev]);
+            setIsAddAdminModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* Edit Administrator Modal */}
+      {editingAdmin && (
+        <EditAdminModal
+          isOpen={!!editingAdmin}
+          onClose={() => setEditingAdmin(null)}
+          admin={editingAdmin}
+          onSaveAdmin={(updated) => {
+            setAdminsList((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+            setEditingAdmin(null);
+          }}
+        />
+      )}
+
+      {/* Edit Pharmacy Medicine Modal */}
+      {editingMedicine && (
+        <EditMedicineModal
+          isOpen={!!editingMedicine}
+          onClose={() => setEditingMedicine(null)}
+          medicine={editingMedicine}
+          onSaveMedicine={(updated) => {
+            setAdminMedicines((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
+            setEditingMedicine(null);
+          }}
+        />
+      )}
+
+      {/* Add Medicine Category Modal */}
+      {isAddCategoryModalOpen && (
+        <AddCategoryModal
+          isOpen={isAddCategoryModalOpen}
+          onClose={() => setIsAddCategoryModalOpen(false)}
+          onAddCategory={(newCat) => {
+            setMedicineCategories((prev) => [...prev, newCat]);
+            setIsAddCategoryModalOpen(false);
+          }}
+        />
+      )}
+
+      {/* Chief Pharmacist Prescription Audit Modal */}
+      {auditingRx && (
+        <AuditPrescriptionModal
+          isOpen={!!auditingRx}
+          onClose={() => setAuditingRx(null)}
+          rx={auditingRx}
+          onApprove={(rxId, remarks) => {
+            handleApprovePrescription(rxId, remarks);
+            setAuditingRx(null);
+          }}
+          onReject={(rxId, reason) => {
+            setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Rejected', rejectReason: reason } : p)));
+            addToast(`Prescription ${rxId} rejected: ${reason}`, 'info');
+            setAuditingRx(null);
+          }}
         />
       )}
 
