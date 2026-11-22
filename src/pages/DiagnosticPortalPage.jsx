@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import DiagnosticBookingModal from '../components/DiagnosticBookingModal';
+import TestDetailModal from '../components/TestDetailModal';
 import { 
   Search, ShieldCheck, Clock, Award, Home,
   ChevronDown, ShoppingCart, Check, SlidersHorizontal,
@@ -20,9 +21,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 20,
     price: 399,
     mrp: 499,
-    description: 'Checks overall health and detects infections, anemia, etc.',
+    description: 'A Complete Blood Count (CBC) is a common blood test that provides important information about your overall health by measuring different components of your blood.',
     image: '/lab-tests/cbc.png',
-    popularRank: 1
+    images: ['/lab-tests/cbc-modal-main.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 1,
+    rating: 4.8,
+    reviewsCount: '2,354',
+    parameters: [
+      'Hemoglobin (Hb)',
+      'Total WBC Count',
+      'RBC Count',
+      'Platelet Count',
+      'Hematocrit (PCV)',
+      '& 15+ other parameters'
+    ],
+    purpose: [
+      'Detects anemia and infections',
+      'Checks overall blood health',
+      'Helps in early diagnosis of many conditions',
+      'Monitors treatment progress'
+    ],
+    preparation: [
+      'No fasting required',
+      'Maintain normal diet and hydration'
+    ],
+    sampleType: 'Blood (2–3 ml)',
+    reportTime: '6–12 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-thyroid',
@@ -32,9 +58,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 30,
     price: 699,
     mrp: 999,
-    description: 'Evaluates thyroid function and hormone levels.',
+    description: 'Evaluates thyroid function and hormone levels to diagnose and manage hyperthyroidism, hypothyroidism, and metabolic imbalances.',
     image: '/lab-tests/thyroid.png',
-    popularRank: 2
+    images: ['/lab-tests/thyroid.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 2,
+    rating: 4.7,
+    reviewsCount: '1,890',
+    parameters: [
+      'Total Triiodothyronine (T3)',
+      'Total Thyroxine (T4)',
+      'Thyroid Stimulating Hormone (TSH)',
+      'Free T3 & Free T4 Ratio',
+      'Thyroid Auto-Antibody Screen',
+      '& 3 hormone parameters'
+    ],
+    purpose: [
+      'Diagnoses hypothyroidism & hyperthyroidism',
+      'Monitors thyroid replacement therapy',
+      'Investigates unexplained weight or fatigue changes',
+      'Screens for thyroid gland disorders'
+    ],
+    preparation: [
+      '10–12 hours overnight fasting recommended',
+      'Take thyroid medications after blood collection'
+    ],
+    sampleType: 'Blood (3 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-lft',
@@ -44,9 +95,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 23,
     price: 699,
     mrp: 1299,
-    description: 'Assesses liver health and detects liver disorders.',
+    description: 'Assesses liver health, enzymes, and proteins to detect early liver disorders, fatty liver, hepatitis, or alcoholic liver disease.',
     image: '/lab-tests/liver.png',
-    popularRank: 3
+    images: ['/lab-tests/liver.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 3,
+    rating: 4.6,
+    reviewsCount: '1,420',
+    parameters: [
+      'SGOT / AST & SGPT / ALT',
+      'Total Bilirubin (Direct & Indirect)',
+      'Alkaline Phosphatase (ALP)',
+      'Total Protein & Albumin',
+      'Globulin & A/G Ratio',
+      '& 11 liver parameters'
+    ],
+    purpose: [
+      'Detects liver inflammation & hepatitis',
+      'Monitors liver disease treatment progress',
+      'Assesses damage from alcohol or medications',
+      'Evaluates jaundice & unexplained nausea'
+    ],
+    preparation: [
+      '8–10 hours overnight fasting preferred',
+      'Avoid alcohol consumption 24 hours prior to test'
+    ],
+    sampleType: 'Blood (3 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-kft',
@@ -56,9 +132,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 25,
     price: 899,
     mrp: 1299,
-    description: 'Checks kidney health and filtration efficiency.',
+    description: 'Checks kidney filtration efficiency, urea, creatinine, and electrolytes to evaluate kidney function and detect renal disorders.',
     image: '/lab-tests/kidney.png',
-    popularRank: 4
+    images: ['/lab-tests/kidney.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 4,
+    rating: 4.8,
+    reviewsCount: '980',
+    parameters: [
+      'Serum Creatinine',
+      'Blood Urea Nitrogen (BUN)',
+      'Uric Acid',
+      'Electrolytes (Sodium, Potassium, Chloride)',
+      'Estimated GFR (Glomerular Filtration Rate)',
+      '& 8 renal parameters'
+    ],
+    purpose: [
+      'Assesses glomerular filtration efficiency',
+      'Monitors hypertension & diabetic nephropathy',
+      'Detects early stages of chronic kidney disease',
+      'Checks fluid & electrolyte balance'
+    ],
+    preparation: [
+      'No strict fasting required',
+      'Drink adequate plain water before the sample'
+    ],
+    sampleType: 'Blood (3 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-lipid',
@@ -68,9 +169,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 20,
     price: 799,
     mrp: 999,
-    description: 'Measures cholesterol and fat levels in the blood.',
+    description: 'Measures complete cholesterol and fat levels in the blood to assess cardiovascular wellness and evaluate risk of heart attack or stroke.',
     image: '/lab-tests/lipid.png',
-    popularRank: 5
+    images: ['/lab-tests/lipid.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 5,
+    rating: 4.7,
+    reviewsCount: '1,560',
+    parameters: [
+      'Total Cholesterol',
+      'HDL Good Cholesterol',
+      'LDL Bad Cholesterol',
+      'VLDL Cholesterol',
+      'Triglycerides',
+      'Cholesterol / HDL Ratio'
+    ],
+    purpose: [
+      'Screens for cardiovascular disease risk',
+      'Guides statin and cholesterol-lowering therapy',
+      'Monitors atherosclerosis plaque buildup',
+      'Assesses heart health alongside diet and lifestyle'
+    ],
+    preparation: [
+      '10–12 hours strict overnight fasting required',
+      'Only plain water is allowed during the fast'
+    ],
+    sampleType: 'Blood (3 ml)',
+    reportTime: '6–12 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-diabetes',
@@ -80,9 +206,34 @@ const LAB_TESTS_DATA = [
     discountPercent: 24,
     price: 1299,
     mrp: 1699,
-    description: 'Helps in the diagnosis and monitoring of diabetes.',
+    description: 'Comprehensive diabetes screening panel measuring Fasting Blood Sugar, Post-Prandial Glucose, and HbA1c 3-month average.',
     image: '/lab-tests/diabetes.png',
-    popularRank: 6
+    images: ['/lab-tests/diabetes.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 6,
+    rating: 4.9,
+    reviewsCount: '2,810',
+    parameters: [
+      'HbA1c (Glycated Hemoglobin)',
+      'Average Blood Glucose (eAG)',
+      'Fasting Blood Sugar (FBS)',
+      'Post Prandial Blood Sugar (PPBS)',
+      'Urine Glucose & Ketones',
+      '& 6 diabetic parameters'
+    ],
+    purpose: [
+      'Diagnoses Type 1, Type 2, and Prediabetes',
+      'Evaluates glycemic control over past 90 days',
+      'Monitors effectiveness of insulin and medications',
+      'Screens for diabetic kidney complications'
+    ],
+    preparation: [
+      '8–10 hours fasting for morning FBS sample',
+      'Post-prandial blood draw exactly 2 hours after meal'
+    ],
+    sampleType: 'Blood (4 ml)',
+    reportTime: '6–12 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-vitamin-d',
@@ -92,9 +243,33 @@ const LAB_TESTS_DATA = [
     discountPercent: 25,
     price: 899,
     mrp: 1199,
-    description: 'Measures vitamin D levels in the body.',
+    description: 'Measures 25-Hydroxy Vitamin D levels to evaluate bone health, calcium absorption, immune strength, and detect deficiency.',
     image: '/lab-tests/vitamin-d.png',
-    popularRank: 7
+    images: ['/lab-tests/vitamin-d.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 7,
+    rating: 4.8,
+    reviewsCount: '1,240',
+    parameters: [
+      '25-OH Vitamin D Total',
+      'D2 (Ergocalciferol)',
+      'D3 (Cholecalciferol)',
+      'Bone Mineral Metabolism Index',
+      'Deficiency Range Grading'
+    ],
+    purpose: [
+      'Detects Vitamin D deficiency & rickets',
+      'Assesses bone mineral density & osteoporosis risk',
+      'Investigates chronic body fatigue and muscle pain',
+      'Monitors Vitamin D supplement dosage'
+    ],
+    preparation: [
+      'No fasting required',
+      'Can be performed at any time of day'
+    ],
+    sampleType: 'Blood (2 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-vitamin-b12',
@@ -104,9 +279,32 @@ const LAB_TESTS_DATA = [
     discountPercent: 20,
     price: 799,
     mrp: 999,
-    description: 'Checks vitamin B12 levels for nerve and blood health.',
+    description: 'Checks Vitamin B12 levels essential for healthy nerve cells, brain function, energy metabolism, and red blood cell formation.',
     image: '/lab-tests/vitamin-b12.png',
-    popularRank: 8
+    images: ['/lab-tests/vitamin-b12.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 8,
+    rating: 4.7,
+    reviewsCount: '1,120',
+    parameters: [
+      'Cyanocobalamin (Vitamin B12)',
+      'Serum Folate / Folic Acid Correlation',
+      'Macrocytic Anemia Index',
+      'Homocysteine Metabolic Marker'
+    ],
+    purpose: [
+      'Diagnoses pernicious and megaloblastic anemia',
+      'Investigates tingling, numbness, and neuropathy',
+      'Screens vegetarians and vegans at risk',
+      'Evaluates unexplained memory fog or weakness'
+    ],
+    preparation: [
+      '6–8 hours fasting recommended',
+      'Avoid high-dose Vitamin B supplements 24h prior'
+    ],
+    sampleType: 'Blood (2 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-iron',
@@ -116,9 +314,33 @@ const LAB_TESTS_DATA = [
     discountPercent: 20,
     price: 1199,
     mrp: 1499,
-    description: 'Evaluates iron levels and detects iron deficiency.',
+    description: 'Evaluates total iron reserves, transferrin, and iron-binding capacity to detect iron deficiency anemia or iron overload.',
     image: '/lab-tests/iron.png',
-    popularRank: 9
+    images: ['/lab-tests/iron.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 9,
+    rating: 4.7,
+    reviewsCount: '870',
+    parameters: [
+      'Serum Iron',
+      'Total Iron Binding Capacity (TIBC)',
+      'UIBC (Unsaturated Iron Binding Capacity)',
+      'Transferrin Saturation Percentage',
+      'Serum Ferritin Storage'
+    ],
+    purpose: [
+      'Accurately diagnoses iron deficiency anemia',
+      'Screens for hemochromatosis (iron overload)',
+      'Evaluates persistent lethargy, dizziness, and pallor',
+      'Monitors response to oral or IV iron therapy'
+    ],
+    preparation: [
+      '8–10 hours overnight fasting required',
+      'Morning blood collection preferred for accurate iron levels'
+    ],
+    sampleType: 'Blood (3 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-cardiac',
@@ -128,9 +350,33 @@ const LAB_TESTS_DATA = [
     discountPercent: 20,
     price: 1999,
     mrp: 2499,
-    description: 'Assesses heart health and risk of heart disease.',
+    description: 'Assesses cardiovascular health, vascular inflammation, and coronary disease risk through advanced lipid markers and hs-CRP.',
     image: '/lab-tests/cardiac.png',
-    popularRank: 10
+    images: ['/lab-tests/cardiac.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 10,
+    rating: 4.9,
+    reviewsCount: '950',
+    parameters: [
+      'High-Sensitivity C-Reactive Protein (hs-CRP)',
+      'Apolipoprotein A1 & Apolipoprotein B',
+      'Lipoprotein (a)',
+      'Comprehensive Lipid Profile (6 Parameters)',
+      'Apo B / Apo A1 Cardiac Risk Ratio'
+    ],
+    purpose: [
+      'Assesses personal risk of coronary artery disease',
+      'Identifies silent arterial vascular inflammation',
+      'Evaluates individuals with family history of cardiac events',
+      'Assists cardiologists in preventive therapy'
+    ],
+    preparation: [
+      '10–12 hours strict fasting required',
+      'Rest quietly 10 minutes prior to blood collection'
+    ],
+    sampleType: 'Blood (4 ml)',
+    reportTime: '12–24 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-hba1c',
@@ -140,9 +386,32 @@ const LAB_TESTS_DATA = [
     discountPercent: 23,
     price: 999,
     mrp: 1299,
-    description: 'Gives average blood sugar levels over last 2–3 months.',
+    description: 'Gold-standard blood test that provides an accurate average of blood sugar levels over the past 2 to 3 months.',
     image: '/lab-tests/hba1c.png',
-    popularRank: 11
+    images: ['/lab-tests/hba1c.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 11,
+    rating: 4.8,
+    reviewsCount: '1,630',
+    parameters: [
+      'HbA1c (% of Total Hemoglobin)',
+      'Estimated Average Glucose (eAG in mg/dL)',
+      'HPLC Gold-Standard Methodology',
+      'NGSP & IFCC Standardized Values'
+    ],
+    purpose: [
+      'Delivers reliable 3-month blood sugar control index',
+      'Screens for prediabetes and early diabetes onset',
+      'Verifies long-term treatment and diet success',
+      'Predicts risk of microvascular diabetic complications'
+    ],
+    preparation: [
+      'No fasting required',
+      'Can be taken anytime of day without dietary changes'
+    ],
+    sampleType: 'Blood (2 ml EDTA)',
+    reportTime: '6–12 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   },
   {
     id: 'test-urine',
@@ -152,9 +421,32 @@ const LAB_TESTS_DATA = [
     discountPercent: 22,
     price: 349,
     mrp: 449,
-    description: 'Checks for infections, kidney issues, and other health problems.',
+    description: 'Checks for urinary infections, kidney filtration issues, crystal formation, and other metabolic abnormalities.',
     image: '/lab-tests/urine.png',
-    popularRank: 12
+    images: ['/lab-tests/urine.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
+    popularRank: 12,
+    rating: 4.6,
+    reviewsCount: '1,310',
+    parameters: [
+      'Physical Exam (Color, Appearance, Sp. Gravity)',
+      'Chemical Exam (pH, Protein, Sugar, Ketone, Bilirubin)',
+      'Microscopic Exam (Pus Cells, RBCs, Epithelial Cells)',
+      'Casts, Crystals & Bacteria Screening'
+    ],
+    purpose: [
+      'Screens for urinary tract infections (UTI)',
+      'Detects early kidney and metabolic disorders',
+      'Investigates hematuria (blood in urine)',
+      'Standard pre-operative and wellness health check'
+    ],
+    preparation: [
+      'First-morning mid-stream clean-catch urine preferred',
+      'Sterile collection container provided by phlebotomist'
+    ],
+    sampleType: 'Urine (20–30 ml in sterile cup)',
+    reportTime: '6–12 Hours',
+    available: 'Mon – Sun',
+    sampleCollection: 'Home / Lab Visit'
   }
 ];
 
@@ -189,6 +481,7 @@ export default function DiagnosticPortalPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [priceMax, setPriceMax] = useState(5000);
   const [sortBy, setSortBy] = useState('Popularity');
+  const [selectedTestDetail, setSelectedTestDetail] = useState(null);
   const [bookingTestItem, setBookingTestItem] = useState(null);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
 
@@ -248,20 +541,8 @@ export default function DiagnosticPortalPage() {
     }, 'diagnostic');
   };
 
-  const handleBookTest = (test) => {
-    if (!user) {
-      enforceAuth({
-        user,
-        navigate,
-        location,
-        openAuth,
-        toastMessage: 'Please login to book a diagnostic lab test',
-        pendingAction: { type: 'book_test', test },
-        addToast
-      });
-      return;
-    }
-    setBookingTestItem(test);
+  const handleCardClick = (test) => {
+    setSelectedTestDetail(test);
   };
 
   const filteredTests = useMemo(() => {
@@ -620,13 +901,13 @@ export default function DiagnosticPortalPage() {
                   return (
                     <div
                       key={test.id}
-                      className="bg-white rounded-2xl border border-slate-200/90 p-3 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all duration-200 group"
+                      onClick={() => handleCardClick(test)}
+                      className="bg-white rounded-2xl border border-slate-200/90 p-3 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all duration-200 group cursor-pointer"
                     >
                       <div>
                         {/* Image Showcase Box */}
                         <div 
-                          onClick={() => handleBookTest(test)}
-                          className="w-full h-28 sm:h-32 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] flex items-center justify-center p-2 cursor-pointer overflow-hidden"
+                          className="w-full h-28 sm:h-32 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] flex items-center justify-center p-2 overflow-hidden"
                         >
                           <img
                             src={test.image}
@@ -638,9 +919,8 @@ export default function DiagnosticPortalPage() {
 
                         {/* Title */}
                         <h3
-                          onClick={() => handleBookTest(test)}
                           title={test.name}
-                          className="text-xs sm:text-[13px] font-bold text-[#0B1E3F] leading-snug line-clamp-2 min-h-[36px] mt-2.5 cursor-pointer hover:text-[#007A64] transition-colors"
+                          className="text-xs sm:text-[13px] font-bold text-[#0B1E3F] leading-snug line-clamp-2 min-h-[36px] mt-2.5 hover:text-[#007A64] transition-colors"
                         >
                           {test.name}
                         </h3>
@@ -686,6 +966,18 @@ export default function DiagnosticPortalPage() {
 
         </div>
       </section>
+
+      {/* Lab Test Detail Pop-up Modal matching reference image */}
+      {selectedTestDetail && (
+        <TestDetailModal
+          test={selectedTestDetail}
+          onClose={() => setSelectedTestDetail(null)}
+          onBookNow={(test) => {
+            setSelectedTestDetail(null);
+            setBookingTestItem(test);
+          }}
+        />
+      )}
 
       {/* Interactive Lab Test Booking Modal */}
       {bookingTestItem && (
