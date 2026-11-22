@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Settings, ChevronLeft, Check, Bell, Volume2, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { playNotificationSound } from '../utils/notificationSound';
 
 // Healthcare notifications tailored for ZESTMED project with website branding
 export const DEFAULT_NOTIFICATIONS = [
@@ -137,6 +138,17 @@ export default function NotificationPopover({
     }
   });
 
+  // Track notifications count to play sound when new notification arrives
+  const prevCountRef = useRef(notifications?.length || 0);
+
+  useEffect(() => {
+    const currentCount = notifications?.length || 0;
+    if (currentCount > prevCountRef.current) {
+      playNotificationSound();
+    }
+    prevCountRef.current = currentCount;
+  }, [notifications]);
+
   // Save settings on update
   useEffect(() => {
     try {
@@ -184,11 +196,17 @@ export default function NotificationPopover({
 
   // Toggle Sound switch
   const handleToggleSound = () => {
+    const nextVal = !settings.sound;
     setSettings((prev) => ({
       ...prev,
-      sound: !prev.sound
+      sound: nextVal
     }));
-    addToast(!settings.sound ? 'Notification sounds enabled' : 'Notification sounds muted', 'info');
+    if (nextVal) {
+      playNotificationSound(true);
+      addToast('Notification sound enabled (Test chime played)', 'success');
+    } else {
+      addToast('Notification sounds muted', 'info');
+    }
   };
 
   // Request browser notifications
@@ -411,9 +429,22 @@ export default function NotificationPopover({
             {/* Sound Row at Bottom */}
             <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
               <div className="min-w-0 pr-1">
-                <h5 className="text-xs font-bold text-slate-800 leading-tight">
-                  Sound
-                </h5>
+                <div className="flex items-center gap-1.5">
+                  <h5 className="text-xs font-bold text-slate-800 leading-tight">
+                    Sound
+                  </h5>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playNotificationSound(true);
+                      addToast('Playing notification test chime', 'info');
+                    }}
+                    className="p-0.5 text-[#007A64] hover:text-[#005f4e] hover:bg-teal-50 rounded transition cursor-pointer"
+                    title="Click to test notification sound"
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
                 <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
                   Play a short sound for new alerts
                 </p>

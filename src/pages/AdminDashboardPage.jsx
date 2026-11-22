@@ -81,6 +81,7 @@ import UploadPackagesModal from '../components/UploadPackagesModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import OrderInvoiceModal from '../components/OrderInvoiceModal';
 import NotificationPopover from '../components/NotificationPopover';
+import { playNotificationSound } from '../utils/notificationSound';
 import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf, downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function AdminDashboardPage() {
@@ -1098,7 +1099,7 @@ export default function AdminDashboardPage() {
   const areaD = `${pathD} L 635 200 L 35 200 Z`;
 
   // Admin Notifications List matching NotificationPopover schema
-  const adminNotifications = [
+  const DEFAULT_ADMIN_NOTIFICATIONS = [
     {
       id: 1,
       sender: 'Diagnostic Operations Hub',
@@ -1165,6 +1166,48 @@ export default function AdminDashboardPage() {
       linkType: 'payments'
     }
   ];
+
+  const [adminNotifications, setAdminNotifications] = useState(DEFAULT_ADMIN_NOTIFICATIONS);
+
+  // Listen for real-time bookings & notifications and trigger audible alert chime
+  useEffect(() => {
+    const handleNewAdminAlert = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        if (stored.length > 0) {
+          const latest = stored[0];
+          const notifId = `admin-${latest.id || latest.bookingId || Date.now()}`;
+          const newNotif = {
+            id: notifId,
+            sender: latest.type || latest.serviceName || 'New Patient Booking',
+            avatar: 'ZM',
+            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+            actionText: `confirmed: #${latest.bookingId || latest.booking_number || latest.id || 'ZM-NEW'}`,
+            time: 'Just now',
+            desc: `New ${latest.type || 'service'} booking confirmed for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || latest.mobileNumber || ''}).`,
+            category: latest.category || 'Clinical Booking',
+            status: 'Confirmed',
+            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+            linkType: latest.isSurgery ? 'surgery-packages' : latest.isPhysio ? 'appointments-doctor' : 'appointments-doctor'
+          };
+          setAdminNotifications((prev) => {
+            if (prev.some(n => n.id === notifId)) return prev;
+            playNotificationSound();
+            return [newNotif, ...prev];
+          });
+        }
+      } catch (_) {}
+    };
+
+    window.addEventListener('zestmed_booking_updated', handleNewAdminAlert);
+    window.addEventListener('storage', handleNewAdminAlert);
+    window.addEventListener('zestmed_new_notification', handleNewAdminAlert);
+    return () => {
+      window.removeEventListener('zestmed_booking_updated', handleNewAdminAlert);
+      window.removeEventListener('storage', handleNewAdminAlert);
+      window.removeEventListener('zestmed_new_notification', handleNewAdminAlert);
+    };
+  }, []);
 
   const handleAdminNotificationClick = (item) => {
     setIsNotificationsOpen(false);

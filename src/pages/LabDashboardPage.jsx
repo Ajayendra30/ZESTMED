@@ -54,6 +54,7 @@ import PublishReportModal from '../components/PublishReportModal';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import NewLabJobModal from '../components/NewLabJobModal';
 import NotificationPopover from '../components/NotificationPopover';
+import { playNotificationSound } from '../utils/notificationSound';
 
 export default function LabDashboardPage() {
   const navigate = useNavigate();
@@ -189,7 +190,7 @@ export default function LabDashboardPage() {
   ]);
 
   // Lab Notifications List matching NotificationPopover schema
-  const labNotifications = [
+  const DEFAULT_LAB_NOTIFICATIONS = [
     {
       id: 1,
       sender: 'Dispur Central Lab Dispatch',
@@ -256,6 +257,51 @@ export default function LabDashboardPage() {
       linkType: 'schedule'
     }
   ];
+
+  const [labNotifications, setLabNotifications] = useState(DEFAULT_LAB_NOTIFICATIONS);
+
+  // Listen for real-time lab bookings & sample updates and trigger audible alert chime
+  useEffect(() => {
+    const handleNewLabAlert = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        const labBookings = stored.filter(b => b.isLabTest || b.category === 'lab' || b.type?.includes('Lab') || b.type?.includes('Diagnostic'));
+        if (labBookings.length > 0) {
+          const latest = labBookings[0];
+          const notifId = `lab-${latest.id || latest.bookingId || Date.now()}`;
+          const newNotif = {
+            id: notifId,
+            sender: 'Lab Order Dispatch',
+            avatar: 'LB',
+            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+            actionText: `new order: #${latest.bookingId || latest.booking_number || latest.id || 'LB-NEW'}`,
+            time: 'Just now',
+            desc: `New sample collection booking for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || ''}). Fasting blood profile required.`,
+            category: 'Home Sample Collection',
+            status: 'New Job',
+            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+            linkType: 'assigned'
+          };
+          setLabNotifications((prev) => {
+            if (prev.some(n => n.id === notifId)) return prev;
+            playNotificationSound();
+            return [newNotif, ...prev];
+          });
+        }
+      } catch (_) {}
+    };
+
+    window.addEventListener('zestmed_booking_updated', handleNewLabAlert);
+    window.addEventListener('storage', handleNewLabAlert);
+    window.addEventListener('zestmed_lab_updated', handleNewLabAlert);
+    window.addEventListener('zestmed_new_notification', handleNewLabAlert);
+    return () => {
+      window.removeEventListener('zestmed_booking_updated', handleNewLabAlert);
+      window.removeEventListener('storage', handleNewLabAlert);
+      window.removeEventListener('zestmed_lab_updated', handleNewLabAlert);
+      window.removeEventListener('zestmed_new_notification', handleNewLabAlert);
+    };
+  }, []);
 
   const handleLabNotificationClick = (item) => {
     setIsNotificationsOpen(false);

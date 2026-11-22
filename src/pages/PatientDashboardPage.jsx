@@ -73,6 +73,7 @@ import PrescriptionDetailModal from '../components/PrescriptionDetailModal';
 import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import BookingDetailModal from '../components/BookingDetailModal';
 import NotificationPopover, { DEFAULT_NOTIFICATIONS } from '../components/NotificationPopover';
+import { playNotificationSound } from '../utils/notificationSound';
 import AuthModal from '../components/AuthModal';
 import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
@@ -94,6 +95,49 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [userBookings, setUserBookings] = useState([]);
   const [isLoadingBookings, setIsLoadingBookings] = useState(false);
   const [selectedBookingForDetail, setSelectedBookingForDetail] = useState(null);
+
+  // Patient Real-Time Notifications
+  const [patientNotifications, setPatientNotifications] = useState(DEFAULT_NOTIFICATIONS);
+
+  // Listen for new patient notifications & bookings and trigger audible alert chime
+  useEffect(() => {
+    const handleNewPatientAlert = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
+        if (stored.length > 0) {
+          const latest = stored[0];
+          const notifId = `pat-${latest.id || latest.bookingId || Date.now()}`;
+          const newNotif = {
+            id: notifId,
+            sender: latest.doctor || latest.doctorName || latest.therapist || 'ZESTMED Healthcare Desk',
+            avatar: 'ZM',
+            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+            actionText: `is confirmed: #${latest.bookingId || latest.booking_number || latest.id || 'ZM-NEW'}`,
+            time: 'Just now',
+            desc: `Your ${latest.type || latest.title || 'appointment'} scheduled for ${latest.date || 'upcoming date'} (${latest.time || latest.slot || ''}) is confirmed.`,
+            category: latest.category || 'Consultation & Care',
+            status: 'Confirmed',
+            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+            linkType: latest.category === 'lab' ? 'lab' : 'appointment'
+          };
+          setPatientNotifications((prev) => {
+            if (prev.some(n => n.id === notifId)) return prev;
+            playNotificationSound();
+            return [newNotif, ...prev];
+          });
+        }
+      } catch (_) {}
+    };
+
+    window.addEventListener('zestmed_booking_updated', handleNewPatientAlert);
+    window.addEventListener('storage', handleNewPatientAlert);
+    window.addEventListener('zestmed_new_notification', handleNewPatientAlert);
+    return () => {
+      window.removeEventListener('zestmed_booking_updated', handleNewPatientAlert);
+      window.removeEventListener('storage', handleNewPatientAlert);
+      window.removeEventListener('zestmed_new_notification', handleNewPatientAlert);
+    };
+  }, []);
 
   // Modals State
   const [selectedReportBooking, setSelectedReportBooking] = useState(null);
@@ -1115,7 +1159,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <NotificationPopover
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
-                notifications={DEFAULT_NOTIFICATIONS}
+                notifications={patientNotifications}
                 onNotificationClick={(n) => {
                   setIsNotificationsOpen(false);
                   if (n.linkType === 'lab') {
@@ -2455,7 +2499,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 inline={true}
                 isOpen={true}
                 onClose={() => {}}
-                notifications={DEFAULT_NOTIFICATIONS}
+                notifications={patientNotifications}
                 onNotificationClick={(n) => {
                   if (n.linkType === 'lab') {
                     setActiveMenu('reports');
