@@ -215,13 +215,13 @@ export default function SurgeryPackagesPage() {
             className="w-full h-full object-cover object-[right_top]"
           />
           {/* Subtle soft gradient on the left behind text for high legibility */}
-          <div className="absolute inset-y-0 left-0 w-full sm:w-[58%] lg:w-[50%] bg-gradient-to-r from-sky-50/85 via-sky-50/45 to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-full sm:w-[62%] lg:w-[56%] bg-gradient-to-r from-sky-50/90 via-sky-50/50 to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 pt-7 sm:pt-9 lg:pt-8 pb-0">
           
           {/* Left Column: Pill, Title, Subtitle, 4 Pillars & CTA */}
-          <div className="w-full lg:w-[540px] xl:w-[580px] shrink-0 space-y-4 sm:space-y-4.5 self-center py-4 lg:py-6 z-20">
+          <div className="w-full lg:w-[620px] xl:w-[680px] 2xl:w-[720px] shrink-0 space-y-4 sm:space-y-4.5 self-center py-4 lg:py-6 z-20">
             
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/85 border border-[#007A64]/40 text-[#007A64] text-xs sm:text-[13px] font-black tracking-wide shadow-2xs">
@@ -229,9 +229,11 @@ export default function SurgeryPackagesPage() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[48px] font-black text-[#0B1E3F] tracking-tight leading-[1.18]">
-              Expert Surgery Services<br />
-              <span className="text-[#0B1E3F]">for a </span><span className="text-[#007A64]">Healthier Tomorrow</span>
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[45px] font-black text-[#0B1E3F] tracking-tight leading-[1.26] sm:leading-[1.28]">
+              <span className="block">Expert Surgery Services</span>
+              <span className="block text-[#0B1E3F] mt-1 sm:mt-1.5">
+                for a <span className="text-[#007A64]">Healthier Tomorrow</span>
+              </span>
             </h1>
 
             {/* Subheading text */}
@@ -244,7 +246,7 @@ export default function SurgeryPackagesPage() {
               {/* Pillar 1 */}
               <div className="flex flex-col items-center text-center">
                 <SurgeonSpecialistIcon className="w-5 h-5 text-[#0B1E3F] mb-1.5" />
-                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-tight">
+                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-snug">
                   Expert Surgeons<br />&amp; Specialists
                 </span>
               </div>
@@ -255,7 +257,7 @@ export default function SurgeryPackagesPage() {
               {/* Pillar 2 */}
               <div className="flex flex-col items-center text-center">
                 <ModernOTIcon className="w-5 h-5 text-[#0B1E3F] mb-1.5" />
-                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-tight">
+                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-snug">
                   Modern<br />Operation Theatres
                 </span>
               </div>
@@ -266,7 +268,7 @@ export default function SurgeryPackagesPage() {
               {/* Pillar 3 */}
               <div className="flex flex-col items-center text-center">
                 <AdvancedTechIcon className="w-5 h-5 text-[#0B1E3F] mb-1.5" />
-                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-tight">
+                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-snug">
                   Advanced<br />Technology
                 </span>
               </div>
@@ -277,7 +279,7 @@ export default function SurgeryPackagesPage() {
               {/* Pillar 4 */}
               <div className="flex flex-col items-center text-center">
                 <PostCareIcon className="w-5 h-5 text-[#0B1E3F] mb-1.5" />
-                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-tight">
+                <span className="text-[11px] sm:text-xs font-bold text-[#0B1E3F] leading-snug">
                   Comprehensive<br />Post-Surgery Care
                 </span>
               </div>
