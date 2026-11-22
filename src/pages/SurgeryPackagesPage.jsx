@@ -205,7 +205,7 @@ export default function SurgeryPackagesPage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION - Recreated to exact reference design                       */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E8F6F8] min-h-[380px] sm:min-h-[410px] lg:min-h-[436px] flex items-stretch">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#E8F6F8] min-h-[400px] sm:min-h-[450px] lg:min-h-[500px] xl:min-h-[540px] flex items-stretch">
         
         {/* Full-Width Background Image */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
@@ -221,7 +221,7 @@ export default function SurgeryPackagesPage() {
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-8 pt-7 sm:pt-9 lg:pt-8 pb-0">
           
           {/* Left Column: Pill, Title, Subtitle, 4 Pillars & CTA */}
-          <div className="w-full lg:w-[620px] xl:w-[680px] 2xl:w-[720px] shrink-0 space-y-4 sm:space-y-4.5 self-center py-4 lg:py-6 z-20">
+          <div className="w-full lg:max-w-[480px] xl:max-w-[530px] 2xl:max-w-[560px] shrink-0 space-y-4 sm:space-y-4.5 self-center py-4 lg:py-6 z-20">
             
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/85 border border-[#007A64]/40 text-[#007A64] text-xs sm:text-[13px] font-black tracking-wide shadow-2xs">
@@ -300,11 +300,11 @@ export default function SurgeryPackagesPage() {
           </div>
 
           {/* Right Column: Transparent Surgeon Cutout Layered Seamlessly */}
-          <div className="w-full lg:flex-1 flex justify-center lg:justify-end items-end self-end pointer-events-none select-none z-20 mt-2 lg:mt-0 -mb-[1px]">
+          <div className="w-full lg:flex-1 flex justify-center lg:justify-end items-end self-end pointer-events-none select-none z-20 mt-3 lg:mt-0 -mb-[1px]">
             <img
               src="/surgery-hero-surgeon.png"
               alt="Surgeon performing advanced surgical procedure at ZESTMED"
-              className="h-[250px] xs:h-[290px] sm:h-[350px] md:h-[390px] lg:h-[436px] xl:h-[460px] w-auto max-w-full object-contain object-bottom select-none drop-shadow-md"
+              className="h-auto max-h-[340px] xs:max-h-[380px] sm:max-h-[440px] md:max-h-[480px] lg:max-h-[520px] xl:max-h-[560px] 2xl:max-h-[620px] w-auto max-w-full object-contain object-bottom select-none drop-shadow-md transition-all duration-300"
             />
           </div>
 
