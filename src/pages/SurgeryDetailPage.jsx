@@ -447,7 +447,7 @@ export default function SurgeryDetailPage() {
                       ₹{(surgery.mrp || 100000).toLocaleString('en-IN')}
                     </span>
                     <span className="text-xs font-bold text-[#007A64] bg-[#DCF6EF] px-2.5 py-0.5 rounded-md border border-[#BCE8DD]">
-                      {surgery.discountPercent || 25}% OFF
+                      20% OFF
                     </span>
                   </div>
 
@@ -627,7 +627,7 @@ export default function SurgeryDetailPage() {
                         ₹{(surgery.mrp || 100000).toLocaleString('en-IN')}
                       </span>
                       <span className="text-[11px] font-bold text-[#007A64] bg-[#DCF6EF] px-1.5 py-0.5 rounded">
-                        {surgery.discountPercent || 25}% OFF
+                        20% OFF
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium mt-1.5">
@@ -964,7 +964,7 @@ export default function SurgeryDetailPage() {
                           ₹{(surgery.mrp || 100000).toLocaleString('en-IN')}
                         </span>
                         <span className="text-[11px] font-bold text-[#007A64] bg-[#DCF6EF] px-1.5 py-0.2 rounded">
-                          {surgery.discountPercent || 25}% OFF
+                          20% OFF
                         </span>
                       </div>
                     </div>
@@ -1186,7 +1186,7 @@ export default function SurgeryDetailPage() {
                         ₹{(surgery.mrp || 100000).toLocaleString('en-IN')}
                       </span>
                       <span className="text-[11px] font-bold text-[#007A64] bg-[#DCF6EF] px-1.5 py-0.5 rounded">
-                        {surgery.discountPercent || 25}% OFF
+                        20% OFF
                       </span>
                     </div>
                   </div>

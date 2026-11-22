@@ -34,7 +34,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       packing: '(10 Tablets)',
       price: 32,
       mrp: 40,
-      discount: '20% Off',
+      discount: '20% OFF',
       image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
       type: 'medicine',
       genericName: 'Paracetamol IP 500mg'
@@ -45,7 +45,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       packing: '(10 Capsules)',
       price: 78,
       mrp: 98,
-      discount: '20% Off',
+      discount: '20% OFF',
       image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=400&q=80',
       type: 'medicine',
       genericName: 'Amoxicillin Trihydrate IP 500mg'
@@ -56,7 +56,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       packing: '(10 Capsules)',
       price: 62,
       mrp: 75,
-      discount: '17% Off',
+      discount: '20% OFF',
       image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=400&q=80',
       type: 'medicine',
       genericName: 'Omeprazole Gastro-Resistant 20mg'
@@ -69,7 +69,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       name: 'Complete Blood Count (CBC)',
       price: 399,
       mrp: 600,
-      discount: '33% Off',
+      discount: '20% OFF',
       type: 'test',
       image: '/popular-test-cbc.jpg'
     },
@@ -78,7 +78,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       name: 'Thyroid Profile (T3, T4, TSH)',
       price: 699,
       mrp: 1000,
-      discount: '30% Off',
+      discount: '20% OFF',
       type: 'test',
       image: '/popular-test-thyroid.jpg'
     },
@@ -87,7 +87,7 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
       name: 'Liver Function Test (LFT)',
       price: 599,
       mrp: 850,
-      discount: '30% Off',
+      discount: '20% OFF',
       type: 'test',
       image: '/popular-test-lft.png'
     }

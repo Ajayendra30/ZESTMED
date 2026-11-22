@@ -143,7 +143,7 @@ export default function DiagnosticSection({ onSelectTest, onScheduleCollection }
                       )}
                     </div>
                     <span className="text-[10px] text-emerald-600 font-semibold block">
-                      Save {test.discountPercent}% Demo Offer
+                      20% OFF
                     </span>
                   </div>
 

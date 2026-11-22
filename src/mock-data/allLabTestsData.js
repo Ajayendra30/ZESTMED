@@ -54,7 +54,7 @@ export const ALL_LAB_TESTS_DATA = [
       "thyroid",
       "hormone"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 699,
     "mrp": 999,
     "description": "Evaluates thyroid function and hormone levels to diagnose and manage hyperthyroidism, hypothyroidism, and metabolic imbalances.",
@@ -100,7 +100,7 @@ export const ALL_LAB_TESTS_DATA = [
       "liver",
       "blood"
     ],
-    "discountPercent": 23,
+    "discountPercent": 20,
     "price": 699,
     "mrp": 1299,
     "description": "Assesses liver health, enzymes, and proteins to detect early liver disorders, fatty liver, hepatitis, or alcoholic liver disease.",
@@ -146,7 +146,7 @@ export const ALL_LAB_TESTS_DATA = [
       "kidney",
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 899,
     "mrp": 1299,
     "description": "Checks kidney health, filtration efficiency, and electrolyte balance to catch renal disorders and impairment early.",
@@ -238,7 +238,7 @@ export const ALL_LAB_TESTS_DATA = [
       "diabetes",
       "blood"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 1299,
     "mrp": 1699,
     "description": "Comprehensive diabetes screening panel measuring Fasting Blood Sugar, Post-Prandial Glucose, and HbA1c 3-month average.",
@@ -283,7 +283,7 @@ export const ALL_LAB_TESTS_DATA = [
       "popular",
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 899,
     "mrp": 1199,
     "description": "Measures 25-Hydroxy Vitamin D levels to evaluate bone health, calcium absorption, immune strength, and detect deficiency.",
@@ -460,7 +460,7 @@ export const ALL_LAB_TESTS_DATA = [
       "diabetes",
       "blood"
     ],
-    "discountPercent": 23,
+    "discountPercent": 20,
     "price": 999,
     "mrp": 1299,
     "description": "Gold-standard blood test that provides an accurate average of blood sugar levels over the past 2 to 3 months.",
@@ -503,7 +503,7 @@ export const ALL_LAB_TESTS_DATA = [
       "kidney",
       "routine"
     ],
-    "discountPercent": 22,
+    "discountPercent": 20,
     "price": 349,
     "mrp": 449,
     "description": "Checks for urinary infections, kidney filtration issues, crystal formation, and other metabolic abnormalities.",
@@ -545,7 +545,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 149,
     "mrp": 200,
     "description": "Measures blood glucose level after an 8-hour overnight fast to screen for prediabetes and diabetes.",
@@ -586,7 +586,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 149,
     "mrp": 200,
     "description": "Evaluates blood sugar level 2 hours after a meal to observe body glucose processing and insulin response.",
@@ -627,7 +627,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 120,
     "mrp": 160,
     "description": "Instant measurement of blood glucose taken at any time regardless of food intake.",
@@ -668,7 +668,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Two-hour diagnostic test evaluating blood glucose response after drinking a standardized 75g glucose solution.",
@@ -709,7 +709,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 699,
     "mrp": 950,
     "description": "Measures fasting insulin levels produced by beta cells to evaluate insulin resistance and hyperinsulinemia.",
@@ -750,7 +750,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Differentiates between Type 1 and Type 2 diabetes by measuring endogenous insulin production.",
@@ -791,7 +791,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 599,
     "mrp": 800,
     "description": "Detects microscopic amounts of albumin in urine to screen for early diabetic nephropathy.",
@@ -832,7 +832,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 999,
     "mrp": 1400,
     "description": "Calculated mathematical model assessing insulin resistance and pancreatic beta-cell function.",
@@ -873,7 +873,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 23,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 850,
     "description": "Reflects average blood sugar control over the intermediate timeframe of the past 2 to 3 weeks.",
@@ -914,7 +914,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 23,
+    "discountPercent": 20,
     "price": 1850,
     "mrp": 2400,
     "description": "Autoantibody marker confirming autoimmune Type 1 diabetes and Latent Autoimmune Diabetes in Adults (LADA).",
@@ -955,7 +955,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 2100,
     "mrp": 2800,
     "description": "Diagnostic autoantibody marker for early autoimmune pancreatic damage.",
@@ -996,7 +996,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 150,
     "mrp": 200,
     "description": "Screens for ketone accumulation in urine to detect diabetic ketoacidosis (DKA).",
@@ -1037,7 +1037,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 750,
     "mrp": 1000,
     "description": "Quantitative blood measurement of the predominant circulating ketone body.",
@@ -1078,7 +1078,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Screening test for gestational diabetes during pregnancy following 50g glucose oral dose.",
@@ -1119,7 +1119,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 720,
     "mrp": 960,
     "description": "Evaluates pancreatic insulin secretion spike following meals.",
@@ -1160,7 +1160,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "diabetes"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1599,
     "mrp": 2200,
     "description": "Includes FBS, PPBS, HbA1c, Lipid Profile, Serum Creatinine and Urine Microalbumin.",
@@ -1201,7 +1201,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 399,
     "mrp": 550,
     "description": "Measures active unbound Triiodothyronine hormone in blood unaffected by protein binding.",
@@ -1243,7 +1243,7 @@ export const ALL_LAB_TESTS_DATA = [
       "thyroid",
       "popular"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 399,
     "mrp": 550,
     "description": "Measures active unbound Thyroxine hormone to evaluate primary thyroid disease.",
@@ -1285,7 +1285,7 @@ export const ALL_LAB_TESTS_DATA = [
       "thyroid",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 299,
     "mrp": 400,
     "description": "High-precision chemiluminescence assay for Thyroid Stimulating Hormone.",
@@ -1326,7 +1326,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 999,
     "mrp": 1400,
     "description": "Key autoimmune marker confirming Hashimoto’s thyroiditis and Graves’ disease.",
@@ -1367,7 +1367,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Assesses autoimmune response against thyroid storage protein thyroglobulin.",
@@ -1408,7 +1408,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1200,
     "mrp": 1600,
     "description": "Post-operative tumor marker for monitoring differentiated thyroid cancer recurrence.",
@@ -1449,7 +1449,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 2400,
     "mrp": 3200,
     "description": "Distinguishes Graves’ disease from other causes of thyrotoxicosis.",
@@ -1490,7 +1490,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2200,
     "description": "Diagnostic tumor marker for Medullary Thyroid Carcinoma (MTC).",
@@ -1531,7 +1531,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 22,
+    "discountPercent": 20,
     "price": 2800,
     "mrp": 3600,
     "description": "Evaluates inactive thyroid metabolite in chronic illness and euthyroid sick syndrome.",
@@ -1572,7 +1572,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 1400,
     "mrp": 1850,
     "description": "Measures primary carrier protein for thyroid hormones in plasma.",
@@ -1613,7 +1613,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "thyroid"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1899,
     "mrp": 2600,
     "description": "Combines T3, T4, TSH, Anti-TPO, and Anti-TG for complete thyroid assessment.",
@@ -1654,7 +1654,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Evaluates liver cell integrity and detects tissue necrosis.",
@@ -1696,7 +1696,7 @@ export const ALL_LAB_TESTS_DATA = [
       "liver",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Primary specific biomarker for acute and chronic hepatocellular damage.",
@@ -1737,7 +1737,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 350,
     "description": "Diagnostic panel for jaundice, hemolytic conditions, and biliary obstruction.",
@@ -1778,7 +1778,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 200,
     "mrp": 270,
     "description": "Screens for biliary duct obstruction and metabolic bone diseases.",
@@ -1820,7 +1820,7 @@ export const ALL_LAB_TESTS_DATA = [
       "liver",
       "popular"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Sensitive enzyme marker for alcoholic liver disease and bile duct injury.",
@@ -1861,7 +1861,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 340,
     "description": "Evaluates hepatic protein synthesis capability and nutritional state.",
@@ -1902,7 +1902,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 190,
     "mrp": 250,
     "description": "Primary plasma oncotic pressure protein synthesized exclusively by liver.",
@@ -1943,7 +1943,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Oncology screening marker for hepatocellular carcinoma (HCC) and cirrhosis.",
@@ -1984,7 +1984,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Gold standard screening marker for active Hepatitis B viral infection.",
@@ -2025,7 +2025,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Screens for exposure and antibodies against Hepatitis C viral hepatitis.",
@@ -2066,7 +2066,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Confirms acute Hepatitis A viral infection in food/water-borne jaundice.",
@@ -2107,7 +2107,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Diagnostic test for acute waterborne Hepatitis E infection.",
@@ -2148,7 +2148,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Screens for Wilson’s disease and hereditary copper metabolism defects.",
@@ -2189,7 +2189,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 799,
     "mrp": 1100,
     "description": "Evaluates hepatic encephalopathy and urea cycle enzymatic disorders.",
@@ -2230,7 +2230,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 280,
     "mrp": 380,
     "description": "Measures liver synthesis of clotting factors and monitors blood thinners.",
@@ -2271,7 +2271,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1200,
     "description": "Screens for autoimmune hepatitis and systemic autoimmune disorders.",
@@ -2312,7 +2312,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1250,
     "mrp": 1700,
     "description": "Confirmatory autoantibody marker for Type 1 Autoimmune Hepatitis.",
@@ -2353,7 +2353,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1350,
     "mrp": 1800,
     "description": "Diagnostic hallmark for Primary Biliary Cholangitis (PBC).",
@@ -2394,7 +2394,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "liver"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1450,
     "mrp": 2000,
     "description": "Non-invasive scoring index assessing degree of liver fibrosis in fatty liver.",
@@ -2436,7 +2436,7 @@ export const ALL_LAB_TESTS_DATA = [
       "kidney",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Standard clinical indicator of renal filtration efficiency and muscular breakdown.",
@@ -2477,7 +2477,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Measures urea nitrogen in blood to detect acute or chronic kidney dysfunction.",
@@ -2519,7 +2519,7 @@ export const ALL_LAB_TESTS_DATA = [
       "kidney",
       "popular"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 220,
     "mrp": 300,
     "description": "Detects hyperuricemia to diagnose gouty arthritis and kidney stone risks.",
@@ -2560,7 +2560,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 350,
     "description": "Accurately calculates renal filtration stage based on age, sex, and creatinine.",
@@ -2601,7 +2601,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Measures Sodium, Potassium, and Chloride essential for renal fluid homeostasis.",
@@ -2642,7 +2642,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 340,
     "description": "Assesses bone-renal mineral metabolism, parathyroid function, and deficiency.",
@@ -2683,7 +2683,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 340,
     "description": "Evaluates mineral bone disorder associated with chronic kidney disease.",
@@ -2724,7 +2724,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Early sensitive kidney marker unaffected by muscle mass, age, or protein diet.",
@@ -2765,7 +2765,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Quantifies daily urinary protein loss in nephrotic syndrome and glomerulonephritis.",
@@ -2806,7 +2806,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Gold standard laboratory clearance measurement of functional nephron filtration.",
@@ -2847,7 +2847,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Identifies bacterial urinary pathogens and provides antibiotic sensitivity report.",
@@ -2888,7 +2888,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Screens for free light chains indicating multiple myeloma kidney involvement.",
@@ -2929,7 +2929,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1200,
     "mrp": 1650,
     "description": "Analyzes oxalate, citrate, uric acid, and calcium saturation for kidney stones.",
@@ -2970,7 +2970,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "kidney"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1399,
     "mrp": 1900,
     "description": "Includes KFT, Electrolytes, Calcium, Phosphorus, Urine Routine & Microalbumin.",
@@ -3012,7 +3012,7 @@ export const ALL_LAB_TESTS_DATA = [
       "heart",
       "popular"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 999,
     "mrp": 1400,
     "description": "Ultrasensitive gold standard myocardial biomarker for acute myocardial infarction.",
@@ -3053,7 +3053,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Cardiospecific marker evaluating ischemic cardiac muscle injury.",
@@ -3094,7 +3094,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 620,
     "description": "Enzyme marker confirming myocardial tissue damage and re-infarction.",
@@ -3136,7 +3136,7 @@ export const ALL_LAB_TESTS_DATA = [
       "heart",
       "popular"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 2200,
     "mrp": 2900,
     "description": "Gold standard diagnostic neurohormone biomarker for congestive heart failure.",
@@ -3177,7 +3177,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Evaluates amino acid levels linked to early vascular thrombosis and stroke.",
@@ -3218,7 +3218,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Measures the protective anti-atherogenic protein in HDL cholesterol particles.",
@@ -3259,7 +3259,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Accurately quantifies total atherogenic particles causing arterial plaque.",
@@ -3300,7 +3300,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1200,
     "description": "Genetically determined independent risk factor for premature coronary heart disease.",
@@ -3341,7 +3341,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Detects microscopic vascular inflammation predicting cardiac events.",
@@ -3382,7 +3382,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Foundational baseline measurement of circulating blood cholesterol.",
@@ -3423,7 +3423,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 200,
     "mrp": 270,
     "description": "Measures storage fats circulating in bloodstream linked to metabolic syndrome.",
@@ -3464,7 +3464,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 220,
     "mrp": 300,
     "description": "Quantifies cardio-protective high-density lipoprotein cholesterol.",
@@ -3505,7 +3505,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 240,
     "mrp": 320,
     "description": "Direct measurement of primary atherogenic low-density lipoprotein cholesterol.",
@@ -3546,7 +3546,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 190,
     "mrp": 260,
     "description": "Measures very low-density lipoprotein carrying triglycerides.",
@@ -3587,7 +3587,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Logarithmic ratio predicting small dense LDL particle subfraction risk.",
@@ -3628,7 +3628,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 280,
     "mrp": 380,
     "description": "Enzyme marker of broad cellular breakdown and myocardial necrosis.",
@@ -3669,7 +3669,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Earliest detectable serum marker released within 2 hours of muscle injury.",
@@ -3710,7 +3710,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Fibrin degradation marker ruling out deep vein thrombosis (DVT) and pulmonary embolism.",
@@ -3751,7 +3751,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 900,
     "description": "Key clotting factor and acute phase reactant contributing to hypercoagulability.",
@@ -3792,7 +3792,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 1900,
     "mrp": 2500,
     "description": "Diagnostic hormone released in ventricular wall stretch during heart failure.",
@@ -3833,7 +3833,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Essential intracellular electrolyte regulating cardiac rhythm and muscle contractility.",
@@ -3874,7 +3874,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "heart"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 2499,
     "mrp": 3500,
     "description": "Comprehensive panel: Lipid Profile, hs-CRP, Homocysteine, Apo A1/B, HbA1c.",
@@ -3916,7 +3916,7 @@ export const ALL_LAB_TESTS_DATA = [
       "hormone",
       "popular"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Evaluates primary male androgen levels, libido, fatigue, and muscle vitality.",
@@ -3957,7 +3957,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Measures bioavailable testosterone active at tissue receptor sites.",
@@ -3999,7 +3999,7 @@ export const ALL_LAB_TESTS_DATA = [
       "hormone",
       "popular"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 420,
     "mrp": 580,
     "description": "Pituitary hormone regulating lactation, fertility, and diagnosing prolactinoma.",
@@ -4040,7 +4040,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Primary female estrogen assessing ovarian reserve, puberty, and menopause.",
@@ -4081,7 +4081,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Confirms ovulation and monitors luteal phase in reproductive health.",
@@ -4122,7 +4122,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 420,
     "mrp": 580,
     "description": "Pituitary gonadotropin triggering ovulation and regulating testosterone.",
@@ -4163,7 +4163,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 420,
     "mrp": 580,
     "description": "Assesses follicle development, ovarian egg reserve, and spermatogenesis.",
@@ -4204,7 +4204,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2200,
     "description": "Premier blood marker measuring female ovarian fertility egg reserve.",
@@ -4245,7 +4245,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 490,
     "mrp": 680,
     "description": "Peak adrenal stress hormone measuring Cushing’s or Addison’s disease.",
@@ -4286,7 +4286,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 490,
     "mrp": 680,
     "description": "Evaluates diurnal adrenal rhythm suppression.",
@@ -4327,7 +4327,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 790,
     "mrp": 1100,
     "description": "Adrenal androgen evaluating PCOS, hirsutism, and adrenal tumors.",
@@ -4368,7 +4368,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Confirms pregnancy age and screens for ectopic pregnancy.",
@@ -4409,7 +4409,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "hormone"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 2199,
     "mrp": 3000,
     "description": "Complete 8-hormone panel: LH, FSH, AMH, Prolactin, Total Testosterone, TSH, Fasting Insulin.",
@@ -4450,7 +4450,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1800,
     "mrp": 2400,
     "description": "Evaluates essential fat-soluble vitamin for optical vision and skin epithelium.",
@@ -4491,7 +4491,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1450,
     "mrp": 1950,
     "description": "Measures circulating antioxidant level supporting collagen and immunity.",
@@ -4532,7 +4532,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2200,
     "description": "Lipid antioxidant guarding cell membranes against oxidative injury.",
@@ -4573,7 +4573,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 2200,
     "mrp": 2900,
     "description": "Assesses coagulation cofactor required for prothrombin bone synthesis.",
@@ -4614,7 +4614,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2600,
     "description": "Screens for beriberi, Wernicke’s encephalopathy, and neuropathies.",
@@ -4655,7 +4655,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "vitamin"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2600,
     "description": "Assesses cofactor for amino acid metabolism and neurotransmitter synthesis.",
@@ -4697,7 +4697,7 @@ export const ALL_LAB_TESTS_DATA = [
       "vitamin",
       "popular"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Early sensitive marker of cellular bioavailable Vitamin B12.",
@@ -4739,7 +4739,7 @@ export const ALL_LAB_TESTS_DATA = [
       "vitamin",
       "popular"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 2799,
     "mrp": 3900,
     "description": "Comprehensive panel covering Vitamin D, B12, B-Complex, Zinc, Iron, Magnesium.",
@@ -4781,7 +4781,7 @@ export const ALL_LAB_TESTS_DATA = [
       "allergy",
       "popular"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Quantifies circulating allergic antibodies for atopy, asthma, and eczema.",
@@ -4822,7 +4822,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1250,
     "mrp": 1700,
     "description": "Screens for sensitization to environmental pollens, dust mites, and pet dander.",
@@ -4864,7 +4864,7 @@ export const ALL_LAB_TESTS_DATA = [
       "allergy",
       "popular"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 2800,
     "mrp": 3800,
     "description": "Tests IgE antibodies to milk, eggs, peanuts, soy, wheat, fish, shellfish.",
@@ -4905,7 +4905,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 2900,
     "mrp": 3900,
     "description": "Identifies allergic triggers across grass, weed, tree pollens, and molds.",
@@ -4946,7 +4946,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Specific IgE tests for casein, alpha-lactalbumin, and beta-lactoglobulin.",
@@ -4987,7 +4987,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Primary serological screening test for Celiac disease and gluten enteropathy.",
@@ -5028,7 +5028,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1200,
     "mrp": 1650,
     "description": "Identifies perennial indoor allergic triggers for rhinitis and asthma.",
@@ -5069,7 +5069,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "allergy"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 4500,
     "mrp": 6000,
     "description": "Comprehensive micro-array mapping food, inhalant, contact, and drug allergens.",
@@ -5111,7 +5111,7 @@ export const ALL_LAB_TESTS_DATA = [
       "blood",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 120,
     "mrp": 160,
     "description": "Classic marker of generalized systemic inflammation, infection, and autoimmune disease.",
@@ -5153,7 +5153,7 @@ export const ALL_LAB_TESTS_DATA = [
       "blood",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 120,
     "mrp": 160,
     "description": "Single quantitative measurement of oxygen-carrying protein in red blood cells.",
@@ -5195,7 +5195,7 @@ export const ALL_LAB_TESTS_DATA = [
       "blood",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 150,
     "mrp": 200,
     "description": "Identifies ABO blood group and Rhesus factor (positive/negative).",
@@ -5236,7 +5236,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 220,
     "mrp": 300,
     "description": "Pathologist microscopic evaluation of RBC morphology, WBC differential, and platelets.",
@@ -5278,7 +5278,7 @@ export const ALL_LAB_TESTS_DATA = [
       "blood",
       "popular"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Most reliable test to evaluate cellular iron storage reserves in anemia.",
@@ -5319,7 +5319,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Measures blood transferrin protein availability for transporting iron.",
@@ -5360,7 +5360,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 750,
     "mrp": 1000,
     "description": "Evaluates essential vitamin required for DNA synthesis and RBC maturation.",
@@ -5401,7 +5401,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 150,
     "mrp": 200,
     "description": "Critical monitoring for dengue, thrombocytopenia, and bleeding disorders.",
@@ -5442,7 +5442,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 240,
     "description": "Quantifies eosinophils elevated in allergies, asthma, and parasitic infections.",
@@ -5483,7 +5483,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 290,
     "mrp": 400,
     "description": "Evaluates bone marrow bone production capacity of new immature red blood cells.",
@@ -5524,7 +5524,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 900,
     "description": "Screens for inherited enzyme deficiency causing hemolytic anemia from antimalarials.",
@@ -5565,7 +5565,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Gold standard test diagnosing Thalassemia minor/major and hemoglobinopathies.",
@@ -5606,7 +5606,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "Screens for abnormal monoclonal M-protein spike in Multiple Myeloma.",
@@ -5647,7 +5647,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 2500,
     "mrp": 3400,
     "description": "Identifies exact heavy and light chain isotype of monoclonal proteins.",
@@ -5688,7 +5688,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 2800,
     "mrp": 3800,
     "description": "Quantitative assessment for plasma cell dyscrasias and amyloidosis.",
@@ -5729,7 +5729,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 250,
     "description": "Basic surgical pre-operative primary and secondary hemostasis screen.",
@@ -5770,7 +5770,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 380,
     "mrp": 520,
     "description": "Measures intrinsic clotting pathway and monitors heparin therapy.",
@@ -5811,7 +5811,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Evaluates fibrin formation from fibrinogen in bleeding investigations.",
@@ -5852,7 +5852,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 1800,
     "mrp": 2500,
     "description": "Diagnoses Antiphospholipid Syndrome (APS) and recurrent pregnancy loss.",
@@ -5893,7 +5893,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1400,
     "mrp": 1900,
     "description": "Autoantibodies linked to arterial and venous blood clots.",
@@ -5934,7 +5934,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1600,
     "mrp": 2200,
     "description": "Specific serological criterion for Antiphospholipid Syndrome.",
@@ -5975,7 +5975,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Standard bacterial infection and inflammatory disease severity index.",
@@ -6016,7 +6016,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Diagnoses Rheumatoid Arthritis and autoimmune joint inflammation.",
@@ -6057,7 +6057,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1250,
     "mrp": 1700,
     "description": "High-specificity antibody confirming early destructive rheumatoid arthritis.",
@@ -6098,7 +6098,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2600,
     "description": "Distinguishes bacterial sepsis from viral infection in critical care.",
@@ -6139,7 +6139,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Early diagnostic marker for Dengue virus within first 1 to 5 days of fever.",
@@ -6180,7 +6180,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 900,
     "description": "Detects active primary or secondary Dengue fever antibody response.",
@@ -6221,7 +6221,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 350,
     "mrp": 480,
     "description": "Rapid chromatographic test identifying Plasmodium vivax and falciparum.",
@@ -6262,7 +6262,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 350,
     "description": "Agglutination test identifying Salmonella typhi antibodies in enteric fever.",
@@ -6303,7 +6303,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 450,
     "mrp": 600,
     "description": "Rapid serological test identifying early acute typhoid fever.",
@@ -6344,7 +6344,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 750,
     "mrp": 1000,
     "description": "Confirms acute Chikungunya virus in sudden fever and crippling joint pain.",
@@ -6385,7 +6385,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Automated continuous monitoring detecting bacteremia and bloodstream infections.",
@@ -6426,7 +6426,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 180,
     "mrp": 250,
     "description": "Standard non-treponemal serological screening for Treponema pallidum.",
@@ -6467,7 +6467,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Specific confirmatory treponemal antibody test.",
@@ -6508,7 +6508,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Combines p24 antigen and HIV-1/2 antibodies for ultra-early detection window.",
@@ -6549,7 +6549,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 900,
     "description": "Screens for benign prostatic hyperplasia (BPH) and prostate cancer in men 50+.",
@@ -6590,7 +6590,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 950,
     "mrp": 1300,
     "description": "Differentiates benign prostate enlargement from prostate malignancy.",
@@ -6631,7 +6631,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1100,
     "mrp": 1500,
     "description": "Ovarian tumor marker for monitoring epithelial ovarian carcinoma.",
@@ -6672,7 +6672,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 1250,
     "mrp": 1700,
     "description": "Tumor marker for pancreatic, colorectal, and biliary tract adenocarcinoma.",
@@ -6713,7 +6713,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1150,
     "description": "General tumor marker monitoring colorectal and gastrointestinal cancers.",
@@ -6754,7 +6754,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 1200,
     "mrp": 1650,
     "description": "Monitors clinical course and recurrence of metastatic breast cancer.",
@@ -6795,7 +6795,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1200,
     "description": "Measures vital trace element for wound healing, skin integrity, and immunity.",
@@ -6836,7 +6836,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1200,
     "description": "Evaluates essential trace metal in hematopoiesis and liver storage.",
@@ -6877,7 +6877,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1500,
     "mrp": 2000,
     "description": "Occupational toxicology screening for toxic heavy metal lead poisoning.",
@@ -6918,7 +6918,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 650,
     "mrp": 900,
     "description": "Evaluates arterial pH, pO2, pCO2, HCO3, and base excess in respiratory failure.",
@@ -6959,7 +6959,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 499,
     "mrp": 700,
     "description": "Gold standard molecular diagnostic test for SARS-CoV-2 viral RNA.",
@@ -7000,7 +7000,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "blood"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2200,
     "description": "Detects Seasonal Flu A/B and H1N1 Swine Flu viruses in acute respiratory illness.",
@@ -7041,7 +7041,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 1699,
     "mrp": 2400,
     "description": "Investigates fever of unknown origin: CBC, ESR, Malarial Antigen, Dengue, Widal, Urine.",
@@ -7082,7 +7082,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 250,
     "mrp": 350,
     "description": "Screens for intestinal parasites, ova, cysts, and protozoan infections.",
@@ -7123,7 +7123,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 27,
+    "discountPercent": 20,
     "price": 290,
     "mrp": 400,
     "description": "Screens for microscopic gastrointestinal bleeding and early colon polyps.",
@@ -7164,7 +7164,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 320,
     "mrp": 450,
     "description": "Detects Mycobacterium tuberculosis in suspected pulmonary tuberculosis.",
@@ -7205,7 +7205,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 26,
+    "discountPercent": 20,
     "price": 550,
     "mrp": 750,
     "description": "Evaluates sperm count, motility, viability, and morphology for fertility.",
@@ -7247,7 +7247,7 @@ export const ALL_LAB_TESTS_DATA = [
       "routine",
       "popular"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1200,
     "description": "Cervical cancer screening detecting pre-cancerous dysplasia.",
@@ -7288,7 +7288,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2600,
     "description": "Molecular genotyping for oncogenic HPV strains 16 & 18.",
@@ -7329,7 +7329,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 24,
+    "discountPercent": 20,
     "price": 2200,
     "mrp": 2900,
     "description": "Screens for fetal Down syndrome and neural tube defects between weeks 15-20.",
@@ -7370,7 +7370,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 2700,
     "mrp": 3600,
     "description": "High-accuracy second-trimester genetic screening panel.",
@@ -7411,7 +7411,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2600,
     "description": "Free Beta-hCG and PAPP-A screening in first trimester of pregnancy.",
@@ -7452,7 +7452,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 19,
+    "discountPercent": 20,
     "price": 14500,
     "mrp": 18000,
     "description": "Advanced cell-free fetal DNA screening for chromosomal aneuploidies.",
@@ -7493,7 +7493,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 25,
+    "discountPercent": 20,
     "price": 2400,
     "mrp": 3200,
     "description": "Screens for Toxoplasma, Rubella, CMV, and Herpes infections in pregnancy.",
@@ -7535,7 +7535,7 @@ export const ALL_LAB_TESTS_DATA = [
       "routine",
       "popular"
     ],
-    "discountPercent": 35,
+    "discountPercent": 20,
     "price": 1299,
     "mrp": 2000,
     "description": "Essential baseline panel: CBC, LFT, KFT, Blood Sugar, Lipid Profile, Urine.",
@@ -7577,7 +7577,7 @@ export const ALL_LAB_TESTS_DATA = [
       "routine",
       "popular"
     ],
-    "discountPercent": 34,
+    "discountPercent": 20,
     "price": 2499,
     "mrp": 3800,
     "description": "Full profile: CBC, LFT, KFT, Lipid, Thyroid, HbA1c, Vitamin D & B12, Urine.",
@@ -7618,7 +7618,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 33,
+    "discountPercent": 20,
     "price": 2999,
     "mrp": 4500,
     "description": "Specialized 75+ parameter geriatric screening including PSA and Cardiac markers.",
@@ -7659,7 +7659,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 33,
+    "discountPercent": 20,
     "price": 2999,
     "mrp": 4500,
     "description": "Geriatric profile including Bone markers, Thyroid, Lipids, Vitamins and CA-125.",
@@ -7700,7 +7700,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 32,
+    "discountPercent": 20,
     "price": 2299,
     "mrp": 3400,
     "description": "Dedicated panel: Thyroid, Prolactin, AMH, LH, FSH, Iron Profile, Vitamin D.",
@@ -7741,7 +7741,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 31,
+    "discountPercent": 20,
     "price": 2199,
     "mrp": 3200,
     "description": "Comprehensive screen: Testosterone, PSA, Lipid, Liver, Kidney, Blood Sugar.",
@@ -7782,7 +7782,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1450,
     "mrp": 2100,
     "description": "Mandatory pre-surgery safety screen: CBC, Blood Group, PT/INR, HIV, HBsAg, HCV, FBS.",
@@ -7823,7 +7823,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 2350,
     "mrp": 3300,
     "description": "Comprehensive panel: Thalassemia HPLC, Blood Group, HIV, Hepatitis, VDRL.",
@@ -7864,7 +7864,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 1850,
     "mrp": 2600,
     "description": "Includes CBC, hs-CRP, Lipid Profile, CEA tumor marker, and ABG analysis.",
@@ -7905,7 +7905,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1750,
     "mrp": 2500,
     "description": "Includes LFT, GGT, Lipid Profile, Uric Acid, KFT, and Blood Sugar.",
@@ -7946,7 +7946,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 1899,
     "mrp": 2700,
     "description": "Evaluates root causes: Ferritin, Iron, Thyroid, Vitamin D, Vitamin B12, Zinc.",
@@ -7987,7 +7987,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 1999,
     "mrp": 2800,
     "description": "Screens anemia, thyroid, vitamin deficiency, electrolytes, and cortisol.",
@@ -8028,7 +8028,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 1699,
     "mrp": 2400,
     "description": "Includes Calcium, Phosphorus, Vitamin D, Alkaline Phosphatase, Uric Acid, RA Factor.",
@@ -8069,7 +8069,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1750,
     "mrp": 2500,
     "description": "CBC, PBS, Iron Profile, Ferritin, Vitamin B12, Folic Acid, Reticulocyte count.",
@@ -8110,7 +8110,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1450,
     "mrp": 2100,
     "description": "T3, T4, TSH, Fasting Blood Sugar, Fasting Insulin, and Lipid Profile.",
@@ -8151,7 +8151,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 2100,
     "mrp": 3000,
     "description": "Thyroid, Lipid Profile, HbA1c, Cortisol, Insulin, Leptin screen.",
@@ -8192,7 +8192,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 31,
+    "discountPercent": 20,
     "price": 1499,
     "mrp": 2200,
     "description": "CBC, Calcium, Vitamin D, Iron, Total Protein, Urine Routine.",
@@ -8233,7 +8233,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2350,
     "description": "Immunoglobulins IgG, IgA, IgM, CBC with Differential, Zinc, Vitamin C.",
@@ -8274,7 +8274,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1950,
     "mrp": 2800,
     "description": "D-Dimer, hs-CRP, Ferritin, CBC, KFT, LFT, and Troponin-I.",
@@ -8315,7 +8315,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 2800,
     "mrp": 4000,
     "description": "Lipid Profile, hs-CRP, Homocysteine, D-Dimer, HbA1c, KFT.",
@@ -8356,7 +8356,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 30,
+    "discountPercent": 20,
     "price": 1250,
     "mrp": 1800,
     "description": "KFT, Electrolytes, Serum Uric Acid, Urine Routine and Microscopic Culture.",
@@ -8397,7 +8397,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 31,
+    "discountPercent": 20,
     "price": 1650,
     "mrp": 2400,
     "description": "LFT, Amylase, Lipase, Stool Routine, Stool Occult Blood, H. Pylori Antigen.",
@@ -8438,7 +8438,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 850,
     "mrp": 1200,
     "description": "Evaluates acute pancreatitis and pancreatic inflammation.",
@@ -8479,7 +8479,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 890,
     "mrp": 1250,
     "description": "Diagnoses Helicobacter pylori peptic ulcers and chronic gastritis.",
@@ -8520,7 +8520,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 31,
+    "discountPercent": 20,
     "price": 2400,
     "mrp": 3500,
     "description": "ANA, Anti-CCP, RA Factor, HLA-B27, ESR, Uric Acid, hs-CRP.",
@@ -8561,7 +8561,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 28,
+    "discountPercent": 20,
     "price": 1850,
     "mrp": 2600,
     "description": "Molecular marker for seronegative spondyloarthropathies and spine arthritis.",
@@ -8602,7 +8602,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 3400,
     "mrp": 4800,
     "description": "Includes PSA, CEA, AFP, CA 19-9, and LDH.",
@@ -8643,7 +8643,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 29,
+    "discountPercent": 20,
     "price": 3400,
     "mrp": 4800,
     "description": "Includes CA-125, CA 15-3, CEA, AFP, and CA 19-9.",
@@ -8685,7 +8685,7 @@ export const ALL_LAB_TESTS_DATA = [
       "routine",
       "popular"
     ],
-    "discountPercent": 33,
+    "discountPercent": 20,
     "price": 3999,
     "mrp": 6000,
     "description": "85+ parameter flagship panel covering all vital organs, vitamins, hormones.",
@@ -8726,7 +8726,7 @@ export const ALL_LAB_TESTS_DATA = [
     "categories": [
       "routine"
     ],
-    "discountPercent": 33,
+    "discountPercent": 20,
     "price": 4999,
     "mrp": 7500,
     "description": "Most exhaustive diagnostic panel with 98+ biomarkers including cancer screens.",

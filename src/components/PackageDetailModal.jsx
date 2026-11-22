@@ -134,7 +134,7 @@ export default function PackageDetailModal({ pkg, onClose, onScheduleCollection 
                   <span className="text-xs text-muted line-through">₹{pkg.mrp.toFixed(2)}</span>
                 )}
                 <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
-                  {pkg.discountPercent}% OFF
+                  20% OFF
                 </span>
               </div>
             </div>

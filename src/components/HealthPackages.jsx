@@ -116,7 +116,7 @@ export default function HealthPackages({ onSelectPackage }) {
                       )}
                     </div>
                     <span className="text-[10px] text-emerald-600 font-bold block">
-                      {pkg.discountPercent}% Demo Discount
+                      20% OFF
                     </span>
                   </div>
 

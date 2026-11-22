@@ -19,7 +19,7 @@ const PACKAGES_DATA = [
     category: 'fullbody',
     categoryName: 'Full Body Checkup',
     testsCount: 70,
-    discountPercent: 33,
+    discountPercent: 20,
     rating: 4.7,
     reviewsCount: '3,205',
     price: 1999,
@@ -37,7 +37,7 @@ const PACKAGES_DATA = [
     category: 'men',
     categoryName: "Men's Health",
     testsCount: 55,
-    discountPercent: 25,
+    discountPercent: 20,
     rating: 4.6,
     reviewsCount: '1,987',
     price: 1499,
@@ -55,7 +55,7 @@ const PACKAGES_DATA = [
     category: 'women',
     categoryName: "Women's Health",
     testsCount: 58,
-    discountPercent: 30,
+    discountPercent: 20,
     rating: 4.6,
     reviewsCount: '1,643',
     price: 1799,
@@ -73,7 +73,7 @@ const PACKAGES_DATA = [
     category: 'senior',
     categoryName: 'Senior Citizen',
     testsCount: 75,
-    discountPercent: 28,
+    discountPercent: 20,
     rating: 4.9,
     reviewsCount: '892',
     price: 1899,
@@ -110,7 +110,7 @@ const PACKAGES_DATA = [
     category: 'heart',
     categoryName: 'Heart Care',
     testsCount: 48,
-    discountPercent: 25,
+    discountPercent: 20,
     rating: 4.7,
     reviewsCount: '1,108',
     price: 2499,
@@ -601,7 +601,7 @@ export default function HealthPackagesPage() {
                         {/* Top: Discount Badge + Wishlist */}
                         <div className="flex items-center justify-between">
                           <span className="px-2 py-0.5 rounded-md bg-[#EAF8EF] text-[#16A34A] text-[10px] sm:text-[11px] font-bold">
-                            {pkg.discountPercent}% OFF
+                            20% OFF
                           </span>
                           <button
                             type="button"

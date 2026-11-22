@@ -550,7 +550,7 @@ export default function DiagnosticPortalPage() {
                               ₹{test.mrp.toLocaleString()}
                             </span>
                             <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold shrink-0 ml-auto sm:ml-0">
-                              {test.discountPercent}% OFF
+                              20% OFF
                             </span>
                           </div>
                         </div>

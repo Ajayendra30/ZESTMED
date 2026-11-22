@@ -64,7 +64,7 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
 
   const priceNum = typeof test.price === 'number' ? test.price : parseFloat(test.price || 399);
   const mrpNum = typeof test.mrp === 'number' ? test.mrp : parseFloat(test.mrp || (priceNum * 1.25));
-  const discountVal = test.discountPercent || Math.round(((mrpNum - priceNum) / mrpNum) * 100) || 20;
+  const discountVal = 20;
 
   const handleAddToCart = (e) => {
     e?.stopPropagation();

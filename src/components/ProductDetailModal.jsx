@@ -54,8 +54,8 @@ export default function ProductDetailModal({ product, onClose }) {
   };
 
   const priceNum = typeof product.price === 'number' ? product.price : parseFloat(product.price || 35);
-  const mrpNum = typeof product.mrp === 'number' ? product.mrp : parseFloat(product.mrp || (priceNum * 1.2));
-  const discountVal = product.discountPercent || Math.round(((mrpNum - priceNum) / mrpNum) * 100) || 17;
+  const mrpNum = typeof product.mrp === 'number' ? product.mrp : parseFloat(product.mrp || (priceNum * 1.25));
+  const discountVal = 20;
 
   const handleAddToCart = (e) => {
     e?.stopPropagation();
