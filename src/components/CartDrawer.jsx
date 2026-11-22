@@ -79,7 +79,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
       const newOrder = {
         id: `ZM-ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
         order_number: `ZM-ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-        patientName: user?.name || 'Self',
+        patientName: (user?.name && user.name !== 'Rahul Verma') ? user.name : 'Self',
         phone: user?.phone || user?.contact || '',
         patientPhone: user?.phone || user?.contact || '',
         userId: user?.id || null,
@@ -160,7 +160,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
             collectionDate: 'Tomorrow, 07:30 AM',
             date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
             time: '07:30 AM - Home Collection',
-            patientName: user?.name || 'Self',
+            patientName: (user?.name && user.name !== 'Rahul Verma') ? user.name : 'Self',
             phone: user?.phone || user?.contact || '',
             patientPhone: user?.phone || user?.contact || '',
             userId: user?.id || null,

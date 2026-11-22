@@ -278,7 +278,7 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onCancelB
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
               <div>
                 <p className="font-extrabold text-slate-900 text-sm">
-                  {booking.patientName || 'Self'}
+                  {(!booking.patientName || booking.patientName === 'Rahul Verma') ? 'Self' : booking.patientName}
                 </p>
                 <p className="text-slate-500 font-medium mt-0.5">
                   Phone: <strong className="text-slate-700">{booking.phone || booking.patientPhone || 'Not Specified'}</strong>

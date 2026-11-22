@@ -457,6 +457,31 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
   }, []);
 
+  // Sanitize stored patient orders and bookings so that Rahul Verma is never present
+  useEffect(() => {
+    try {
+      const activeName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') ? user.name : 'Self';
+      const stored = localStorage.getItem('zestmed_patient_orders');
+      if (stored && stored.includes('Rahul Verma')) {
+        const cleaned = stored.replace(/Rahul Verma/gi, activeName);
+        localStorage.setItem('zestmed_patient_orders', cleaned);
+        setOrders(JSON.parse(cleaned));
+      }
+      const storedLabs = localStorage.getItem('zestmed_patient_lab_bookings');
+      if (storedLabs && storedLabs.includes('Rahul Verma')) {
+        const cleanedLabs = storedLabs.replace(/Rahul Verma/gi, activeName);
+        localStorage.setItem('zestmed_patient_lab_bookings', cleanedLabs);
+        setLabBookings(JSON.parse(cleanedLabs));
+      }
+      const storedAppts = localStorage.getItem('patient_appointments');
+      if (storedAppts && storedAppts.includes('Rahul Verma')) {
+        const cleanedAppts = storedAppts.replace(/Rahul Verma/gi, activeName);
+        localStorage.setItem('patient_appointments', cleanedAppts);
+        setAppointments(JSON.parse(cleanedAppts));
+      }
+    } catch (_) {}
+  }, [user]);
+
   const [addresses, setAddresses] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_saved_addresses');
@@ -707,6 +732,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       const itemNames = Array.isArray(o.items) && o.items.length > 0
         ? o.items.map((it) => it.name).filter(Boolean).join(', ')
         : 'Prescription Medicines';
+      
+      const resolvedPatientName = (!o.patientName || o.patientName === 'Rahul Verma' || o.patientName === 'Self')
+        ? (user?.name || 'Self')
+        : o.patientName;
+
       return {
         id: o.id || o.order_number,
         bookingId: o.id || o.order_number,
@@ -732,7 +762,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         status: o.status || o.order_status || 'Out for Delivery',
         totalAmount: parseFloat(o.totalAmount || o.total || 0),
         price: parseFloat(o.totalAmount || o.total || 0),
-        patientName: o.patientName || (user?.name || 'Self'),
+        patientName: resolvedPatientName,
+        patient: resolvedPatientName,
         phone: o.phone || (user?.phone || user?.contact || ''),
         source: 'orders',
         rawOrder: o
@@ -753,12 +784,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         map.set(key, mb);
       }
     });
-    return Array.from(map.values()).sort((a, b) => {
-      const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
-      const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
-      return timeB - timeA;
-    });
-  }, [userBookings, formattedMedicineBookings]);
+    return Array.from(map.values())
+      .map((b) => {
+        if (!b.patientName || b.patientName === 'Rahul Verma') {
+          return { ...b, patientName: user?.name || 'Self', patient: user?.name || 'Self' };
+        }
+        return b;
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
+        const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
+        return timeB - timeA;
+      });
+  }, [userBookings, formattedMedicineBookings, user]);
 
   // Filtered Real User Bookings for My Bookings View
   const filteredUserBookings = useMemo(() => {
@@ -2077,7 +2115,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                   ID: {b.bookingId || b.id}
                                 </span>
                                 <span className="text-slate-400 font-sans">
-                                  • Patient: <strong className="text-slate-700">{b.patientName || 'Self'}</strong>
+                                  • Patient: <strong className="text-slate-700">{(!b.patientName || b.patientName === 'Rahul Verma') ? (user?.name || 'Self') : b.patientName}</strong>
                                 </span>
                               </div>
                             </div>
