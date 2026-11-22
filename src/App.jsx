@@ -44,6 +44,23 @@ function AppContent() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Ensure redirect to Home page if the website was reloaded
+  useEffect(() => {
+    try {
+      const navEntries = window.performance?.getEntriesByType?.('navigation');
+      const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
+      const isReloadByLegacy = window.performance?.navigation?.type === 1;
+      const isReloadBySession = sessionStorage.getItem('zestmed_is_reloading') === 'true';
+
+      if (isReloadByEntries || isReloadByLegacy || isReloadBySession) {
+        sessionStorage.removeItem('zestmed_is_reloading');
+        if (location.pathname !== '/' || location.search || location.hash) {
+          navigate('/', { replace: true });
+        }
+      }
+    } catch (_) {}
+  }, []);
+
   // Global Interactive Modals for New Core Services
   const [isDoctorModalOpen, setIsDoctorModalOpen] = useState(false);
   const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
