@@ -979,12 +979,11 @@ export const getUserBookings = async (user) => {
     if (!item) return false;
     const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
     if (cleanPhone && itemPhone && cleanPhone === itemPhone) return true;
-    if (userId && item.userId && userId === item.userId) return true;
-    if (userName && userName !== 'Verified Patient' && !userName.startsWith('Patient') && userName !== 'Self') {
-      const itemPatientName = (item.patientName || item.patient_name || item.name || '').toLowerCase();
-      if (itemPatientName.includes(userName.toLowerCase())) return true;
+    if (userId && (item.userId || item.user_id) && String(userId) === String(item.userId || item.user_id)) return true;
+    if (userEmail && (item.userEmail || item.user_email || item.email)) {
+      const itemEmail = (item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
+      if (itemEmail && itemEmail === userEmail) return true;
     }
-    if (userEmail && item.userEmail && item.userEmail.toLowerCase() === userEmail) return true;
     return false;
   };
 
@@ -994,12 +993,12 @@ export const getUserBookings = async (user) => {
   // 1. Fetch from Supabase PostgreSQL tables if configured
   if (isSupabaseConfigured()) {
     try {
-      const phoneFilter = cleanPhone ? `phone.ilike.%${cleanPhone}%` : null;
-      const nameFilter = (userName && userName !== 'Verified Patient' && !userName.startsWith('Patient') && userName !== 'Self')
-        ? `patient_name.ilike.%${userName}%`
-        : null;
+      const filters = [];
+      if (cleanPhone) filters.push(`phone.ilike.%${cleanPhone}%`);
+      if (userId) filters.push(`user_id.eq.${userId}`);
+      if (userEmail) filters.push(`user_email.eq.${userEmail}`);
 
-      const filterClause = [phoneFilter, nameFilter].filter(Boolean).join(',');
+      const filterClause = filters.length > 0 ? filters.join(',') : null;
 
       if (filterClause) {
         const [docsRes, physioRes, surgRes, wellRes, labsRes, ordersRes] = await Promise.allSettled([
@@ -1012,7 +1011,7 @@ export const getUserBookings = async (user) => {
         ]);
 
         if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) {
-          docsRes.value.data.forEach((d) => {
+          docsRes.value.data.filter(isMatchingUser).forEach((d) => {
             const bId = d.appointment_number || d.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
@@ -1048,7 +1047,7 @@ export const getUserBookings = async (user) => {
         }
 
         if (physioRes.status === 'fulfilled' && Array.isArray(physioRes.value.data)) {
-          physioRes.value.data.forEach((p) => {
+          physioRes.value.data.filter(isMatchingUser).forEach((p) => {
             const bId = p.booking_number || p.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
@@ -1084,7 +1083,7 @@ export const getUserBookings = async (user) => {
         }
 
         if (surgRes.status === 'fulfilled' && Array.isArray(surgRes.value.data)) {
-          surgRes.value.data.forEach((s) => {
+          surgRes.value.data.filter(isMatchingUser).forEach((s) => {
             const bId = s.booking_number || s.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
@@ -1121,7 +1120,7 @@ export const getUserBookings = async (user) => {
         }
 
         if (wellRes.status === 'fulfilled' && Array.isArray(wellRes.value.data)) {
-          wellRes.value.data.forEach((w) => {
+          wellRes.value.data.filter(isMatchingUser).forEach((w) => {
             const bId = w.booking_number || w.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
@@ -1156,7 +1155,7 @@ export const getUserBookings = async (user) => {
         }
 
         if (labsRes.status === 'fulfilled' && Array.isArray(labsRes.value.data)) {
-          labsRes.value.data.forEach((l) => {
+          labsRes.value.data.filter(isMatchingUser).forEach((l) => {
             const bId = l.booking_number || l.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
@@ -1193,7 +1192,7 @@ export const getUserBookings = async (user) => {
         }
 
         if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
-          ordersRes.value.data.forEach((o) => {
+          ordersRes.value.data.filter(isMatchingUser).forEach((o) => {
             const bId = o.order_number || o.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));

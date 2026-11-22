@@ -1,9 +1,9 @@
 // src/pages/PatientDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Patient / User Dashboard specification pixel-for-pixel
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
-import { saveRegisteredPatient } from '../utils/patientRegistry';
+import { saveRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 import { 
   updateDoctorAppointmentStatus, 
   updateLabBookingStatus, 
@@ -114,20 +114,44 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [isLoadingBookings, setIsLoadingBookings] = useState(false);
   const [selectedBookingForDetail, setSelectedBookingForDetail] = useState(null);
 
-  // Patient Real-Time Notifications (persisted with Buy & Book alerts)
+  // Strict matching helper to ensure patient data isolation
+  const isMatchingCurrentUser = useCallback((item) => {
+    if (!item || !user) return false;
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
+    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
+    if (cleanUserPhone && itemPhone) {
+      return cleanUserPhone === itemPhone;
+    }
+    if (user.id && (item.userId || item.user_id)) {
+      return String(user.id) === String(item.userId || item.user_id);
+    }
+    if (user.email && (item.userEmail || item.user_email || item.email)) {
+      const itemEmail = (item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
+      if (itemEmail && itemEmail === (user.email || '').trim().toLowerCase()) return true;
+    }
+    return false;
+  }, [user]);
+
+  // Patient Real-Time Notifications (strictly isolated to current verified user)
   const [patientNotifications, setPatientNotifications] = useState(() => {
+    if (!user) return [];
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
     try {
       const stored = localStorage.getItem('zestmed_patient_notifications');
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const ids = new Set(parsed.map((p) => p.id));
-          return [...parsed, ...DEFAULT_NOTIFICATIONS.filter((d) => !ids.has(d.id))];
+        if (Array.isArray(parsed)) {
+          return parsed.filter(item => {
+            const itemPhone = normalizePhone(item.phone || item.patientPhone || item.contact || '');
+            if (cleanUserPhone && itemPhone) return cleanUserPhone === itemPhone;
+            if (user.id && item.userId) return String(user.id) === String(item.userId);
+            return false;
+          });
         }
       }
-      return DEFAULT_NOTIFICATIONS;
+      return cleanUserPhone === '9279125091' ? DEFAULT_NOTIFICATIONS : [];
     } catch {
-      return DEFAULT_NOTIFICATIONS;
+      return cleanUserPhone === '9279125091' ? DEFAULT_NOTIFICATIONS : [];
     }
   });
 
@@ -138,18 +162,21 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         // 1. Direct notification in event detail
         if (e?.detail?.notification) {
           const incoming = e.detail.notification;
-          setPatientNotifications((prev) => {
-            if (prev.some((n) => n.id === incoming.id)) return prev;
-            playNotificationSound();
-            return [incoming, ...prev];
-          });
-          return;
+          if (isMatchingCurrentUser(incoming)) {
+            setPatientNotifications((prev) => {
+              if (prev.some((n) => n.id === incoming.id)) return prev;
+              playNotificationSound();
+              return [incoming, ...prev];
+            });
+            return;
+          }
         }
 
         // 2. Load from zestmed_patient_notifications
         const storedNotifs = JSON.parse(localStorage.getItem('zestmed_patient_notifications') || '[]');
-        if (storedNotifs.length > 0) {
-          const latest = storedNotifs[0];
+        const userNotifs = storedNotifs.filter(isMatchingCurrentUser);
+        if (userNotifs.length > 0) {
+          const latest = userNotifs[0];
           setPatientNotifications((prev) => {
             if (prev.some((n) => n.id === latest.id)) return prev;
             playNotificationSound();
@@ -160,8 +187,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
         // 3. Check medicine orders (BUY)
         const storedOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
-        if (storedOrders.length > 0) {
-          const latest = storedOrders[0];
+        const userOrders = storedOrders.filter(isMatchingCurrentUser);
+        if (userOrders.length > 0) {
+          const latest = userOrders[0];
           const notifId = `pat-ord-${latest.id || latest.orderId || Date.now()}`;
           const newNotif = {
             id: notifId,
@@ -186,8 +214,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
         // 4. Check lab bookings (BOOK)
         const storedLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        if (storedLabs.length > 0) {
-          const latest = storedLabs[0];
+        const userLabs = storedLabs.filter(isMatchingCurrentUser);
+        if (userLabs.length > 0) {
+          const latest = userLabs[0];
           const notifId = `pat-lab-${latest.id || latest.bookingId || Date.now()}`;
           const newNotif = {
             id: notifId,
@@ -212,8 +241,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
         // 5. Check appointments (BOOK)
         const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        if (stored.length > 0) {
-          const latest = stored[0];
+        const userAppointments = stored.filter(isMatchingCurrentUser);
+        if (userAppointments.length > 0) {
+          const latest = userAppointments[0];
           const notifId = `pat-${latest.id || latest.bookingId || Date.now()}`;
           const newNotif = {
             id: notifId,
@@ -246,7 +276,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       window.removeEventListener('storage', handleNewPatientAlert);
       window.removeEventListener('zestmed_new_notification', handleNewPatientAlert);
     };
-  }, []);
+  }, [isMatchingCurrentUser]);
 
   // Modals State
   const [selectedReportBooking, setSelectedReportBooking] = useState(null);
@@ -340,46 +370,76 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     };
   }, [user]);
 
-  // Persistent User Data (for local fallback views)
+  // Persistent User Data (strictly scoped to current verified user)
   const [orders, setOrders] = useState(() => {
+    if (!user) return [];
     try {
       const saved = localStorage.getItem('zestmed_patient_orders');
-      return saved ? JSON.parse(saved) : initialPatientOrders;
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed.filter(isMatchingCurrentUser) : [];
     } catch {
-      return initialPatientOrders;
+      return [];
     }
   });
 
   const [labBookings, setLabBookings] = useState(() => {
+    if (!user) return [];
     try {
       const saved = localStorage.getItem('zestmed_patient_lab_bookings');
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed.filter(isMatchingCurrentUser) : [];
     } catch {
       return [];
     }
   });
 
   const [appointments, setAppointments] = useState(() => {
+    if (!user) return [];
     try {
       const saved = localStorage.getItem('patient_appointments');
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed.filter(isMatchingCurrentUser) : [];
     } catch {
       return [];
     }
   });
 
+  // Synchronize user-specific orders and bookings when user logs in or updates
+  useEffect(() => {
+    if (!user) {
+      setOrders([]);
+      setLabBookings([]);
+      setAppointments([]);
+      return;
+    }
+    try {
+      const savedOrders = localStorage.getItem('zestmed_patient_orders');
+      setOrders(savedOrders ? JSON.parse(savedOrders).filter(isMatchingCurrentUser) : []);
+
+      const savedLab = localStorage.getItem('zestmed_patient_lab_bookings');
+      setLabBookings(savedLab ? JSON.parse(savedLab).filter(isMatchingCurrentUser) : []);
+
+      const savedAppts = localStorage.getItem('patient_appointments');
+      setAppointments(savedAppts ? JSON.parse(savedAppts).filter(isMatchingCurrentUser) : []);
+    } catch (_) {}
+  }, [user, isMatchingCurrentUser]);
+
   // Real-time synchronization across app actions
   useEffect(() => {
     const handleSyncStorage = () => {
+      if (!user) return;
       try {
         const savedOrders = localStorage.getItem('zestmed_patient_orders');
-        if (savedOrders) setOrders(JSON.parse(savedOrders));
+        if (savedOrders) setOrders(JSON.parse(savedOrders).filter(isMatchingCurrentUser));
 
         const savedLab = localStorage.getItem('zestmed_patient_lab_bookings');
-        if (savedLab) setLabBookings(JSON.parse(savedLab));
+        if (savedLab) setLabBookings(JSON.parse(savedLab).filter(isMatchingCurrentUser));
 
         const savedAppts = localStorage.getItem('patient_appointments');
-        if (savedAppts) setAppointments(JSON.parse(savedAppts));
+        if (savedAppts) setAppointments(JSON.parse(savedAppts).filter(isMatchingCurrentUser));
       } catch (err) {
         console.error('Storage sync error', err);
       }
@@ -391,7 +451,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       window.removeEventListener('storage', handleSyncStorage);
       window.removeEventListener('zestmed_booking_updated', handleSyncStorage);
     };
-  }, []);
+  }, [user, isMatchingCurrentUser]);
 
   // Sanitize orders so wellness packages and lab tests never contaminate medicine orders
   useEffect(() => {
@@ -446,8 +506,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
           localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updatedLabs));
           localStorage.setItem('zestmed_patient_orders', JSON.stringify(medicineOrders));
-          setOrders(medicineOrders.length > 0 ? medicineOrders : initialPatientOrders);
-          setLabBookings(updatedLabs);
+          setOrders(medicineOrders.filter(isMatchingCurrentUser));
+          setLabBookings(updatedLabs.filter(isMatchingCurrentUser));
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
         }
@@ -455,39 +515,26 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     } catch (e) {
       console.warn('Error sanitizing orders:', e);
     }
-  }, []);
-
-  // Sanitize stored patient orders and bookings so that Rahul Verma is never present
-  useEffect(() => {
-    try {
-      const activeName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') ? user.name : 'Self';
-      const stored = localStorage.getItem('zestmed_patient_orders');
-      if (stored && stored.includes('Rahul Verma')) {
-        const cleaned = stored.replace(/Rahul Verma/gi, activeName);
-        localStorage.setItem('zestmed_patient_orders', cleaned);
-        setOrders(JSON.parse(cleaned));
-      }
-      const storedLabs = localStorage.getItem('zestmed_patient_lab_bookings');
-      if (storedLabs && storedLabs.includes('Rahul Verma')) {
-        const cleanedLabs = storedLabs.replace(/Rahul Verma/gi, activeName);
-        localStorage.setItem('zestmed_patient_lab_bookings', cleanedLabs);
-        setLabBookings(JSON.parse(cleanedLabs));
-      }
-      const storedAppts = localStorage.getItem('patient_appointments');
-      if (storedAppts && storedAppts.includes('Rahul Verma')) {
-        const cleanedAppts = storedAppts.replace(/Rahul Verma/gi, activeName);
-        localStorage.setItem('patient_appointments', cleanedAppts);
-        setAppointments(JSON.parse(cleanedAppts));
-      }
-    } catch (_) {}
-  }, [user]);
+  }, [isMatchingCurrentUser]);
 
   const [addresses, setAddresses] = useState(() => {
+    if (!user) return [];
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
     try {
       const saved = localStorage.getItem('zestmed_saved_addresses');
-      return saved ? JSON.parse(saved) : initialAssamAddresses;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const userAddrs = parsed.filter(a => {
+            const aPhone = normalizePhone(a.phone || a.contact || '');
+            return !aPhone || aPhone === cleanUserPhone;
+          });
+          if (userAddrs.length > 0) return userAddrs;
+        }
+      }
+      return cleanUserPhone === '9279125091' ? initialAssamAddresses : [];
     } catch {
-      return initialAssamAddresses;
+      return cleanUserPhone === '9279125091' ? initialAssamAddresses : [];
     }
   });
 
@@ -728,56 +775,58 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Formatted Medicine Bookings from local orders state so they always appear in My Bookings
   const formattedMedicineBookings = useMemo(() => {
-    return (orders || []).map((o) => {
-      const itemNames = Array.isArray(o.items) && o.items.length > 0
-        ? o.items.map((it) => it.name).filter(Boolean).join(', ')
-        : 'Prescription Medicines';
-      
-      const resolvedPatientName = (!o.patientName || o.patientName === 'Rahul Verma' || o.patientName === 'Self')
-        ? (user?.name || 'Self')
-        : o.patientName;
-
-      return {
-        id: o.id || o.order_number,
-        bookingId: o.id || o.order_number,
-        serviceType: 'Medicine Order',
-        itemType: 'medicine',
-        displayType: 'Medicine Order',
-        serviceName: itemNames,
-        title: itemNames,
-        items: o.items || [],
-        trackingSteps: o.trackingSteps || [],
-        provider: o.hub || 'Zestmed Certified Pharmacy Hub',
-        bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
-        createdAt: o.createdAt || new Date().toISOString(),
-        appointmentDate: o.date || 'Today',
-        appointmentTime: o.time || 'Express Delivery',
-        date: o.date || 'Today',
-        time: o.time || 'Express Delivery',
-        mode: 'Doorstep Delivery',
-        location: o.deliveryAddress || 'Guwahati, Assam',
-        deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
-        paymentStatus: o.paymentMethod || o.payment_status || 'UPI (Prepaid - Verified)',
-        bookingStatus: o.status || o.order_status || 'Out for Delivery',
-        status: o.status || o.order_status || 'Out for Delivery',
-        totalAmount: parseFloat(o.totalAmount || o.total || 0),
-        price: parseFloat(o.totalAmount || o.total || 0),
-        patientName: resolvedPatientName,
-        patient: resolvedPatientName,
-        phone: o.phone || (user?.phone || user?.contact || ''),
-        source: 'orders',
-        rawOrder: o
-      };
-    });
-  }, [orders, user]);
+    if (!user) return [];
+    return (orders || [])
+      .filter(isMatchingCurrentUser)
+      .map((o) => {
+        const itemNames = Array.isArray(o.items) && o.items.length > 0
+          ? o.items.map((it) => it.name).filter(Boolean).join(', ')
+          : 'Prescription Medicines';
+        
+        return {
+          id: o.id || o.order_number,
+          bookingId: o.id || o.order_number,
+          serviceType: 'Medicine Order',
+          itemType: 'medicine',
+          displayType: 'Medicine Order',
+          serviceName: itemNames,
+          title: itemNames,
+          items: o.items || [],
+          trackingSteps: o.trackingSteps || [],
+          provider: o.hub || 'Zestmed Certified Pharmacy Hub',
+          bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+          createdAt: o.createdAt || new Date().toISOString(),
+          appointmentDate: o.date || 'Today',
+          appointmentTime: o.time || 'Express Delivery',
+          date: o.date || 'Today',
+          time: o.time || 'Express Delivery',
+          mode: 'Doorstep Delivery',
+          location: o.deliveryAddress || 'Guwahati, Assam',
+          deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
+          paymentStatus: o.paymentMethod || o.payment_status || 'UPI (Prepaid - Verified)',
+          bookingStatus: o.status || o.order_status || 'Confirmed',
+          status: o.status || o.order_status || 'Confirmed',
+          totalAmount: parseFloat(o.totalAmount || o.total || 0),
+          price: parseFloat(o.totalAmount || o.total || 0),
+          patientName: o.patientName || user?.name || 'Self',
+          patient: o.patientName || user?.name || 'Self',
+          phone: o.phone || (user?.phone || user?.contact || ''),
+          source: 'orders',
+          rawOrder: o
+        };
+      });
+  }, [orders, user, isMatchingCurrentUser]);
 
   // Combined real user bookings (Database/Synced + Local persistent medicine orders)
   const allUserBookings = useMemo(() => {
+    if (!user) return [];
     const map = new Map();
-    (userBookings || []).forEach((b) => {
-      const key = String(b.bookingId || b.id);
-      map.set(key, b);
-    });
+    (userBookings || [])
+      .filter(isMatchingCurrentUser)
+      .forEach((b) => {
+        const key = String(b.bookingId || b.id);
+        map.set(key, b);
+      });
     (formattedMedicineBookings || []).forEach((mb) => {
       const key = String(mb.bookingId || mb.id);
       if (!map.has(key)) {
@@ -785,18 +834,84 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       }
     });
     return Array.from(map.values())
-      .map((b) => {
-        if (!b.patientName || b.patientName === 'Rahul Verma') {
-          return { ...b, patientName: user?.name || 'Self', patient: user?.name || 'Self' };
-        }
-        return b;
-      })
       .sort((a, b) => {
         const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
         const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
         return timeB - timeA;
       });
-  }, [userBookings, formattedMedicineBookings, user]);
+  }, [userBookings, formattedMedicineBookings, user, isMatchingCurrentUser]);
+
+  // Real or Historical Diagnostic Reports (strictly isolated to verified user)
+  const userReports = useMemo(() => {
+    if (!user) return [];
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
+    if (cleanUserPhone === '9279125091') {
+      return [
+        {
+          test: 'Complete Blood Count (CBC)',
+          date: 'Nov 07, 2026',
+          id: 'ZM-REP-9041',
+          status: 'Normal',
+          pathologist: 'Dr. N. Bora, MD (Pathology)'
+        },
+        {
+          test: 'Lipid Profile Screen',
+          date: 'Oct 28, 2026',
+          id: 'ZM-REP-8812',
+          status: 'Desirable',
+          pathologist: 'Dr. Arindam Sharma, MD'
+        },
+        {
+          test: 'Liver Function Test (LFT)',
+          date: 'Oct 20, 2026',
+          id: 'ZM-REP-8450',
+          status: 'Normal',
+          pathologist: 'Dr. N. Bora, MD (Pathology)'
+        },
+        {
+          test: 'Thyroid Profile (T3, T4, TSH)',
+          date: 'Sep 15, 2026',
+          id: 'ZM-REP-7901',
+          status: 'Optimal',
+          pathologist: 'Dr. S. Das, MD (Biochemistry)'
+        }
+      ];
+    }
+    const completedLabs = allUserBookings.filter(b => b.itemType === 'lab' && (
+      (b.status || '').toLowerCase().includes('report') ||
+      (b.status || '').toLowerCase().includes('publish') ||
+      (b.status || '').toLowerCase().includes('complete')
+    )).map((l, idx) => ({
+      test: l.serviceName || l.title || 'Diagnostic Test',
+      date: l.date || 'Recent',
+      id: `ZM-REP-${l.bookingId || idx + 1}`,
+      status: 'Ready',
+      pathologist: 'Dr. Pranabesh Sarma, MD Pathology'
+    }));
+
+    try {
+      const stored = JSON.parse(localStorage.getItem('zestmed_patient_reports') || '[]');
+      const userStored = Array.isArray(stored) ? stored.filter(isMatchingCurrentUser) : [];
+      return [...userStored, ...completedLabs];
+    } catch {
+      return completedLabs;
+    }
+  }, [user, allUserBookings, isMatchingCurrentUser]);
+
+  // Real or Historical Prescriptions (strictly isolated to verified user)
+  const userPrescriptions = useMemo(() => {
+    if (!user) return [];
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
+    if (cleanUserPhone === '9279125091') {
+      return initialPatientPrescriptions;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem('zestmed_patient_prescriptions') || '[]');
+      return Array.isArray(stored) ? stored.filter(isMatchingCurrentUser) : [];
+    } catch {
+      return [];
+    }
+  }, [user, isMatchingCurrentUser]);
 
   // Filtered Real User Bookings for My Bookings View
   const filteredUserBookings = useMemo(() => {
@@ -1443,7 +1558,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Total Bookings
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {combinedBookings.length}
+                  {allUserBookings.length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
                   <span>View All →</span>
@@ -1510,7 +1625,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   Reports
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  4
+                  {userReports.length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-bold text-purple-600 mt-0.5 flex items-center gap-0.5">
                   <span>Download →</span>
@@ -1714,79 +1829,40 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </button>
               </div>
 
-              {/* 3 Medicine Orders matching image */}
+              {/* Dynamically Rendered Patient Medicine Orders */}
               <div className="space-y-3 pt-1">
-                {/* 1. Paracetamol 500 mg */}
-                <div
-                  onClick={() => handleOpenOrderModal('Paracetamol 500 mg', '#ORD5487')}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3">
-                    <MedicineBoxThumb type="paracetamol" />
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
-                        Paracetamol 500 mg
-                      </h4>
-                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                        Order #ORD5487 • Nov 10, 2026
-                      </p>
+                {allUserBookings.filter(b => b.itemType === 'medicine').length > 0 ? (
+                  allUserBookings.filter(b => b.itemType === 'medicine').slice(0, 3).map((ord) => (
+                    <div
+                      key={ord.id || ord.bookingId}
+                      onClick={() => handleOpenOrderModal(ord.items?.[0]?.name || ord.serviceName || 'Medicine', ord.bookingId || ord.id)}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <MedicineBoxThumb type="paracetamol" />
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition truncate">
+                            {ord.items?.[0]?.name || ord.serviceName || 'Prescription Medicines'}
+                          </h4>
+                          <p className="text-[11px] text-slate-400 font-medium mt-0.5 truncate">
+                            Order #{ord.bookingId || ord.id} • {ord.date || 'Recent'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+                          {ord.status || 'Confirmed'}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <p className="font-semibold text-slate-700">No medicine orders yet</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Order medicines from our pharmacy store with fast delivery.</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                      Delivered
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
-
-                {/* 2. Vitamin D3 600 IU */}
-                <div
-                  onClick={() => handleOpenOrderModal('Vitamin D3 600 IU', '#ORD5462')}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3">
-                    <MedicineBoxThumb type="vitamind3" />
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
-                        Vitamin D3 600 IU
-                      </h4>
-                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                        Order #ORD5462 • Nov 05, 2026
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                      Delivered
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
-
-                {/* 3. Omeprazole 20 mg */}
-                <div
-                  onClick={() => handleOpenOrderModal('Omeprazole 20 mg', '#ORD5420')}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3">
-                    <MedicineBoxThumb type="omeprazole" />
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition">
-                        Omeprazole 20 mg
-                      </h4>
-                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                        Order #ORD5420 • Nov 01, 2026
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-blue-50 text-blue-600 border border-blue-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                      Completed
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -1812,76 +1888,38 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </button>
               </div>
 
-              {/* 3 Reports matching image */}
+              {/* Dynamically Rendered Diagnostic Reports */}
               <div className="space-y-3 pt-1">
-                {/* 1. Complete Blood Count (CBC) */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">
-                      Complete Blood Count (CBC)
-                    </h4>
-                    <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                      Nov 07, 2026
-                    </p>
+                {userReports.length > 0 ? (
+                  userReports.slice(0, 3).map((rep, idx) => (
+                    <div key={rep.id || idx} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-bold text-slate-900 truncate">
+                          {rep.test}
+                        </h4>
+                        <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                          {rep.date}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          downloadClinicalReport({ test: rep.test, date: rep.date, id: rep.id });
+                          addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                        }}
+                        className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 ml-2"
+                        title="Download Report"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <p className="font-semibold text-slate-700">No diagnostic reports yet</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Book a lab test to receive certified digital reports.</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      downloadClinicalReport({ test: 'Complete Blood Count (CBC)', date: 'Nov 07, 2026', id: 'ZM-REP-9041' });
-                      addToast('Official signed PDF report downloaded for Complete Blood Count (CBC).', 'success');
-                    }}
-                    className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
-                    title="Download Report"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* 2. Lipid Profile */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">
-                      Lipid Profile
-                    </h4>
-                    <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                      Oct 28, 2026
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      downloadClinicalReport({ test: 'Lipid Profile', date: 'Oct 28, 2026', id: 'ZM-REP-8812' });
-                      addToast('Official signed PDF report downloaded for Lipid Profile.', 'success');
-                    }}
-                    className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
-                    title="Download Report"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* 3. Liver Function Test (LFT) */}
-                <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">
-                      Liver Function Test (LFT)
-                    </h4>
-                    <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                      Oct 20, 2026
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      downloadClinicalReport({ test: 'Liver Function Test (LFT)', date: 'Oct 20, 2026', id: 'ZM-REP-8450' });
-                      addToast('Official signed PDF report downloaded for Liver Function Test (LFT).', 'success');
-                    }}
-                    className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"
-                    title="Download Report"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
+                )}
               </div>
             </div>
 
@@ -2308,61 +2346,73 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* Active & Past Prescriptions List */}
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-800">
-                  Uploaded & Verified Prescriptions ({initialPatientPrescriptions.length})
+                  Uploaded & Verified Prescriptions ({userPrescriptions.length})
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {initialPatientPrescriptions.map((rx) => (
-                    <div
-                      key={rx.id}
-                      className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                          <div>
-                            <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
-                            <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName}</h4>
-                            <p className="text-[11px] text-slate-500">{rx.specialty} • {rx.hospital}</p>
+                {userPrescriptions.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {userPrescriptions.map((rx) => (
+                      <div
+                        key={rx.id}
+                        className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                              <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
+                              <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName || 'Prescription Document'}</h4>
+                              <p className="text-[11px] text-slate-500">{rx.specialty || 'General Care'} • {rx.hospital || 'Assam Health Desk'}</p>
+                            </div>
+                            <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
+                              (rx.status || '').toLowerCase().includes('verified')
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            }`}>
+                              {rx.status || 'Verified'}
+                            </span>
                           </div>
-                          <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
-                            rx.status.toLowerCase().includes('verified')
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}>
-                            {rx.status}
-                          </span>
+
+                          <div className="py-3 text-xs text-slate-600 space-y-1">
+                            <p><strong className="text-slate-700">Issued On:</strong> {rx.dateOfIssue || 'Recent'}</p>
+                            <p><strong className="text-slate-700">Valid Until:</strong> {rx.expiryDate || 'Standard Validity'}</p>
+                            <p><strong className="text-slate-700">Medications:</strong> {rx.medicines?.map(m => m.name).join(', ') || 'Prescribed Medicines'}</p>
+                          </div>
                         </div>
 
-                        <div className="py-3 text-xs text-slate-600 space-y-1">
-                          <p><strong className="text-slate-700">Issued On:</strong> {rx.dateOfIssue}</p>
-                          <p><strong className="text-slate-700">Valid Until:</strong> {rx.expiryDate}</p>
-                          <p><strong className="text-slate-700">Medications:</strong> {rx.medicines?.map(m => m.name).join(', ') || 'Metformin, Atorvastatin'}</p>
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPrescription(rx)}
+                            className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>View Details</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
+                              openCart();
+                            }}
+                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            <span>Order Medicines</span>
+                          </button>
                         </div>
                       </div>
-
-                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedPrescription(rx)}
-                          className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>View Details</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
-                            openCart();
-                          }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <ShoppingCart className="w-3.5 h-3.5" />
-                          <span>Order Medicines</span>
-                        </button>
-                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
+                    <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center mx-auto">
+                      <FileText className="w-7 h-7" />
                     </div>
-                  ))}
-                </div>
+                    <h3 className="text-base font-extrabold text-slate-800">No Prescriptions Uploaded</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                      You haven't uploaded any doctor prescriptions yet. Use the upload box above to submit your prescription for verified doorstep medicine fulfillment.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -2393,95 +2443,86 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               </div>
 
               {/* Reports Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  {
-                    test: 'Complete Blood Count (CBC)',
-                    date: 'Nov 07, 2026',
-                    id: 'ZM-REP-9041',
-                    status: 'Normal',
-                    pathologist: 'Dr. N. Bora, MD (Pathology)'
-                  },
-                  {
-                    test: 'Lipid Profile Screen',
-                    date: 'Oct 28, 2026',
-                    id: 'ZM-REP-8812',
-                    status: 'Desirable',
-                    pathologist: 'Dr. Arindam Sharma, MD'
-                  },
-                  {
-                    test: 'Liver Function Test (LFT)',
-                    date: 'Oct 20, 2026',
-                    id: 'ZM-REP-8450',
-                    status: 'Normal',
-                    pathologist: 'Dr. N. Bora, MD (Pathology)'
-                  },
-                  {
-                    test: 'Thyroid Profile (T3, T4, TSH)',
-                    date: 'Sep 15, 2026',
-                    id: 'ZM-REP-7901',
-                    status: 'Optimal',
-                    pathologist: 'Dr. S. Das, MD (Biochemistry)'
-                  }
-                ].map((rep, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                          <FileCheck className="w-5 h-5" />
+              {userReports.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {userReports.map((rep, idx) => (
+                    <div
+                      key={rep.id || idx}
+                      className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                            <FileCheck className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900">{rep.test}</h3>
+                            <p className="text-xs text-slate-400 font-mono mt-0.5">
+                              {rep.id} • {rep.date}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-sm font-bold text-slate-900">{rep.test}</h3>
-                          <p className="text-xs text-slate-400 font-mono mt-0.5">
-                            {rep.id} • {rep.date}
-                          </p>
-                        </div>
+                        <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                          {rep.status || 'Ready'}
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
-                        {rep.status}
-                      </span>
-                    </div>
 
-                    <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl flex items-center justify-between">
-                      <span>Pathologist: <strong className="text-slate-700">{rep.pathologist}</strong></span>
-                      <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
-                    </div>
+                      <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl flex items-center justify-between">
+                        <span>Pathologist: <strong className="text-slate-700">{rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology'}</strong></span>
+                        <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
+                      </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist)}
-                        className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>View Report</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          downloadClinicalReport(rep);
-                          addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
-                        }}
-                        className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
-                        title="Download PDF"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => shareClinicalReport(rep, addToast)}
-                        className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200"
-                        title="Share with Doctor"
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
+                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>View Report</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            downloadClinicalReport(rep);
+                            addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                          }}
+                          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200 cursor-pointer"
+                          title="Download PDF"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => shareClinicalReport(rep, addToast)}
+                          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200 cursor-pointer"
+                          title="Share with Doctor"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
+                  <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto">
+                    <FileText className="w-7 h-7" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-base font-extrabold text-slate-800">No Diagnostic Test Reports Found</h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    You do not have any published test reports yet. When you complete a diagnostic test with our certified labs, your verified reports and digital signatures will appear here.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/diagnostics')}
+                    className="mt-2 inline-flex items-center gap-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Book a Diagnostic Test</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -2597,28 +2638,35 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     <div className="space-y-3">
-                      {addresses.map((addr) => (
-                        <div
-                          key={addr.id}
-                          className="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs"
-                        >
-                          <div>
-                            <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-[11px] inline-block mb-1">
-                              {addr.tag || 'Home'}
-                            </span>
-                            <p className="text-slate-700 font-medium leading-relaxed">{addr.addressLine || addr.street}</p>
-                            <p className="text-slate-400 text-[11px] mt-0.5">{addr.locality}, {addr.city} - {addr.pincode}</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteAddress(addr.id)}
-                            className="p-1 text-slate-400 hover:text-rose-600 transition"
-                            title="Delete Address"
+                      {addresses.length > 0 ? (
+                        addresses.map((addr) => (
+                          <div
+                            key={addr.id}
+                            className="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                            <div>
+                              <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-[11px] inline-block mb-1">
+                                {addr.tag || 'Home'}
+                              </span>
+                              <p className="text-slate-700 font-medium leading-relaxed">{addr.addressLine || addr.street}</p>
+                              <p className="text-slate-400 text-[11px] mt-0.5">{addr.locality}, {addr.city} - {addr.pincode}</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                              title="Delete Address"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                          <p className="font-semibold text-slate-700">No saved addresses</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Click 'Add New' to add a delivery address.</p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
                 </div>

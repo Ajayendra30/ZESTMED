@@ -150,25 +150,25 @@ export function purgeRahulVermaFromStorage() {
     // 5. Clean zestmed_patient_notifications
     const storedNotifs = localStorage.getItem('zestmed_patient_notifications');
     if (storedNotifs && storedNotifs.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_notifications', storedNotifs.replace(/Rahul Verma/gi, fallbackName));
+      localStorage.setItem('zestmed_patient_notifications', storedNotifs.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
 
     // 6. Clean patient_appointments
     const storedAppts = localStorage.getItem('patient_appointments');
     if (storedAppts && storedAppts.includes('Rahul Verma')) {
-      localStorage.setItem('patient_appointments', storedAppts.replace(/Rahul Verma/gi, fallbackName));
+      localStorage.setItem('patient_appointments', storedAppts.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
 
     // 7. Clean zestmed_patient_orders
     const storedOrders = localStorage.getItem('zestmed_patient_orders');
     if (storedOrders && storedOrders.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_orders', storedOrders.replace(/Rahul Verma/gi, fallbackName));
+      localStorage.setItem('zestmed_patient_orders', storedOrders.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
 
     // 8. Clean zestmed_patient_lab_bookings
     const storedLabs = localStorage.getItem('zestmed_patient_lab_bookings');
     if (storedLabs && storedLabs.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_lab_bookings', storedLabs.replace(/Rahul Verma/gi, fallbackName));
+      localStorage.setItem('zestmed_patient_lab_bookings', storedLabs.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
   } catch (_) {}
 }
