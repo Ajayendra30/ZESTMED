@@ -362,7 +362,7 @@ export default function SurgeryDetailPage() {
       )}
 
       {/* Main Container */}
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-16 py-6 sm:py-8">
 
         {/* =======================================================================
             VIEW 1: SURGERY DETAIL PAGE (Image 1 in reference)
@@ -445,13 +445,13 @@ export default function SurgeryDetailPage() {
 
               </div>
 
-              {/* Right Column: Knee Replacement Illustration Card */}
-              <div className="lg:col-span-5 flex justify-center lg:justify-end">
-                <div className="w-full max-w-sm rounded-3xl overflow-hidden shadow-lg border border-slate-200/90 bg-white">
+              {/* Right Column: Surgery Illustration Card (Enlarged & Uncropped) */}
+              <div className="lg:col-span-5 flex justify-center lg:justify-end items-center">
+                <div className="w-full max-w-xl xl:max-w-2xl rounded-3xl overflow-hidden shadow-lg border border-slate-200/90 bg-white p-2.5 sm:p-3 flex items-center justify-center">
                   <img
                     src={surgery.image || '/surgery-orthopedic-knee.png'}
                     alt={surgery.title}
-                    className="w-full h-auto object-cover"
+                    className="w-full h-auto max-h-[460px] sm:max-h-[520px] lg:max-h-[580px] object-contain rounded-2xl"
                   />
                 </div>
               </div>
@@ -590,7 +590,7 @@ export default function SurgeryDetailPage() {
                   <img
                     src={surgery.thumbImage || surgery.image || '/surgery-pkg-orthopedic.png'}
                     alt={surgery.title}
-                    className="w-20 h-20 rounded-2xl object-cover shrink-0 border border-slate-200"
+                    className="w-20 h-20 rounded-2xl object-contain bg-white p-1 shrink-0 border border-slate-200"
                   />
                   <div>
                     <h3 className="text-base font-black text-[#0B1E3F] leading-tight">
@@ -943,7 +943,7 @@ export default function SurgeryDetailPage() {
                     <img
                       src={surgery.thumbImage || surgery.image || '/surgery-pkg-orthopedic.png'}
                       alt={surgery.title}
-                      className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200"
+                      className="w-16 h-16 rounded-xl object-contain bg-white p-1 shrink-0 border border-slate-200"
                     />
                     <div>
                       <h3 className="text-base font-black text-[#0B1E3F]">
@@ -1165,7 +1165,7 @@ export default function SurgeryDetailPage() {
                   <img
                     src={surgery.thumbImage || surgery.image || '/surgery-pkg-orthopedic.png'}
                     alt={surgery.title}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shrink-0 border border-slate-200"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-contain bg-white p-1 shrink-0 border border-slate-200"
                   />
                   <div>
                     <h3 className="text-base sm:text-lg font-black text-[#0B1E3F] leading-tight">
