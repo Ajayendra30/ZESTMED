@@ -167,7 +167,7 @@ export default function Navbar({
             
             {/* Left: Brand Logo & Navigation (Hamburger alongside it) */}
             <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 min-w-0">
-              <Link to="/" className="flex items-center group shrink-0">
+              <Link to="/" className="flex items-center group shrink-0 mr-3 sm:mr-4 lg:mr-7 xl:mr-9 2xl:mr-11">
                 <img
                   src="/logo.png"
                   alt="Zestmed Diagnostics & Polyclinic"
@@ -188,7 +188,7 @@ export default function Navbar({
             </div>
 
             {/* Center Navigation Links with Mega Menu */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 lg:ml-3.5 xl:ml-5 2xl:ml-6">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 lg:ml-4 xl:ml-6 2xl:ml-8">
               {primaryNavLinks.map((link) => {
                 const isActive = routerLocation.pathname === link.href || 
                   (link.href === '/medicines' && (routerLocation.pathname.startsWith('/medicines') || medicinesMegaOpen));
