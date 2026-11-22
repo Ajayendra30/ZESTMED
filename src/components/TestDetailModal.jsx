@@ -461,7 +461,7 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
                   onClick={handleBookNowClick}
                   className="flex-1 sm:flex-initial px-5 sm:px-6 py-2.5 border border-slate-300 text-[#0B1E3F] hover:bg-slate-50 hover:border-slate-400 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow-2xs active:scale-98"
                 >
-                  <Zap className="w-4 h-4 text-[#007A64]" />
+                  <Calendar className="w-4 h-4 text-[#007A64]" />
                   <span>Book Now</span>
                 </button>
               </div>
