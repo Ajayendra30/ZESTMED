@@ -88,11 +88,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab') || urlParams.get('menu');
-      if (tabParam) return tabParam;
+      if (tabParam && tabParam !== 'notifications') return tabParam;
       const openParam = urlParams.get('open');
       if (openParam === 'prescription') return 'prescription';
       const saved = sessionStorage.getItem('zestmed_patient_active_tab');
-      return saved || 'bookings';
+      return saved && saved !== 'notifications' ? saved : 'bookings';
     } catch {
       return 'bookings';
     }
@@ -297,7 +297,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       if (openParam === 'prescription' || tabParam === 'prescription') {
         setActiveMenu('prescription');
         setIsPrescriptionUploadModalOpen(true);
-      } else if (tabParam) {
+      } else if (tabParam && tabParam !== 'notifications') {
         setActiveMenu(tabParam);
       }
     } catch (_) {}
@@ -1187,27 +1187,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             >
               <User className="w-4 h-4" />
               <span>My Profile</span>
-            </button>
-
-            {/* Notifications with red indicator dot */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveMenu('notifications');
-                setIsSidebarOpen(false);
-                addToast('Viewing real-time medical & appointment alerts', 'info');
-              }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-                activeMenu === 'notifications'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Bell className="w-4 h-4" />
-                <span>Notifications</span>
-              </div>
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             </button>
 
             {/* Logout */}
@@ -2609,57 +2588,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             </div>
           )}
 
-          {/* ======================================================== */}
-          {/* 6. NOTIFICATIONS CENTER VIEW                             */}
-          {/* ======================================================== */}
-          {activeMenu === 'notifications' && (
-            <div className="space-y-6 max-w-2xl mx-auto py-2">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-[#14B8A6]" />
-                    <span>Notification Center</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Real-time clinical alerts for diagnostic reports, doctor appointments, and prescription pharmacy orders.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => addToast('All notifications marked as read', 'success')}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 self-start sm:self-auto cursor-pointer"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Mark All as Read</span>
-                </button>
-              </div>
 
-              {/* Exact Dark Notification Card & Settings matching Reference Images */}
-              <NotificationPopover
-                inline={true}
-                isOpen={true}
-                onClose={() => {}}
-                notifications={patientNotifications}
-                onNotificationClick={(n) => {
-                  if (n.linkType === 'lab') {
-                    setActiveMenu('reports');
-                    addToast('Navigating to Diagnostic Lab Reports', 'info');
-                  } else if (n.linkType === 'order') {
-                    setActiveMenu('bookings');
-                    setServiceCategoryFilter('medicine');
-                    addToast('Navigating to Medicine Orders in My Bookings', 'info');
-                  } else if (n.linkType === 'doctor') {
-                    setActiveMenu('bookings');
-                    setServiceCategoryFilter('doctor');
-                    addToast('Navigating to Doctor Appointments in My Bookings', 'info');
-                  } else if (n.linkType === 'rx') {
-                    setActiveMenu('prescription');
-                    addToast('Navigating to Prescription Vault', 'info');
-                  }
-                }}
-              />
-            </div>
-          )}
         </main>
       </div>
 
