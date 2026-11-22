@@ -8,7 +8,7 @@ import ProductDetailModal from '../components/ProductDetailModal';
 import { ALL_MEDICINES_DATA } from '../mock-data/allMedicinesData';
 import { 
   Search, ShieldCheck, Truck, RotateCcw, Tag,
-  ShoppingCart, SlidersHorizontal, ArrowLeft, ArrowRight
+  ShoppingCart, SlidersHorizontal, ArrowLeft, ArrowRight, Check
 } from 'lucide-react';
 
 const STORE_MEDICINES = ALL_MEDICINES_DATA;
@@ -303,83 +303,137 @@ export default function MedicineStorePage() {
           
           {/* ================== LEFT FILTER SIDEBAR ================== */}
           <aside
-            className={`w-full lg:w-56 xl:w-60 shrink-0 ${
+            className={`w-full lg:w-56 xl:w-64 shrink-0 ${
               showMobileFilter ? 'block' : 'hidden lg:block'
             }`}
           >
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-5">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-6">
               
               {/* 1. Categories */}
               <div>
-                <h3 className="text-sm font-bold text-[#0B1E3F] mb-3 tracking-tight">
+                <h3 className="text-base font-bold text-[#0B1E3F] mb-3.5 tracking-tight">
                   Categories
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {SIDEBAR_CATEGORIES.map((cat) => {
                     const isChecked = selectedCategories.includes(cat.id);
                     return (
                       <label
                         key={cat.id}
-                        className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm"
+                        onClick={() => toggleCategory(cat.id)}
+                        className="flex items-center justify-between text-xs sm:text-sm cursor-pointer select-none group"
                       >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleCategory(cat.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
-                        />
-                        <span className={isChecked ? 'text-[#007A64] font-semibold' : 'font-normal'}>
-                          {cat.name}
-                        </span>
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className={`w-4.5 h-4.5 rounded-[4px] flex items-center justify-center transition-colors ${
+                              isChecked
+                                ? 'bg-[#007A64] text-white'
+                                : 'border border-slate-300 bg-white group-hover:border-slate-400'
+                            }`}
+                          >
+                            {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          </div>
+                          <span
+                            className={`text-slate-700 group-hover:text-slate-900 ${
+                              isChecked ? 'font-bold text-[#007A64]' : 'font-medium'
+                            }`}
+                          >
+                            {cat.name}
+                          </span>
+                        </div>
                       </label>
                     );
                   })}
                 </div>
               </div>
 
+              <div className="border-t border-slate-100" />
+
               {/* 2. Price Range */}
-              <div className="pt-4 border-t border-slate-100">
-                <h3 className="text-sm font-bold text-[#0B1E3F] mb-2.5 tracking-tight">
+              <div>
+                <h3 className="text-base font-bold text-[#0B1E3F] mb-3.5 tracking-tight">
                   Price Range
                 </h3>
-                <input
-                  type="range"
-                  min="0"
-                  max="2000"
-                  step="10"
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(Number(e.target.value))}
-                  className="w-full accent-[#007A64] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-                />
-                <div className="text-xs text-slate-600 font-medium mt-1.5">
+                <div className="relative pt-1">
+                  <input
+                    type="range"
+                    min="0"
+                    max="2000"
+                    step="10"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(Number(e.target.value))}
+                    className="w-full accent-[#007A64] cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                  />
+                </div>
+                <div className="text-xs sm:text-sm font-semibold text-slate-700 mt-2">
                   ₹0 – ₹{priceMax >= 2000 ? '2,000' : priceMax.toLocaleString()}
                 </div>
               </div>
 
+              <div className="border-t border-slate-100" />
+
               {/* 3. Availability */}
-              <div className="pt-4 border-t border-slate-100">
-                <h3 className="text-sm font-bold text-[#0B1E3F] mb-2.5 tracking-tight">
+              <div>
+                <h3 className="text-base font-bold text-[#0B1E3F] mb-3.5 tracking-tight">
                   Availability
                 </h3>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm">
-                    <input
-                      type="checkbox"
-                      checked={stockFilter === 'in_stock' || stockFilter === 'all'}
-                      onChange={() => setStockFilter(stockFilter === 'in_stock' ? 'all' : 'in_stock')}
-                      className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">In Stock ({stockCounts.inStock.toLocaleString()})</span>
+                <div className="space-y-2.5">
+                  <label
+                    onClick={() => setStockFilter(stockFilter === 'in_stock' ? 'all' : 'in_stock')}
+                    className="flex items-center justify-between text-xs sm:text-sm cursor-pointer select-none group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`w-4.5 h-4.5 rounded-[4px] flex items-center justify-center transition-colors ${
+                          stockFilter === 'in_stock' || stockFilter === 'all'
+                            ? 'bg-[#007A64] text-white'
+                            : 'border border-slate-300 bg-white group-hover:border-slate-400'
+                        }`}
+                      >
+                        {(stockFilter === 'in_stock' || stockFilter === 'all') && (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-slate-700 group-hover:text-slate-900 ${
+                          stockFilter === 'in_stock' || stockFilter === 'all' ? 'font-bold text-[#007A64]' : 'font-medium'
+                        }`}
+                      >
+                        In Stock
+                      </span>
+                    </div>
+                    <span className="text-slate-400 text-xs font-medium">
+                      ({stockCounts.inStock.toLocaleString()})
+                    </span>
                   </label>
 
-                  <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm">
-                    <input
-                      type="checkbox"
-                      checked={stockFilter === 'out_of_stock'}
-                      onChange={() => setStockFilter(stockFilter === 'out_of_stock' ? 'all' : 'out_of_stock')}
-                      className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">Out of Stock ({stockCounts.outOfStock.toLocaleString()})</span>
+                  <label
+                    onClick={() => setStockFilter(stockFilter === 'out_of_stock' ? 'all' : 'out_of_stock')}
+                    className="flex items-center justify-between text-xs sm:text-sm cursor-pointer select-none group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`w-4.5 h-4.5 rounded-[4px] flex items-center justify-center transition-colors ${
+                          stockFilter === 'out_of_stock'
+                            ? 'bg-[#007A64] text-white'
+                            : 'border border-slate-300 bg-white group-hover:border-slate-400'
+                        }`}
+                      >
+                        {stockFilter === 'out_of_stock' && (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-slate-700 group-hover:text-slate-900 ${
+                          stockFilter === 'out_of_stock' ? 'font-bold text-[#007A64]' : 'font-medium'
+                        }`}
+                      >
+                        Out of Stock
+                      </span>
+                    </div>
+                    <span className="text-slate-400 text-xs font-medium">
+                      ({stockCounts.outOfStock.toLocaleString()})
+                    </span>
                   </label>
                 </div>
               </div>
@@ -394,7 +448,7 @@ export default function MedicineStorePage() {
                     setSearchQuery('');
                     setStockFilter('in_stock');
                   }}
-                  className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer"
+                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer"
                 >
                   Reset Filters
                 </button>
