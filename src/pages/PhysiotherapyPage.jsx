@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import { ALL_PHYSIO_SERVICES } from '../mock-data/allPhysioServicesData';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -117,107 +118,7 @@ function PostureIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   );
 }
 
-// 12 Comprehensive Physiotherapy Services data with fallback images
-const PHYSIO_SERVICES = [
-  {
-    id: 'back-neck',
-    title: 'Back & Neck Pain Therapy',
-    desc: 'Targeted relief from chronic cervical, lumbar, and posture-related pain.',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-back.jpg',
-    icon: SpineIcon,
-  },
-  {
-    id: 'joint-pain',
-    title: 'Joint Pain & Arthritis Care',
-    desc: 'Specialized therapy for knee osteoarthritis, hip stiffness, and joint mobility.',
-    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-joint.jpg',
-    icon: KneeJointIcon,
-  },
-  {
-    id: 'sports-injury',
-    title: 'Sports Injury Rehabilitation',
-    desc: 'Rapid recovery from ligament sprains, muscle tears, and athletic conditioning.',
-    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-sports.jpg',
-    icon: SportsInjuryIcon,
-  },
-  {
-    id: 'post-surgery',
-    title: 'Post-Surgery Rehabilitation',
-    desc: 'Structured recovery for joint replacements, spine surgeries, and fractures.',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-surgery.jpg',
-    icon: PostSurgeryIcon,
-  },
-  {
-    id: 'elderly-care',
-    title: 'Elderly Care & Fall Prevention',
-    desc: 'Gentle mobility exercises, gait retraining, and balance support for seniors.',
-    image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-elderly.jpg',
-    icon: ElderlyCareIcon,
-  },
-  {
-    id: 'posture-correction',
-    title: 'Posture & Ergonomic Correction',
-    desc: 'Correction of rounded shoulders, tech-neck, and desk-related strain.',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-posture.jpg',
-    icon: PostureIcon,
-  },
-  {
-    id: 'neuro-rehab',
-    title: 'Neurological Rehabilitation',
-    desc: 'Neuro-physiotherapy for stroke recovery, Parkinson’s, paralysis, and neuropathy.',
-    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-surgery.jpg',
-    icon: Brain,
-  },
-  {
-    id: 'cardiopulmonary',
-    title: 'Cardiopulmonary & Chest Therapy',
-    desc: 'Breathing exercises, endurance recovery, and lung capacity improvement.',
-    image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-back.jpg',
-    icon: Wind,
-  },
-  {
-    id: 'pediatric',
-    title: 'Pediatric Physiotherapy',
-    desc: 'Developmental milestone therapy for children, posture, and motor coordination.',
-    image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-sports.jpg',
-    icon: Baby,
-  },
-  {
-    id: 'womens-health',
-    title: 'Women’s Health & Prenatal Care',
-    desc: 'Pelvic floor conditioning, prenatal back pain relief, and postpartum recovery.',
-    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-elderly.jpg',
-    icon: HeartHandshake,
-  },
-  {
-    id: 'dry-needling',
-    title: 'Myofascial Trigger Point Therapy',
-    desc: 'Deep tissue therapy, cupping, and dry needling for stubborn muscular knots.',
-    image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-joint.jpg',
-    icon: Flame,
-  },
-  {
-    id: 'strength-conditioning',
-    title: 'Strength & Functional Conditioning',
-    desc: 'Therapeutic resistance training to restore muscle mass, core, and stamina.',
-    image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=600&q=80',
-    fallback: '/physio-service-posture.jpg',
-    icon: Dumbbell,
-  },
-];
-
-// 12 Conditions data matching Comprehensive Physiotherapy Scope
+// Services imported from allPhysioServicesData
 const CONDITIONS_LIST = [
   { id: 'c1', name: 'Back Pain', lines: ['Back Pain'], icon: SpineIcon },
   { id: 'c2', name: 'Neck Pain', lines: ['Neck Pain'], icon: NeckIcon },
@@ -416,43 +317,87 @@ export default function PhysiotherapyPage() {
           </div>
 
           {/* 6 Cards Grid in 3 Columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {PHYSIO_SERVICES.map((srv) => {
-              const IconComp = srv.icon;
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+            {ALL_PHYSIO_SERVICES.map((srv) => {
               return (
                 <div
                   key={srv.id}
-                  onClick={() => handleBookSession(srv.title)}
-                  className="bg-white rounded-2xl border border-slate-200/90 hover:border-teal-300 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none"
+                  onClick={() => navigate(`/physiotherapy/${srv.id}`)}
+                  className="bg-white rounded-3xl border border-slate-200/90 hover:border-teal-300 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group select-none relative overflow-hidden"
                 >
                   <div>
-                    {/* Image Thumbnail with Floating Badge */}
-                    <div className="relative w-full h-40 sm:h-44 rounded-xl overflow-hidden bg-slate-100">
+                    {/* Image Thumbnail with Floating Badges */}
+                    <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden bg-slate-100">
                       <img
                         src={srv.image}
                         onError={(e) => { e.currentTarget.src = srv.fallback; }}
                         alt={srv.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
                       />
-                      {/* Circular Icon Overlay */}
-                      <div className="absolute bottom-2.5 left-2.5 w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white text-[#007A64] shadow-md flex items-center justify-center border border-teal-100">
-                        <IconComp className="w-5 sm:w-5.5 h-5 sm:h-5.5 text-[#007A64]" />
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                      
+                      {/* Category Badge */}
+                      <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-[#007A64] text-[11px] font-black uppercase tracking-wider shadow-xs">
+                        {srv.category || 'Clinical Therapy'}
+                      </span>
+
+                      {/* Duration Badge */}
+                      <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-white text-[11px] font-bold">
+                        {srv.duration}
+                      </span>
                     </div>
 
                     {/* Card Content */}
-                    <h3 className="text-base sm:text-lg font-black text-[#0F172A] mt-3.5 group-hover:text-[#007A64] transition-colors leading-snug">
-                      {srv.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed mt-1">
-                      {srv.desc}
-                    </p>
+                    <div className="mt-4 space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-amber-500 text-xs font-black">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{srv.rating}</span>
+                        <span className="text-slate-400 font-semibold">({srv.reviewCount} reviews)</span>
+                      </div>
+
+                      <h3 className="text-lg sm:text-xl font-black text-[#0B1E3F] group-hover:text-[#007A64] transition-colors leading-snug">
+                        {srv.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">
+                        {srv.shortDesc || srv.desc}
+                      </p>
+                    </div>
+
+                    {/* Quick Highlights */}
+                    <div className="mt-3.5 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600 font-medium">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                        <span className="truncate">In-Clinic &amp; Doorstep Home Visit</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                        <span className="truncate">1-on-1 Certified Specialist PT</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64]">
-                    <span>Book Session</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {/* Price & Action Button Footer */}
+                  <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Per Session</span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-lg sm:text-xl font-black text-[#0B1E3F]">₹{srv.price}</span>
+                        <span className="text-xs text-slate-400 line-through">₹{srv.mrp}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/physiotherapy/${srv.id}`);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-50 group-hover:bg-[#007A64] text-[#007A64] group-hover:text-white font-black text-xs sm:text-sm transition-all shadow-2xs cursor-pointer"
+                    >
+                      <span>View Details &amp; Book</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
                   </div>
                 </div>
               );
@@ -543,7 +488,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={cond.id}
-                  onClick={() => handleBookSession(cond.name)}
+                  onClick={() => navigate('/physiotherapy/general-physiotherapy')}
                   className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 flex flex-col items-center justify-center text-center shadow-2xs hover:shadow-md hover:border-teal-300 hover:scale-102 transition-all cursor-pointer group min-h-[110px] sm:min-h-[120px] select-none"
                 >
                   <div className="h-10 w-10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform text-[#007A64]">
