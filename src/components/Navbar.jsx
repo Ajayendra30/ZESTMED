@@ -117,7 +117,6 @@ export default function Navbar({
     { name: 'Wellness Packages', href: '/wellness-packages', isRoute: true },
     { name: 'Physiotherapy', href: '/physiotherapy', isRoute: true },
     { name: 'Doctor Appointment', href: '/doctor-appointment', isRoute: true },
-    { name: 'About', href: '/about', isRoute: true },
     { name: 'Contact', href: '/contact', isRoute: true },
   ];
 
