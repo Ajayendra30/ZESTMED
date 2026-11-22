@@ -7,7 +7,7 @@ import { enforceAuth } from '../utils/authGuard';
 import { 
   X, Star, ShieldCheck, Truck, RotateCcw, Lock, 
   Target, Pill, Package, FlaskConical, Calendar, 
-  Thermometer, Building2, Tag, ShoppingCart, Zap,
+  Thermometer, Building2, Tag, ShoppingCart, ShoppingBag,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
 
@@ -436,7 +436,7 @@ export default function ProductDetailModal({ product, onClose }) {
                 onClick={handleBuyNow}
                 className="flex-1 py-3 px-5 bg-white hover:bg-slate-50 text-[#0B1E3F] border border-slate-300 font-extrabold text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-2xs cursor-pointer active:scale-95"
               >
-                <Zap className="w-4 h-4 text-[#1D4ED8]" />
+                <ShoppingBag className="w-4 h-4 text-[#007A64]" />
                 <span>Buy Now</span>
               </button>
 
