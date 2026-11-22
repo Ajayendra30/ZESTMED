@@ -151,18 +151,14 @@ export default function ProductDetailModal({ product, onClose }) {
             {/* Main Showcase Box */}
             <div className="bg-[#F8FAFC] rounded-2xl p-4 sm:p-5 relative border border-slate-100 flex flex-col items-center justify-center min-h-[290px] sm:min-h-[320px]">
               
-              {/* Prescription Status Pill Badge */}
-              <div className="absolute top-3.5 left-3.5 z-10">
-                {product.prescriptionRequired ? (
+              {/* Prescription Status Pill Badge (Only shown if prescription is strictly required) */}
+              {product.prescriptionRequired && (
+                <div className="absolute top-3.5 left-3.5 z-10">
                   <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-black tracking-wide">
                     Prescription Required
                   </span>
-                ) : (
-                  <span className="px-3 py-1 rounded-full bg-[#DCF6EF] text-[#007A64] text-[11px] font-black tracking-wide">
-                    Prescription Not Required
-                  </span>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Prev Carousel Arrow Button */}
               {imagesList.length > 1 && (
