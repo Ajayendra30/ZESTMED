@@ -28,3 +28,7 @@ pnpm-debug.log*
 # Environment
 .env.local
 
+# Scratch
+scratch/
+
+
