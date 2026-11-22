@@ -4,8 +4,17 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 
-// Automatically redirect to Home page whenever the website is reloaded
+// Automatically redirect to Home page whenever the website is reloaded,
+// EXCEPT for Admin and Lab dashboards which must stay on their respective pages on reload.
 try {
+  const pathname = window.location.pathname.toLowerCase();
+  const isAdminPath = pathname.startsWith('/admin') || pathname === '/admin-dashboard';
+  const isLabPath =
+    pathname === '/lab' ||
+    pathname.startsWith('/lab/') ||
+    pathname === '/lab-dashboard' ||
+    pathname.startsWith('/lab-dashboard/');
+
   const navEntries = window.performance?.getEntriesByType?.('navigation');
   const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
   const isReloadByLegacy = window.performance?.navigation?.type === 1;
@@ -13,7 +22,7 @@ try {
 
   sessionStorage.removeItem('zestmed_is_reloading');
 
-  if (isReloadByEntries || isReloadByLegacy || isReloadBySession) {
+  if ((isReloadByEntries || isReloadByLegacy || isReloadBySession) && !isAdminPath && !isLabPath) {
     if (window.location.pathname !== '/' || window.location.search || window.location.hash) {
       window.history.replaceState(null, '', '/');
     }

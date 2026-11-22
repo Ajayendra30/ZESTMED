@@ -60,8 +60,23 @@ export default function LabDashboardPage() {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  // Navigation & Interactive State
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+  // Navigation & Interactive State (persisted across reloads)
+  const [activeMenu, setActiveMenu] = useState(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab') || urlParams.get('menu');
+      if (tabParam) return tabParam;
+      return sessionStorage.getItem('zestmed_lab_active_tab') || 'dashboard';
+    } catch {
+      return 'dashboard';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('zestmed_lab_active_tab', activeMenu);
+    } catch (_) {}
+  }, [activeMenu]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState('Thu, Nov 13, 2026');

@@ -47,9 +47,23 @@ function AppContent() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Ensure redirect to Home page if the website was reloaded
+  // Ensure redirect to Home page if the website was reloaded,
+  // EXCEPT for Admin and Lab dashboards which must stay on their respective pages on reload.
   useEffect(() => {
     try {
+      const currentPath = location.pathname.toLowerCase();
+      const isAdminPath = currentPath.startsWith('/admin') || currentPath === '/admin-dashboard' || activeSubdomain === 'admin';
+      const isLabPath =
+        currentPath === '/lab' ||
+        currentPath.startsWith('/lab/') ||
+        currentPath === '/lab-dashboard' ||
+        currentPath.startsWith('/lab-dashboard/') ||
+        activeSubdomain === 'lab';
+
+      if (isAdminPath || isLabPath) {
+        return;
+      }
+
       const navEntries = window.performance?.getEntriesByType?.('navigation');
       const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
       const isReloadByLegacy = window.performance?.navigation?.type === 1;
