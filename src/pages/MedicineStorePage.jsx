@@ -265,53 +265,37 @@ export default function MedicineStorePage() {
       </section>
 
       {/* =========================================================================
-          2. MEDICINES CATALOG SECTION (MATCHING EXACT REFERENCE IMAGE 1)
+          2. MEDICINES CATALOG SECTION (MATCHING LAB TESTS FULL-WIDTH SEARCH BAR)
           ========================================================================= */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6 sm:py-8">
+      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6">
         
-        {/* Top Header Row: Left Title/Subtitle & Right Search Bar + Filter Button */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          {/* Title & Subtitle on Left */}
-          <div>
-            <h2 className="text-2xl sm:text-[26px] font-bold text-[#0B1E3F] tracking-tight">
-              Medicines
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-              Order genuine medicines online with fast and reliable delivery.
-            </p>
-          </div>
-
-          {/* Search & Filter on Right */}
-          <div className="flex items-center gap-2.5 w-full md:w-auto">
-            <div className="relative flex-1 md:w-80 lg:w-96">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search medicines (e.g., Crocin, Disprin, Augovin...)"
-                className="w-full pl-9 pr-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#007A64] shadow-2xs"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-medium"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
+        {/* Full-width Search Bar with left Search Icon & right Filter Button (just like Lab Tests page) */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-2 sm:p-2.5 flex items-center gap-3 mb-6">
+          <Search className="w-5 h-5 text-slate-400 shrink-0 ml-3" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search medicines (e.g., Crocin, Disprin, Augovin...)"
+            className="flex-1 bg-transparent text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none"
+          />
+          {searchQuery && (
             <button
               type="button"
-              onClick={() => setShowMobileFilter(!showMobileFilter)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs shrink-0 cursor-pointer"
+              onClick={() => setSearchQuery('')}
+              className="text-xs text-slate-400 hover:text-slate-600 px-2 font-medium cursor-pointer"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600" />
-              <span>Filter</span>
+              Clear
             </button>
-          </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowMobileFilter(!showMobileFilter)}
+            className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition shrink-0 cursor-pointer"
+          >
+            <SlidersHorizontal className="w-4 h-4 text-[#007A64]" />
+            <span>Filter</span>
+          </button>
         </div>
 
         {/* 2-Column Layout: Left Filter Sidebar + Right 10-Card Catalog Grid */}
