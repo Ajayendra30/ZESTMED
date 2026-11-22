@@ -9,446 +9,9 @@ import TestDetailModal from '../components/TestDetailModal';
 import { 
   Search, ShieldCheck, Clock, Award, Home,
   ChevronDown, ShoppingCart, Check, SlidersHorizontal,
-  Calendar, ArrowRight
+  Calendar, ArrowRight, ArrowLeft
 } from 'lucide-react';
-
-const LAB_TESTS_DATA = [
-  {
-    id: 'test-cbc',
-    name: 'Complete Blood Count (CBC)',
-    category: 'blood',
-    categories: ['popular', 'blood'],
-    discountPercent: 20,
-    price: 399,
-    mrp: 499,
-    description: 'A Complete Blood Count (CBC) is a common blood test that provides important information about your overall health by measuring different components of your blood.',
-    image: '/lab-tests/cbc.png',
-    images: ['/lab-tests/cbc-modal-main.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 1,
-    rating: 4.8,
-    reviewsCount: '2,354',
-    parameters: [
-      'Hemoglobin (Hb)',
-      'Total WBC Count',
-      'RBC Count',
-      'Platelet Count',
-      'Hematocrit (PCV)',
-      '& 15+ other parameters'
-    ],
-    purpose: [
-      'Detects anemia and infections',
-      'Checks overall blood health',
-      'Helps in early diagnosis of many conditions',
-      'Monitors treatment progress'
-    ],
-    preparation: [
-      'No fasting required',
-      'Maintain normal diet and hydration'
-    ],
-    sampleType: 'Blood (2–3 ml)',
-    reportTime: '6–12 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-thyroid',
-    name: 'Thyroid Profile (T3, T4, TSH)',
-    category: 'thyroid',
-    categories: ['popular', 'thyroid', 'hormone'],
-    discountPercent: 30,
-    price: 699,
-    mrp: 999,
-    description: 'Evaluates thyroid function and hormone levels to diagnose and manage hyperthyroidism, hypothyroidism, and metabolic imbalances.',
-    image: '/lab-tests/thyroid.png',
-    images: ['/lab-tests/thyroid.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 2,
-    rating: 4.7,
-    reviewsCount: '1,890',
-    parameters: [
-      'Total Triiodothyronine (T3)',
-      'Total Thyroxine (T4)',
-      'Thyroid Stimulating Hormone (TSH)',
-      'Free T3 & Free T4 Ratio',
-      'Thyroid Auto-Antibody Screen',
-      '& 3 hormone parameters'
-    ],
-    purpose: [
-      'Diagnoses hypothyroidism & hyperthyroidism',
-      'Monitors thyroid replacement therapy',
-      'Investigates unexplained weight or fatigue changes',
-      'Screens for thyroid gland disorders'
-    ],
-    preparation: [
-      '10–12 hours overnight fasting recommended',
-      'Take thyroid medications after blood collection'
-    ],
-    sampleType: 'Blood (3 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-lft',
-    name: 'Liver Function Test (LFT)',
-    category: 'liver',
-    categories: ['popular', 'liver', 'blood'],
-    discountPercent: 23,
-    price: 699,
-    mrp: 1299,
-    description: 'Assesses liver health, enzymes, and proteins to detect early liver disorders, fatty liver, hepatitis, or alcoholic liver disease.',
-    image: '/lab-tests/liver.png',
-    images: ['/lab-tests/liver.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 3,
-    rating: 4.6,
-    reviewsCount: '1,420',
-    parameters: [
-      'SGOT / AST & SGPT / ALT',
-      'Total Bilirubin (Direct & Indirect)',
-      'Alkaline Phosphatase (ALP)',
-      'Total Protein & Albumin',
-      'Globulin & A/G Ratio',
-      '& 11 liver parameters'
-    ],
-    purpose: [
-      'Detects liver inflammation & hepatitis',
-      'Monitors liver disease treatment progress',
-      'Assesses damage from alcohol or medications',
-      'Evaluates jaundice & unexplained nausea'
-    ],
-    preparation: [
-      '8–10 hours overnight fasting preferred',
-      'Avoid alcohol consumption 24 hours prior to test'
-    ],
-    sampleType: 'Blood (3 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-kft',
-    name: 'Kidney Function Test (KFT)',
-    category: 'kidney',
-    categories: ['popular', 'kidney'],
-    discountPercent: 25,
-    price: 899,
-    mrp: 1299,
-    description: 'Checks kidney filtration efficiency, urea, creatinine, and electrolytes to evaluate kidney function and detect renal disorders.',
-    image: '/lab-tests/kidney.png',
-    images: ['/lab-tests/kidney.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 4,
-    rating: 4.8,
-    reviewsCount: '980',
-    parameters: [
-      'Serum Creatinine',
-      'Blood Urea Nitrogen (BUN)',
-      'Uric Acid',
-      'Electrolytes (Sodium, Potassium, Chloride)',
-      'Estimated GFR (Glomerular Filtration Rate)',
-      '& 8 renal parameters'
-    ],
-    purpose: [
-      'Assesses glomerular filtration efficiency',
-      'Monitors hypertension & diabetic nephropathy',
-      'Detects early stages of chronic kidney disease',
-      'Checks fluid & electrolyte balance'
-    ],
-    preparation: [
-      'No strict fasting required',
-      'Drink adequate plain water before the sample'
-    ],
-    sampleType: 'Blood (3 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-lipid',
-    name: 'Lipid Profile',
-    category: 'heart',
-    categories: ['popular', 'heart', 'blood'],
-    discountPercent: 20,
-    price: 799,
-    mrp: 999,
-    description: 'Measures complete cholesterol and fat levels in the blood to assess cardiovascular wellness and evaluate risk of heart attack or stroke.',
-    image: '/lab-tests/lipid.png',
-    images: ['/lab-tests/lipid.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 5,
-    rating: 4.7,
-    reviewsCount: '1,560',
-    parameters: [
-      'Total Cholesterol',
-      'HDL Good Cholesterol',
-      'LDL Bad Cholesterol',
-      'VLDL Cholesterol',
-      'Triglycerides',
-      'Cholesterol / HDL Ratio'
-    ],
-    purpose: [
-      'Screens for cardiovascular disease risk',
-      'Guides statin and cholesterol-lowering therapy',
-      'Monitors atherosclerosis plaque buildup',
-      'Assesses heart health alongside diet and lifestyle'
-    ],
-    preparation: [
-      '10–12 hours strict overnight fasting required',
-      'Only plain water is allowed during the fast'
-    ],
-    sampleType: 'Blood (3 ml)',
-    reportTime: '6–12 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-diabetes',
-    name: 'Diabetes Profile (HbA1c, FBS, PPBS)',
-    category: 'diabetes',
-    categories: ['popular', 'diabetes', 'blood'],
-    discountPercent: 24,
-    price: 1299,
-    mrp: 1699,
-    description: 'Comprehensive diabetes screening panel measuring Fasting Blood Sugar, Post-Prandial Glucose, and HbA1c 3-month average.',
-    image: '/lab-tests/diabetes.png',
-    images: ['/lab-tests/diabetes.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 6,
-    rating: 4.9,
-    reviewsCount: '2,810',
-    parameters: [
-      'HbA1c (Glycated Hemoglobin)',
-      'Average Blood Glucose (eAG)',
-      'Fasting Blood Sugar (FBS)',
-      'Post Prandial Blood Sugar (PPBS)',
-      'Urine Glucose & Ketones',
-      '& 6 diabetic parameters'
-    ],
-    purpose: [
-      'Diagnoses Type 1, Type 2, and Prediabetes',
-      'Evaluates glycemic control over past 90 days',
-      'Monitors effectiveness of insulin and medications',
-      'Screens for diabetic kidney complications'
-    ],
-    preparation: [
-      '8–10 hours fasting for morning FBS sample',
-      'Post-prandial blood draw exactly 2 hours after meal'
-    ],
-    sampleType: 'Blood (4 ml)',
-    reportTime: '6–12 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-vitamin-d',
-    name: 'Vitamin D Test',
-    category: 'vitamin',
-    categories: ['popular', 'vitamin'],
-    discountPercent: 25,
-    price: 899,
-    mrp: 1199,
-    description: 'Measures 25-Hydroxy Vitamin D levels to evaluate bone health, calcium absorption, immune strength, and detect deficiency.',
-    image: '/lab-tests/vitamin-d.png',
-    images: ['/lab-tests/vitamin-d.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 7,
-    rating: 4.8,
-    reviewsCount: '1,240',
-    parameters: [
-      '25-OH Vitamin D Total',
-      'D2 (Ergocalciferol)',
-      'D3 (Cholecalciferol)',
-      'Bone Mineral Metabolism Index',
-      'Deficiency Range Grading'
-    ],
-    purpose: [
-      'Detects Vitamin D deficiency & rickets',
-      'Assesses bone mineral density & osteoporosis risk',
-      'Investigates chronic body fatigue and muscle pain',
-      'Monitors Vitamin D supplement dosage'
-    ],
-    preparation: [
-      'No fasting required',
-      'Can be performed at any time of day'
-    ],
-    sampleType: 'Blood (2 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-vitamin-b12',
-    name: 'Vitamin B12 Test',
-    category: 'vitamin',
-    categories: ['popular', 'vitamin', 'blood'],
-    discountPercent: 20,
-    price: 799,
-    mrp: 999,
-    description: 'Checks Vitamin B12 levels essential for healthy nerve cells, brain function, energy metabolism, and red blood cell formation.',
-    image: '/lab-tests/vitamin-b12.png',
-    images: ['/lab-tests/vitamin-b12.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 8,
-    rating: 4.7,
-    reviewsCount: '1,120',
-    parameters: [
-      'Cyanocobalamin (Vitamin B12)',
-      'Serum Folate / Folic Acid Correlation',
-      'Macrocytic Anemia Index',
-      'Homocysteine Metabolic Marker'
-    ],
-    purpose: [
-      'Diagnoses pernicious and megaloblastic anemia',
-      'Investigates tingling, numbness, and neuropathy',
-      'Screens vegetarians and vegans at risk',
-      'Evaluates unexplained memory fog or weakness'
-    ],
-    preparation: [
-      '6–8 hours fasting recommended',
-      'Avoid high-dose Vitamin B supplements 24h prior'
-    ],
-    sampleType: 'Blood (2 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-iron',
-    name: 'Iron Profile',
-    category: 'blood',
-    categories: ['blood'],
-    discountPercent: 20,
-    price: 1199,
-    mrp: 1499,
-    description: 'Evaluates total iron reserves, transferrin, and iron-binding capacity to detect iron deficiency anemia or iron overload.',
-    image: '/lab-tests/iron.png',
-    images: ['/lab-tests/iron.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 9,
-    rating: 4.7,
-    reviewsCount: '870',
-    parameters: [
-      'Serum Iron',
-      'Total Iron Binding Capacity (TIBC)',
-      'UIBC (Unsaturated Iron Binding Capacity)',
-      'Transferrin Saturation Percentage',
-      'Serum Ferritin Storage'
-    ],
-    purpose: [
-      'Accurately diagnoses iron deficiency anemia',
-      'Screens for hemochromatosis (iron overload)',
-      'Evaluates persistent lethargy, dizziness, and pallor',
-      'Monitors response to oral or IV iron therapy'
-    ],
-    preparation: [
-      '8–10 hours overnight fasting required',
-      'Morning blood collection preferred for accurate iron levels'
-    ],
-    sampleType: 'Blood (3 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-cardiac',
-    name: 'Cardiac Risk Profile',
-    category: 'heart',
-    categories: ['popular', 'heart', 'blood'],
-    discountPercent: 20,
-    price: 1999,
-    mrp: 2499,
-    description: 'Assesses cardiovascular health, vascular inflammation, and coronary disease risk through advanced lipid markers and hs-CRP.',
-    image: '/lab-tests/cardiac.png',
-    images: ['/lab-tests/cardiac.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 10,
-    rating: 4.9,
-    reviewsCount: '950',
-    parameters: [
-      'High-Sensitivity C-Reactive Protein (hs-CRP)',
-      'Apolipoprotein A1 & Apolipoprotein B',
-      'Lipoprotein (a)',
-      'Comprehensive Lipid Profile (6 Parameters)',
-      'Apo B / Apo A1 Cardiac Risk Ratio'
-    ],
-    purpose: [
-      'Assesses personal risk of coronary artery disease',
-      'Identifies silent arterial vascular inflammation',
-      'Evaluates individuals with family history of cardiac events',
-      'Assists cardiologists in preventive therapy'
-    ],
-    preparation: [
-      '10–12 hours strict fasting required',
-      'Rest quietly 10 minutes prior to blood collection'
-    ],
-    sampleType: 'Blood (4 ml)',
-    reportTime: '12–24 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-hba1c',
-    name: 'HbA1c (Glycated Hemoglobin)',
-    category: 'diabetes',
-    categories: ['popular', 'diabetes', 'blood'],
-    discountPercent: 23,
-    price: 999,
-    mrp: 1299,
-    description: 'Gold-standard blood test that provides an accurate average of blood sugar levels over the past 2 to 3 months.',
-    image: '/lab-tests/hba1c.png',
-    images: ['/lab-tests/hba1c.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 11,
-    rating: 4.8,
-    reviewsCount: '1,630',
-    parameters: [
-      'HbA1c (% of Total Hemoglobin)',
-      'Estimated Average Glucose (eAG in mg/dL)',
-      'HPLC Gold-Standard Methodology',
-      'NGSP & IFCC Standardized Values'
-    ],
-    purpose: [
-      'Delivers reliable 3-month blood sugar control index',
-      'Screens for prediabetes and early diabetes onset',
-      'Verifies long-term treatment and diet success',
-      'Predicts risk of microvascular diabetic complications'
-    ],
-    preparation: [
-      'No fasting required',
-      'Can be taken anytime of day without dietary changes'
-    ],
-    sampleType: 'Blood (2 ml EDTA)',
-    reportTime: '6–12 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  },
-  {
-    id: 'test-urine',
-    name: 'Urine Routine & Microscopy',
-    category: 'kidney',
-    categories: ['kidney', 'routine'],
-    discountPercent: 22,
-    price: 349,
-    mrp: 449,
-    description: 'Checks for urinary infections, kidney filtration issues, crystal formation, and other metabolic abnormalities.',
-    image: '/lab-tests/urine.png',
-    images: ['/lab-tests/urine.png', '/lab-tests/cbc-modal-thumb2.png', '/lab-tests/cbc-modal-thumb3.png'],
-    popularRank: 12,
-    rating: 4.6,
-    reviewsCount: '1,310',
-    parameters: [
-      'Physical Exam (Color, Appearance, Sp. Gravity)',
-      'Chemical Exam (pH, Protein, Sugar, Ketone, Bilirubin)',
-      'Microscopic Exam (Pus Cells, RBCs, Epithelial Cells)',
-      'Casts, Crystals & Bacteria Screening'
-    ],
-    purpose: [
-      'Screens for urinary tract infections (UTI)',
-      'Detects early kidney and metabolic disorders',
-      'Investigates hematuria (blood in urine)',
-      'Standard pre-operative and wellness health check'
-    ],
-    preparation: [
-      'First-morning mid-stream clean-catch urine preferred',
-      'Sterile collection container provided by phlebotomist'
-    ],
-    sampleType: 'Urine (20–30 ml in sterile cup)',
-    reportTime: '6–12 Hours',
-    available: 'Mon – Sun',
-    sampleCollection: 'Home / Lab Visit'
-  }
-];
+import { ALL_LAB_TESTS_DATA } from '../mock-data/allLabTestsData';
 
 const SIDEBAR_CATEGORIES = [
   { id: 'all', name: 'All Tests' },
@@ -484,6 +47,9 @@ export default function DiagnosticPortalPage() {
   const [selectedTestDetail, setSelectedTestDetail] = useState(null);
   const [bookingTestItem, setBookingTestItem] = useState(null);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 12;
 
   // Auto-open booking modal when user logs in on the same page
   useEffect(() => {
@@ -500,6 +66,11 @@ export default function DiagnosticPortalPage() {
       } catch (_) {}
     }
   }, [user, location.state]);
+
+  // Reset to page 1 on filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategories, selectedAvailability, searchQuery, priceMax, sortBy]);
 
   const handleCategoryToggle = (catId) => {
     if (catId === 'all') {
@@ -546,7 +117,7 @@ export default function DiagnosticPortalPage() {
   };
 
   const filteredTests = useMemo(() => {
-    return LAB_TESTS_DATA.filter((test) => {
+    return ALL_LAB_TESTS_DATA.filter((test) => {
       // Category filter
       if (!selectedCategories.includes('all')) {
         const hasMatchingCat = selectedCategories.some((cat) =>
@@ -555,11 +126,16 @@ export default function DiagnosticPortalPage() {
         if (!hasMatchingCat) return false;
       }
 
+      // Availability filter
+      if (selectedAvailability.includes('lab') && !selectedAvailability.includes('home')) {
+        if (!test.supportsLabVisit && !test.sampleCollection.includes('Lab')) return false;
+      }
+
       // Search input filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchesName = test.name.toLowerCase().includes(q);
-        const matchesDesc = test.description.toLowerCase().includes(q);
+        const matchesDesc = test.description && test.description.toLowerCase().includes(q);
         if (!matchesName && !matchesDesc) return false;
       }
 
@@ -575,7 +151,38 @@ export default function DiagnosticPortalPage() {
       if (sortBy === 'Name: A to Z') return a.name.localeCompare(b.name);
       return 0;
     });
-  }, [selectedCategories, searchQuery, priceMax, sortBy]);
+  }, [selectedCategories, selectedAvailability, searchQuery, priceMax, sortBy]);
+
+  // Pagination calculations
+  const totalItems = filteredTests.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+  const displayedTests = filteredTests.slice(startIndex, endIndex);
+
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+    if (currentPage >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  };
+
+  const handlePageChange = (pageNum) => {
+    if (pageNum < 1 || pageNum > totalPages || pageNum === currentPage) return;
+    setCurrentPage(pageNum);
+    const catalogElem = document.getElementById('lab-tests-catalog');
+    if (catalogElem) {
+      catalogElem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 450, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen font-sans pb-16">
@@ -695,7 +302,7 @@ export default function DiagnosticPortalPage() {
       {/* =========================================================================
           2. LAB TESTS CATALOG SECTION (MATCHING EXACT REFERENCE IMAGE 1)
           ========================================================================= */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6">
+      <section id="lab-tests-catalog" className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6">
         
         {/* Full-width Search Bar with left Search Icon & right Filter Button */}
         <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-2 sm:p-2.5 flex items-center gap-3 mb-6">
@@ -784,10 +391,10 @@ export default function DiagnosticPortalPage() {
 
               {/* 2. Price Range */}
               <div>
-                <h3 className="text-base font-bold text-[#0B1E3F] mb-3 tracking-tight">
+                <h3 className="text-base font-bold text-[#0B1E3F] mb-3.5 tracking-tight">
                   Price Range
                 </h3>
-                <div className="relative pt-1 pb-1">
+                <div className="relative pt-1">
                   <input
                     type="range"
                     min="0"
@@ -851,13 +458,13 @@ export default function DiagnosticPortalPage() {
             </div>
           </aside>
 
-          {/* ================== RIGHT CONTENT: 12 LAB TEST CARDS ================== */}
+          {/* ================== RIGHT CONTENT: 12 LAB TEST CARDS PER PAGE ================== */}
           <main className="flex-1 min-w-0">
             
-            {/* Header: Showing X of 212 Lab Tests + Sort By dropdown */}
+            {/* Header: Showing X – Y of 212 Lab Tests + Sort By dropdown */}
             <div className="flex items-center justify-between mb-4 gap-4">
               <div className="text-xs sm:text-sm font-semibold text-slate-700">
-                Showing 1 – {filteredTests.length} of 212 Lab Tests
+                Showing {totalItems === 0 ? 0 : startIndex + 1} – {endIndex} of {totalItems} Lab Tests
               </div>
 
               <div className="flex items-center gap-2">
@@ -896,70 +503,137 @@ export default function DiagnosticPortalPage() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
-                {filteredTests.map((test) => {
-                  return (
-                    <div
-                      key={test.id}
-                      onClick={() => handleCardClick(test)}
-                      className="bg-white rounded-2xl border border-slate-200/90 p-3 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all duration-200 group cursor-pointer"
-                    >
-                      <div>
-                        {/* Image Showcase Box */}
-                        <div 
-                          className="w-full h-28 sm:h-32 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] flex items-center justify-center p-2 overflow-hidden"
-                        >
-                          <img
-                            src={test.image}
-                            alt={test.name}
-                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-xs"
-                            loading="lazy"
-                          />
-                        </div>
-
-                        {/* Title */}
-                        <h3
-                          title={test.name}
-                          className="text-xs sm:text-[13px] font-bold text-[#0B1E3F] leading-snug line-clamp-2 min-h-[36px] mt-2.5 hover:text-[#007A64] transition-colors"
-                        >
-                          {test.name}
-                        </h3>
-
-                        {/* Description */}
-                        <p
-                          title={test.description}
-                          className="text-[11px] text-slate-500 leading-snug line-clamp-2 min-h-[30px] mt-1"
-                        >
-                          {test.description}
-                        </p>
-
-                        {/* Price Row */}
-                        <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
-                          <span className="text-sm sm:text-[15px] font-black text-[#0B1E3F]">
-                            ₹{test.price.toLocaleString()}
-                          </span>
-                          <span className="text-[11px] text-slate-400 line-through font-normal">
-                            ₹{test.mrp.toLocaleString()}
-                          </span>
-                          <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold shrink-0 ml-auto sm:ml-0">
-                            {test.discountPercent}% OFF
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Outline Add to Cart Button */}
-                      <button
-                        type="button"
-                        onClick={(e) => handleAddToCart(test, e)}
-                        className="w-full mt-3 py-1.5 px-2 border border-[#007A64] text-[#007A64] hover:bg-[#007A64] hover:text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
+                  {displayedTests.map((test) => {
+                    return (
+                      <div
+                        key={test.id}
+                        onClick={() => handleCardClick(test)}
+                        className="bg-white rounded-2xl border border-slate-200/90 p-3 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-teal-300 transition-all duration-200 group cursor-pointer"
                       >
-                        <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
-                        <span>Add to Cart</span>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+                        <div>
+                          {/* Image Showcase Box */}
+                          <div 
+                            className="w-full h-28 sm:h-32 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] flex items-center justify-center p-2 overflow-hidden"
+                          >
+                            <img
+                              src={test.image}
+                              alt={test.name}
+                              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-xs"
+                              loading="lazy"
+                            />
+                          </div>
+
+                          {/* Title */}
+                          <h3
+                            title={test.name}
+                            className="text-xs sm:text-[13px] font-bold text-[#0B1E3F] leading-snug line-clamp-2 min-h-[36px] mt-2.5 hover:text-[#007A64] transition-colors"
+                          >
+                            {test.name}
+                          </h3>
+
+                          {/* Description */}
+                          <p
+                            title={test.description}
+                            className="text-[11px] text-slate-500 leading-snug line-clamp-2 min-h-[30px] mt-1"
+                          >
+                            {test.description}
+                          </p>
+
+                          {/* Price Row */}
+                          <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                            <span className="text-sm sm:text-[15px] font-black text-[#0B1E3F]">
+                              ₹{test.price.toLocaleString()}
+                            </span>
+                            <span className="text-[11px] text-slate-400 line-through font-normal">
+                              ₹{test.mrp.toLocaleString()}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold shrink-0 ml-auto sm:ml-0">
+                              {test.discountPercent}% OFF
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Outline Add to Cart Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => handleAddToCart(test, e)}
+                          className="w-full mt-3 py-1.5 px-2 border border-[#007A64] text-[#007A64] hover:bg-[#007A64] hover:text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                          <span>Add to Cart</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ================== PAGINATION ROW (MATCHING USER REFERENCE IMAGE) ================== */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 pt-8 pb-4 select-none">
+                    {/* Previous Page Button */}
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold transition shadow-2xs ${
+                        currentPage === 1
+                          ? 'text-slate-300 bg-white cursor-not-allowed opacity-60'
+                          : 'text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
+                      }`}
+                      title="Previous Page"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    {/* Number Buttons & Ellipsis */}
+                    {getPageNumbers().map((num, idx) => {
+                      if (num === '...') {
+                        return (
+                          <span
+                            key={`ellipsis-${idx}`}
+                            className="px-1 text-slate-500 font-bold text-sm sm:text-base select-none"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+
+                      const isCurrent = currentPage === num;
+                      return (
+                        <button
+                          key={`page-${num}`}
+                          type="button"
+                          onClick={() => handlePageChange(num)}
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-sm sm:text-base font-bold transition shadow-2xs cursor-pointer ${
+                            isCurrent
+                              ? 'bg-[#007A64] text-white shadow-xs'
+                              : 'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      );
+                    })}
+
+                    {/* Next Page Button */}
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold transition shadow-2xs ${
+                        currentPage === totalPages
+                          ? 'text-slate-300 bg-white cursor-not-allowed opacity-60'
+                          : 'text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
+                      }`}
+                      title="Next Page"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
           </main>
