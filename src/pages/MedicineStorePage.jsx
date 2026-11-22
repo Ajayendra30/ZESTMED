@@ -515,12 +515,15 @@ export default function MedicineStorePage() {
                           </p>
 
                           {/* Pricing */}
-                          <div className="flex items-baseline gap-1.5 pt-1.5">
+                          <div className="flex items-center gap-1.5 pt-1.5 flex-wrap">
                             <span className="text-sm sm:text-base font-bold text-[#0B1E3F]">
                               ₹{item.price.toFixed(2)}
                             </span>
                             <span className="text-[11px] text-slate-400 line-through">
                               ₹{item.mrp.toFixed(2)}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[10px] font-bold shrink-0 ml-auto sm:ml-0">
+                              20% OFF
                             </span>
                           </div>
                         </div>
