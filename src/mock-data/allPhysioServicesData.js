@@ -16,7 +16,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '3 - 5 Sessions Recommended',
     rating: 4.96,
     reviewCount: 420,
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-back.jpg',
     category: 'Spine & Posture',
     expert: {
@@ -67,7 +67,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '4 - 6 Sessions Recommended',
     rating: 4.88,
     reviewCount: 310,
-    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-joint.jpg',
     category: 'Joint Care',
     expert: {
@@ -115,7 +115,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '4 - 8 Sessions Recommended',
     rating: 4.95,
     reviewCount: 290,
-    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-sports.jpg',
     category: 'Sports Medicine',
     expert: {
@@ -163,7 +163,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '6 - 10 Sessions Recommended',
     rating: 4.97,
     reviewCount: 360,
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-surgery.jpg',
     category: 'Post-Op Recovery',
     expert: {
@@ -210,7 +210,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '5 - 8 Sessions Recommended',
     rating: 4.98,
     reviewCount: 450,
-    image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-elderly.jpg',
     category: 'Geriatric Care',
     expert: {
@@ -258,7 +258,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '3 - 5 Sessions Recommended',
     rating: 4.89,
     reviewCount: 275,
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-posture.jpg',
     category: 'Spine & Posture',
     expert: {
@@ -306,7 +306,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '8 - 15 Sessions Recommended',
     rating: 4.96,
     reviewCount: 310,
-    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-surgery.jpg',
     category: 'Neurological Care',
     expert: {
@@ -354,7 +354,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '4 - 8 Sessions Recommended',
     rating: 4.91,
     reviewCount: 195,
-    image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-back.jpg',
     category: 'Pulmonary & Cardiac',
     expert: {
@@ -402,7 +402,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '6 - 12 Sessions Recommended',
     rating: 4.95,
     reviewCount: 220,
-    image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-sports.jpg',
     category: 'Pediatric Care',
     expert: {
@@ -450,7 +450,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '4 - 6 Sessions Recommended',
     rating: 4.97,
     reviewCount: 340,
-    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-elderly.jpg',
     category: "Women's Health",
     expert: {
@@ -498,7 +498,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '2 - 4 Sessions Recommended',
     rating: 4.93,
     reviewCount: 280,
-    image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-joint.jpg',
     category: 'Advanced Modality',
     expert: {
@@ -546,7 +546,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '5 - 10 Sessions Recommended',
     rating: 4.94,
     reviewCount: 310,
-    image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-posture.jpg',
     category: 'Functional Fitness',
     expert: {
@@ -594,7 +594,7 @@ export const ALL_PHYSIO_SERVICES = [
     recommendedSessions: '3 - 5 Sessions Recommended',
     rating: 4.94,
     reviewCount: 380,
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=85',
     fallback: '/physio-service-back.jpg',
     category: 'Orthopedic & General',
     expert: {

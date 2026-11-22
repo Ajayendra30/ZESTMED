@@ -39,11 +39,11 @@ export default function PhysiotherapyDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F5FD]/60 font-sans pb-20 select-none">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-20 select-none">
       
-      {/* 1. BREADCRUMBS & TOP BAR */}
-      <div className="bg-white border-b border-slate-200/80 py-4 px-4 sm:px-6 sticky top-16 z-20 shadow-2xs">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      {/* 1. BREADCRUMBS & TOP BAR - Full Width Edge to Edge */}
+      <div className="bg-white border-b border-slate-200/80 py-4 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 sticky top-16 z-20 shadow-2xs">
+        <div className="w-full flex items-center justify-between">
           <nav className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium overflow-x-auto">
             <Link to="/" className="hover:text-[#007A64] transition">Home</Link>
             <span>/</span>
@@ -63,44 +63,55 @@ export default function PhysiotherapyDetailPage() {
         </div>
       </div>
 
-      {/* 2. MAIN TWO-COLUMN LAYOUT (Similar to the second reference image) */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* 2. MAIN TWO-COLUMN LAYOUT - Full Width Responsive Grid */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-6 sm:pt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
           
           {/* Left Column: Complete Details Card */}
-          <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-blue-100/90 shadow-2xs space-y-7">
+          <div className="lg:col-span-8 xl:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-slate-200/90 shadow-2xs space-y-7 sm:space-y-8">
             
             {/* Header with Activity Icon & Title */}
             <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1E60D5] flex items-center justify-center shrink-0">
-                <Activity className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                <Activity className="w-5 h-5 text-[#007A64]" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#0F172A] tracking-tight">
                   {service.title}
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
                   {service.tagline}
                 </p>
               </div>
             </div>
 
-            {/* Service Featured Image */}
-            <div className="relative w-full h-56 sm:h-72 md:h-80 rounded-2xl overflow-hidden bg-slate-100 shadow-inner">
+            {/* Service Featured Image - Full Size & Entirely Visible Without Cropping */}
+            <div className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-slate-200/90 shadow-sm">
+              {/* Ambient soft background to fill letterboxing smoothly */}
               <img
                 src={service.image}
-                onError={(e) => { e.currentTarget.src = service.fallback; }}
-                alt={service.title}
-                className="w-full h-full object-cover"
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none select-none"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
-                <div className="flex items-center gap-2 text-xs font-bold bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              
+              {/* Main Image - Fully visible, uncropped, maximized size */}
+              <div className="relative z-10 w-full flex items-center justify-center min-h-[360px] sm:min-h-[440px] md:min-h-[500px] lg:min-h-[560px] xl:min-h-[600px] py-2 sm:py-3">
+                <img
+                  src={service.image}
+                  onError={(e) => { e.currentTarget.src = service.fallback; }}
+                  alt={service.title}
+                  className="w-full h-auto max-h-[580px] lg:max-h-[640px] object-contain mx-auto"
+                />
+              </div>
+
+              {/* Badges Overlay */}
+              <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-12 pb-3.5 px-3.5 sm:px-5 flex items-center justify-between text-white pointer-events-none">
+                <div className="flex items-center gap-2 text-xs sm:text-sm font-bold bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/20">
+                  <MapPin className="w-4 h-4 text-emerald-400" />
                   <span>In-Clinic &amp; Doorstep Home Visits in Guwahati</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs font-black bg-amber-400/90 text-slate-900 px-2.5 py-1 rounded-xl">
-                  <Star className="w-3.5 h-3.5 fill-slate-900" />
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black bg-amber-400 text-slate-900 px-3 py-1.5 rounded-xl shadow-xs">
+                  <Star className="w-4 h-4 fill-slate-900" />
                   <span>{service.rating} ({service.reviewCount})</span>
                 </div>
               </div>
@@ -108,48 +119,48 @@ export default function PhysiotherapyDetailPage() {
 
             {/* Clinical Overview */}
             <div className="space-y-2.5">
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A]">
+              <h2 className="text-base sm:text-xl font-black text-[#0F172A]">
                 About This Therapy
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-base text-slate-600 leading-relaxed font-normal">
                 {service.fullDesc}
               </p>
             </div>
 
             {/* Available Session Modes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-blue-50/50 border border-blue-100/80">
-                <div className="w-9 h-9 rounded-lg bg-blue-100/80 text-[#1E60D5] flex items-center justify-center shrink-0">
-                  <MapPin className="w-4.5 h-4.5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+              <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-[#E0F3ED]/50 border border-[#BCE8DD]">
+                <div className="w-10 h-10 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-black text-[#0F172A]">In-Clinic Session</h4>
-                  <p className="text-[11px] text-slate-500 font-medium">Fully equipped rehabilitation center in Guwahati</p>
+                  <h4 className="text-sm sm:text-base font-black text-[#0F172A]">In-Clinic Session</h4>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">Fully equipped rehabilitation center in Guwahati</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-100/80">
-                <div className="w-9 h-9 rounded-lg bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Home className="w-4.5 h-4.5" />
+              <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-[#E0F3ED]/50 border border-[#BCE8DD]">
+                <div className="w-10 h-10 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                  <Home className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-black text-[#0F172A]">At-Home Session</h4>
-                  <p className="text-[11px] text-slate-500 font-medium">Physiotherapist visits your home with portable therapy equipment</p>
+                  <h4 className="text-sm sm:text-base font-black text-[#0F172A]">At-Home Session</h4>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">Physiotherapist visits your home with portable therapy equipment</p>
                 </div>
               </div>
             </div>
 
             {/* What's Included */}
             <div className="space-y-3 pt-2">
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A] flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#007A64]" />
+              <h2 className="text-base sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                <ShieldCheck className="w-5 sm:w-6 h-5 sm:h-6 text-[#007A64]" />
                 <span>What's Included in Every Session</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {service.keyBenefits.map((benefit, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
-                    <CheckCircle2 className="w-4 h-4 text-[#007A64] shrink-0 mt-0.5" />
-                    <span className="text-xs font-bold text-slate-700 leading-snug">
+                  <div key={idx} className="flex items-start gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <CheckCircle2 className="w-4.5 h-4.5 text-[#007A64] shrink-0 mt-0.5" />
+                    <span className="text-xs sm:text-sm font-bold text-slate-700 leading-snug">
                       {benefit}
                     </span>
                   </div>
@@ -159,13 +170,13 @@ export default function PhysiotherapyDetailPage() {
 
             {/* Conditions Treated */}
             <div className="space-y-3 pt-2">
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A]">
+              <h2 className="text-base sm:text-xl font-black text-[#0F172A]">
                 Conditions Treated Under This Service
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {service.conditionsTreated.map((cond, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-blue-50/40 px-3.5 py-2.5 rounded-xl border border-blue-100/70">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#1E60D5] shrink-0" />
+                  <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm font-bold text-slate-700 bg-[#E0F3ED]/40 px-4 py-3 rounded-xl border border-[#BCE8DD]">
+                    <div className="w-2 h-2 rounded-full bg-[#007A64] shrink-0" />
                     <span>{cond}</span>
                   </div>
                 ))}
@@ -174,19 +185,19 @@ export default function PhysiotherapyDetailPage() {
 
             {/* 4-Step Treatment Process */}
             <div className="space-y-3 pt-2">
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A]">
+              <h2 className="text-base sm:text-xl font-black text-[#0F172A]">
                 Our 4-Step Clinical Treatment Process
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {service.process.map((p, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#1E60D5] transition space-y-1.5">
-                    <span className="text-[10px] font-black text-[#1E60D5] bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                  <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-white hover:border-[#007A64] transition space-y-1.5">
+                    <span className="text-[10px] sm:text-xs font-black text-[#007A64] bg-[#E0F3ED] px-2.5 py-0.5 rounded border border-[#BCE8DD]">
                       Step {p.step}
                     </span>
-                    <h4 className="text-xs sm:text-sm font-black text-[#0F172A]">
+                    <h4 className="text-xs sm:text-sm md:text-base font-black text-[#0F172A]">
                       {p.title}
                     </h4>
-                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-relaxed">
                       {p.desc}
                     </p>
                   </div>
@@ -197,10 +208,10 @@ export default function PhysiotherapyDetailPage() {
             {/* Assigned Specialist Doctor */}
             {service.expert && (
               <div className="space-y-3 pt-2">
-                <h2 className="text-base sm:text-lg font-black text-[#0F172A]">
+                <h2 className="text-base sm:text-xl font-black text-[#0F172A]">
                   Supervised by Senior Clinical Lead
                 </h2>
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                   <img
                     src={service.expert.avatar}
                     alt={service.expert.name}
@@ -213,7 +224,7 @@ export default function PhysiotherapyDetailPage() {
                     <p className="text-xs text-[#007A64] font-bold">
                       {service.expert.degree}
                     </p>
-                    <p className="text-[11px] text-slate-500 font-medium">
+                    <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
                       {service.expert.experience} • {service.expert.hospital}
                     </p>
                   </div>
@@ -223,8 +234,8 @@ export default function PhysiotherapyDetailPage() {
 
             {/* Frequently Asked Questions */}
             <div className="space-y-3 pt-2">
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A] flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-[#1E60D5]" />
+              <h2 className="text-base sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                <HelpCircle className="w-5 sm:w-6 h-5 sm:h-6 text-[#007A64]" />
                 <span>Frequently Asked Questions</span>
               </h2>
               <div className="space-y-2.5">
@@ -235,13 +246,13 @@ export default function PhysiotherapyDetailPage() {
                       <button
                         type="button"
                         onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full text-left p-3.5 bg-white hover:bg-slate-50 flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#0F172A] cursor-pointer"
+                        className="w-full text-left p-4 bg-white hover:bg-slate-50 flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#0F172A] cursor-pointer"
                       >
                         <span>{faq.q}</span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-[#1E60D5]' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isOpen ? 'rotate-180 text-[#007A64]' : ''}`} />
                       </button>
                       {isOpen && (
-                        <div className="p-3.5 pt-0 bg-white text-xs text-slate-600 leading-relaxed border-t border-slate-100">
+                        <div className="p-4 pt-0 bg-white text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
                           {faq.a}
                         </div>
                       )}
@@ -253,12 +264,12 @@ export default function PhysiotherapyDetailPage() {
 
           </div>
 
-          {/* Right Column: Service & Booking Summary Card (Exact layout of 2nd reference image) */}
-          <div className="lg:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-blue-100/90 shadow-2xs space-y-5 sticky top-28">
+          {/* Right Column: Service & Booking Summary Card (ZESTMED Emerald Primary Theme) */}
+          <div className="lg:col-span-4 xl:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-2xs space-y-5 sticky top-28">
             
             {/* Header */}
             <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-              <ClipboardList className="w-5 h-5 text-[#1E60D5]" />
+              <ClipboardList className="w-5 h-5 text-[#007A64]" />
               <h3 className="text-lg sm:text-xl font-black text-[#0F172A]">
                 Booking Summary
               </h3>
@@ -277,11 +288,11 @@ export default function PhysiotherapyDetailPage() {
                   {service.title}
                 </h4>
                 <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-[#1E60D5] shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
                   <span>In-Clinic &amp; At-Home Session</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                  <Clock className="w-3.5 h-3.5 text-[#1E60D5] shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
                   <span>{service.duration} Dedicated Care</span>
                 </div>
               </div>
@@ -294,21 +305,21 @@ export default function PhysiotherapyDetailPage() {
                 <span className="font-bold text-slate-900">₹{service.price.toLocaleString('en-IN')}</span>
               </div>
 
-              {/* Highlighted Total Box */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-blue-50/70 text-slate-900 border border-blue-100">
+              {/* Highlighted Total Box - ZESTMED Primary Emerald */}
+              <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-[#E0F3ED]/70 text-slate-900 border border-[#BCE8DD]">
                 <span className="text-sm font-bold">Total Payable</span>
-                <span className="text-lg font-black text-[#1E60D5]">
+                <span className="text-lg sm:text-xl font-black text-[#007A64]">
                   ₹{service.price.toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
 
-            {/* Separate Book Button & Back Button */}
+            {/* Separate Book Button & Back Button - ZESTMED Primary Theme */}
             <div className="space-y-2.5 pt-2">
               <button
                 type="button"
                 onClick={handleProceedToBooking}
-                className="w-full bg-[#1E60D5] hover:bg-[#1850B5] text-white font-bold text-sm sm:text-base py-3.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm sm:text-base py-3.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <Calendar className="w-4.5 h-4.5" />
                 <span>Book</span>
@@ -318,7 +329,7 @@ export default function PhysiotherapyDetailPage() {
               <button
                 type="button"
                 onClick={() => navigate('/physiotherapy')}
-                className="w-full bg-white hover:bg-slate-50 text-[#1E60D5] border-2 border-[#1E60D5] font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full bg-white hover:bg-emerald-50/50 text-[#007A64] border-2 border-[#007A64] font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Physiotherapy</span>

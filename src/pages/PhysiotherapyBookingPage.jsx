@@ -29,7 +29,7 @@ export default function PhysiotherapyBookingPage() {
   // Stepper state: 1 = Book Session, 2 = Patient Details, 3 = Review & Pay, 4 = Confirmation
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Step 1: Booking Details state (matching exact reference image)
+  // Step 1: Booking Details state
   const [sessionType, setSessionType] = useState('In-Clinic Session'); // 'In-Clinic Session' | 'At-Home Session'
   const [preferredDate, setPreferredDate] = useState('2026-11-24');
   const [preferredTimeSlot, setPreferredTimeSlot] = useState('10:00 AM - 11:00 AM');
@@ -162,39 +162,40 @@ export default function PhysiotherapyBookingPage() {
         amount: service.price,
         bookingId: bookingId,
         bookingType: 'physiotherapy',
-        serviceTitle: `Physiotherapy: ${service.title} (${sessionType})`,
+        serviceTitle: `Physiotherapy Session: ${service.title} (${sessionType})`,
         customer: {
           name: patientName,
           phone: mobileNumber,
-          email: user?.email || 'patient@zestmed.in'
+          email: user?.email || 'patient@zestmed.in',
         },
-        onSuccess: (verifiedTxn) => {
-          createBookingRecord(verifiedTxn);
-        },
-        onFailure: (err) => {
-          setIsSubmitting(false);
-          addToast(err?.message || 'Payment not completed.', 'error');
+        onSuccess: async (response) => {
+          await createBookingRecord({
+            paymentId: response.razorpay_payment_id || `PAY_${Date.now()}`,
+            orderId: response.razorpay_order_id,
+            paymentMethod: 'Razorpay Online (UPI/Cards)',
+          });
         },
         onDismiss: () => {
           setIsSubmitting(false);
-          addToast('Payment cancelled. You can choose Pay Post-Session.', 'info');
-        }
+          addToast('Payment cancelled. You can choose Pay Post-Session or retry.', 'info');
+        },
       });
     } else {
       setIsSubmitting(true);
-      setTimeout(() => {
-        createBookingRecord({ paymentId: 'PAY_POST_SESSION' });
-      }, 500);
+      await createBookingRecord({
+        paymentId: 'PAY_POST_SESSION',
+        paymentMethod: 'Pay Post-Session (Cash/UPI)',
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F5FD]/60 font-sans pb-20 select-none">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-20 select-none">
       
       {/* ========================================================================= */}
-      {/* 1. TOP PROGRESS STEPPER (Matching exact reference image)                 */}
+      {/* 1. TOP PROGRESS STEPPER - Full Width Responsive                           */}
       {/* ========================================================================= */}
-      <div className="bg-white border-b border-slate-200/80 py-5 px-4 sm:px-6">
+      <div className="bg-white border-b border-slate-200/80 py-5 sm:py-6 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 sticky top-16 z-20 shadow-2xs">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between relative">
             
@@ -203,7 +204,7 @@ export default function PhysiotherapyBookingPage() {
               <div 
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm transition-colors ${
                   currentStep === 1 
-                    ? 'bg-[#1E60D5] text-white shadow-xs' 
+                    ? 'bg-[#007A64] text-white shadow-xs' 
                     : currentStep > 1 
                     ? 'bg-[#007A64] text-white' 
                     : 'bg-slate-100 text-slate-500 border border-slate-300'
@@ -211,7 +212,7 @@ export default function PhysiotherapyBookingPage() {
               >
                 {currentStep > 1 ? <Check className="w-4 h-4 stroke-[3]" /> : '1'}
               </div>
-              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 1 ? 'text-[#1E60D5]' : currentStep > 1 ? 'text-[#007A64]' : 'text-slate-500'}`}>
+              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 1 ? 'text-[#007A64]' : currentStep > 1 ? 'text-[#007A64]' : 'text-slate-500'}`}>
                 Book Session
               </span>
             </div>
@@ -224,7 +225,7 @@ export default function PhysiotherapyBookingPage() {
               <div 
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm transition-colors ${
                   currentStep === 2 
-                    ? 'bg-[#1E60D5] text-white shadow-xs' 
+                    ? 'bg-[#007A64] text-white shadow-xs' 
                     : currentStep > 2 
                     ? 'bg-[#007A64] text-white' 
                     : 'bg-slate-100 text-slate-500 border border-slate-300'
@@ -232,7 +233,7 @@ export default function PhysiotherapyBookingPage() {
               >
                 {currentStep > 2 ? <Check className="w-4 h-4 stroke-[3]" /> : '2'}
               </div>
-              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 2 ? 'text-[#1E60D5]' : currentStep > 2 ? 'text-[#007A64]' : 'text-slate-500'}`}>
+              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 2 ? 'text-[#007A64]' : currentStep > 2 ? 'text-[#007A64]' : 'text-slate-500'}`}>
                 Patient Details
               </span>
             </div>
@@ -245,7 +246,7 @@ export default function PhysiotherapyBookingPage() {
               <div 
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm transition-colors ${
                   currentStep === 3 
-                    ? 'bg-[#1E60D5] text-white shadow-xs' 
+                    ? 'bg-[#007A64] text-white shadow-xs' 
                     : currentStep > 3 
                     ? 'bg-[#007A64] text-white' 
                     : 'bg-slate-100 text-slate-500 border border-slate-300'
@@ -253,7 +254,7 @@ export default function PhysiotherapyBookingPage() {
               >
                 {currentStep > 3 ? <Check className="w-4 h-4 stroke-[3]" /> : '3'}
               </div>
-              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 3 ? 'text-[#1E60D5]' : currentStep > 3 ? 'text-[#007A64]' : 'text-slate-500'}`}>
+              <span className={`text-xs sm:text-sm font-bold mt-2 whitespace-nowrap ${currentStep === 3 ? 'text-[#007A64]' : currentStep > 3 ? 'text-[#007A64]' : 'text-slate-500'}`}>
                 Review &amp; Pay
               </span>
             </div>
@@ -281,22 +282,22 @@ export default function PhysiotherapyBookingPage() {
         </div>
       </div>
 
-      {/* Main Container */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      {/* Main Full-Width Container */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-6 sm:pt-8 pb-12">
 
         {/* ========================================================================= */}
-        {/* STEP 1: BOOK SESSION (Exact layout & design of shared reference image)   */}
+        {/* STEP 1: BOOK SESSION (ZESTMED Emerald Primary Theme)                      */}
         {/* ========================================================================= */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
             
             {/* Left Column: Booking Details Card */}
-            <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-blue-100/90 shadow-2xs space-y-6">
+            <div className="lg:col-span-8 xl:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-slate-200/90 shadow-2xs space-y-6">
               
               {/* Card Header with Calendar Icon */}
               <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1E60D5] flex items-center justify-center shrink-0">
-                  <Calendar className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5 text-[#007A64]" />
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
                   Booking Details
@@ -315,9 +316,9 @@ export default function PhysiotherapyBookingPage() {
                       Select Service <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#1E60D5] transition shadow-xs">
+                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#007A64] transition shadow-xs">
                         <div className="flex items-center gap-2.5 truncate">
-                          <Activity className="w-4 h-4 text-[#1E60D5] shrink-0" />
+                          <Activity className="w-4 h-4 text-[#007A64] shrink-0" />
                           <select
                             value={selectedServiceId}
                             onChange={(e) => setSelectedServiceId(e.target.value)}
@@ -346,11 +347,11 @@ export default function PhysiotherapyBookingPage() {
                         onClick={() => setSessionType('In-Clinic Session')}
                         className={`px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition cursor-pointer border ${
                           sessionType === 'In-Clinic Session'
-                            ? 'border-[#1E60D5] bg-blue-50/70 text-[#1E60D5] shadow-xs'
+                            ? 'border-[#007A64] bg-[#E0F3ED]/70 text-[#007A64] shadow-xs'
                             : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
                       >
-                        <MapPin className="w-4 h-4 shrink-0 text-[#1E60D5]" />
+                        <MapPin className="w-4 h-4 shrink-0 text-[#007A64]" />
                         <span>In-Clinic Session</span>
                       </button>
 
@@ -359,11 +360,11 @@ export default function PhysiotherapyBookingPage() {
                         onClick={() => setSessionType('At-Home Session')}
                         className={`px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition cursor-pointer border ${
                           sessionType === 'At-Home Session'
-                            ? 'border-[#1E60D5] bg-blue-50/70 text-[#1E60D5] shadow-xs'
+                            ? 'border-[#007A64] bg-[#E0F3ED]/70 text-[#007A64] shadow-xs'
                             : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
                       >
-                        <Home className="w-4 h-4 shrink-0 text-[#1E60D5]" />
+                        <Home className="w-4 h-4 shrink-0 text-[#007A64]" />
                         <span>At-Home Session</span>
                       </button>
                     </div>
@@ -380,9 +381,9 @@ export default function PhysiotherapyBookingPage() {
                       Preferred Date <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#1E60D5] transition shadow-xs">
+                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#007A64] transition shadow-xs">
                         <div className="flex items-center gap-2.5">
-                          <Calendar className="w-4 h-4 text-[#1E60D5] shrink-0" />
+                          <Calendar className="w-4 h-4 text-[#007A64] shrink-0" />
                           <span className="text-xs sm:text-sm font-bold text-slate-800">
                             {formatDateDisplay(preferredDate)}
                           </span>
@@ -404,9 +405,9 @@ export default function PhysiotherapyBookingPage() {
                       Preferred Time Slot <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#1E60D5] transition shadow-xs">
+                      <div className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-[#007A64] transition shadow-xs">
                         <div className="flex items-center gap-2.5 truncate">
-                          <Clock className="w-4 h-4 text-[#1E60D5] shrink-0" />
+                          <Clock className="w-4 h-4 text-[#007A64] shrink-0" />
                           <select
                             value={preferredTimeSlot}
                             onChange={(e) => setPreferredTimeSlot(e.target.value)}
@@ -444,7 +445,7 @@ export default function PhysiotherapyBookingPage() {
                       value={conditionNotes}
                       onChange={(e) => setConditionNotes(e.target.value)}
                       placeholder="e.g., back pain, post-surgery rehab, sports injury, etc."
-                      className="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 outline-none focus:border-[#1E60D5] transition resize-none placeholder:text-slate-400"
+                      className="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 outline-none focus:border-[#007A64] transition resize-none placeholder:text-slate-400"
                     />
                     <span className="absolute bottom-2.5 right-3 text-[11px] font-semibold text-slate-400">
                       {conditionNotes.length}/250
@@ -453,8 +454,8 @@ export default function PhysiotherapyBookingPage() {
                 </div>
 
                 {/* Info Disclaimer Banner */}
-                <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 text-xs sm:text-[13px] text-slate-700 font-medium">
-                  <Info className="w-4.5 h-4.5 text-[#1E60D5] shrink-0" />
+                <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#E0F3ED]/60 border border-[#BCE8DD] text-xs sm:text-[13px] text-slate-700 font-medium">
+                  <Info className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
                   <span>A physiotherapy expert will be assigned to you based on your condition and availability.</span>
                 </div>
 
@@ -462,12 +463,12 @@ export default function PhysiotherapyBookingPage() {
 
             </div>
 
-            {/* Right Column: Booking Summary Card (Exact match) */}
-            <div className="lg:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-blue-100/90 shadow-2xs space-y-5">
+            {/* Right Column: Booking Summary Card */}
+            <div className="lg:col-span-4 xl:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-2xs space-y-5 sticky top-28">
               
               {/* Header */}
               <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-                <ClipboardList className="w-5 h-5 text-[#1E60D5]" />
+                <ClipboardList className="w-5 h-5 text-[#007A64]" />
                 <h3 className="text-lg sm:text-xl font-black text-[#0F172A]">
                   Booking Summary
                 </h3>
@@ -486,15 +487,15 @@ export default function PhysiotherapyBookingPage() {
                     {service.title}
                   </h4>
                   <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                    <MapPin className="w-3.5 h-3.5 text-[#1E60D5] shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
                     <span>{sessionType}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                    <Calendar className="w-3.5 h-3.5 text-[#1E60D5] shrink-0" />
+                    <Calendar className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
                     <span>{formatDateDisplay(preferredDate)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-[#1E60D5] shrink-0" />
+                    <Clock className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
                     <span>{preferredTimeSlot} (60 mins)</span>
                   </div>
                 </div>
@@ -508,9 +509,9 @@ export default function PhysiotherapyBookingPage() {
                 </div>
 
                 {/* Highlighted Total Box */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-blue-50/70 text-slate-900 border border-blue-100">
+                <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-[#E0F3ED]/70 text-slate-900 border border-[#BCE8DD]">
                   <span className="text-sm font-bold">Total Payable</span>
-                  <span className="text-lg font-black text-[#1E60D5]">
+                  <span className="text-lg sm:text-xl font-black text-[#007A64]">
                     ₹{service.price.toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -521,7 +522,7 @@ export default function PhysiotherapyBookingPage() {
                 <button
                   type="button"
                   onClick={handleProceedFromStep1}
-                  className="w-full bg-[#1E60D5] hover:bg-[#1850B5] text-white font-bold text-sm sm:text-base py-3.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                  className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm sm:text-base py-3.5 rounded-xl shadow-xs hover:shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                 >
                   <CreditCard className="w-4.5 h-4.5" />
                   <span>Proceed to Payment</span>
@@ -531,7 +532,7 @@ export default function PhysiotherapyBookingPage() {
                 <button
                   type="button"
                   onClick={() => navigate('/physiotherapy')}
-                  className="w-full bg-white hover:bg-slate-50 text-[#1E60D5] border-2 border-[#1E60D5] font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                  className="w-full bg-white hover:bg-emerald-50/50 text-[#007A64] border-2 border-[#007A64] font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Physiotherapy</span>
@@ -547,12 +548,12 @@ export default function PhysiotherapyBookingPage() {
         {/* STEP 2: PATIENT DETAILS                                                  */}
         {/* ========================================================================= */}
         {currentStep === 2 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
             
-            <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-blue-100/90 shadow-2xs space-y-6">
+            <div className="lg:col-span-8 xl:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-slate-200/90 shadow-2xs space-y-6">
               <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1E60D5] flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                  <User className="w-5 h-5 text-[#007A64]" />
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
                   Patient Information
@@ -571,7 +572,7 @@ export default function PhysiotherapyBookingPage() {
                       value={patientName}
                       onChange={(e) => setPatientName(e.target.value)}
                       placeholder="e.g. Ajayendra Shekhar"
-                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#1E60D5]"
+                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#007A64]"
                     />
                   </div>
 
@@ -586,7 +587,7 @@ export default function PhysiotherapyBookingPage() {
                       value={mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value)}
                       placeholder="10-digit mobile number"
-                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#1E60D5]"
+                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#007A64]"
                     />
                   </div>
                 </div>
@@ -601,7 +602,7 @@ export default function PhysiotherapyBookingPage() {
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
                       placeholder="e.g. 45"
-                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#1E60D5]"
+                      className="w-full p-3 rounded-xl border border-slate-200 text-sm font-semibold outline-none focus:border-[#007A64]"
                     />
                   </div>
 
@@ -617,7 +618,7 @@ export default function PhysiotherapyBookingPage() {
                             name="gender"
                             checked={gender === g}
                             onChange={() => setGender(g)}
-                            className="accent-[#1E60D5]"
+                            className="accent-[#007A64]"
                           />
                           <span>{g}</span>
                         </label>
@@ -636,7 +637,7 @@ export default function PhysiotherapyBookingPage() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="House / Flat No, Street, Landmark, Area in Guwahati"
-                    className="w-full p-3 rounded-xl border border-slate-200 text-sm font-medium outline-none focus:border-[#1E60D5] resize-none"
+                    className="w-full p-3 rounded-xl border border-slate-200 text-sm font-medium outline-none focus:border-[#007A64] resize-none"
                   />
                 </div>
 
@@ -652,7 +653,7 @@ export default function PhysiotherapyBookingPage() {
 
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-[#1E60D5] text-white font-bold text-xs sm:text-sm hover:bg-[#1850B5] transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    className="px-6 py-2.5 rounded-xl bg-[#007A64] text-white font-bold text-xs sm:text-sm hover:bg-[#006852] transition cursor-pointer flex items-center gap-1.5 shadow-sm"
                   >
                     <span>Proceed to Review &amp; Pay</span>
                     <ArrowRight className="w-4 h-4" />
@@ -662,7 +663,7 @@ export default function PhysiotherapyBookingPage() {
             </div>
 
             {/* Summary Preview */}
-            <div className="lg:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-2xs space-y-4">
+            <div className="lg:col-span-4 xl:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4 sticky top-28">
               <h3 className="text-base font-black text-[#0F172A] border-b border-slate-100 pb-2">
                 Booking Snapshot
               </h3>
@@ -670,7 +671,7 @@ export default function PhysiotherapyBookingPage() {
                 <p><strong>Service:</strong> {service.title}</p>
                 <p><strong>Mode:</strong> {sessionType}</p>
                 <p><strong>Date &amp; Slot:</strong> {formatDateDisplay(preferredDate)} • {preferredTimeSlot}</p>
-                <p className="text-[#1E60D5] font-black text-sm pt-2 border-t border-slate-100">
+                <p className="text-[#007A64] font-black text-sm pt-2 border-t border-slate-100">
                   Payable: ₹{service.price}
                 </p>
               </div>
@@ -683,12 +684,12 @@ export default function PhysiotherapyBookingPage() {
         {/* STEP 3: REVIEW & PAY                                                     */}
         {/* ========================================================================= */}
         {currentStep === 3 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
             
-            <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-blue-100/90 shadow-2xs space-y-6">
+            <div className="lg:col-span-8 xl:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-slate-200/90 shadow-2xs space-y-6">
               <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1E60D5] flex items-center justify-center shrink-0">
-                  <CreditCard className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-[#E0F3ED] text-[#007A64] flex items-center justify-center shrink-0">
+                  <CreditCard className="w-5 h-5 text-[#007A64]" />
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] tracking-tight">
                   Choose Payment Method
@@ -703,7 +704,7 @@ export default function PhysiotherapyBookingPage() {
                 </div>
                 <div className="flex justify-between pb-1.5 border-b border-slate-200">
                   <span className="text-slate-500">Service:</span>
-                  <span className="font-bold text-[#1E60D5]">{service.title} ({sessionType})</span>
+                  <span className="font-bold text-[#007A64]">{service.title} ({sessionType})</span>
                 </div>
                 <div className="flex justify-between pb-1.5 border-b border-slate-200">
                   <span className="text-slate-500">Schedule:</span>
@@ -726,13 +727,13 @@ export default function PhysiotherapyBookingPage() {
                     onClick={() => setPaymentMode('online')}
                     className={`p-4 rounded-2xl border text-left transition cursor-pointer ${
                       paymentMode === 'online'
-                        ? 'border-[#1E60D5] bg-blue-50/70 ring-1 ring-[#1E60D5]'
+                        ? 'border-[#007A64] bg-[#E0F3ED]/50 ring-1 ring-[#007A64]'
                         : 'border-slate-200 hover:bg-slate-50 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <CreditCard className="w-5 h-5 text-[#1E60D5]" />
-                      {paymentMode === 'online' && <CheckCircle2 className="w-5 h-5 text-[#1E60D5]" />}
+                      <CreditCard className="w-5 h-5 text-[#007A64]" />
+                      {paymentMode === 'online' && <CheckCircle2 className="w-5 h-5 text-[#007A64]" />}
                     </div>
                     <h4 className="text-sm font-black text-[#0F172A]">Pay Online (Razorpay)</h4>
                     <p className="text-xs text-slate-500 font-medium">Instant UPI, Google Pay, PhonePe, Cards, NetBanking</p>
@@ -743,13 +744,13 @@ export default function PhysiotherapyBookingPage() {
                     onClick={() => setPaymentMode('clinic')}
                     className={`p-4 rounded-2xl border text-left transition cursor-pointer ${
                       paymentMode === 'clinic'
-                        ? 'border-[#007A64] bg-teal-50/70 ring-1 ring-[#007A64]'
+                        ? 'border-[#007A64] bg-[#E0F3ED]/50 ring-1 ring-[#007A64]'
                         : 'border-slate-200 hover:bg-slate-50 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <Banknote className="w-5 h-5 text-emerald-600" />
-                      {paymentMode === 'clinic' && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
+                      <Banknote className="w-5 h-5 text-[#007A64]" />
+                      {paymentMode === 'clinic' && <CheckCircle2 className="w-5 h-5 text-[#007A64]" />}
                     </div>
                     <h4 className="text-sm font-black text-[#0F172A]">Pay Post-Session</h4>
                     <p className="text-xs text-slate-500 font-medium">Pay via Cash / UPI to the physiotherapist after treatment</p>
@@ -772,7 +773,7 @@ export default function PhysiotherapyBookingPage() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleFinalPayment}
-                  className="px-6 sm:px-8 py-3 rounded-xl bg-[#1E60D5] hover:bg-[#1850B5] text-white font-black text-sm sm:text-base transition cursor-pointer flex items-center gap-2 shadow-md disabled:opacity-50"
+                  className="px-6 sm:px-8 py-3 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white font-black text-sm sm:text-base transition cursor-pointer flex items-center gap-2 shadow-md disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <span>Processing...</span>
@@ -793,7 +794,7 @@ export default function PhysiotherapyBookingPage() {
             </div>
 
             {/* Summary */}
-            <div className="lg:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-2xs space-y-4">
+            <div className="lg:col-span-4 xl:col-span-4 bg-white rounded-2xl sm:rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4 sticky top-28">
               <h3 className="text-base font-black text-[#0F172A] border-b border-slate-100 pb-2">
                 Order Total
               </h3>
@@ -805,9 +806,9 @@ export default function PhysiotherapyBookingPage() {
                 <span>Special Discount</span>
                 <span>-₹400 (Applied)</span>
               </div>
-              <div className="p-3 rounded-xl bg-blue-50 text-slate-900 border border-blue-100 flex items-center justify-between font-black text-base">
+              <div className="p-3.5 rounded-xl bg-[#E0F3ED]/70 text-slate-900 border border-[#BCE8DD] flex items-center justify-between font-black text-base">
                 <span>Total Amount</span>
-                <span className="text-[#1E60D5]">₹{service.price}</span>
+                <span className="text-[#007A64] text-lg">₹{service.price}</span>
               </div>
             </div>
 
@@ -821,7 +822,7 @@ export default function PhysiotherapyBookingPage() {
           <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-8 border border-emerald-100 shadow-xl space-y-6">
             
             <div className="text-center space-y-2">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
+              <div className="w-16 h-16 rounded-full bg-[#E0F3ED] text-[#007A64] mx-auto flex items-center justify-center shadow-inner">
                 <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A]">
@@ -839,7 +840,7 @@ export default function PhysiotherapyBookingPage() {
             <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/90 space-y-3 text-xs sm:text-sm">
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Service</span>
-                <span className="font-bold text-[#1E60D5]">{confirmedBooking.title}</span>
+                <span className="font-bold text-[#007A64]">{confirmedBooking.title}</span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Session Mode</span>
@@ -859,7 +860,7 @@ export default function PhysiotherapyBookingPage() {
               </div>
               <div className="flex justify-between pt-1 text-sm font-black text-[#0F172A]">
                 <span>Total Fee</span>
-                <span className="text-emerald-700 font-bold">₹{confirmedBooking.fee} ({confirmedBooking.paymentStatus})</span>
+                <span className="text-[#007A64] font-bold">₹{confirmedBooking.fee} ({confirmedBooking.paymentStatus})</span>
               </div>
             </div>
 
@@ -876,7 +877,7 @@ export default function PhysiotherapyBookingPage() {
               <button
                 type="button"
                 onClick={() => navigate('/physiotherapy')}
-                className="w-full py-3.5 px-4 rounded-xl bg-[#1E60D5] hover:bg-[#1850B5] text-white font-bold text-xs sm:text-sm transition cursor-pointer text-center shadow-xs"
+                className="w-full py-3.5 px-4 rounded-xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm transition cursor-pointer text-center shadow-xs"
               >
                 Back to Physiotherapy
               </button>
