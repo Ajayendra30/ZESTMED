@@ -191,8 +191,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
               <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 border border-teal-200 rounded-2xl p-3.5 flex items-center gap-3">
                 <Heart className="w-6 h-6 text-[#008F83] fill-[#008F83] shrink-0" />
                 <div className="text-xs">
-                  <strong className="text-slate-900 block font-bold">100% Free Door-to-Door Sanitized AC Cab</strong>
-                  <span className="text-slate-600">Available for Senior Citizens (60+) traveling for diagnostic lab tests, doctor consults, or day surgeries in Guwahati.</span>
+                  <span className="text-slate-700 font-medium leading-relaxed">Available for Senior Citizens (60+) traveling for diagnostic lab tests, doctor consults, or day surgeries in Guwahati.</span>
                 </div>
               </div>
 
