@@ -149,9 +149,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           });
         }
       }
-      return cleanUserPhone === '9279125091' ? DEFAULT_NOTIFICATIONS : [];
+      return [];
     } catch {
-      return cleanUserPhone === '9279125091' ? DEFAULT_NOTIFICATIONS : [];
+      return [];
     }
   });
 
@@ -532,9 +532,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           if (userAddrs.length > 0) return userAddrs;
         }
       }
-      return cleanUserPhone === '9279125091' ? initialAssamAddresses : [];
+      return [];
     } catch {
-      return cleanUserPhone === '9279125091' ? initialAssamAddresses : [];
+      return [];
     }
   });
 
@@ -844,39 +844,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Real or Historical Diagnostic Reports (strictly isolated to verified user)
   const userReports = useMemo(() => {
     if (!user) return [];
-    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
-    if (cleanUserPhone === '9279125091') {
-      return [
-        {
-          test: 'Complete Blood Count (CBC)',
-          date: 'Nov 07, 2026',
-          id: 'ZM-REP-9041',
-          status: 'Normal',
-          pathologist: 'Dr. N. Bora, MD (Pathology)'
-        },
-        {
-          test: 'Lipid Profile Screen',
-          date: 'Oct 28, 2026',
-          id: 'ZM-REP-8812',
-          status: 'Desirable',
-          pathologist: 'Dr. Arindam Sharma, MD'
-        },
-        {
-          test: 'Liver Function Test (LFT)',
-          date: 'Oct 20, 2026',
-          id: 'ZM-REP-8450',
-          status: 'Normal',
-          pathologist: 'Dr. N. Bora, MD (Pathology)'
-        },
-        {
-          test: 'Thyroid Profile (T3, T4, TSH)',
-          date: 'Sep 15, 2026',
-          id: 'ZM-REP-7901',
-          status: 'Optimal',
-          pathologist: 'Dr. S. Das, MD (Biochemistry)'
-        }
-      ];
-    }
     const completedLabs = allUserBookings.filter(b => b.itemType === 'lab' && (
       (b.status || '').toLowerCase().includes('report') ||
       (b.status || '').toLowerCase().includes('publish') ||
@@ -901,10 +868,6 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Real or Historical Prescriptions (strictly isolated to verified user)
   const userPrescriptions = useMemo(() => {
     if (!user) return [];
-    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
-    if (cleanUserPhone === '9279125091') {
-      return initialPatientPrescriptions;
-    }
     try {
       const stored = JSON.parse(localStorage.getItem('zestmed_patient_prescriptions') || '[]');
       return Array.isArray(stored) ? stored.filter(isMatchingCurrentUser) : [];

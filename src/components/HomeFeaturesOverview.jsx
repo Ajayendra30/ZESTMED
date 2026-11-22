@@ -238,11 +238,11 @@ export default function HomeFeaturesOverview({ onSelectPackage, onOpenSeniorPick
               style={{ backgroundImage: "url('/home-sample-collection.png')" }}
             />
             {/* Subtle Gradient Overlay to Guarantee Crisp Readability Without Touching the Photo */}
-            <div className="absolute inset-y-0 left-0 w-3/5 sm:w-1/2 bg-gradient-to-r from-[#00545D] via-[#00545D]/85 to-transparent pointer-events-none rounded-l-3xl z-[1]" />
+            <div className="absolute inset-y-0 left-0 w-full sm:w-3/5 md:w-1/2 bg-gradient-to-r from-[#00545D] via-[#00545D]/95 sm:via-[#00545D]/85 to-transparent pointer-events-none rounded-3xl sm:rounded-l-3xl z-[1]" />
 
             {/* Left Content - Perfectly Constrained to Safe Teal Region */}
-            <div className="relative z-10 max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] xl:max-w-[360px] space-y-3 text-left">
-              <h3 className="text-2xl sm:text-[28px] lg:text-[30px] xl:text-[32px] font-black text-white leading-[1.22] tracking-tight">
+            <div className="relative z-10 w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] xl:max-w-[360px] space-y-3 text-left">
+              <h3 className="text-xl xs:text-2xl sm:text-[28px] lg:text-[30px] xl:text-[32px] font-black text-white leading-[1.22] tracking-tight">
                 Home Sample Collection <br />
                 at Your Doorstep
               </h3>

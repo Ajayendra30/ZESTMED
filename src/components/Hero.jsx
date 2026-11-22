@@ -32,7 +32,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             </div>
 
             {/* Main Headline - Lab Tests FIRST */}
-            <h1 className="text-2xl sm:text-3.5xl md:text-4xl lg:text-[32px] xl:text-[36px] 2xl:text-[40px] font-black text-[#0B2238] tracking-tight leading-[1.18]">
+            <h1 className="text-[22px] xs:text-2xl sm:text-3.5xl md:text-4xl lg:text-[32px] xl:text-[36px] 2xl:text-[40px] font-black text-[#0B2238] tracking-tight leading-[1.18]">
               Book Lab Tests, Consult <br className="hidden sm:inline" />
               Doctors &amp; Order Medicines <br className="hidden sm:inline" />
               <span className="text-[#008F83]">Healthcare Hub in Guwahati</span>
@@ -47,7 +47,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1 w-full">
               <Link
                 to="/doctor-appointment"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Stethoscope className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
                 <span>Book Doctor</span>
@@ -55,7 +55,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/medicines"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <ShoppingCart className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-emerald-600 shrink-0" />
                 <span>Medicines</span>
@@ -63,7 +63,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/diagnostics"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <FlaskConical className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
                 <span>Lab Tests</span>
@@ -71,7 +71,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/physiotherapy"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Activity className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
                 <span>Physiotherapy</span>
@@ -79,7 +79,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/surgery-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Scissors className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
                 <span>Surgery Packages</span>
@@ -87,7 +87,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
 
               <Link
                 to="/wellness-packages"
-                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-[13.5px] leading-snug flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <ShieldCheck className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
                 <span>Wellness Packages</span>

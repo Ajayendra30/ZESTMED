@@ -149,6 +149,7 @@ export default function HealthPackagesPage() {
   const [sortBy, setSortBy] = useState('Popularity');
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [showAllTypes, setShowAllTypes] = useState(false);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   const toggleWishlist = (id) => {
     setWishlist((prev) => ({
@@ -387,7 +388,7 @@ export default function HealthPackagesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
           {/* ================== LEFT SIDEBAR: FILTER PACKAGES ================== */}
-          <aside className="lg:col-span-3 space-y-5">
+          <aside className={`lg:col-span-3 space-y-5 ${showMobileFilter ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-6">
               {/* Sidebar Header */}
               <div className="flex items-center gap-2 text-[#0B1728] font-black text-base pb-3 border-b border-slate-100">
@@ -522,9 +523,18 @@ export default function HealthPackagesPage() {
                     addToast('Showing all available health packages', 'info');
                   }
                 }}
-                className="px-6 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs"
+                className="px-4 sm:px-6 py-2 bg-[#008F83] hover:bg-[#007A70] text-white text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs"
               >
                 Search
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowMobileFilter(!showMobileFilter)}
+                className="lg:hidden flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shrink-0 ml-1.5 cursor-pointer"
+                aria-label="Toggle Filters"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#008F83]" />
+                <span>Filter</span>
               </button>
             </div>
 

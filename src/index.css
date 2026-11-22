@@ -99,3 +99,14 @@
 .glass-pill {
   @apply bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm;
 }
+
+/* Hide scrollbars cleanly on mobile horizontally scrollable strips */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

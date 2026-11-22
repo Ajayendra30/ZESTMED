@@ -609,10 +609,10 @@ export default function DoctorAppointmentPage() {
         {/* 2. FEATURE BADGES BAR (5 Items Strip matching Reference Image)           */}
         {/* ========================================================================= */}
         <section className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs py-5 sm:py-6 px-4 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 divide-y-0 sm:divide-x divide-slate-100">
             
             {/* Feature 1 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 first:pt-0 sm:first:pl-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-3.5 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                 <ShieldCheck className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
@@ -623,7 +623,7 @@ export default function DoctorAppointmentPage() {
             </div>
 
             {/* Feature 2 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-3.5 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                 <CalendarCheck className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
@@ -634,7 +634,7 @@ export default function DoctorAppointmentPage() {
             </div>
 
             {/* Feature 3 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-3.5 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                 <Video className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
@@ -645,7 +645,7 @@ export default function DoctorAppointmentPage() {
             </div>
 
             {/* Feature 4 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-3.5 pl-1 sm:pl-3">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                 <Clock className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
@@ -656,7 +656,7 @@ export default function DoctorAppointmentPage() {
             </div>
 
             {/* Feature 5 */}
-            <div className="flex items-center gap-3.5 pt-2 sm:pt-0 pl-1 sm:pl-3">
+            <div className="flex items-center gap-3.5 pl-1 sm:pl-3 col-span-2 sm:col-span-1">
               <div className="shrink-0 flex items-center justify-center text-[#007A64]">
                 <CreditCard className="w-7 sm:w-8 h-7 sm:h-8 text-[#007A64]" />
               </div>
@@ -1020,10 +1020,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <Search className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Search Doctor
                 </h4>
-                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Find by specialty, location or name
                 </p>
               </div>
@@ -1036,10 +1036,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <Calendar className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Select Date & Time
                 </h4>
-                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Choose a convenient slot
                 </p>
               </div>
@@ -1052,10 +1052,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <UserCheck className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Book Appointment
                 </h4>
-                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Confirm your details and book
                 </p>
               </div>
@@ -1068,10 +1068,10 @@ export default function DoctorAppointmentPage() {
                 <div className="w-8 sm:w-9 h-8 sm:h-9 flex items-center justify-start mb-2 text-[#007A64]">
                   <CheckCircle2 className="w-6 sm:w-7 h-6 sm:h-7 text-[#007A64] stroke-[2.2]" />
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug whitespace-nowrap">
+                <h4 className="text-sm sm:text-base font-black text-[#0F1E36] leading-snug">
                   Get Confirmation
                 </h4>
-                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed whitespace-nowrap">
+                <p className="text-xs sm:text-[12px] xl:text-[13px] text-slate-500 font-medium mt-1 leading-relaxed">
                   Receive instant booking confirmation
                 </p>
               </div>
