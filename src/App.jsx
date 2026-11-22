@@ -24,8 +24,6 @@ import SurgeryDetailPage from './pages/SurgeryDetailPage';
 import DoctorAppointmentPage from './pages/DoctorAppointmentPage';
 import BookDoctorPage from './pages/BookDoctorPage';
 import PhysiotherapyPage from './pages/PhysiotherapyPage';
-import PhysiotherapyDetailPage from './pages/PhysiotherapyDetailPage';
-import PhysiotherapyBookingPage from './pages/PhysiotherapyBookingPage';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
@@ -224,12 +222,6 @@ function AppContent() {
           <Route path="/physiotherapy" element={<PhysiotherapyPage />} />
           <Route path="/physio" element={<PhysiotherapyPage />} />
           <Route path="/physiotherapist" element={<PhysiotherapyPage />} />
-          <Route path="/physiotherapy/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physio/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physiotherapy-service/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physiotherapy/:id/book" element={<PhysiotherapyBookingPage />} />
-          <Route path="/book-physiotherapy" element={<PhysiotherapyBookingPage />} />
-          <Route path="/book-physiotherapy/:id" element={<PhysiotherapyBookingPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<AuthPage />} />
