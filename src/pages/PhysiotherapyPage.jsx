@@ -4,7 +4,8 @@ import {
   Calendar, ArrowRight, Phone, User, Clock, Activity, 
   ShieldCheck, CheckCircle2, ChevronRight, Star, Heart,
   Award, Sparkles, FileText, Target, Home as HomeIcon,
-  Stethoscope, Users, X, CreditCard, Banknote, Lock, ClipboardList 
+  Stethoscope, Users, X, CreditCard, Banknote, Lock, ClipboardList,
+  Brain, Wind, Baby, HeartHandshake, Flame, Dumbbell
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -116,20 +117,20 @@ function PostureIcon({ className = "w-8 sm:w-9 h-8 sm:h-9 text-[#007A64]" }) {
   );
 }
 
-// 6 Core Services data with fallback images
+// 12 Comprehensive Physiotherapy Services data with fallback images
 const PHYSIO_SERVICES = [
   {
     id: 'back-neck',
     title: 'Back & Neck Pain Therapy',
-    desc: 'Relief from chronic and posture-related pain.',
+    desc: 'Targeted relief from chronic cervical, lumbar, and posture-related pain.',
     image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-back.jpg',
     icon: SpineIcon,
   },
   {
     id: 'joint-pain',
-    title: 'Joint Pain Management',
-    desc: 'Treatment for knee, shoulder and joint issues.',
+    title: 'Joint Pain & Arthritis Care',
+    desc: 'Specialized therapy for knee osteoarthritis, hip stiffness, and joint mobility.',
     image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-joint.jpg',
     icon: KneeJointIcon,
@@ -137,7 +138,7 @@ const PHYSIO_SERVICES = [
   {
     id: 'sports-injury',
     title: 'Sports Injury Rehabilitation',
-    desc: 'Recover safely and return to active life.',
+    desc: 'Rapid recovery from ligament sprains, muscle tears, and athletic conditioning.',
     image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-sports.jpg',
     icon: SportsInjuryIcon,
@@ -145,30 +146,78 @@ const PHYSIO_SERVICES = [
   {
     id: 'post-surgery',
     title: 'Post-Surgery Rehabilitation',
-    desc: 'Regain strength, mobility and independence.',
+    desc: 'Structured recovery for joint replacements, spine surgeries, and fractures.',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-surgery.jpg',
     icon: PostSurgeryIcon,
   },
   {
     id: 'elderly-care',
-    title: 'Elderly Care Physiotherapy',
-    desc: 'Improve mobility, balance and daily living activities.',
+    title: 'Elderly Care & Fall Prevention',
+    desc: 'Gentle mobility exercises, gait retraining, and balance support for seniors.',
     image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-elderly.jpg',
     icon: ElderlyCareIcon,
   },
   {
     id: 'posture-correction',
-    title: 'Posture Correction',
-    desc: 'Fix poor posture and prevent future pain.',
+    title: 'Posture & Ergonomic Correction',
+    desc: 'Correction of rounded shoulders, tech-neck, and desk-related strain.',
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
     fallback: '/physio-service-posture.jpg',
     icon: PostureIcon,
   },
+  {
+    id: 'neuro-rehab',
+    title: 'Neurological Rehabilitation',
+    desc: 'Neuro-physiotherapy for stroke recovery, Parkinson’s, paralysis, and neuropathy.',
+    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-surgery.jpg',
+    icon: Brain,
+  },
+  {
+    id: 'cardiopulmonary',
+    title: 'Cardiopulmonary & Chest Therapy',
+    desc: 'Breathing exercises, endurance recovery, and lung capacity improvement.',
+    image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-back.jpg',
+    icon: Wind,
+  },
+  {
+    id: 'pediatric',
+    title: 'Pediatric Physiotherapy',
+    desc: 'Developmental milestone therapy for children, posture, and motor coordination.',
+    image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-sports.jpg',
+    icon: Baby,
+  },
+  {
+    id: 'womens-health',
+    title: 'Women’s Health & Prenatal Care',
+    desc: 'Pelvic floor conditioning, prenatal back pain relief, and postpartum recovery.',
+    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-elderly.jpg',
+    icon: HeartHandshake,
+  },
+  {
+    id: 'dry-needling',
+    title: 'Myofascial Trigger Point Therapy',
+    desc: 'Deep tissue therapy, cupping, and dry needling for stubborn muscular knots.',
+    image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-joint.jpg',
+    icon: Flame,
+  },
+  {
+    id: 'strength-conditioning',
+    title: 'Strength & Functional Conditioning',
+    desc: 'Therapeutic resistance training to restore muscle mass, core, and stamina.',
+    image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=600&q=80',
+    fallback: '/physio-service-posture.jpg',
+    icon: Dumbbell,
+  },
 ];
 
-// 8 Conditions data matching Reference Design
+// 12 Conditions data matching Comprehensive Physiotherapy Scope
 const CONDITIONS_LIST = [
   { id: 'c1', name: 'Back Pain', lines: ['Back Pain'], icon: SpineIcon },
   { id: 'c2', name: 'Neck Pain', lines: ['Neck Pain'], icon: NeckIcon },
@@ -178,6 +227,10 @@ const CONDITIONS_LIST = [
   { id: 'c6', name: 'Post-Surgery Recovery', lines: ['Post-Surgery', 'Recovery'], icon: PostSurgeryIcon },
   { id: 'c7', name: 'Age-Related Mobility Issues', lines: ['Age-Related', 'Mobility Issues'], icon: ElderlyCareIcon },
   { id: 'c8', name: 'Posture Problems', lines: ['Posture', 'Problems'], icon: PostureIcon },
+  { id: 'c9', name: 'Stroke & Paralysis', lines: ['Stroke &', 'Paralysis'], icon: Brain },
+  { id: 'c10', name: 'Sciatica & Slip Disc', lines: ['Sciatica &', 'Slip Disc'], icon: SpineIcon },
+  { id: 'c11', name: 'Arthritis & Spondylitis', lines: ['Arthritis &', 'Spondylitis'], icon: KneeJointIcon },
+  { id: 'c12', name: 'Muscle Spasms & Strains', lines: ['Muscle Spasms', '& Strains'], icon: Flame },
 ];
 
 export default function PhysiotherapyPage() {
@@ -340,7 +393,7 @@ export default function PhysiotherapyPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 3. OUR PHYSIOTHERAPY SERVICES (6 Cards in Balanced Grid)                  */}
+        {/* 3. OUR PHYSIOTHERAPY SERVICES (12 Cards in Balanced Grid)                 */}
         {/* ========================================================================= */}
         <section id="physio-services-section" className="space-y-6">
           
@@ -484,7 +537,7 @@ export default function PhysiotherapyPage() {
             Conditions We Treat
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-3.5">
             {CONDITIONS_LIST.map((cond) => {
               const IconComp = cond.icon;
               return (
