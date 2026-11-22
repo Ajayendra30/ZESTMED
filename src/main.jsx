@@ -5,7 +5,7 @@ import App from './App.jsx'
 import './index.css'
 
 // Automatically redirect to Home page whenever the website is reloaded,
-// EXCEPT for Admin and Lab dashboards which must stay on their respective pages on reload.
+// EXCEPT for Admin, Lab, and Patient dashboards which must stay on their respective pages on reload.
 try {
   const pathname = window.location.pathname.toLowerCase();
   const isAdminPath = pathname.startsWith('/admin') || pathname === '/admin-dashboard';
@@ -14,6 +14,11 @@ try {
     pathname.startsWith('/lab/') ||
     pathname === '/lab-dashboard' ||
     pathname.startsWith('/lab-dashboard/');
+  const isPatientPath =
+    pathname === '/patient-dashboard' ||
+    pathname.startsWith('/patient-dashboard/') ||
+    pathname === '/patient' ||
+    pathname.startsWith('/patient/');
 
   const navEntries = window.performance?.getEntriesByType?.('navigation');
   const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
@@ -22,7 +27,7 @@ try {
 
   sessionStorage.removeItem('zestmed_is_reloading');
 
-  if ((isReloadByEntries || isReloadByLegacy || isReloadBySession) && !isAdminPath && !isLabPath) {
+  if ((isReloadByEntries || isReloadByLegacy || isReloadBySession) && !isAdminPath && !isLabPath && !isPatientPath) {
     if (window.location.pathname !== '/' || window.location.search || window.location.hash) {
       window.history.replaceState(null, '', '/');
     }

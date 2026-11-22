@@ -48,7 +48,7 @@ function AppContent() {
   }, [location.pathname]);
 
   // Ensure redirect to Home page if the website was reloaded,
-  // EXCEPT for Admin and Lab dashboards which must stay on their respective pages on reload.
+  // EXCEPT for Admin, Lab, and Patient dashboards which must stay on their respective pages on reload.
   useEffect(() => {
     try {
       const currentPath = location.pathname.toLowerCase();
@@ -59,8 +59,13 @@ function AppContent() {
         currentPath === '/lab-dashboard' ||
         currentPath.startsWith('/lab-dashboard/') ||
         activeSubdomain === 'lab';
+      const isPatientPath =
+        currentPath === '/patient-dashboard' ||
+        currentPath.startsWith('/patient-dashboard/') ||
+        currentPath === '/patient' ||
+        currentPath.startsWith('/patient/');
 
-      if (isAdminPath || isLabPath) {
+      if (isAdminPath || isLabPath || isPatientPath) {
         return;
       }
 
@@ -159,14 +164,20 @@ function AppContent() {
   // =========================================================================
   // 3. STANDALONE PATIENT DASHBOARD: http://localhost:5173/patient-dashboard
   // =========================================================================
-  if (location.pathname === '/patient-dashboard') {
+  const isPatientDashboardPath =
+    location.pathname === '/patient-dashboard' ||
+    location.pathname.startsWith('/patient-dashboard/') ||
+    location.pathname === '/patient' ||
+    location.pathname.startsWith('/patient/');
+
+  if (isPatientDashboardPath) {
     return (
       <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
         <PatientDashboardPage
-          onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
+          onOpenPrescriptionModal={handleOpenPrescriptionRequest}
         />
         <CartDrawer
-          onOpenPrescriptionModal={() => setPrescriptionModalOpen(true)}
+          onOpenPrescriptionModal={handleOpenPrescriptionRequest}
         />
         <LocationModal />
         <AuthModal />
@@ -245,6 +256,10 @@ function AppContent() {
           <Route path="/physiotherapy/:id/book" element={<PhysiotherapyBookingPage />} />
           <Route path="/book-physiotherapy" element={<PhysiotherapyBookingPage />} />
           <Route path="/book-physiotherapy/:id" element={<PhysiotherapyBookingPage />} />
+          <Route path="/patient-dashboard" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
+          <Route path="/patient-dashboard/*" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
+          <Route path="/patient" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
+          <Route path="/patient/*" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<AuthPage />} />
