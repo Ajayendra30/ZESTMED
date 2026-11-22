@@ -10,6 +10,7 @@ import { useToast } from '../context/ToastContext';
 import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookSurgery } from '../services/supabaseService';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }) {
   const navigate = useNavigate();
@@ -106,6 +107,18 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
         localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Play audible notification chime & record Book notification
+        recordAndPlayNotification({
+          type: 'book',
+          title: 'Surgery Package Confirmed',
+          actionText: `Consultation #${bookingRef} Confirmed`,
+          desc: `Surgery consultation reserved for ${selectedPackage.title}. Lead surgeon & care manager assigned.`,
+          sender: 'ZESTMED Surgery Care Desk',
+          category: 'Surgery Package',
+          refId: bookingRef,
+          linkType: 'surgery'
+        });
 
         // Save to Supabase PostgreSQL database
         bookSurgery(newBooking).catch((err) => console.warn('Supabase surgery booking error:', err));

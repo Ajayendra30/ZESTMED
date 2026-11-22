@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { bookSurgery } from '../services/supabaseService';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 // Custom SVG Icons matching the Reference Design
 function ExpertSurgeonIcon({ className = "w-6 h-6 text-[#0B1E3F]" }) {
@@ -257,6 +258,18 @@ export default function SurgeryDetailPage() {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Surgery Consultation Confirmed',
+        actionText: `Booking #${bookingPayload.id} Confirmed`,
+        desc: `Surgery consultation reserved for ${surgery.title} on ${bookingPayload.date}. Lead surgeon & care manager assigned.`,
+        sender: 'ZESTMED Surgery Care Desk',
+        category: 'Surgery Package',
+        refId: bookingPayload.id,
+        linkType: 'surgery'
+      });
+
       setConfirmedBookingData(bookingPayload);
       setStep('confirmed');
       addToast('Surgery consultation booked successfully!', 'success');
@@ -264,6 +277,18 @@ export default function SurgeryDetailPage() {
       console.error('Save booking error:', err);
       setConfirmedBookingData(bookingPayload);
       setStep('confirmed');
+
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Surgery Consultation Confirmed',
+        actionText: `Booking #${bookingPayload.id} Confirmed`,
+        desc: `Surgery consultation reserved for ${surgery.title} on ${bookingPayload.date}.`,
+        sender: 'ZESTMED Surgery Care Desk',
+        category: 'Surgery Package',
+        refId: bookingPayload.id,
+        linkType: 'surgery'
+      });
+
       addToast('Surgery package booked successfully!', 'success');
     } finally {
       setIsSubmitting(false);

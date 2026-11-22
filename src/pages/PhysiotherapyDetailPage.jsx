@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 // =========================================================================
 // Custom SVG Icons matching Reference Design & ZESTMED Branding
@@ -281,6 +282,18 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Physiotherapy Session Confirmed',
+        actionText: `Session #${bookingPayload.id} Confirmed`,
+        desc: `${bookingPayload.serviceName} booked for ${bookingPayload.patientName} on ${bookingPayload.date} (${bookingPayload.time}). Certified therapist assigned.`,
+        sender: 'ZESTMED Physiotherapy Care',
+        category: 'Physiotherapy & Rehab',
+        refId: bookingPayload.id,
+        linkType: 'appointment'
+      });
+
       setConfirmedBookingData(bookingPayload);
       setStep('confirmed');
       addToast('Physiotherapy session booked successfully!', 'success');
@@ -292,6 +305,18 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
 
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Physiotherapy Session Confirmed',
+        actionText: `Session #${bookingPayload.id} Confirmed`,
+        desc: `${bookingPayload.serviceName} booked for ${bookingPayload.patientName} on ${bookingPayload.date} (${bookingPayload.time}). Certified therapist assigned.`,
+        sender: 'ZESTMED Physiotherapy Care',
+        category: 'Physiotherapy & Rehab',
+        refId: bookingPayload.id,
+        linkType: 'appointment'
+      });
 
       setConfirmedBookingData(bookingPayload);
       setStep('confirmed');

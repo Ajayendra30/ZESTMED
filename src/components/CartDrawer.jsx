@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { placeMedicineOrder, bookLabTest } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 import { 
   X, Trash2, Plus, Minus, ShoppingBag, ShieldCheck, 
   FileText, ArrowRight, CheckCircle2, AlertTriangle, Truck, Clock, Lock
@@ -119,6 +120,18 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
+        // Play audible notification chime & record Buy notification
+        recordAndPlayNotification({
+          type: 'buy',
+          title: 'Medicine Order Confirmed',
+          actionText: `Order #${newOrder.id} Placed & Confirmed`,
+          desc: `Pharmacy order for ${newOrder.items.length} items (${newOrder.items.map((i) => i.name).slice(0, 2).join(', ')}${newOrder.items.length > 2 ? '...' : ''}) confirmed. Express cold-pack delivery in Guwahati.`,
+          sender: 'ZESTMED Express Pharmacy',
+          category: 'Medicine Order',
+          refId: newOrder.id,
+          linkType: 'order'
+        });
+
         // Save order to Supabase PostgreSQL database
         placeMedicineOrder(newOrder).catch((err) => console.warn('Supabase medicine order error:', err));
       } catch (err) {
@@ -171,6 +184,20 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...existingBookings]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+        // Play audible notification chime & record Book notifications for each lab/wellness booking
+        newBookings.forEach((b) => {
+          recordAndPlayNotification({
+            type: 'book',
+            title: `${b.type} Confirmed`,
+            actionText: `Booking #${b.bookingId} Confirmed`,
+            desc: `Home collection confirmed for ${b.testName} scheduled on ${b.date}.`,
+            sender: 'ZESTMED Diagnostics Hub',
+            category: b.category,
+            refId: b.bookingId,
+            linkType: 'lab'
+          });
+        });
 
         // Save bookings to Supabase PostgreSQL database
         newBookings.forEach((b) => {

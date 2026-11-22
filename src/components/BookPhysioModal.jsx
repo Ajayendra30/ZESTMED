@@ -12,6 +12,7 @@ import { useAuth } from '../context/AuthContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, initialCondition = 'All Conditions' }) {
   const navigate = useNavigate();
@@ -109,6 +110,18 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, i
       localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Play audible notification chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Physiotherapy Session Confirmed',
+        actionText: `Session #${bookingRef} Confirmed`,
+        desc: `${serviceType} scheduled with ${selectedPhysio.name} for ${sessionDate} (${sessionSlot}).`,
+        sender: selectedPhysio.name,
+        category: 'Physiotherapy & Rehab',
+        refId: bookingRef,
+        linkType: 'appointment'
+      });
 
       // Save to Supabase PostgreSQL database
       await bookPhysiotherapy(newBooking);

@@ -14,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 import DoctorHero from '../components/DoctorHero';
 
 // =========================================================================
@@ -496,6 +497,18 @@ export default function DoctorAppointmentPage() {
       localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Doctor Appointment Confirmed',
+        actionText: `Appointment #${bookingId} Confirmed`,
+        desc: `Consultation confirmed with ${bookingDoctor?.name} (${bookingDoctor?.specialty}) for ${selectedDate} (${selectedTimeSlot}).`,
+        sender: bookingDoctor?.name,
+        category: 'Doctor Consultation',
+        refId: bookingId,
+        linkType: 'appointment'
+      });
 
       // Save to Supabase PostgreSQL database
       await bookDoctorAppointment(newBooking);

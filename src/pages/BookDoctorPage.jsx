@@ -12,6 +12,7 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 export default function BookDoctorPage() {
   const navigate = useNavigate();
@@ -294,6 +295,18 @@ export default function BookDoctorPage() {
       localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Doctor Appointment Confirmed',
+        actionText: `Appointment #${bookingId} Confirmed`,
+        desc: `Consultation confirmed with ${chosenDoctor.name} (${chosenDoctor.specialty}) for ${selectedDate} (${selectedSlot}).`,
+        sender: chosenDoctor.name,
+        category: 'Doctor Consultation',
+        refId: bookingId,
+        linkType: 'appointment'
+      });
 
       // 2. Persist to Supabase Database
       try {

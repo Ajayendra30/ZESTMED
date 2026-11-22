@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { bookLabTest } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 import { 
   X, Calendar, Clock, MapPin, User, CheckCircle2, 
   FlaskConical, ShieldCheck, ArrowRight, ArrowLeft, 
@@ -123,6 +124,18 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+
+      // Play audible notification chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Diagnostic Test Confirmed',
+        actionText: `Booking #${generatedRef} Confirmed`,
+        desc: `Home collection confirmed for ${item.name} on ${selectedDate} (${selectedTimeSlot}). Field phlebotomist assigned.`,
+        sender: 'Dispur Central Pathology Lab',
+        category: 'Diagnostic Lab Test',
+        refId: generatedRef,
+        linkType: 'lab'
+      });
 
       // Save to Supabase PostgreSQL database
       await bookLabTest(newLabBooking);

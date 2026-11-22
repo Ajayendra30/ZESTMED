@@ -8,6 +8,7 @@ import { useLocation } from '../context/LocationContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 
 export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultService = 'Lab Test & Diagnostics' }) {
   const navigate = useNavigate();
@@ -72,6 +73,19 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
         vehicleNumber: 'AS 01 EX 4529 (Sanitized AC EV)',
         driverPhone: '+91 94350 88219'
       });
+
+      // Play audible chime & record Book notification
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Senior Citizen Pick-up Scheduled',
+        actionText: `Cab Booking #${bookingRef} Confirmed`,
+        desc: `Complimentary sanitized AC EV reserved for ${formData.patientName} on ${formData.pickupDate} (${formData.pickupTime}). Driver: Manoj Kalita (+91 94350 88219).`,
+        sender: 'ZESTMED Senior Care Dispatch',
+        category: 'Senior Citizen Care',
+        refId: bookingRef,
+        linkType: 'appointment'
+      });
+
       addToast('Senior Citizen Pick-up & Drop Scheduled Successfully!', 'success');
     }, 900);
   };

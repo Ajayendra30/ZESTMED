@@ -277,28 +277,46 @@ export default function LabDashboardPage() {
 
   // Listen for real-time lab bookings & sample updates and trigger audible alert chime
   useEffect(() => {
-    const handleNewLabAlert = () => {
+    const handleNewLabAlert = (e) => {
       try {
-        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        const labBookings = stored.filter(b => b.isLabTest || b.category === 'lab' || b.type?.includes('Lab') || b.type?.includes('Diagnostic'));
-        if (labBookings.length > 0) {
-          const latest = labBookings[0];
+        if (e?.detail?.notification && (e.detail.notification.linkType === 'lab' || e.detail.notification.category?.toLowerCase().includes('lab'))) {
+          const incoming = e.detail.notification;
+          const labNotifId = `lab-${incoming.id}`;
+          const newNotif = {
+            ...incoming,
+            id: labNotifId,
+            sender: 'Lab Order Dispatch',
+            actionText: incoming.actionText || 'New Lab Order',
+            desc: incoming.desc,
+            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+          };
+          setLabNotifications((prev) => {
+            if (prev.some((n) => n.id === labNotifId)) return prev;
+            playNotificationSound();
+            return [newNotif, ...prev];
+          });
+          return;
+        }
+
+        const stored = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+        if (stored.length > 0) {
+          const latest = stored[0];
           const notifId = `lab-${latest.id || latest.bookingId || Date.now()}`;
           const newNotif = {
             id: notifId,
             sender: 'Lab Order Dispatch',
             avatar: 'LB',
             avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `new order: #${latest.bookingId || latest.booking_number || latest.id || 'LB-NEW'}`,
+            actionText: `Booking #${latest.bookingId || latest.booking_number || latest.id || 'LB-NEW'} Confirmed`,
             time: 'Just now',
-            desc: `New sample collection booking for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || ''}). Fasting blood profile required.`,
+            desc: `New home sample collection booking for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || ''}). Specimen: ${latest.specimen || 'Blood / Serum Sample'}.`,
             category: 'Home Sample Collection',
             status: 'New Job',
             statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
             linkType: 'assigned'
           };
           setLabNotifications((prev) => {
-            if (prev.some(n => n.id === notifId)) return prev;
+            if (prev.some((n) => n.id === notifId)) return prev;
             playNotificationSound();
             return [newNotif, ...prev];
           });
