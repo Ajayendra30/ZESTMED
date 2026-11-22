@@ -1,341 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import ProductDetailModal from '../components/ProductDetailModal';
+import { ALL_MEDICINES_DATA } from '../mock-data/allMedicinesData';
 import { 
   Search, ShieldCheck, Truck, RotateCcw, Tag,
-  ShoppingCart, SlidersHorizontal
+  ShoppingCart, SlidersHorizontal, ArrowLeft, ArrowRight
 } from 'lucide-react';
 
-const STORE_MEDICINES = [
-  {
-    id: 'med-crocin',
-    name: 'Crocin 500 mg Tablet',
-    genericName: 'Paracetamol 500 mg',
-    composition: 'Paracetamol 500 mg',
-    compositionLong: 'Paracetamol (Acetaminophen) 500 mg',
-    dosageType: 'Tablet',
-    pack: '(15 Tablets)',
-    packSize: 'Strip of 15 Tablets',
-    brand: 'GlaxoSmithKline (GSK)',
-    manufacturer: 'GlaxoSmithKline (GSK)',
-    category: 'fever',
-    categories: ['fever', 'pain'],
-    categoryLong: 'Pain Relief / Fever Reducer',
-    price: 35.00,
-    mrp: 42.00,
-    discountPercent: 17,
-    rating: 4.6,
-    reviewsCount: '2,418',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '50 strips',
-    expiry: 'Apr 2028',
-    storage: 'Store below 30°C, in a dry place',
-    description: 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
-    usesText: 'Relieves fever, headache, body ache, and mild to moderate pain.',
-    dosageText: '1 tablet (500 mg) every 4–6 hours as needed. (Max 4 tablets in 24 hours)',
-    image: '/medicines/crocin-500.png',
-    images: [
-      '/medicines/crocin-500.png',
-      '/medicines/crocin-thumb2.png',
-      '/medicines/crocin-thumb3.png'
-    ],
-    popularityRank: 1
-  },
-  {
-    id: 'med-disprin',
-    name: 'Disprin Tablet',
-    genericName: 'Pain Relief / Headache',
-    composition: 'Aspirin 350 mg',
-    compositionLong: 'Acetylsalicylic Acid (Aspirin) 350 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Reckitt Benckiser',
-    manufacturer: 'Reckitt Benckiser',
-    category: 'pain',
-    categories: ['pain', 'fever'],
-    categoryLong: 'Pain Relief / Headache',
-    price: 28.00,
-    mrp: 32.00,
-    discountPercent: 12,
-    rating: 4.5,
-    reviewsCount: '1,540',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '35 strips',
-    expiry: 'Dec 2027',
-    storage: 'Store below 25°C, away from moisture',
-    description: 'Disprin is an effervescent tablet used for fast relief from headache, toothache, period pain, and muscular pain.',
-    usesText: 'Fast relief from headache, muscular pain, toothache, and inflammation.',
-    dosageText: '1 to 2 tablets dissolved in a glass of water every 4–6 hours as needed.',
-    image: '/medicines/disprin.png',
-    images: ['/medicines/disprin.png'],
-    popularityRank: 2
-  },
-  {
-    id: 'med-augovin',
-    name: 'Augovin 625 mg Tablet',
-    genericName: 'Antibiotic',
-    composition: 'Amoxicillin 500 mg + Clavulanic Acid 125 mg',
-    compositionLong: 'Amoxicillin Trihydrate IP 500 mg + Diluted Potassium Clavulanate IP 125 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'GlaxoSmithKline (GSK)',
-    manufacturer: 'GlaxoSmithKline (GSK)',
-    category: 'antibiotics',
-    categories: ['antibiotics'],
-    categoryLong: 'Antibiotic / Bacterial Infections',
-    price: 210.00,
-    mrp: 232.00,
-    discountPercent: 9,
-    rating: 4.7,
-    reviewsCount: '1,820',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '30 strips',
-    expiry: 'Aug 2027',
-    storage: 'Store below 25°C in a dry place',
-    description: 'Augovin 625 mg is a broad-spectrum penicillin antibiotic combined with a beta-lactamase inhibitor to treat severe bacterial infections.',
-    usesText: 'Bacterial infections of the respiratory tract, ear, nose, throat, skin, and urinary tract.',
-    dosageText: '1 tablet twice daily with food or as advised by your doctor.',
-    image: '/medicines/augovin-625.png',
-    images: ['/medicines/augovin-625.png'],
-    popularityRank: 3
-  },
-  {
-    id: 'med-evion',
-    name: 'Evion 400 mg Capsule',
-    genericName: 'Vitamin E Supplement',
-    composition: 'Tocopheryl Acetate 400 mg',
-    compositionLong: 'Tocopheryl Acetate IP (Vitamin E) 400 mg',
-    dosageType: 'Capsule',
-    pack: '(10 Capsules)',
-    packSize: 'Strip of 10 Capsules',
-    brand: 'Procter & Gamble / Merck',
-    manufacturer: 'Merck Healthcare / P&G',
-    category: 'vitamins',
-    categories: ['vitamins', 'skin'],
-    categoryLong: 'Vitamin E Supplement / Antioxidant',
-    price: 110.00,
-    mrp: 132.00,
-    discountPercent: 17,
-    rating: 4.8,
-    reviewsCount: '3,120',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '65 strips',
-    expiry: 'May 2028',
-    storage: 'Store below 25°C, away from direct sunlight',
-    description: 'Evion 400 contains Vitamin E, an essential fat-soluble antioxidant that protects cells from damage, promotes healthy skin, and supports muscular health.',
-    usesText: 'Nourishes glowing skin, prevents cellular aging, strengthens hair, and boosts immunity.',
-    dosageText: '1 capsule daily after a meal or as directed by a healthcare professional.',
-    image: '/medicines/evion-400.png',
-    images: ['/medicines/evion-400.png'],
-    popularityRank: 4
-  },
-  {
-    id: 'med-becosules',
-    name: 'Becosules Capsule',
-    genericName: 'Multivitamin Supplement',
-    composition: 'B-Complex + Vitamin C',
-    compositionLong: 'Vitamin B1, B2, B6, B12, Niacinamide, Calcium Pantothenate, Folic Acid + Vitamin C',
-    dosageType: 'Capsule',
-    pack: '(20 Capsules)',
-    packSize: 'Strip of 20 Capsules',
-    brand: 'Pfizer',
-    manufacturer: 'Pfizer Limited',
-    category: 'vitamins',
-    categories: ['vitamins'],
-    categoryLong: 'Multivitamin & Mineral Supplement',
-    price: 125.00,
-    mrp: 149.00,
-    discountPercent: 16,
-    rating: 4.6,
-    reviewsCount: '2,850',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '80 strips',
-    expiry: 'Jul 2028',
-    storage: 'Store below 30°C in a dry place',
-    description: 'Becosules capsules provide an optimal balance of Vitamin B-complex and Vitamin C to treat vitamin deficiencies, mouth ulcers, and physical fatigue.',
-    usesText: 'Treats mouth ulcers, heals tissue damage, boosts cellular metabolism, and improves vitality.',
-    dosageText: '1 capsule daily after food or as recommended by physician.',
-    image: '/medicines/becosules.png',
-    images: ['/medicines/becosules.png'],
-    popularityRank: 5
-  },
-  {
-    id: 'med-pantop',
-    name: 'Pantop 40 mg Tablet',
-    genericName: 'Acidity / GERD',
-    composition: 'Pantoprazole Sodium 40 mg',
-    compositionLong: 'Pantoprazole Sodium Gastro-resistant IP 40 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Aristo Pharma',
-    manufacturer: 'Aristo Pharmaceuticals',
-    category: 'digestive',
-    categories: ['digestive'],
-    categoryLong: 'Antacid / GERD & Acidity',
-    price: 98.00,
-    mrp: 112.00,
-    discountPercent: 12,
-    rating: 4.6,
-    reviewsCount: '1,420',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '55 strips',
-    expiry: 'Sep 2028',
-    storage: 'Store below 25°C in a cool, dry place',
-    description: 'Pantop 40 mg is a proton pump inhibitor that suppresses stomach acid secretion, relieving severe acid reflux, heartburn, and peptic ulcers.',
-    usesText: 'Treats gastroesophageal reflux disease (GERD), heartburn, stomach ulcers, and acid indigestion.',
-    dosageText: '1 tablet daily in the morning, 30–60 minutes before breakfast.',
-    image: '/medicines/pantop-40.png',
-    images: ['/medicines/pantop-40.png'],
-    popularityRank: 6
-  },
-  {
-    id: 'med-amlong',
-    name: 'Amlong 5 mg Tablet',
-    genericName: 'Blood Pressure Control',
-    composition: 'Amlodipine Besylate 5 mg',
-    compositionLong: 'Amlodipine Besylate IP 5 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Micro Labs',
-    manufacturer: 'Micro Labs Limited',
-    category: 'heart',
-    categories: ['heart'],
-    categoryLong: 'Cardiovascular / Blood Pressure',
-    price: 72.00,
-    mrp: 88.00,
-    discountPercent: 18,
-    rating: 4.7,
-    reviewsCount: '1,640',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '45 strips',
-    expiry: 'Jan 2028',
-    storage: 'Store below 25°C, protected from light',
-    description: 'Amlong 5 contains Amlodipine, which widens blood vessels to improve blood flow, lower arterial pressure, and prevent coronary chest pain.',
-    usesText: 'Manages high blood pressure (hypertension) and prevents stable angina attacks.',
-    dosageText: '1 tablet daily at the same time every day, or as advised by your physician.',
-    image: '/medicines/amlong-5.png',
-    images: ['/medicines/amlong-5.png'],
-    popularityRank: 7
-  },
-  {
-    id: 'med-metformin',
-    name: 'Metformin 500 mg Tablet',
-    genericName: 'Diabetes Care',
-    composition: 'Metformin Hydrochloride 500 mg',
-    compositionLong: 'Metformin Hydrochloride Prolonged-Release IP 500 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'USV Limited',
-    manufacturer: 'USV Private Limited',
-    category: 'diabetes',
-    categories: ['diabetes'],
-    categoryLong: 'Diabetes Care / Blood Sugar Control',
-    price: 56.00,
-    mrp: 68.00,
-    discountPercent: 18,
-    rating: 4.5,
-    reviewsCount: '2,110',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '70 strips',
-    expiry: 'Oct 2027',
-    storage: 'Store below 30°C in a dry place',
-    description: 'Metformin 500 mg is the gold standard oral anti-diabetic medication, helping the body respond better to insulin and decreasing liver glucose production.',
-    usesText: 'Lowers high blood sugar levels in Type 2 Diabetes Mellitus and prevents diabetic complications.',
-    dosageText: '1 tablet twice daily with or immediately after meals.',
-    image: '/medicines/metformin-500.png',
-    images: ['/medicines/metformin-500.png'],
-    popularityRank: 8
-  },
-  {
-    id: 'med-atorva',
-    name: 'Atorva 10 mg Tablet',
-    genericName: 'Cholesterol Control',
-    composition: 'Atorvastatin Calcium 10 mg',
-    compositionLong: 'Atorvastatin Calcium IP 10 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Zydus Cadila',
-    manufacturer: 'Zydus Healthcare',
-    category: 'heart',
-    categories: ['heart'],
-    categoryLong: 'Cardiovascular / Lipid Lowering',
-    price: 135.00,
-    mrp: 158.00,
-    discountPercent: 15,
-    rating: 4.6,
-    reviewsCount: '1,980',
-    prescriptionRequired: true,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '40 strips',
-    expiry: 'Feb 2028',
-    storage: 'Store below 25°C in a dry place',
-    description: 'Atorva 10 mg is a lipid-lowering medication (statin) that blocks the enzyme needed to produce cholesterol, protecting against heart attacks and strokes.',
-    usesText: 'Lowers LDL ("bad") cholesterol, reduces triglycerides, and elevates HDL ("good") cholesterol.',
-    dosageText: '1 tablet once daily, preferably at bedtime.',
-    image: '/medicines/atorva-10.png',
-    images: ['/medicines/atorva-10.png'],
-    popularityRank: 9
-  },
-  {
-    id: 'med-cetirizine',
-    name: 'Cetirizine 10 mg Tablet',
-    genericName: 'Allergy Relief',
-    composition: 'Cetirizine Dihydrochloride 10 mg',
-    compositionLong: 'Cetirizine Dihydrochloride IP 10 mg',
-    dosageType: 'Tablet',
-    pack: '(10 Tablets)',
-    packSize: 'Strip of 10 Tablets',
-    brand: 'Cipla',
-    manufacturer: 'Cipla Ltd',
-    category: 'skin',
-    categories: ['skin', 'fever', 'pain'],
-    categoryLong: 'Antiallergic / Skin & Cold Relief',
-    price: 28.00,
-    mrp: 32.00,
-    discountPercent: 12,
-    rating: 4.5,
-    reviewsCount: '1,750',
-    prescriptionRequired: false,
-    inStock: true,
-    stockText: 'In Stock',
-    stockCount: '85 strips',
-    expiry: 'Nov 2027',
-    storage: 'Store below 30°C in a dry place',
-    description: 'Cetirizine 10 mg provides fast, 24-hour relief from allergies, allergic rhinitis, watery eyes, sneezing, and itchy skin rashes or hives.',
-    usesText: 'Relieves allergy symptoms, allergic rhinitis, hay fever, hives, and pruritus.',
-    dosageText: '1 tablet once daily at bedtime.',
-    image: '/medicines/cetirizine-10.png',
-    images: ['/medicines/cetirizine-10.png'],
-    popularityRank: 10
-  }
-];
+const STORE_MEDICINES = ALL_MEDICINES_DATA;
 
 const SIDEBAR_CATEGORIES = [
   { id: 'pain', name: 'Pain Relief' },
@@ -426,6 +102,52 @@ export default function MedicineStorePage() {
       return true;
     }).sort((a, b) => a.popularityRank - b.popularityRank);
   }, [searchQuery, selectedCategories, priceMax, stockFilter]);
+
+  // Overall stock count for the sidebar
+  const stockCounts = useMemo(() => {
+    const inStock = STORE_MEDICINES.filter((m) => m.inStock).length;
+    const outOfStock = STORE_MEDICINES.filter((m) => !m.inStock).length;
+    return { inStock, outOfStock };
+  }, []);
+
+  // Pagination states & calculations
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  // Reset page to 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategories, priceMax, stockFilter]);
+
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+  const displayedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  const getPageNumbers = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', totalPages];
+    }
+    if (currentPage >= totalPages - 3) {
+      return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+  };
+
+  const handlePageChange = (pageNum) => {
+    if (pageNum < 1 || pageNum > totalPages || pageNum === currentPage) return;
+    setCurrentPage(pageNum);
+    const catalogElem = document.getElementById('medicines-catalog');
+    if (catalogElem) {
+      catalogElem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 450, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen font-sans pb-16">
@@ -663,7 +385,7 @@ export default function MedicineStorePage() {
                       onChange={() => setStockFilter(stockFilter === 'in_stock' ? 'all' : 'in_stock')}
                       className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
                     />
-                    <span className="font-normal text-slate-800">In Stock (328)</span>
+                    <span className="font-normal text-slate-800">In Stock ({stockCounts.inStock.toLocaleString()})</span>
                   </label>
 
                   <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900 select-none text-xs sm:text-sm">
@@ -673,7 +395,7 @@ export default function MedicineStorePage() {
                       onChange={() => setStockFilter(stockFilter === 'out_of_stock' ? 'all' : 'out_of_stock')}
                       className="w-4 h-4 rounded border-slate-300 text-[#007A64] focus:ring-[#007A64] cursor-pointer"
                     />
-                    <span className="font-normal text-slate-800">Out of Stock (12)</span>
+                    <span className="font-normal text-slate-800">Out of Stock ({stockCounts.outOfStock.toLocaleString()})</span>
                   </label>
                 </div>
               </div>
@@ -698,7 +420,15 @@ export default function MedicineStorePage() {
           </aside>
 
           {/* ================== RIGHT 10-CARD GRID ================== */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0" id="medicines-catalog">
+            
+            {/* Header: Showing X – Y of 1,440 medicines */}
+            <div className="flex items-center justify-between mb-3.5">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600">
+                Showing {totalItems === 0 ? 0 : startIndex + 1} – {endIndex} of {totalItems.toLocaleString()} medicines
+              </span>
+            </div>
+
             {filteredProducts.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
                 <p className="text-slate-600 font-bold mb-3 text-sm sm:text-base">No medicines match your filter criteria.</p>
@@ -716,62 +446,129 @@ export default function MedicineStorePage() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3 sm:gap-3.5">
-                {filteredProducts.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => setSelectedProduct(item)}
-                    className="bg-white rounded-xl border border-slate-200/80 p-2.5 sm:p-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer group"
-                  >
-                    <div>
-                      {/* Image Container with Light Grey Background */}
-                      <div className="w-full h-28 sm:h-32 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 mb-2.5 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3 sm:gap-3.5">
+                  {displayedProducts.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setSelectedProduct(item)}
+                      className="bg-white rounded-xl border border-slate-200/80 p-2.5 sm:p-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer group"
+                    >
+                      <div>
+                        {/* Image Container with Light Grey Background */}
+                        <div className="w-full h-28 sm:h-32 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 mb-2.5 overflow-hidden">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
 
-                      {/* Title & Subtitle */}
-                      <div className="space-y-0.5">
-                        <h4 className="text-xs sm:text-sm font-bold text-[#0B1E3F] leading-snug line-clamp-1 group-hover:text-[#007A64] transition">
-                          {item.name}
-                        </h4>
-                        <p className="text-[11px] text-slate-500 font-medium leading-snug line-clamp-1">
-                          {item.genericName}
-                        </p>
+                        {/* Title & Subtitle */}
+                        <div className="space-y-0.5">
+                          <h4 className="text-xs sm:text-sm font-bold text-[#0B1E3F] leading-snug line-clamp-1 group-hover:text-[#007A64] transition">
+                            {item.name}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 font-medium leading-snug line-clamp-1">
+                            {item.genericName}
+                          </p>
 
-                        {/* Pricing */}
-                        <div className="flex items-baseline gap-1.5 pt-1.5">
-                          <span className="text-sm sm:text-base font-bold text-[#0B1E3F]">
-                            ₹{item.price.toFixed(2)}
-                          </span>
-                          <span className="text-[11px] text-slate-400 line-through">
-                            ₹{item.mrp.toFixed(2)}
-                          </span>
+                          {/* Pricing */}
+                          <div className="flex items-baseline gap-1.5 pt-1.5">
+                            <span className="text-sm sm:text-base font-bold text-[#0B1E3F]">
+                              ₹{item.price.toFixed(2)}
+                            </span>
+                            <span className="text-[11px] text-slate-400 line-through">
+                              ₹{item.mrp.toFixed(2)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Outline Green Add to Cart Button */}
+                      {/* Outline Green Add to Cart Button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(item);
+                        }}
+                        className="w-full mt-2.5 py-1.5 px-2 rounded-lg border border-[#007A64] text-[#007A64] hover:bg-[#007A64] hover:text-white transition font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <span>Add to Cart</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ================== PAGINATION ROW (MATCHING USER REFERENCE IMAGE) ================== */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 pt-8 pb-4 select-none">
+                    {/* Previous Page Button */}
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(item);
-                      }}
-                      className="w-full mt-2.5 py-1.5 px-2 rounded-lg border border-[#007A64] text-[#007A64] hover:bg-[#007A64] hover:text-white transition font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 flex items-center justify-center transition shadow-2xs ${
+                        currentPage === 1
+                          ? 'text-slate-300 bg-white cursor-not-allowed opacity-60'
+                          : 'text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
+                      }`}
+                      title="Previous Page"
                     >
-                      <ShoppingCart className="w-3.5 h-3.5" />
-                      <span>Add to Cart</span>
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+
+                    {/* Number Buttons & Ellipsis */}
+                    {getPageNumbers().map((num, idx) => {
+                      if (num === '...') {
+                        return (
+                          <span
+                            key={`ellipsis-${idx}`}
+                            className="px-1 text-slate-500 font-bold text-sm sm:text-base select-none"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+
+                      const isCurrent = currentPage === num;
+                      return (
+                        <button
+                          key={`page-${num}`}
+                          type="button"
+                          onClick={() => handlePageChange(num)}
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-sm sm:text-base font-bold transition shadow-2xs cursor-pointer ${
+                            isCurrent
+                              ? 'bg-[#007A64] text-white shadow-xs'
+                              : 'border border-slate-200 bg-white text-slate-800 hover:bg-slate-50'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      );
+                    })}
+
+                    {/* Next Page Button */}
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 flex items-center justify-center transition shadow-2xs ${
+                        currentPage === totalPages
+                          ? 'text-slate-300 bg-white cursor-not-allowed opacity-60'
+                          : 'text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
+                      }`}
+                      title="Next Page"
+                    >
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </main>
 
