@@ -31,6 +31,7 @@ import AuthPage from './pages/AuthPage';
 import BookDoctorModal from './components/BookDoctorModal';
 import BookPhysioModal from './components/BookPhysioModal';
 import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
+import FloatingCallWhatsApp from './components/FloatingCallWhatsApp';
 import { getActiveSubdomain } from './utils/subdomain';
 
 function AppContent() {
@@ -244,6 +245,9 @@ function AppContent() {
 
       {/* Global Footer */}
       <Footer onOpenPrescriptionModal={handleOpenPrescriptionRequest} />
+
+      {/* Site-wide Floating Call & WhatsApp Buttons */}
+      <FloatingCallWhatsApp />
 
       {/* Global Modals & Drawers */}
       <CartDrawer
