@@ -177,15 +177,43 @@ export const getAllPatients = async () => {
 // ------------------------------------------------------------------------------
 
 export const getDoctorAppointments = async (phone = null) => {
+  const clean = normalizePhone(phone);
+
   if (isSupabaseConfigured()) {
     try {
       let query = supabase.from('doctor_appointments').select('*').order('created_at', { ascending: false });
-      if (phone) {
-        query = query.eq('phone', phone);
+      if (clean) {
+        query = query.or(`phone.eq.${clean},phone.eq.+91 ${clean},phone.eq.+91${clean}`);
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.map((d) => ({
+          id: d.appointment_number || d.id,
+          bookingId: d.appointment_number || d.id,
+          appointment_number: d.appointment_number || d.id,
+          type: 'Doctor Appointment',
+          category: 'doctor',
+          title: d.doctor_name,
+          doctor: d.doctor_name,
+          doctorName: d.doctor_name,
+          specialty: d.department,
+          doctorSpecialty: d.department,
+          hospital: 'Zestmed Polyclinic Hub, Guwahati',
+          doctorHospital: 'Zestmed Polyclinic Hub, Guwahati',
+          date: d.appointment_date,
+          time: d.appointment_time,
+          slot: `${d.appointment_date}, ${d.appointment_time}`,
+          mode: d.consultation_type || 'Clinic Visit',
+          fee: d.fees,
+          price: d.fees,
+          patientName: d.patient_name,
+          phone: d.phone,
+          patientPhone: d.phone,
+          status: d.status || 'Confirmed',
+          notes: d.notes,
+          symptoms: d.notes,
+          createdAt: d.created_at,
+        }));
       }
     } catch (err) {
       console.warn('[SupabaseService] getDoctorAppointments error:', err);
@@ -193,60 +221,91 @@ export const getDoctorAppointments = async (phone = null) => {
   }
 
   const all = getLocalData('patient_appointments', []);
-  const doctorOnly = all.filter((a) => !a.isPhysio && !a.isSurgery && !a.isWellness);
-  if (phone) {
-    return doctorOnly.filter((a) => a.phone === phone);
+  const doctorOnly = all.filter((a) => a.type === 'Doctor Appointment' || a.category === 'doctor' || a.doctor);
+  if (clean) {
+    return doctorOnly.filter((a) => normalizePhone(a.phone || a.patientPhone) === clean);
   }
   return doctorOnly;
 };
 
 export const bookDoctorAppointment = async (appointmentData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a doctor appointment.');
-  }
+  const authUser = getAuthenticatedUser() || {
+    id: appointmentData.userId || 'usr_direct',
+    phone: appointmentData.phone || appointmentData.patientPhone || '',
+    name: appointmentData.patientName || 'Patient'
+  };
 
-  // Sync with protected Node.js API endpoint
+  const resolvedPhone = normalizePhone(appointmentData.phone || appointmentData.patientPhone || authUser.phone || authUser.contact || '');
+  const refId = appointmentData.id || appointmentData.appointment_number || `ZM-DOC-${Date.now().toString().slice(-4)}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newAppointment = {
+    ...appointmentData,
+    id: refId,
+    bookingId: refId,
+    appointment_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: appointmentData.patientName || authUser.name || 'Patient',
+    doctorName: appointmentData.doctorName || appointmentData.doctor || appointmentData.title || 'Specialist Doctor',
+    department: appointmentData.department || appointmentData.specialty || appointmentData.doctorSpecialty || 'General Medicine',
+    date: appointmentData.date || appointmentData.appointment_date,
+    time: appointmentData.time || appointmentData.appointment_time,
+    mode: appointmentData.mode || appointmentData.consultation_type || 'Clinic Visit',
+    fee: parseFloat(appointmentData.fee || appointmentData.fees || appointmentData.price || 600),
+    status: appointmentData.status || 'Confirmed',
+    createdAt: appointmentData.createdAt || new Date().toISOString(),
+  };
+
+  // 1. Sync to local cache (deduplicated by refId)
+  const localList = getLocalData('patient_appointments', []);
+  const filteredExisting = localList.filter((a) => a.id !== refId && a.bookingId !== refId && a.appointment_number !== refId);
+  setLocalData('patient_appointments', [newAppointment, ...filteredExisting]);
+
+  // 2. Sync with protected Node.js API endpoint if active
   try {
     const token = getAuthToken();
     if (token && typeof fetch !== 'undefined') {
       fetch('/api/bookings/doctor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(appointmentData)
+        body: JSON.stringify(newAppointment)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('patient_appointments', []);
-  const resolvedPhone = appointmentData.phone || appointmentData.patientPhone || '';
-  const newAppointment = {
-    ...appointmentData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    id: appointmentData.id || `DOC-${Date.now()}`,
-    appointment_number: appointmentData.appointment_number || `DOC-${Date.now()}`,
-    created_at: appointmentData.createdAt || new Date().toISOString(),
-    status: appointmentData.status || 'Confirmed',
-  };
-
-  setLocalData('patient_appointments', [newAppointment, ...localList]);
-
+  // 3. Persist directly to Supabase PostgreSQL database table
   if (isSupabaseConfigured()) {
     try {
+      // Ensure date is a valid YYYY-MM-DD for PostgreSQL DATE column
+      let formattedDate = new Date().toISOString().split('T')[0];
+      const rawDateStr = String(newAppointment.date || newAppointment.appointment_date || '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(rawDateStr)) {
+        formattedDate = rawDateStr;
+      } else if (rawDateStr.toLowerCase().includes('tomorrow')) {
+        const tmrw = new Date();
+        tmrw.setDate(tmrw.getDate() + 1);
+        formattedDate = tmrw.toISOString().split('T')[0];
+      } else if (rawDateStr) {
+        const cleaned = rawDateStr.replace(/^today,?\s*/i, '');
+        const parsed = Date.parse(cleaned);
+        if (!isNaN(parsed)) {
+          formattedDate = new Date(parsed).toISOString().split('T')[0];
+        }
+      }
+
       const { data, error } = await supabase
         .from('doctor_appointments')
         .insert([
           {
             appointment_number: newAppointment.appointment_number,
-            patient_name: newAppointment.patientName || newAppointment.patient_name,
+            patient_name: newAppointment.patientName,
             phone: resolvedPhone,
-            doctor_name: newAppointment.doctorName || newAppointment.doctor_name,
-            department: newAppointment.department || newAppointment.specialty || 'General Medicine',
-            appointment_date: newAppointment.date || newAppointment.appointment_date,
-            appointment_time: newAppointment.time || newAppointment.appointment_time,
-            consultation_type: newAppointment.type || newAppointment.mode || 'Clinic Visit',
-            fees: parseFloat(newAppointment.fees || newAppointment.fee || 500),
+            doctor_name: newAppointment.doctorName,
+            department: newAppointment.department,
+            appointment_date: formattedDate,
+            appointment_time: newAppointment.time || '10:00 AM',
+            consultation_type: newAppointment.mode,
+            fees: newAppointment.fee,
             status: newAppointment.status,
             notes: newAppointment.notes || newAppointment.symptoms || null,
           },
@@ -255,7 +314,10 @@ export const bookDoctorAppointment = async (appointmentData) => {
         .single();
 
       if (!error && data) {
-        return data;
+        return { ...newAppointment, ...data };
+      }
+      if (error) {
+        console.warn('[SupabaseService] bookDoctorAppointment insert error:', error);
       }
     } catch (err) {
       console.warn('[SupabaseService] bookDoctorAppointment to Supabase error:', err);

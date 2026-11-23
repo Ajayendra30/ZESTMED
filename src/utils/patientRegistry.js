@@ -153,10 +153,16 @@ export function purgeRahulVermaFromStorage() {
       localStorage.setItem('zestmed_patient_notifications', storedNotifs.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
 
-    // 6. Clean patient_appointments
+    // 6. Clean patient_appointments and remove demo mock entries
     const storedAppts = localStorage.getItem('patient_appointments');
-    if (storedAppts && storedAppts.includes('Rahul Verma')) {
-      localStorage.setItem('patient_appointments', storedAppts.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
+    if (storedAppts) {
+      try {
+        let apptList = JSON.parse(storedAppts);
+        if (Array.isArray(apptList)) {
+          apptList = apptList.filter(a => a.id !== 'ZM-DOC-50124' && a.bookingId !== 'ZM-DOC-50124' && a.id !== 'ZM-PHY-78901');
+          localStorage.setItem('patient_appointments', JSON.stringify(apptList));
+        }
+      } catch (_) {}
     }
 
     // 7. Clean zestmed_patient_orders

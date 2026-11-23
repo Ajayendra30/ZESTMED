@@ -11,7 +11,7 @@ import {
 import { MOCK_DOCTORS, DOCTOR_SPECIALTIES, matchesSpecialty } from '../mock-data/doctorsData';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { bookDoctorAppointment, getDoctors } from '../services/supabaseService';
+import { bookDoctorAppointment, getDoctorAppointments, getDoctors, updateDoctorAppointmentStatus, normalizePhone } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
 import { recordAndPlayNotification } from '../utils/notificationSound';
@@ -265,16 +265,51 @@ export default function DoctorAppointmentPage() {
   const [patientAppointments, setPatientAppointments] = useState([]);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
-  // Load user's booked appointments from localStorage
-  const loadAppointments = () => {
+  // Load user's booked appointments (strictly for authenticated user, with real backend sync)
+  const loadAppointments = async () => {
+    if (!user) {
+      setPatientAppointments([]);
+      return;
+    }
+
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
+
+    let dbAppts = [];
+    // 1. Fetch real appointments from Supabase backend
+    try {
+      dbAppts = await getDoctorAppointments(cleanUserPhone);
+    } catch (err) {
+      console.warn('Backend doctor appointments fetch error:', err);
+    }
+
+    // 2. Local fallback strictly filtered by user & merge with DB
     try {
       const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      const filtered = (stored || []).filter(item => 
-        item.type === 'Doctor Appointment' || item.category === 'doctor' || item.doctor
-      );
-      setPatientAppointments(filtered);
+      const filtered = (stored || []).filter(item => {
+        const isDoc = item.type === 'Doctor Appointment' || item.category === 'doctor' || item.doctor;
+        if (!isDoc) return false;
+        const itemPhone = normalizePhone(item.phone || item.patientPhone || item.contact || '');
+        if (cleanUserPhone && itemPhone) {
+          return cleanUserPhone === itemPhone;
+        }
+        if (user.id && (item.userId || item.user_id)) {
+          return String(user.id) === String(item.userId || item.user_id);
+        }
+        return false;
+      });
+
+      const combined = Array.isArray(dbAppts) ? [...dbAppts] : [];
+      const seenIds = new Set(combined.map(a => String(a.id || a.bookingId || a.appointment_number)));
+      filtered.forEach(loc => {
+        const id = String(loc.id || loc.bookingId || loc.appointment_number);
+        if (!seenIds.has(id)) {
+          seenIds.add(id);
+          combined.push(loc);
+        }
+      });
+      setPatientAppointments(combined);
     } catch {
-      setPatientAppointments([]);
+      setPatientAppointments(Array.isArray(dbAppts) ? dbAppts : []);
     }
   };
 
@@ -286,14 +321,17 @@ export default function DoctorAppointmentPage() {
       window.removeEventListener('storage', loadAppointments);
       window.removeEventListener('zestmed_booking_updated', loadAppointments);
     };
-  }, []);
+  }, [user]);
 
   // Cancel an appointment
-  const handleCancelAppointment = (id) => {
+  const handleCancelAppointment = async (id) => {
     try {
       const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      const updated = existing.map(item => (item.id === id || item.bookingId === id) ? { ...item, status: 'Cancelled' } : item);
+      const updated = existing.map(item => (item.id === id || item.bookingId === id || item.appointment_number === id) ? { ...item, status: 'Cancelled' } : item);
       localStorage.setItem('patient_appointments', JSON.stringify(updated));
+      await updateDoctorAppointmentStatus(id, 'Cancelled');
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
       loadAppointments();
       addToast('Appointment cancelled successfully', 'info');
     } catch {
@@ -499,16 +537,20 @@ export default function DoctorAppointmentPage() {
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
       // Play audible chime & record Book notification
-      recordAndPlayNotification({
-        type: 'book',
-        title: 'Doctor Appointment Confirmed',
-        actionText: `Appointment #${bookingId} Confirmed`,
-        desc: `Consultation confirmed with ${bookingDoctor?.name} (${bookingDoctor?.specialty}) for ${selectedDate} (${selectedTimeSlot}).`,
-        sender: bookingDoctor?.name,
-        category: 'Doctor Consultation',
-        refId: bookingId,
-        linkType: 'appointment'
-      });
+      try {
+        recordAndPlayNotification({
+          type: 'book',
+          title: 'Doctor Appointment Confirmed',
+          actionText: `Appointment #${apptId} Confirmed`,
+          desc: `Consultation confirmed with ${bookingDoctor?.name} (${bookingDoctor?.specialty}) for ${newBooking.date} (${newBooking.time}).`,
+          sender: bookingDoctor?.name,
+          category: 'Doctor Consultation',
+          refId: apptId,
+          linkType: 'appointment'
+        });
+      } catch (notifyErr) {
+        console.warn('Audio/Notification record ignored:', notifyErr);
+      }
 
       // Save to Supabase PostgreSQL database
       await bookDoctorAppointment(newBooking);

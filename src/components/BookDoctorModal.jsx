@@ -129,16 +129,20 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
       // Play audible notification chime & record Book notification
-      recordAndPlayNotification({
-        type: 'book',
-        title: 'Doctor Appointment Confirmed',
-        actionText: `Appointment #${apptId} Confirmed`,
-        desc: `Consultation confirmed with ${selectedDoctor.name} (${selectedDoctor.specialty}) for ${selectedSlot?.date || 'scheduled date'} (${selectedSlot?.time || ''}).`,
-        sender: selectedDoctor.name,
-        category: 'Doctor Consultation',
-        refId: apptId,
-        linkType: 'appointment'
-      });
+      try {
+        recordAndPlayNotification({
+          type: 'book',
+          title: 'Doctor Appointment Confirmed',
+          actionText: `Appointment #${apptId} Confirmed`,
+          desc: `Consultation confirmed with ${selectedDoctor.name} (${selectedDoctor.specialty}) for ${selectedSlot?.date || 'scheduled date'} (${selectedSlot?.time || ''}).`,
+          sender: selectedDoctor.name,
+          category: 'Doctor Consultation',
+          refId: apptId,
+          linkType: 'appointment'
+        });
+      } catch (notifyErr) {
+        console.warn('Audio/Notification record ignored:', notifyErr);
+      }
 
       // Save to Supabase PostgreSQL database
       await bookDoctorAppointment(newBooking);
