@@ -6,7 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
 import { 
   X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown, User, 
-  CheckCircle2, Clock, AlertTriangle, RefreshCw, Mail, Calendar, MapPin
+  CheckCircle2, Clock, AlertTriangle, RefreshCw
 } from 'lucide-react';
 import { 
   requestOtp, 
@@ -76,10 +76,6 @@ export default function AuthModal() {
 
   // Step 3 Profile fields
   const [profileName, setProfileName] = useState('');
-  const [profileEmail, setProfileEmail] = useState('');
-  const [profileAge, setProfileAge] = useState('');
-  const [profileGender, setProfileGender] = useState('Male');
-  const [profileCity, setProfileCity] = useState('Guwahati');
 
   // Check detected user as phone changes
   useEffect(() => {
@@ -309,10 +305,7 @@ export default function AuthModal() {
     const clean = normalizePhoneNumber(phoneNumber);
     const newUser = setupUserProfile(clean, {
       name: profileName.trim(),
-      email: profileEmail.trim(),
-      age: profileAge.trim(),
-      gender: profileGender,
-      city: profileCity.trim() || 'Guwahati'
+      city: 'Guwahati'
     });
 
     handlePostLoginFlow(newUser);
@@ -651,7 +644,7 @@ export default function AuthModal() {
                 </div>
               )}
 
-              <form onSubmit={handleCompleteProfile} className="space-y-3">
+              <form onSubmit={handleCompleteProfile} className="space-y-4">
                 {/* Full Name */}
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-slate-700">
@@ -668,83 +661,6 @@ export default function AuthModal() {
                       className="w-full text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-2.5"
                       autoFocus
                     />
-                  </div>
-                </div>
-
-                {/* Email Address */}
-                <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">
-                    Email Address (Optional)
-                  </label>
-                  <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2.5 shadow-2xs">
-                    <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-                    <input
-                      type="email"
-                      value={profileEmail}
-                      onChange={(e) => setProfileEmail(e.target.value)}
-                      placeholder="e.g. arpita@example.com"
-                      className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-2.5"
-                    />
-                  </div>
-                </div>
-
-                {/* Age & Gender in 2 columns */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700">
-                      Age
-                    </label>
-                    <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2.5 shadow-2xs">
-                      <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
-                      <input
-                        type="number"
-                        min={1}
-                        max={120}
-                        value={profileAge}
-                        onChange={(e) => setProfileAge(e.target.value)}
-                        placeholder="e.g. 28"
-                        className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-2"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-700">
-                      City
-                    </label>
-                    <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2.5 shadow-2xs">
-                      <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                      <input
-                        type="text"
-                        value={profileCity}
-                        onChange={(e) => setProfileCity(e.target.value)}
-                        placeholder="Guwahati"
-                        className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-2"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Gender Pill Selectors */}
-                <div className="space-y-1 pt-0.5">
-                  <label className="block text-xs font-bold text-slate-700">
-                    Gender
-                  </label>
-                  <div className="flex gap-2">
-                    {['Male', 'Female', 'Other'].map((g) => (
-                      <button
-                        type="button"
-                        key={g}
-                        onClick={() => setProfileGender(g)}
-                        className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer border ${
-                          profileGender === g
-                            ? 'bg-[#007A64] text-white border-[#007A64]'
-                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                        }`}
-                      >
-                        {g}
-                      </button>
-                    ))}
                   </div>
                 </div>
 
