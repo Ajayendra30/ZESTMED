@@ -1432,85 +1432,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Dashboard</span>
             </button>
 
-            {/* 2. Book Lab Test */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/diagnostics');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <FlaskConical className="w-4 h-4" />
-              <span>Book Lab Test</span>
-            </button>
-
-            {/* 3. Doctor Appointment */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/doctor-appointment');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <Stethoscope className="w-4 h-4" />
-              <span>Doctor Appointment</span>
-            </button>
-
-            {/* 4. Medicine Store */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/medicines');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span>Medicine Store</span>
-            </button>
-
-            {/* 5. Surgery Packages */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/surgeries');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <Activity className="w-4 h-4" />
-              <span>Surgery Packages</span>
-            </button>
-
-            {/* 6. Wellness Packages */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/wellness-packages');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <HeartPulse className="w-4 h-4" />
-              <span>Wellness Packages</span>
-            </button>
-
-            {/* 7. Physiotherapy */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSidebarOpen(false);
-                navigate('/physiotherapy');
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
-            >
-              <Activity className="w-4 h-4" />
-              <span>Physiotherapy</span>
-            </button>
-
-            {/* 8. My Bookings */}
+            {/* 2. My Bookings */}
             <button
               type="button"
               onClick={() => {
@@ -1520,7 +1442,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 addToast('Viewing My Bookings', 'info');
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-                activeMenu === 'bookings' && serviceCategoryFilter !== 'medicine'
+                activeMenu === 'bookings'
                   ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
@@ -1529,26 +1451,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Bookings</span>
             </button>
 
-            {/* 9. My Orders */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveMenu('bookings');
-                setServiceCategoryFilter('medicine');
-                setIsSidebarOpen(false);
-                addToast('Viewing Medicine Orders', 'info');
-              }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-                activeMenu === 'bookings' && serviceCategoryFilter === 'medicine'
-                  ? 'bg-[#00BFA5] text-white shadow-sm'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              <span>My Orders</span>
-            </button>
-
-            {/* 10. My Reports */}
+            {/* 3. My Reports */}
             <button
               type="button"
               onClick={() => {
@@ -1566,7 +1469,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Reports</span>
             </button>
 
-            {/* 11. Upload Prescription */}
+            {/* 4. Upload Prescription */}
             <button
               type="button"
               onClick={() => {
@@ -1585,7 +1488,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Upload Prescription</span>
             </button>
 
-            {/* 12. Health Records */}
+            {/* 5. Health Records */}
             <button
               type="button"
               onClick={() => {
@@ -1603,7 +1506,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Health Records</span>
             </button>
 
-            {/* 13. My Profile */}
+            {/* 6. My Profile */}
             <button
               type="button"
               onClick={() => {
@@ -1621,7 +1524,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Profile</span>
             </button>
 
-            {/* 14. Settings */}
+            {/* 7. Settings */}
             <button
               type="button"
               onClick={() => {
@@ -1639,7 +1542,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Settings</span>
             </button>
 
-            {/* 15. Logout */}
+            {/* 8. Logout */}
             <button
               type="button"
               onClick={handleLogout}
