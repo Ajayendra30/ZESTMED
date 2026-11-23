@@ -110,3 +110,48 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ========================================================================= */
+/* Print Styling for Single-Page Doctor Tickets, Invoices & Clinical Reports */
+/* ========================================================================= */
+@media print {
+  @page {
+    size: portrait;
+    margin: 8mm 12mm;
+  }
+
+  /* Universal print isolation: suppress non-printable application chrome */
+  header,
+  nav,
+  footer,
+  aside,
+  .print\:hidden,
+  .no-print,
+  #floating-call-whatsapp,
+  aside[aria-label="Quick Contact Assistance"] {
+    display: none !important;
+  }
+
+  body, html, #root {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Avoid page breaks inside tickets, receipt cards, and tables */
+  .print-avoid-break,
+  .print\:break-inside-avoid,
+  .ticket-card,
+  [data-print-container="ticket"] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+

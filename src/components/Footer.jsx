@@ -13,7 +13,7 @@ import {
 
 export default function Footer({ onOpenPrescriptionModal }) {
   return (
-    <footer id="contact" className="bg-[#01333A] text-[#C0D8DC] select-none font-sans">
+    <footer id="contact" className="bg-[#01333A] text-[#C0D8DC] select-none font-sans print:hidden">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-12 sm:pt-16 pb-8 sm:pb-10">
         {/* Main Grid: Brand + 4 Link Columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 pb-10">

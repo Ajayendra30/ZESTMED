@@ -129,7 +129,7 @@ export default function Navbar({
   return (
     <>
       {/* Top Announcement Bar - Compact, Sleek Height with Exact Original Content */}
-      <div className="bg-[#0B2238] text-white text-[11px] sm:text-xs py-1 sm:py-1.5 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans">
+      <div className="bg-[#0B2238] text-white text-[11px] sm:text-xs py-1 sm:py-1.5 px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 border-b border-white/10 select-none font-sans print:hidden">
         <div className="w-full flex items-center justify-between gap-2 sm:gap-4 min-h-[24px]">
           <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 text-slate-200 min-w-0 flex-1">
             <span className="flex items-center gap-1.5 font-bold truncate sm:whitespace-nowrap text-[11px] sm:text-xs text-teal-300 leading-none">
@@ -156,7 +156,7 @@ export default function Navbar({
 
       {/* Main Sticky Navbar - Full Width with Responsive Max Constraint */}
       <header
-        className={`sticky top-0 z-50 w-full transition-all duration-300 font-sans ${
+        className={`sticky top-0 z-50 w-full transition-all duration-300 font-sans print:hidden ${
           isScrolled
             ? 'bg-white/95 backdrop-blur-md shadow-card border-b border-border'
             : 'bg-white border-b border-border'

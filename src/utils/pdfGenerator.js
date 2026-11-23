@@ -367,6 +367,96 @@ export function createStatutoryDocPdfBlob(docData) {
 }
 
 // -----------------------------------------------------------------------------
+// 4. Specialist Doctor Consultation Reference Ticket PDF
+// -----------------------------------------------------------------------------
+export function createDoctorTicketPdfBlob(ticket) {
+  const doc = new SimplePdfDocument();
+  const ticketId = ticket.id || ticket.bookingId || 'ZM-DOC-TICKET';
+  const doctorName = ticket.doctor || ticket.doctorName || 'Senior Specialist';
+  const specialty = ticket.specialty || ticket.doctorSpecialty || 'General Medicine';
+  const hospital = ticket.doctorHospital || ticket.hospital || 'Christian Basti Medical Centre & Zestmed Hub';
+  const date = ticket.date || new Date().toISOString().split('T')[0];
+  const time = ticket.time || ticket.slot || 'Morning Slot (10:00 AM)';
+  const patientName = ticket.patientName || 'Verified Patient';
+  const patientPhone = ticket.patientPhone || ticket.phone || '9279125091';
+  const fee = ticket.fee || 600;
+
+  // Header Banner (Navy/Teal)
+  doc.rect(36, 742, 523, 62, [0.004, 0.20, 0.23], null);
+  doc.text('ZESTMED DIAGNOSTICS & POLYCLINIC', 50, 782, { bold: true, size: 14, color: [1, 1, 1] });
+  doc.text('SPECIALIST CONSULTATION REFERENCE TICKET & APPOINTMENT PASS', 50, 766, { bold: true, size: 8, color: [0.8, 0.95, 0.92] });
+  doc.text('Christian Basti Hub • Dispur, Guwahati • Helpline: +91 92791 25091', 50, 752, { size: 7.5, color: [0.75, 0.88, 0.88] });
+  doc.text('STATUS: CONFIRMED', 430, 782, { bold: true, size: 9.5, color: [0.3, 0.95, 0.5] });
+  doc.text('CLINICAL PASS', 450, 766, { size: 7.5, color: [0.8, 0.95, 0.92] });
+
+  // Main Ticket Card Outer Box
+  doc.rect(36, 420, 523, 305, [0.97, 0.99, 0.99], [0.0, 0.55, 0.5], 1.5);
+
+  // Top Bar inside Card
+  doc.text('REFERENCE TICKET NUMBER:', 50, 705, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(ticketId, 50, 690, { bold: true, size: 12, color: [0.0, 0.48, 0.39] });
+  doc.text('[ VERIFIED APPOINTMENT ]', 420, 690, { bold: true, size: 8.5, color: [0.06, 0.55, 0.28] });
+  doc.line(50, 680, 545, 680, [0.8, 0.9, 0.88], 1);
+
+  // Doctor Details
+  doc.text('CONSULTING SPECIALIST:', 50, 660, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(doctorName, 50, 644, { bold: true, size: 12, color: [0.08, 0.12, 0.18] });
+  doc.text(specialty, 50, 630, { bold: true, size: 9, color: [0.0, 0.48, 0.39] });
+  doc.text(hospital, 50, 617, { size: 8.5, color: [0.35, 0.4, 0.48] });
+
+  // Grid Divider
+  doc.line(50, 605, 545, 605, [0.88, 0.92, 0.94], 1);
+
+  // Appointment Details Grid
+  doc.text('Consultation Date:', 50, 588, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(date, 50, 574, { bold: true, size: 9.5, color: [0.1, 0.15, 0.2] });
+
+  doc.text('Preferred Slot:', 200, 588, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(time, 200, 574, { bold: true, size: 9.5, color: [0.1, 0.15, 0.2] });
+
+  doc.text('Patient Name:', 50, 554, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(patientName, 50, 540, { bold: true, size: 9.5, color: [0.1, 0.15, 0.2] });
+
+  doc.text('Contact Number:', 200, 554, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text(patientPhone, 200, 540, { bold: true, size: 9.5, color: [0.1, 0.15, 0.2] });
+
+  doc.text('Mode of Consultation:', 380, 554, { size: 7.5, color: [0.45, 0.5, 0.55] });
+  doc.text('In-Clinic Consultation', 380, 540, { bold: true, size: 9.5, color: [0.0, 0.48, 0.39] });
+
+  // Fee Row Box
+  doc.rect(50, 485, 495, 36, [1, 1, 1], [0.85, 0.92, 0.9], 1);
+  doc.text('Consultation Fee (Payable at Clinic Reception Desk):', 62, 502, { bold: true, size: 8.5, color: [0.2, 0.25, 0.35] });
+  doc.text(`INR ${fee}`, 470, 502, { bold: true, size: 11, color: [0.08, 0.12, 0.18] });
+
+  // WhatsApp Alert Row
+  doc.text(`* WhatsApp confirmation and clinic Google Maps location sent to +91 ${patientPhone}`, 50, 465, { bold: true, size: 7.5, color: [0.06, 0.5, 0.25] });
+
+  // Instructions Box
+  doc.rect(36, 255, 523, 145, [0.98, 0.99, 1.0], [0.85, 0.9, 0.95], 1);
+  doc.text('IMPORTANT CLINIC VISIT GUIDELINES & INSTRUCTIONS', 50, 380, { bold: true, size: 9, color: [0.05, 0.2, 0.3] });
+  doc.line(50, 372, 350, 372, [0.0, 0.48, 0.39], 1);
+
+  doc.text('1. Please arrive at the clinic 10-15 minutes prior to your selected consultation time slot.', 50, 355, { size: 8, color: [0.25, 0.3, 0.38] });
+  doc.text('2. Present this official reference ticket (digital copy or printout) at the hospital reception counter.', 50, 340, { size: 8, color: [0.25, 0.3, 0.38] });
+  doc.text('3. Consultation fees are payable directly at the clinic reception counter (Cash / UPI / Card accepted).', 50, 325, { size: 8, color: [0.25, 0.3, 0.38] });
+  doc.text('4. Please carry your previous medical prescriptions, lab investigation reports, and medical history.', 50, 310, { size: 8, color: [0.25, 0.3, 0.38] });
+  doc.text('5. Senior citizen priority desk and free wheelchair assistance available at the main polyclinic entrance.', 50, 295, { size: 8, color: [0.25, 0.3, 0.38] });
+  doc.text('6. Need assistance or rescheduling? Call 24x7 Zestmed Careline at +91 92791 25091.', 50, 280, { bold: true, size: 8, color: [0.0, 0.48, 0.39] });
+
+  // Verification & Signatures
+  doc.line(36, 170, 559, 170, [0.8, 0.85, 0.9], 1);
+  doc.text('• System generated clinical appointment token issued by Zestmed Health Private Limited.', 46, 150, { size: 7.5, color: [0.45, 0.5, 0.58] });
+  doc.text('• Valid for entry and queue token generation at polyclinic reception.', 46, 138, { size: 7.5, color: [0.45, 0.5, 0.58] });
+  doc.text('Zestmed Health Private Limited • GS Road, Dispur, Guwahati - 781005', 46, 126, { size: 7, color: [0.5, 0.55, 0.6] });
+
+  doc.text('Authorized by Polyclinic Reception Desk', 380, 150, { bold: true, size: 8 });
+  doc.text('Zestmed Healthcare Network', 380, 138, { size: 7.5, color: [0.35, 0.4, 0.5] });
+  doc.text('Assam Clinical Establishments Reg: ACE-2024-ZM', 380, 126, { size: 7, color: [0.35, 0.4, 0.5] });
+
+  return doc.buildBlob();
+}
+
+// -----------------------------------------------------------------------------
 // Download, View, and Print Triggers
 // -----------------------------------------------------------------------------
 export function downloadPdfBlob(blob, filename) {
@@ -419,3 +509,15 @@ export function openStatutoryDocumentPdf(docData) {
   const blob = createStatutoryDocPdfBlob(docData);
   openPdfBlobInNewTab(blob);
 }
+
+export function downloadDoctorAppointmentTicketPdf(ticket) {
+  const blob = createDoctorTicketPdfBlob(ticket);
+  const ticketId = (ticket.id || ticket.bookingId || 'ZM-DOC-TICKET').replace(/[^a-zA-Z0-9_-]/g, '_');
+  downloadPdfBlob(blob, `ZESTMED_Doctor_Consultation_Ticket_${ticketId}.pdf`);
+}
+
+export function openDoctorAppointmentTicketPdf(ticket) {
+  const blob = createDoctorTicketPdfBlob(ticket);
+  openPdfBlobInNewTab(blob);
+}
+

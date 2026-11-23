@@ -381,11 +381,11 @@ export default function BookDoctorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#F8FAFC] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:py-0 print:px-0 print:min-h-0">
+      <div className="max-w-4xl mx-auto print:max-w-none print:m-0 print:p-0">
 
         {/* Back Link */}
-        <div className="mb-6">
+        <div className="mb-6 print:hidden">
           <Link
             to="/doctor-appointment"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-500 hover:text-[#007A64] transition cursor-pointer"
@@ -396,7 +396,7 @@ export default function BookDoctorPage() {
         </div>
 
         {/* Header Section matching Reference Image */}
-        <div className="text-center mb-6 sm:mb-8 space-y-2">
+        <div className="text-center mb-6 sm:mb-8 space-y-2 print:hidden">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#E6F4F1] text-[#007A64] border border-teal-200/60 text-[11px] sm:text-xs font-black tracking-wider uppercase shadow-2xs">
             <Calendar className="w-3.5 h-3.5 text-[#007A64]" />
@@ -418,7 +418,7 @@ export default function BookDoctorPage() {
         </div>
 
         {/* Top Tab Bar: New Appointment vs My Appointments */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-8 print:hidden">
           <div className="inline-flex items-center bg-white p-1.5 rounded-2xl border border-slate-200/90 shadow-2xs">
             <button
               type="button"
@@ -711,99 +711,140 @@ export default function BookDoctorPage() {
               </div>
             ) : (
               /* Success Digital Reference Ticket Display */
-              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 max-w-2xl mx-auto space-y-6 animate-in fade-in">
-                
-                {/* Header Badge */}
-                <div className="text-center space-y-2">
-                  <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-2xs">
-                    <CheckCircle2 className="w-8 h-8" />
+              <div 
+                data-print-container="ticket"
+                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 max-w-2xl mx-auto space-y-6 animate-in fade-in print:border-none print:shadow-none print:p-0 print:m-0 print:max-w-xl print:space-y-3 print-avoid-break"
+              >
+                {/* Print-Only Official Hospital Letterhead / Header */}
+                <div className="hidden print:flex items-center justify-between border-b-2 border-teal-600 pb-2.5 mb-2">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src="/logo.png"
+                      alt="Zestmed"
+                      className="h-9 w-auto object-contain"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                    <div>
+                      <h2 className="text-sm font-black text-slate-900 leading-tight">
+                        ZESTMED DIAGNOSTICS & POLYCLINIC
+                      </h2>
+                      <p className="text-[10px] text-teal-700 font-bold">
+                        Specialist Consultation Reference Ticket & Appointment Pass
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                  <div className="text-right text-[9.5px] text-slate-500 font-medium">
+                    <span className="font-bold text-slate-800 block">Christian Basti Hub • Dispur, Guwahati</span>
+                    <span>Helpline: +91 92791 25091</span>
+                  </div>
+                </div>
+
+                {/* Header Badge */}
+                <div className="text-center space-y-2 print:space-y-1 print:mb-2">
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-2xs print:w-9 print:h-9">
+                    <CheckCircle2 className="w-8 h-8 print:w-5 print:h-5" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 print:text-base">
                     Appointment Confirmed!
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium print:text-[10.5px]">
                     Your digital consultation reference ticket has been generated.
                   </p>
                 </div>
 
                 {/* Digital Ticket Card */}
-                <div className="rounded-2xl border-2 border-dashed border-teal-300 bg-gradient-to-b from-[#EBF7F5] to-white p-5 sm:p-6 relative overflow-hidden space-y-4">
+                <div className="rounded-2xl border-2 border-dashed border-teal-300 bg-gradient-to-b from-[#EBF7F5] to-white p-5 sm:p-6 relative overflow-hidden space-y-4 print:border-teal-500 print:bg-white print:p-4 print:space-y-2.5 print-avoid-break">
                   
                   {/* Top Bar */}
-                  <div className="flex items-center justify-between border-b border-teal-200/70 pb-3">
+                  <div className="flex items-center justify-between border-b border-teal-200/70 pb-3 print:pb-2">
                     <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block print:text-[8.5px]">
                         REFERENCE TICKET NUMBER
                       </span>
-                      <span className="text-lg sm:text-xl font-mono font-black text-[#007A64]">
+                      <span className="text-lg sm:text-xl font-mono font-black text-[#007A64] print:text-base">
                         {confirmedTicket.id}
                       </span>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black">
+                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black print:px-2 print:py-0.5 print:text-[10px]">
                       Confirmed
                     </span>
                   </div>
 
                   {/* Doctor Info */}
-                  <div className="flex items-center gap-3.5">
+                  <div className="flex items-center gap-3.5 print:gap-3">
                     <img
                       src={confirmedTicket.doctorAvatar || '/contact-doctor.png'}
                       alt={confirmedTicket.doctor}
-                      className="w-14 h-14 rounded-xl object-cover object-top border border-teal-200 shadow-2xs"
+                      className="w-14 h-14 rounded-xl object-cover object-top border border-teal-200 shadow-2xs print:w-11 print:h-11"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = '/contact-doctor.png';
                       }}
                     />
                     <div>
-                      <h4 className="text-base font-black text-slate-900 leading-tight">
+                      <h4 className="text-base font-black text-slate-900 leading-tight print:text-sm">
                         {confirmedTicket.doctor}
                       </h4>
-                      <p className="text-xs text-[#007A64] font-bold mt-0.5">
+                      <p className="text-xs text-[#007A64] font-bold mt-0.5 print:text-[10.5px]">
                         {confirmedTicket.specialty}
                       </p>
-                      <p className="text-xs text-slate-500 font-medium">
+                      <p className="text-xs text-slate-500 font-medium print:text-[10.5px]">
                         {confirmedTicket.doctorHospital}
                       </p>
                     </div>
                   </div>
 
                   {/* Details Grid */}
-                  <div className="grid grid-cols-2 gap-3 pt-2 text-xs border-t border-slate-100">
+                  <div className="grid grid-cols-2 gap-3 pt-2 text-xs border-t border-slate-100 print:gap-2 print:pt-1.5 print:text-[11px]">
                     <div>
-                      <span className="text-slate-400 font-medium block">Consultation Date</span>
+                      <span className="text-slate-400 font-medium block print:text-[9.5px]">Consultation Date</span>
                       <span className="font-bold text-slate-800">{confirmedTicket.date}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-medium block">Preferred Slot</span>
+                      <span className="text-slate-400 font-medium block print:text-[9.5px]">Preferred Slot</span>
                       <span className="font-bold text-slate-800">{confirmedTicket.time}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-medium block">Patient Name</span>
+                      <span className="text-slate-400 font-medium block print:text-[9.5px]">Patient Name</span>
                       <span className="font-bold text-slate-800">{confirmedTicket.patientName}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-medium block">Contact Number</span>
+                      <span className="text-slate-400 font-medium block print:text-[9.5px]">Contact Number</span>
                       <span className="font-bold text-slate-800">{confirmedTicket.patientPhone}</span>
                     </div>
                   </div>
 
                   {/* Payment Note */}
-                  <div className="p-3 bg-white rounded-xl border border-teal-100 flex items-center justify-between text-xs">
-                    <span className="text-slate-600 font-medium">Consultation Fee (Pay at Clinic):</span>
-                    <span className="font-black text-slate-900 text-sm">₹{confirmedTicket.fee}</span>
+                  <div className="p-3 bg-white rounded-xl border border-teal-100 flex items-center justify-between text-xs print:p-2 print:border-teal-200">
+                    <span className="text-slate-600 font-medium print:text-[10.5px]">Consultation Fee (Pay at Clinic):</span>
+                    <span className="font-black text-slate-900 text-sm print:text-xs">₹{confirmedTicket.fee}</span>
                   </div>
 
                   {/* WhatsApp Notice */}
-                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center gap-2 text-xs text-emerald-800 font-semibold">
-                    <MessageSquare className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center gap-2 text-xs text-emerald-800 font-semibold print:p-1.5 print:text-[10px]">
+                    <MessageSquare className="w-4 h-4 text-emerald-600 shrink-0 print:w-3.5 print:h-3.5" />
                     <span>WhatsApp confirmation & clinic location sent to {confirmedTicket.patientPhone}</span>
+                  </div>
+
+                  {/* Print-Only Clinic Instructions & Authenticity Note */}
+                  <div className="hidden print:block pt-2.5 border-t border-teal-100/80 text-[9.5px] text-slate-600 space-y-1">
+                    <div className="font-bold text-slate-800">Important Instructions for Clinic Visit:</div>
+                    <ul className="list-disc list-inside space-y-0.5 text-slate-600 text-[9px]">
+                      <li>Please arrive at the clinic 10-15 minutes prior to your scheduled consultation slot.</li>
+                      <li>Present this reference ticket (printed copy or on mobile) at the polyclinic reception.</li>
+                      <li>Consultation fee is payable directly at the clinic reception desk.</li>
+                      <li>Please bring any previous prescriptions, medical history, or test reports if applicable.</li>
+                    </ul>
+                    <div className="pt-2 flex items-center justify-between text-[8.5px] text-slate-400 border-t border-slate-100 mt-1.5">
+                      <span>Zestmed Health Polyclinic Network • Guwahati, Assam</span>
+                      <span>System Generated Medical Pass • Valid for Clinic Entry</span>
+                    </div>
                   </div>
 
                 </div>
 
                 {/* Ticket Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 print:hidden">
                   <button
                     type="button"
                     onClick={() => window.print()}
@@ -844,7 +885,7 @@ export default function BookDoctorPage() {
         {/* TAB 2: MY APPOINTMENTS HISTORY                                            */}
         {/* ========================================================================= */}
         {activeTab === 'my-appointments' && (
-          <div className="space-y-4">
+          <div className="space-y-4 print:hidden">
             {patientAppointments.length === 0 ? (
               <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-8 sm:p-12 text-center space-y-3">
                 <div className="w-14 h-14 bg-teal-50 text-[#007A64] rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
