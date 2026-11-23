@@ -6169,133 +6169,136 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                 </div>
 
-                {/* 3. Quick Actions Row */}
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
-                  <div className="flex items-center gap-1.5 mr-1 font-black text-slate-900 text-sm">
-                    <Zap className="w-4 h-4 text-[#00A68A]" />
+                {/* 3. Quick Actions Row (Expanded to fill row properly) */}
+                <div className="w-full flex flex-col md:flex-row md:items-center gap-2.5 sm:gap-3.5 pt-1">
+                  <div className="flex items-center gap-2 font-black text-slate-900 text-sm sm:text-base shrink-0 mr-1">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-[#00A68A]" />
                     <span>Quick Actions</span>
                   </div>
 
-                  {/* Upload Document Primary Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveMenu('prescription');
-                      setIsPrescriptionUploadModalOpen(true);
-                    }}
-                    className="bg-[#008F83] hover:bg-[#007A70] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs inline-flex items-center gap-2 cursor-pointer transition"
-                  >
-                    <UploadCloud className="w-4 h-4 text-white" />
-                    <span>Upload Document</span>
-                  </button>
+                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
+                    {/* Upload Document Primary Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveMenu('prescription');
+                        setIsPrescriptionUploadModalOpen(true);
+                      }}
+                      className="bg-[#008F83] hover:bg-[#007A70] text-white px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold shadow-xs flex items-center justify-center gap-2 cursor-pointer transition w-full"
+                    >
+                      <UploadCloud className="w-4 h-4 text-white shrink-0" />
+                      <span className="truncate">Upload Document</span>
+                    </button>
 
-                  {/* Add Health Record */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsPrescriptionUploadModalOpen(true);
-                    }}
-                    className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Add Health Record</span>
-                  </button>
+                    {/* Add Health Record */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPrescriptionUploadModalOpen(true);
+                      }}
+                      className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 hover:border-slate-300 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold shadow-2xs flex items-center justify-center gap-2 cursor-pointer transition w-full"
+                    >
+                      <Plus className="w-4 h-4 text-slate-500 shrink-0" />
+                      <span className="truncate">Add Health Record</span>
+                    </button>
 
-                  {/* Record Vitals */}
-                  <button
-                    type="button"
-                    onClick={() => setIsRecordVitalsModalOpen(true)}
-                    className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Activity className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Record Vitals</span>
-                  </button>
+                    {/* Record Vitals */}
+                    <button
+                      type="button"
+                      onClick={() => setIsRecordVitalsModalOpen(true)}
+                      className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 hover:border-slate-300 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold shadow-2xs flex items-center justify-center gap-2 cursor-pointer transition w-full"
+                    >
+                      <Activity className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">Record Vitals</span>
+                    </button>
 
-                  {/* Download All */}
-                  <button
-                    type="button"
-                    onClick={handleDownloadAll}
-                    className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Download className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Download All</span>
-                  </button>
+                    {/* Download All */}
+                    <button
+                      type="button"
+                      onClick={handleDownloadAll}
+                      className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 hover:border-slate-300 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold shadow-2xs flex items-center justify-center gap-2 cursor-pointer transition w-full"
+                    >
+                      <Download className="w-4 h-4 text-slate-500 shrink-0" />
+                      <span className="truncate">Download All</span>
+                    </button>
 
-                  {/* Share Records */}
-                  <button
-                    type="button"
-                    onClick={handleShareRecords}
-                    className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 px-3.5 py-2 rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Share2 className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Share Records</span>
-                  </button>
+                    {/* Share Records */}
+                    <button
+                      type="button"
+                      onClick={handleShareRecords}
+                      className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 hover:border-slate-300 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold shadow-2xs flex items-center justify-center gap-2 cursor-pointer transition w-full"
+                    >
+                      <Share2 className="w-4 h-4 text-slate-500 shrink-0" />
+                      <span className="truncate">Share Records</span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* 4. Filter Tabs Row */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-none pt-1">
+                {/* 4. Filter Tabs Row (Expanded to fill row properly) */}
+                <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-2.5 pt-1">
                   <button
                     type="button"
                     onClick={() => setRecordsFilter('all')}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
                       recordsFilter === 'all'
                         ? 'bg-[#008F83] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
-                    <span>All Records ({totalRecordsCount})</span>
+                    <Layers className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">All Records ({totalRecordsCount})</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setRecordsFilter('prescription')}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
                       recordsFilter === 'prescription'
                         ? 'bg-[#008F83] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
-                    <span className="font-serif italic font-bold">℞</span>
-                    <span>Prescriptions ({prescriptionsCount})</span>
+                    <span className="font-serif italic font-bold text-sm shrink-0">℞</span>
+                    <span className="truncate">Prescriptions ({prescriptionsCount})</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setRecordsFilter('report')}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
                       recordsFilter === 'report'
                         ? 'bg-[#008F83] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
-                    <FlaskConical className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Lab Reports ({labReportsCount})</span>
+                    <FlaskConical className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    <span className="truncate">Lab Reports ({labReportsCount})</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setRecordsFilter('consultation')}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
                       recordsFilter === 'consultation'
                         ? 'bg-[#008F83] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
-                    <Stethoscope className="w-3.5 h-3.5 text-purple-500" />
-                    <span>Consultations ({consultationsCount})</span>
+                    <Stethoscope className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+                    <span className="truncate">Consultations ({consultationsCount})</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setRecordsFilter('vitals')}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer ${
                       recordsFilter === 'vitals'
                         ? 'bg-[#008F83] text-white shadow-xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
-                    <Activity className="w-3.5 h-3.5 text-teal-600" />
-                    <span>Vitals</span>
+                    <Activity className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                    <span className="truncate">Vitals</span>
                   </button>
                 </div>
 
