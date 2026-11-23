@@ -2264,7 +2264,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <h3 className="text-base font-extrabold text-slate-800">No Bookings Found</h3>
                     <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
                       {user 
-                        ? `There are no bookings recorded under your verified account (${user.phone || user.contact || user.email || user.name || 'Current User'}). Only your own real bookings will be displayed here.`
+                        ? `There are no bookings recorded under your account (${user.phone || user.contact || user.email || user.name || 'Current User'}). Only your own real bookings will be displayed here.`
                         : 'Please log in with your phone or email to view your booked services.'}
                     </p>
                   </div>

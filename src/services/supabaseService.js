@@ -933,7 +933,7 @@ export const placeMedicineOrder = async (orderData) => {
         .insert([
           {
             order_number: newOrder.order_number,
-            patient_name: newOrder.patientName || newOrder.patient_name || 'Verified Patient',
+            patient_name: newOrder.patientName || newOrder.patient_name || 'Patient',
             phone: resolvedPhone,
             delivery_address: newOrder.deliveryAddress || newOrder.delivery_address || 'Guwahati, Assam',
             subtotal: parseFloat(newOrder.subtotal || newOrder.total || 0),

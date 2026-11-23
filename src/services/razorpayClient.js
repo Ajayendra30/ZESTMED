@@ -177,7 +177,7 @@ export const verifyServerPayment = async ({
       paymentStatus: 'Paid',
       bookingId: bookingId || `ZM-ORD-${Date.now().toString().slice(-6)}`,
       bookingType: bookingType || 'service',
-      customerName: customer?.name || 'Verified Patient',
+      customerName: customer?.name || 'Patient',
       customerPhone: customer?.phone || '',
       paymentMethod: 'Razorpay (Verified)',
       verifiedAt: new Date().toISOString()

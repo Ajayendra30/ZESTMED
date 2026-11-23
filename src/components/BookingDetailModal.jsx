@@ -284,11 +284,6 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onCancelB
                   Phone: <strong className="text-slate-700">{booking.phone || booking.patientPhone || 'Not Specified'}</strong>
                 </p>
               </div>
-              <div className="text-right">
-                <span className="inline-block px-2.5 py-1 rounded-lg bg-teal-50 text-[#007A64] border border-teal-200 text-xs font-bold">
-                  Verified Patient Account
-                </span>
-              </div>
             </div>
 
             {booking.notes && (

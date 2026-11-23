@@ -1523,7 +1523,7 @@ export default function AdminDashboardPage() {
           const formatted = txns.map((t) => ({
             id: t.transaction_id || t.id,
             ref: t.booking_id || t.order_id || `#TXN-${String(t.id).slice(-5)}`,
-            customer: t.customer_name || 'Verified Patient',
+            customer: t.customer_name || 'Patient',
             method: t.payment_method || 'Razorpay (Verified)',
             amount: Number(t.amount || 0),
             date: t.created_at
