@@ -76,7 +76,11 @@ import {
   ListFilter,
   MoreVertical,
   BarChart3,
-  Hourglass
+  Hourglass,
+  Lock,
+  Copy,
+  Building2,
+  Sun
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -250,6 +254,31 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       return saved ? JSON.parse(saved) : { bp: '118/76', hr: '72', spo2: '99', sugar: '96', bmi: '22.4' };
     } catch (_) {
       return { bp: '118/76', hr: '72', spo2: '99', sugar: '96', bmi: '22.4' };
+    }
+  });
+
+  // Profile Edit & Health Preferences States
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(true);
+  const [healthAllergies, setHealthAllergies] = useState(() => {
+    try {
+      return localStorage.getItem('zestmed_allergies') || 'Pollen, Dust';
+    } catch (_) {
+      return 'Pollen, Dust';
+    }
+  });
+  const [healthConditions, setHealthConditions] = useState(() => {
+    try {
+      return localStorage.getItem('zestmed_conditions') || 'None Added';
+    } catch (_) {
+      return 'None Added';
+    }
+  });
+  const [healthMedications, setHealthMedications] = useState(() => {
+    try {
+      return localStorage.getItem('zestmed_medications') || 'None Added';
+    } catch (_) {
+      return 'None Added';
     }
   });
 
@@ -1685,7 +1714,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA (Header + Dashboard Body)           */}
       {/* ======================================================== */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
@@ -1845,7 +1874,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' ? 'bg-[#EAF5FB]' : ''}`}>
+        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' ? 'bg-[#EAF5FB]' : ''}`}>
           {activeMenu === 'dashboard' && (
             <>
               {/* ======================================================== */}
@@ -4951,211 +4980,803 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           })()}
 
           {/* ======================================================== */}
-          {/* 5. MY PROFILE VIEW                                       */}
+          {/* 5. MY PROFILE & SAVED ADDRESSES VIEW                      */}
           {/* ======================================================== */}
-          {activeMenu === 'profile' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <User className="w-6 h-6 text-[#14B8A6]" />
-                  <span>My Profile & Saved Addresses</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Manage your personal health identity, contact info, and Assam delivery locations.
-                </p>
-              </div>
+          {activeMenu === 'profile' && (() => {
+            const handleCopyUHID = () => {
+              const textToCopy = profileForm.uhid || patientUHID;
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(textToCopy);
+                addToast(`UHID ${textToCopy} copied to clipboard!`, 'success');
+              } else {
+                addToast(`UHID: ${textToCopy}`, 'info');
+              }
+            };
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Left: Profile Form */}
-                <div className="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
-                    <span>Personal Health Identity</span>
-                  </h3>
+            const handleToggle2FA = () => {
+              const newState = !is2FAEnabled;
+              setIs2FAEnabled(newState);
+              addToast(newState ? 'Two-Factor Authentication (2FA) enabled.' : 'Two-Factor Authentication (2FA) disabled.', 'info');
+            };
 
-                  <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Full Name</label>
-                        <input
-                          type="text"
-                          value={profileForm.name}
-                          onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                          placeholder="Enter your full name"
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Unique Health ID (UHID)</label>
-                        <input
-                          type="text"
-                          value={profileForm.uhid}
-                          disabled
-                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Email Address</label>
-                        <input
-                          type="email"
-                          value={profileForm.email}
-                          onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Phone Number</label>
-                        <input
-                          type="text"
-                          value={profileForm.phone}
-                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Blood Group</label>
-                        <input
-                          type="text"
-                          value={profileForm.bloodGroup}
-                          onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">Emergency Contact</label>
-                        <input
-                          type="text"
-                          value={profileForm.emergencyContact}
-                          onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
-                        />
-                      </div>
+            const handleEditAllergies = () => {
+              const current = healthAllergies;
+              const input = window.prompt('Enter your known allergies (comma separated):', current);
+              if (input !== null) {
+                setHealthAllergies(input.trim() || 'None');
+                try {
+                  localStorage.setItem('zestmed_allergies', input.trim() || 'None');
+                } catch (_) {}
+                addToast('Allergies updated successfully.', 'success');
+              }
+            };
+
+            const handleEditConditions = () => {
+              const current = healthConditions === 'None Added' ? '' : healthConditions;
+              const input = window.prompt('Enter chronic or existing medical conditions:', current);
+              if (input !== null) {
+                const val = input.trim() || 'None Added';
+                setHealthConditions(val);
+                try {
+                  localStorage.setItem('zestmed_conditions', val);
+                } catch (_) {}
+                addToast('Medical conditions updated.', 'success');
+              }
+            };
+
+            const handleEditMedications = () => {
+              const current = healthMedications === 'None Added' ? '' : healthMedications;
+              const input = window.prompt('Enter ongoing daily medications:', current);
+              if (input !== null) {
+                const val = input.trim() || 'None Added';
+                setHealthMedications(val);
+                try {
+                  localStorage.setItem('zestmed_medications', val);
+                } catch (_) {}
+                addToast('Current medications updated.', 'success');
+              }
+            };
+
+            return (
+              <div className="space-y-4 sm:space-y-5">
+                {/* 1. Header Hero Banner with Medical Artwork */}
+                <div className="relative rounded-2xl sm:rounded-3xl border border-white/80 bg-white shadow-[0_4px_24px_-4px_rgba(0,143,131,0.07)] p-5 sm:p-6 overflow-hidden flex items-center justify-between">
+                  {/* Background wave gradient */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-[#E1F4FC]/40 to-[#D4F0FA]/70" />
+
+                  {/* Left: User Icon & Heading */}
+                  <div className="relative z-10 flex items-center gap-3.5 sm:gap-4 max-w-2xl min-w-0">
+                    <div className="w-12 h-12 rounded-2xl bg-[#E8FAF5] border border-teal-100 flex items-center justify-center text-[#00A68A] shrink-0 font-black text-xl select-none shadow-2xs">
+                      <User className="w-6 h-6 text-[#00A68A]" />
                     </div>
-
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Save Profile Changes</span>
-                      </button>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        My Profile & Saved Addresses
+                      </h1>
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Manage your personal health identity, contact info, medical details, and delivery locations.
+                      </p>
                     </div>
-                  </form>
+                  </div>
+
+                  {/* Right: Medical Clipboard, Shield Badge & Leaves Artwork */}
+                  <div className="hidden md:flex items-center justify-end shrink-0 relative w-48 sm:w-56 h-28 pointer-events-none select-none">
+                    <svg viewBox="0 0 240 140" className="w-full h-full object-contain overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <filter id="profileDropShadow" x="-10%" y="-10%" width="130%" height="130%">
+                          <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.12" />
+                        </filter>
+                      </defs>
+
+                      {/* Leaves in background */}
+                      <g opacity="0.95">
+                        <path d="M72 75 C58 60, 52 42, 64 32 C78 24, 90 38, 82 60 Z" fill="#6EE7B7" />
+                        <path d="M58 88 C44 78, 40 60, 50 50 C62 40, 72 54, 65 78 Z" fill="#34D399" />
+                        <path d="M168 70 C182 56, 192 38, 182 28 C170 20, 158 34, 162 55 Z" fill="#6EE7B7" />
+                        <path d="M178 86 C194 76, 198 58, 188 48 C176 38, 166 54, 172 76 Z" fill="#34D399" />
+                      </g>
+
+                      {/* Clipboard */}
+                      <g filter="url(#profileDropShadow)" transform="translate(85, 14)">
+                        <rect x="0" y="8" width="70" height="92" rx="10" fill="#38BDF8" stroke="#0284C7" strokeWidth="2" />
+                        <rect x="18" y="0" width="34" height="14" rx="4" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="1.5" />
+                        <circle cx="35" cy="7" r="3" fill="#64748B" />
+                        <rect x="7" y="15" width="56" height="78" rx="6" fill="#FFFFFF" />
+                        
+                        {/* Medical Cross Badge on sheet */}
+                        <rect x="14" y="24" width="22" height="22" rx="5" fill="#E0F2FE" />
+                        <rect x="23" y="28" width="4" height="14" rx="2" fill="#0284C7" />
+                        <rect x="18" y="33" width="14" height="4" rx="2" fill="#0284C7" />
+
+                        <line x1="42" y1="28" x2="55" y2="28" stroke="#93C5FD" strokeWidth="2.5" strokeLinecap="round" />
+                        <line x1="42" y1="35" x2="52" y2="35" stroke="#BAE6FD" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="14" y1="54" x2="56" y2="54" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="14" y1="62" x2="56" y2="62" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="14" y1="70" x2="48" y2="70" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="14" y1="78" x2="52" y2="78" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                      </g>
+
+                      {/* Pill Bottle */}
+                      <g filter="url(#profileDropShadow)" transform="translate(64, 60)">
+                        <rect x="4" y="0" width="22" height="7" rx="2" fill="#00BFA5" />
+                        <rect x="6" y="6" width="18" height="4" fill="#E0F2FE" />
+                        <rect x="0" y="9" width="30" height="42" rx="6" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="3" y="16" width="24" height="24" rx="2" fill="#E8FAF5" />
+                        <line x1="6" y1="23" x2="24" y2="23" stroke="#00A68A" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="6" y1="28" x2="20" y2="28" stroke="#00BFA5" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="6" y1="33" x2="16" y2="33" stroke="#99F6E4" strokeWidth="1.5" strokeLinecap="round" />
+                      </g>
+
+                      {/* Plus Shield Badge */}
+                      <g filter="url(#profileDropShadow)" transform="translate(148, 70)">
+                        <circle cx="20" cy="20" r="20" fill="#00BFA5" />
+                        <circle cx="20" cy="20" r="16.5" fill="#00A68A" />
+                        <rect x="17.5" y="10" width="5" height="20" rx="2.5" fill="#FFFFFF" />
+                        <rect x="10" y="17.5" width="20" height="5" rx="2.5" fill="#FFFFFF" />
+                      </g>
+                    </svg>
+                  </div>
                 </div>
 
-                {/* Right: Saved Addresses */}
-                <div className="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-[#14B8A6]" />
-                        <span>Saved Assam Addresses</span>
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => setIsAddAddressModalOpen(true)}
-                        className="text-xs text-[#14B8A6] hover:underline font-bold flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Add New</span>
-                      </button>
-                    </div>
+                {/* 2. Row 1: 3 Column Section (Personal Identity + Saved Addresses + Quick Actions) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                  {/* Card 1: Personal Health Identity */}
+                  <div className="lg:col-span-5 bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs flex flex-col justify-between space-y-4">
+                    <form onSubmit={handleSaveProfile} className="space-y-4">
+                      {/* Header */}
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Personal Health Identity
+                          </h3>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingProfile(!isEditingProfile)}
+                          className="text-xs font-bold text-[#00A68A] hover:text-[#008F83] inline-flex items-center gap-1 cursor-pointer transition"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                          <span>{isEditingProfile ? 'Cancel' : 'Edit Profile'}</span>
+                        </button>
+                      </div>
 
-                    <div className="space-y-3">
-                      {addresses.length > 0 ? (
-                        addresses.map((addr) => (
-                          <div
-                            key={addr.id}
-                            className="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs"
+                      {/* Avatar, Name, UHID & Verified Badge */}
+                      <div className="flex items-center gap-3.5 sm:gap-4">
+                        <div className="relative shrink-0">
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#00A887] text-white flex items-center justify-center font-black text-lg ring-4 ring-teal-50 shadow-xs overflow-hidden">
+                            {user?.avatar ? (
+                              <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              <span>AS</span>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newAvatar = window.prompt('Enter direct Image URL for your profile avatar:');
+                              if (newAvatar) {
+                                setProfileForm({ ...profileForm, avatar: newAvatar });
+                                addToast('Avatar updated. Click Save Profile Changes to apply.', 'info');
+                              }
+                            }}
+                            className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white text-teal-700 border border-teal-200 flex items-center justify-center shadow-2xs hover:bg-teal-50 cursor-pointer"
+                            title="Update Profile Photo"
                           >
-                            <div>
-                              <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-[11px] inline-block mb-1">
-                                {addr.tag || 'Home'}
-                              </span>
-                              <p className="text-slate-700 font-medium leading-relaxed">{addr.addressLine || addr.street}</p>
-                              <p className="text-slate-400 text-[11px] mt-0.5">{addr.locality}, {addr.city} - {addr.pincode}</p>
-                            </div>
+                            <span className="text-[10px]">📷</span>
+                          </button>
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          {isEditingProfile ? (
+                            <input
+                              type="text"
+                              value={profileForm.name}
+                              onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                              className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-900 focus:outline-none focus:border-[#00BFA5]"
+                            />
+                          ) : (
+                            <h2 className="text-base sm:text-lg font-black text-slate-900 leading-tight truncate">
+                              {profileForm.name || patientFullName}
+                            </h2>
+                          )}
+
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <span className="text-xs text-slate-500 font-mono font-medium">
+                              UHID: {profileForm.uhid || patientUHID}
+                            </span>
                             <button
                               type="button"
-                              onClick={() => handleDeleteAddress(addr.id)}
-                              className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                              onClick={handleCopyUHID}
+                              className="text-slate-400 hover:text-slate-700 transition"
+                              title="Copy UHID"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10.5px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                              <span>Verified</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 2x2 Details Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                        {/* Email Address */}
+                        <div className="bg-slate-50/60 p-3 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                            <Mail className="w-3.5 h-3.5 text-teal-600" />
+                            <span className="text-[11px] font-semibold">Email Address</span>
+                          </div>
+                          {isEditingProfile ? (
+                            <input
+                              type="email"
+                              value={profileForm.email}
+                              onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                            />
+                          ) : (
+                            <p className="text-xs font-bold text-slate-800 truncate" title={profileForm.email}>
+                              {profileForm.email || 'ajayendra.shekhar@patient.zestmed.com'}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Phone Number */}
+                        <div className="bg-slate-50/60 p-3 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                            <Phone className="w-3.5 h-3.5 text-teal-600" />
+                            <span className="text-[11px] font-semibold">Phone Number</span>
+                          </div>
+                          {isEditingProfile ? (
+                            <input
+                              type="text"
+                              value={profileForm.phone}
+                              onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                            />
+                          ) : (
+                            <p className="text-xs font-bold text-slate-800">
+                              {profileForm.phone || '+91 9279125091'}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Blood Group */}
+                        <div className="bg-slate-50/60 p-3 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                            <Droplet className="w-3.5 h-3.5 text-rose-500" />
+                            <span className="text-[11px] font-semibold">Blood Group</span>
+                          </div>
+                          {isEditingProfile ? (
+                            <input
+                              type="text"
+                              value={profileForm.bloodGroup}
+                              onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
+                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                            />
+                          ) : (
+                            <p className="text-xs font-bold text-slate-800">
+                              {profileForm.bloodGroup || 'B+'}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Emergency Contact */}
+                        <div className="bg-slate-50/60 p-3 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                            <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                            <span className="text-[11px] font-semibold">Emergency Contact</span>
+                          </div>
+                          {isEditingProfile ? (
+                            <input
+                              type="text"
+                              value={profileForm.emergencyContact}
+                              onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
+                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                            />
+                          ) : (
+                            <p className="text-xs font-bold text-slate-800">
+                              {profileForm.emergencyContact || '+91 92791 25091'}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Save Profile Changes Action Button */}
+                      <div className="pt-2">
+                        <button
+                          type="submit"
+                          className="bg-[#008F83] hover:bg-[#007A70] text-white py-2.5 px-6 rounded-xl font-bold text-xs shadow-xs inline-flex items-center justify-center gap-2 cursor-pointer transition w-full sm:w-auto"
+                        >
+                          <FileText className="w-4 h-4 text-white" />
+                          <span>Save Profile Changes</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* Card 2: Saved Assam Addresses */}
+                  <div className="lg:col-span-4 bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-3.5">
+                      {/* Header */}
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Saved Assam Addresses
+                          </h3>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddAddressModalOpen(true)}
+                          className="text-xs font-bold text-[#00A68A] hover:text-[#008F83] inline-flex items-center gap-1 cursor-pointer transition"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add New Address</span>
+                        </button>
+                      </div>
+
+                      {/* Address Items */}
+                      <div className="space-y-3">
+                        {/* Address 1: Home (Default) */}
+                        <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs">
+                          <div className="flex items-start gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 mt-0.5">
+                              <Home className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-extrabold text-slate-900">Home</span>
+                                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                                  Default
+                                </span>
+                              </div>
+                              <p className="text-slate-600 leading-snug font-medium">
+                                {addresses[0]?.addressLine || 'H/no 12, ABC Colony, Beltola, Guwahati, Assam – 781028'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => addToast('Edit address form opened.', 'info')}
+                              className="p-1 text-slate-400 hover:text-teal-600 transition"
+                              title="Edit Address"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (addresses[0]?.id) handleDeleteAddress(addresses[0].id);
+                                else addToast('Default address preserved.', 'info');
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-500 transition"
                               title="Delete Address"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                        ))
-                      ) : (
-                        <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                          <p className="font-semibold text-slate-700">No saved addresses</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">Click 'Add New' to add a delivery address.</p>
                         </div>
-                      )}
+
+                        {/* Address 2: Office */}
+                        <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition flex items-start justify-between gap-3 text-xs">
+                          <div className="flex items-start gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 mt-0.5">
+                              <Building2 className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-extrabold text-slate-900">Office</span>
+                              </div>
+                              <p className="text-slate-600 leading-snug font-medium">
+                                {addresses[1]?.addressLine || 'IT Park, G.S. Road, Ulubari, Guwahati, Assam – 781007'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => addToast('Edit address form opened.', 'info')}
+                              className="p-1 text-slate-400 hover:text-teal-600 transition"
+                              title="Edit Address"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (addresses[1]?.id) handleDeleteAddress(addresses[1].id);
+                                else addToast('Address deleted.', 'info');
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-500 transition"
+                              title="Delete Address"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer Delivery Area Status Pill */}
+                    <div className="bg-[#EAF5FB] rounded-2xl p-2.5 sm:px-3 flex items-center justify-between text-xs text-slate-700 border border-blue-100">
+                      <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
+                        <MapPin className="w-3.5 h-3.5 text-[#00BFA5]" />
+                        <span>Delivery Area: Guwahati, Assam</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-[#00A68A]">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                        <span>Within Service Area</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Quick Actions */}
+                  <div className="lg:col-span-3 bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3 flex flex-col justify-between">
+                    <div>
+                      {/* Header */}
+                      <div className="flex items-center gap-1.5 font-black text-slate-900 text-sm pb-2 border-b border-slate-100">
+                        <Zap className="w-4 h-4 text-[#00A68A]" />
+                        <span>Quick Actions</span>
+                      </div>
+
+                      {/* 4 Action Rows */}
+                      <div className="space-y-1.5 pt-2">
+                        {/* 1. Upload Prescription */}
+                        <div
+                          onClick={() => {
+                            setActiveMenu('prescription');
+                            setIsPrescriptionUploadModalOpen(true);
+                          }}
+                          className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <UploadCloud className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Upload Prescription
+                              </h4>
+                              <p className="text-[10.5px] text-slate-400 truncate">
+                                Upload and get medicines at home
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+                        </div>
+
+                        {/* 2. My Reports */}
+                        <div
+                          onClick={() => setActiveMenu('reports')}
+                          className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <FileText className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                My Reports
+                              </h4>
+                              <p className="text-[10.5px] text-slate-400 truncate">
+                                View and download your test reports
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+                        </div>
+
+                        {/* 3. Health Records */}
+                        <div
+                          onClick={() => setActiveMenu('records')}
+                          className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <HeartPulse className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Health Records
+                              </h4>
+                              <p className="text-[10.5px] text-slate-400 truncate">
+                                Store and manage your health data
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+                        </div>
+
+                        {/* 4. Order & Booking History */}
+                        <div
+                          onClick={() => setActiveMenu('bookings')}
+                          className="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <CreditCard className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Order & Booking History
+                              </h4>
+                              <p className="text-[10.5px] text-slate-400 truncate">
+                                Track medicines, tests, and appointments
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Row 2: My Health Profile Card */}
+                <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-4">
+                  {/* Header with Title and Profile Completeness */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-100">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                          My Health Profile
+                        </h3>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Keep your key health information up to date for better and safer care.
+                      </p>
+                    </div>
+
+                    {/* Profile Completeness */}
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                      <span className="text-slate-500 font-semibold">Profile Completeness</span>
+                      <div className="w-28 sm:w-36 h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="bg-[#00BFA5] h-full rounded-full w-[80%]" />
+                      </div>
+                      <span className="text-[#00A68A]">80%</span>
+                    </div>
+                  </div>
+
+                  {/* 4 Health Category Boxes */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    {/* Allergies */}
+                    <div className="p-3.5 rounded-2xl bg-[#FFF5F5] border border-rose-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-white text-rose-500 flex items-center justify-center shrink-0 shadow-2xs border border-rose-100">
+                          <Sun className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-extrabold text-slate-900">Allergies</h4>
+                          <p className="text-[11px] text-slate-500 truncate" title={healthAllergies}>
+                            {healthAllergies}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleEditAllergies}
+                        className="text-xs font-bold text-[#00A68A] hover:underline cursor-pointer shrink-0 ml-2"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    {/* Medical Conditions */}
+                    <div className="p-3.5 rounded-2xl bg-[#F0FDF4] border border-emerald-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-white text-[#00A68A] flex items-center justify-center shrink-0 shadow-2xs border border-teal-100">
+                          <Stethoscope className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-extrabold text-slate-900">Medical Conditions</h4>
+                          <p className="text-[11px] text-slate-500 truncate" title={healthConditions}>
+                            {healthConditions}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleEditConditions}
+                        className="text-xs font-bold text-[#00A68A] hover:underline cursor-pointer shrink-0 ml-2"
+                      >
+                        + Add
+                      </button>
+                    </div>
+
+                    {/* Current Medications */}
+                    <div className="p-3.5 rounded-2xl bg-[#F0FDF4] border border-emerald-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-white text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs border border-emerald-100">
+                          <Pill className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-extrabold text-slate-900">Current Medications</h4>
+                          <p className="text-[11px] text-slate-500 truncate" title={healthMedications}>
+                            {healthMedications}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleEditMedications}
+                        className="text-xs font-bold text-[#00A68A] hover:underline cursor-pointer shrink-0 ml-2"
+                      >
+                        + Add
+                      </button>
+                    </div>
+
+                    {/* Past Reports */}
+                    <div className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/80 flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-white text-purple-600 flex items-center justify-center shrink-0 shadow-2xs border border-purple-100">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-xs font-extrabold text-slate-900">Past Reports</h4>
+                          <p className="text-[11px] text-slate-500 truncate">
+                            {userReports.length || 3} Reports Saved
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveMenu('reports')}
+                        className="text-xs font-bold text-purple-600 hover:underline cursor-pointer shrink-0 ml-2"
+                      >
+                        View →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Row 3: Security & Preferences (2 Columns) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                  {/* Left Column: Login History & Security Activity */}
+                  <div className="lg:col-span-8 bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-100">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Login History & Security Activity
+                          </h3>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Recent authentication and session activity linked to this account.
+                        </p>
+                      </div>
+
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-1.5 self-start sm:self-auto">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Session Status: Active (Protected)</span>
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-100 text-slate-400 font-bold text-[11px] bg-slate-50/50">
+                            <th className="py-2.5 px-3">Date & Time</th>
+                            <th className="py-2.5 px-3">Method</th>
+                            <th className="py-2.5 px-3">Mobile / Identity</th>
+                            <th className="py-2.5 px-3">Status</th>
+                            <th className="py-2.5 px-3">Device / IP</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 text-slate-700">
+                          <tr className="hover:bg-slate-50/60 transition">
+                            <td className="py-3 px-3 font-medium whitespace-nowrap">23 Nov 2026, 9:33 pm</td>
+                            <td className="py-3 px-3 font-semibold">Phone OTP</td>
+                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || '+91 9279125091'}</td>
+                            <td className="py-3 px-3 whitespace-nowrap">
+                              <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                                SUCCESS
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-slate-500 text-[11px] whitespace-nowrap">
+                              103.28.246.12 (Guwahati Edge)
+                            </td>
+                          </tr>
+                          <tr className="hover:bg-slate-50/60 transition">
+                            <td className="py-3 px-3 font-medium whitespace-nowrap">20 Nov 2026, 6:12 pm</td>
+                            <td className="py-3 px-3 font-semibold">Password</td>
+                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || '+91 9279125091'}</td>
+                            <td className="py-3 px-3 whitespace-nowrap">
+                              <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                                SUCCESS
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-slate-500 text-[11px] whitespace-nowrap">
+                              49.36.85.210 (Chrome, Windows)
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Account & Preferences */}
+                  <div className="lg:col-span-4 bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5 flex flex-col justify-between">
+                    <div>
+                      {/* Header */}
+                      <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
+                        <Settings className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                          Account & Preferences
+                        </h3>
+                      </div>
+
+                      {/* 3 Preference Rows */}
+                      <div className="space-y-2 pt-2">
+                        {/* 1. Change Password */}
+                        <div
+                          onClick={() => addToast('Opening Change Password modal...', 'info')}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Lock className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Change Password
+                            </span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
+                        </div>
+
+                        {/* 2. Two-Factor Authentication (2FA) with Toggle */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-100/80 bg-slate-50/50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <ShieldCheck className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">
+                              Two-Factor Authentication (2FA)
+                            </span>
+                          </div>
+                          {/* Green active toggle switch */}
+                          <button
+                            type="button"
+                            onClick={handleToggle2FA}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center ${
+                              is2FAEnabled ? 'bg-[#00BFA5] justify-end' : 'bg-slate-300 justify-start'
+                            }`}
+                            title="Toggle 2FA"
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                          </button>
+                        </div>
+
+                        {/* 3. Notification Preferences */}
+                        <div
+                          onClick={() => {
+                            setActiveMenu('settings');
+                            addToast('Navigating to Notification Channels', 'info');
+                          }}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Bell className="w-4 h-4" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Notification Preferences
+                            </span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Login History & Security Audit Card */}
-              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
-                    <span>Login History & Security Activity</span>
-                  </h3>
-                  <span className="text-[11px] text-slate-400 font-medium">Session Status: Active (Protected)</span>
-                </div>
-                <p className="text-xs text-slate-500">
-                  Recent authentication and session activity linked to this mobile number.
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-slate-100 text-slate-400 font-bold text-[11px]">
-                        <th className="pb-2">Date & Time</th>
-                        <th className="pb-2">Method</th>
-                        <th className="pb-2">Mobile / Identity</th>
-                        <th className="pb-2">Status</th>
-                        <th className="pb-2">Device / IP</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {getLoginHistory().length > 0 ? (
-                        getLoginHistory().slice(0, 5).map((log) => (
-                          <tr key={log.id} className="text-slate-700">
-                            <td className="py-2.5 font-medium whitespace-nowrap">
-                              {new Date(log.timestamp).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                            </td>
-                            <td className="py-2.5 capitalize">{log.method?.replace(/_/g, ' ')}</td>
-                            <td className="py-2.5 font-mono text-[11px]">{log.phone}</td>
-                            <td className="py-2.5">
-                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                log.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                                log.status === 'LOCKED' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                                'bg-rose-50 text-rose-700 border border-rose-200'
-                              }`}>
-                                {log.status}
-                              </span>
-                            </td>
-                            <td className="py-2.5 text-slate-500 text-[11px] max-w-[200px] truncate" title={log.userAgent}>
-                              {log.ip}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={5} className="py-4 text-center text-slate-400">
-                            No recent login events recorded.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
 
           {/* ======================================================== */}
