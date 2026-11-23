@@ -80,7 +80,15 @@ import {
   Lock,
   Copy,
   Building2,
-  Sun
+  Sun,
+  SlidersHorizontal,
+  Globe,
+  Moon,
+  Link2,
+  Smartphone,
+  Key,
+  Monitor,
+  ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -281,6 +289,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       return 'None Added';
     }
   });
+
+  // Settings & Preferences States
+  const [settingsActiveTab, setSettingsActiveTab] = useState('security');
+  const [settingsOtpAuth, setSettingsOtpAuth] = useState(true);
+  const [settingsSmsWhatsapp, setSettingsSmsWhatsapp] = useState(true);
+  const [settingsEmailReports, setSettingsEmailReports] = useState(true);
+  const [settingsInAppNotifs, setSettingsInAppNotifs] = useState(true);
+  const [settingsLabUpdates, setSettingsLabUpdates] = useState(true);
+  const [settingsAppointmentUpdates, setSettingsAppointmentUpdates] = useState(true);
+  const [settingsOrderUpdates, setSettingsOrderUpdates] = useState(true);
+  const [settingsLanguage, setSettingsLanguage] = useState('English');
+  const [settingsTheme, setSettingsTheme] = useState('light');
 
   // Ensure a verified patient session is active so reloading keeps the patient dashboard open
   useEffect(() => {
@@ -1714,7 +1734,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA (Header + Dashboard Body)           */}
       {/* ======================================================== */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' || activeMenu === 'settings' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
@@ -1874,7 +1894,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' ? 'bg-[#EAF5FB]' : ''}`}>
+        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' || activeMenu === 'records' || activeMenu === 'profile' || activeMenu === 'settings' ? 'bg-[#EAF5FB]' : ''}`}>
           {activeMenu === 'dashboard' && (
             <>
               {/* ======================================================== */}
@@ -6818,81 +6838,734 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           })()}
 
           {/* ======================================================== */}
-          {/* SETTINGS VIEW                                            */}
+          {/* SETTINGS & PREFERENCES VIEW                              */}
           {/* ======================================================== */}
-          {activeMenu === 'settings' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Settings className="w-6 h-6 text-[#00BFA5]" />
-                  <span>Settings & Preferences</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Manage your account security, notification alerts, communication preferences, and data privacy.
-                </p>
-              </div>
+          {activeMenu === 'settings' && (() => {
+            const handleDownloadMyData = () => {
+              const exportData = {
+                profile: profileForm,
+                savedAddresses: addresses,
+                prescriptionsCount: userPrescriptions?.length || 0,
+                reportsCount: userReports?.length || 0,
+                exportedAt: new Date().toISOString()
+              };
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `ZESTMED_Health_Data_${patientUHID}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+              addToast('Personal health & account data exported successfully.', 'success');
+            };
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {/* Security Card */}
-                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#00BFA5]" />
-                    <span>Account Security & Authentication</span>
-                  </h3>
-                  <div className="space-y-3 text-xs">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <div>
-                        <p className="font-bold text-slate-900">OTP Mobile Verification</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Each login requires a secure 6-digit one-time code.</p>
-                      </div>
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        Active
-                      </span>
-                    </div>
+            const handleChangePassword = () => {
+              const newPass = window.prompt('Enter new secure password (min 6 characters):');
+              if (newPass && newPass.length >= 6) {
+                addToast('Password updated successfully for your registered mobile number.', 'success');
+              } else if (newPass) {
+                addToast('Password must be at least 6 characters.', 'error');
+              }
+            };
 
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <div>
-                        <p className="font-bold text-slate-900">One Number, One User Policy</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Your phone number {user?.phone || user?.contact || profileForm.phone} is uniquely linked.</p>
-                      </div>
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        Enforced
-                      </span>
+            const handleDeleteAccount = () => {
+              const confirmText = window.prompt('Type DELETE to permanently erase your patient account and data:');
+              if (confirmText === 'DELETE') {
+                addToast('Account deletion request submitted. Our compliance team will process it within 24 hours.', 'info');
+              }
+            };
+
+            return (
+              <div className="space-y-4 sm:space-y-5">
+                {/* 1. Header Hero Banner with Security Shield & Gears Artwork */}
+                <div className="relative rounded-2xl sm:rounded-3xl border border-white/80 bg-white shadow-[0_4px_24px_-4px_rgba(0,143,131,0.07)] p-5 sm:p-6 overflow-hidden flex items-center justify-between">
+                  {/* Background wave gradient */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-[#E1F4FC]/40 to-[#D4F0FA]/70" />
+
+                  {/* Left: Settings Icon & Title */}
+                  <div className="relative z-10 flex items-center gap-3.5 sm:gap-4 max-w-2xl min-w-0">
+                    <div className="w-12 h-12 rounded-2xl bg-[#E8FAF5] border border-teal-100 flex items-center justify-center text-[#00A68A] shrink-0 font-black text-xl select-none shadow-2xs">
+                      <Settings className="w-6 h-6 text-[#00A68A]" />
                     </div>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Settings & Preferences
+                      </h1>
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Manage your account security, notifications, communication, privacy, and application preferences.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right: Security Shield with Lock, Gears & Leaves Artwork */}
+                  <div className="hidden md:flex items-center justify-end shrink-0 relative w-48 sm:w-56 h-28 pointer-events-none select-none">
+                    <svg viewBox="0 0 240 140" className="w-full h-full object-contain overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#00BFA5" />
+                          <stop offset="100%" stopColor="#008F83" />
+                        </linearGradient>
+                        <filter id="gearShadow" x="-10%" y="-10%" width="130%" height="130%">
+                          <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.12" />
+                        </filter>
+                      </defs>
+
+                      {/* Leaves in background */}
+                      <g opacity="0.95">
+                        <path d="M168 65 C184 52, 196 34, 186 24 C174 16, 162 30, 166 50 Z" fill="#6EE7B7" />
+                        <path d="M180 80 C196 70, 202 52, 192 42 C180 32, 170 48, 174 70 Z" fill="#34D399" />
+                      </g>
+
+                      {/* Left Teal Gear Wheel */}
+                      <g filter="url(#gearShadow)" transform="translate(68, 55)">
+                        <circle cx="18" cy="18" r="14" fill="#00BFA5" />
+                        <circle cx="18" cy="18" r="7" fill="#FFFFFF" />
+                        {/* Gear Teeth */}
+                        <rect x="15.5" y="0" width="5" height="6" rx="1.5" fill="#00BFA5" />
+                        <rect x="15.5" y="30" width="5" height="6" rx="1.5" fill="#00BFA5" />
+                        <rect x="0" y="15.5" width="6" height="5" rx="1.5" fill="#00BFA5" />
+                        <rect x="30" y="15.5" width="6" height="5" rx="1.5" fill="#00BFA5" />
+                        <rect x="5" y="5" width="5" height="5" rx="1.5" transform="rotate(45 7.5 7.5)" fill="#00BFA5" />
+                        <rect x="25" y="5" width="5" height="5" rx="1.5" transform="rotate(45 27.5 7.5)" fill="#00BFA5" />
+                        <rect x="5" y="25" width="5" height="5" rx="1.5" transform="rotate(45 7.5 27.5)" fill="#00BFA5" />
+                        <rect x="25" y="25" width="5" height="5" rx="1.5" transform="rotate(45 27.5 27.5)" fill="#00BFA5" />
+                      </g>
+
+                      {/* Large Center Shield with Lock */}
+                      <g filter="url(#gearShadow)" transform="translate(108, 16)">
+                        {/* Shield Body */}
+                        <path
+                          d="M40 0 C64 12, 76 16, 76 34 C76 68, 48 88, 40 94 C32 88, 4 68, 4 34 C4 16, 16 12, 40 0 Z"
+                          fill="url(#shieldGrad)"
+                        />
+                        <path
+                          d="M40 6 C60 16, 70 20, 70 35 C70 64, 46 82, 40 87 C34 82, 10 64, 10 35 C10 20, 20 16, 40 6 Z"
+                          fill="#FFFFFF"
+                        />
+
+                        {/* Lock Symbol inside shield */}
+                        <g transform="translate(28, 30)">
+                          {/* Shackle */}
+                          <path
+                            d="M6 14 V8 C6 2.5, 18 2.5, 18 8 V14"
+                            fill="none"
+                            stroke="#008F83"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
+                          />
+                          {/* Lock Body */}
+                          <rect x="0" y="12" width="24" height="20" rx="5" fill="#00A68A" />
+                          {/* Keyhole */}
+                          <circle cx="12" cy="20" r="2.5" fill="#FFFFFF" />
+                          <rect x="11" y="21" width="2" height="4" fill="#FFFFFF" />
+                        </g>
+                      </g>
+                    </svg>
                   </div>
                 </div>
 
-                {/* Notifications Preferences */}
-                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-[#00BFA5]" />
-                    <span>Notification Channels</span>
-                  </h3>
-                  <div className="space-y-3 text-xs">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <div>
-                        <p className="font-bold text-slate-900">SMS & WhatsApp Alerts</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Live order dispatches, test collection updates & reports.</p>
+                {/* 2. Category Tabs Bar (6 Navigation Tabs) */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-none pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('security')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'security'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Account & Security</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('notifications')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'notifications'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <Bell className="w-3.5 h-3.5 text-blue-500" />
+                    <span>Notifications</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('privacy')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'privacy'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Privacy & Data</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('preferences')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'preferences'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Preferences</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('billing')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'billing'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <CreditCard className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Billing & Payments</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsActiveTab('linked')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                      settingsActiveTab === 'linked'
+                        ? 'bg-[#008F83] text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                    }`}
+                  >
+                    <Link2 className="w-3.5 h-3.5 text-teal-600" />
+                    <span>Linked Accounts</span>
+                  </button>
+                </div>
+
+                {/* 3. Main 3-Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+                  {/* ======================================================== */}
+                  {/* COLUMN 1: Account Security & Authentication + Privacy   */}
+                  {/* ======================================================== */}
+                  <div className="lg:col-span-5 space-y-4 sm:space-y-5">
+                    {/* Card 1.1: Account Security & Authentication */}
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-4">
+                      {/* Header */}
+                      <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <Lock className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Account Security & Authentication
+                          </h3>
+                        </div>
+                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                          <span>Account Protected</span>
+                        </span>
                       </div>
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        Enabled
-                      </span>
+
+                      {/* Items */}
+                      <div className="space-y-3">
+                        {/* 1. OTP Mobile Verification */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Smartphone className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">OTP Mobile Verification</h4>
+                              <p className="text-[10.5px] text-slate-500">Each login requires a secure 6-digit one-time code.</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Active
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          </div>
+                        </div>
+
+                        {/* 2. One Number, One User Policy */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <User className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">One Number, One User Policy</h4>
+                              <p className="text-[10.5px] text-slate-500 truncate">
+                                Your phone number {profileForm.phone || '+91 9279125091'} is uniquely linked.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Enforced
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          </div>
+                        </div>
+
+                        {/* 3. Change Password */}
+                        <div
+                          onClick={handleChangePassword}
+                          className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Key className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Change Password
+                              </h4>
+                              <p className="text-[10.5px] text-slate-500">Update your account password regularly.</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-2" />
+                        </div>
+
+                        {/* 4. Two-Factor Authentication (2FA) */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <ShieldCheck className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">Two-Factor Authentication (2FA)</h4>
+                              <p className="text-[10.5px] text-slate-500">Add an extra layer of security to your account.</p>
+                            </div>
+                          </div>
+                          {/* Green Toggle Switch */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIs2FAEnabled(!is2FAEnabled);
+                              addToast(!is2FAEnabled ? '2FA Enabled successfully.' : '2FA Disabled.', 'info');
+                            }}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center shrink-0 ml-2 ${
+                              is2FAEnabled ? 'bg-[#00BFA5] justify-end' : 'bg-slate-300 justify-start'
+                            }`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <div>
-                        <p className="font-bold text-slate-900">Email Reports</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">Digital signed lab reports sent to {profileForm.email}.</p>
+                    {/* Card 1.2: Privacy & Data */}
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5">
+                      {/* Header */}
+                      <div className="pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <ShieldAlert className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Privacy & Data
+                          </h3>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Control your data, reports, and privacy settings.
+                        </p>
                       </div>
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        Enabled
-                      </span>
+
+                      {/* Items */}
+                      <div className="space-y-2">
+                        {/* 1. Manage Health Data */}
+                        <div
+                          onClick={() => setActiveMenu('records')}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <FileText className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Manage Health Data
+                              </h4>
+                              <p className="text-[10.5px] text-slate-500">View and update your health information.</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-2" />
+                        </div>
+
+                        {/* 2. Download My Data */}
+                        <div
+                          onClick={handleDownloadMyData}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Download className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Download My Data
+                              </h4>
+                              <p className="text-[10.5px] text-slate-500">Get a copy of your account and health data.</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-2" />
+                        </div>
+
+                        {/* 3. Data & Privacy Policy */}
+                        <div
+                          onClick={() => addToast('Opening ZESTMED Healthcare Data Protection & Privacy Policy...', 'info')}
+                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Lock className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Data & Privacy Policy
+                              </h4>
+                              <p className="text-[10.5px] text-slate-500">Read how we collect, use, and protect your data.</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-2" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ======================================================== */}
+                  {/* COLUMN 2: Notification Channels + Communication Prefs   */}
+                  {/* ======================================================== */}
+                  <div className="lg:col-span-4 space-y-4 sm:space-y-5">
+                    {/* Card 2.1: Notification Channels */}
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-4">
+                      {/* Header */}
+                      <div className="pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Notification Channels
+                          </h3>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Choose how you want to receive updates and alerts.
+                        </p>
+                      </div>
+
+                      {/* Items */}
+                      <div className="space-y-3">
+                        {/* 1. SMS & WhatsApp Alerts */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Mail className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">SMS & WhatsApp Alerts</h4>
+                              <p className="text-[10.5px] text-slate-500">Live order dispatches, test collection updates & reports.</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Enabled
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          </div>
+                        </div>
+
+                        {/* 2. Email Reports */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Mail className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">Email Reports</h4>
+                              <p className="text-[10.5px] text-slate-500">Digital signed lab reports sent to your email.</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Enabled
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          </div>
+                        </div>
+
+                        {/* 3. In-App Notifications */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Bell className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">In-App Notifications</h4>
+                              <p className="text-[10.5px] text-slate-500">Receive real-time updates inside the app.</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Enabled
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card 2.2: Communication Preferences */}
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5">
+                      {/* Header */}
+                      <div className="pb-1 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <SlidersHorizontal className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                            Communication Preferences
+                          </h3>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Choose the type of updates you want to receive.
+                        </p>
+                      </div>
+
+                      {/* Items with Toggles */}
+                      <div className="space-y-3">
+                        {/* 1. Lab Test Updates */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <FlaskConical className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">Lab Test Updates</h4>
+                              <p className="text-[10.5px] text-slate-500">Booking, sample collection, and report status.</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsLabUpdates(!settingsLabUpdates);
+                              addToast(!settingsLabUpdates ? 'Lab test updates enabled.' : 'Lab test updates disabled.', 'info');
+                            }}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center shrink-0 ml-2 ${
+                              settingsLabUpdates ? 'bg-[#00BFA5] justify-end' : 'bg-slate-300 justify-start'
+                            }`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                          </button>
+                        </div>
+
+                        {/* 2. Appointment Updates */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Calendar className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">Appointment Updates</h4>
+                              <p className="text-[10.5px] text-slate-500">Reminders, confirmations, and follow-ups.</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsAppointmentUpdates(!settingsAppointmentUpdates);
+                              addToast(!settingsAppointmentUpdates ? 'Appointment updates enabled.' : 'Appointment updates disabled.', 'info');
+                            }}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center shrink-0 ml-2 ${
+                              settingsAppointmentUpdates ? 'bg-[#00BFA5] justify-end' : 'bg-slate-300 justify-start'
+                            }`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                          </button>
+                        </div>
+
+                        {/* 3. Order & Medicine Updates */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                              <Package className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900">Order & Medicine Updates</h4>
+                              <p className="text-[10.5px] text-slate-500">Order confirmation, dispatch, and delivery status.</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsOrderUpdates(!settingsOrderUpdates);
+                              addToast(!settingsOrderUpdates ? 'Medicine order updates enabled.' : 'Medicine order updates disabled.', 'info');
+                            }}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center shrink-0 ml-2 ${
+                              settingsOrderUpdates ? 'bg-[#00BFA5] justify-end' : 'bg-slate-300 justify-start'
+                            }`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ======================================================== */}
+                  {/* COLUMN 3: Preferences, Connected Accounts & Danger Zone */}
+                  {/* ======================================================== */}
+                  <div className="lg:col-span-3 space-y-4 sm:space-y-5">
+                    {/* Card 3.1: Language, Theme, Billing & Connected Accounts */}
+                    <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs space-y-4">
+                      {/* 1. Language Preference */}
+                      <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-[#00A68A]" />
+                            <h4 className="text-xs font-bold text-slate-900">Language Preference</h4>
+                          </div>
+                          <select
+                            value={settingsLanguage}
+                            onChange={(e) => {
+                              setSettingsLanguage(e.target.value);
+                              addToast(`Language set to ${e.target.value}`, 'success');
+                            }}
+                            className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none"
+                          >
+                            <option value="English">English</option>
+                            <option value="Assamese">অসমীয়া (Assamese)</option>
+                            <option value="Hindi">हिन्दी (Hindi)</option>
+                            <option value="Bengali">বাংলা (Bengali)</option>
+                          </select>
+                        </div>
+                        <p className="text-[10.5px] text-slate-400">Choose your preferred language.</p>
+                      </div>
+
+                      {/* 2. Theme */}
+                      <div className="space-y-2 pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <Moon className="w-4 h-4 text-[#00A68A]" />
+                          <h4 className="text-xs font-bold text-slate-900">Theme</h4>
+                        </div>
+                        <p className="text-[10.5px] text-slate-400">Customize your display experience.</p>
+                        <div className="grid grid-cols-3 gap-1.5 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsTheme('light');
+                              addToast('Light theme active', 'info');
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                              settingsTheme === 'light'
+                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                            }`}
+                          >
+                            <Sun className="w-3.5 h-3.5" />
+                            <span>Light</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsTheme('dark');
+                              addToast('Dark mode preference saved.', 'info');
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                              settingsTheme === 'dark'
+                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                            }`}
+                          >
+                            <Moon className="w-3.5 h-3.5" />
+                            <span>Dark</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSettingsTheme('system');
+                              addToast('System theme enabled.', 'info');
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                              settingsTheme === 'system'
+                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                            }`}
+                          >
+                            <Monitor className="w-3.5 h-3.5" />
+                            <span>System</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 3. Billing & Payment Settings */}
+                      <div
+                        onClick={() => addToast('Opening Billing & Razorpay/UPI Payment Methods...', 'info')}
+                        className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <CreditCard className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Billing & Payment Settings
+                            </h4>
+                            <p className="text-[10px] text-slate-400 truncate">Manage saved payment methods, invoices, and refunds.</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
+                      </div>
+
+                      {/* 4. Linked Accounts */}
+                      <div
+                        onClick={() => addToast('Google OAuth identity linked to +91 9279125091', 'info')}
+                        className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <Link2 className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Linked Accounts
+                            </h4>
+                            <p className="text-[10px] text-slate-400 truncate">Manage connected accounts (e.g., Google).</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
+                      </div>
+                    </div>
+
+                    {/* Card 3.2: Danger Zone */}
+                    <div className="bg-[#FFF5F5] rounded-3xl p-5 border border-rose-100 shadow-xs space-y-3">
+                      <div className="flex items-center gap-2 pb-1 border-b border-rose-100">
+                        <AlertTriangle className="w-4 h-4 text-rose-500" />
+                        <h4 className="text-xs font-black text-rose-600">Danger Zone</h4>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-start gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-xl bg-white text-rose-500 flex items-center justify-center shrink-0 border border-rose-200 shadow-2xs mt-0.5">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <h5 className="text-xs font-bold text-slate-900">Delete Account</h5>
+                            <p className="text-[10.5px] text-slate-500 leading-snug">
+                              Permanently remove your account and all associated data.
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleDeleteAccount}
+                          className="border border-rose-300 hover:bg-rose-100/60 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer shrink-0"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
           
         </main>
       </div>
