@@ -1700,8 +1700,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* ======================================================== */}
               {/* ROW 1: WELCOME GREETING BANNER                           */}
               {/* ======================================================== */}
-              <div className="relative rounded-2xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-5 sm:p-6 shadow-xs flex items-center justify-between min-h-[115px]">
-                <div className="relative z-10 max-w-xl">
+              <div className="relative rounded-2xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[120px] sm:min-h-[130px]">
+                <div className="relative z-10 max-w-sm md:max-w-md lg:max-w-xl">
                   <div className="flex items-center gap-3">
                     <div className="w-1.5 h-9 sm:h-10 bg-[#0284C7] rounded-full shrink-0" />
                     <div>
@@ -1717,7 +1717,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
 
                 {/* Center ECG Wave Graphic */}
-                <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 lg:w-60 h-16 pointer-events-none opacity-85">
+                <div className="hidden lg:block absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 lg:w-56 h-14 pointer-events-none opacity-80">
                   <img
                     src="/dashboard/ecg-pulse.png"
                     alt="Heart Pulse"
@@ -1725,8 +1725,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   />
                 </div>
 
-                {/* Right Stethoscope & Heart Graphic */}
-                <div className="relative z-10 shrink-0 hidden sm:block h-20 sm:h-24 w-44 sm:w-56 pointer-events-none">
+                {/* Right Stethoscope & Heart Graphic (Increased size, fully visible without cropping) */}
+                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-24 sm:h-28 md:h-32 lg:h-36 w-60 sm:w-72 md:w-84 lg:w-[380px] pointer-events-none">
                   <img
                     src="/dashboard/stethoscope-heart.png"
                     alt="Stethoscope and Heart"
