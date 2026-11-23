@@ -3080,8 +3080,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
               </div>
 
-              {/* Service Category Filter Pills Bar */}
-              <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {/* Service Category Filter Pills Bar (Expanded to fill available space on the right) */}
+              <div className="w-full flex items-center justify-between gap-1 sm:gap-1.5 md:gap-2 overflow-x-auto pb-1 scrollbar-none">
                 {[
                   { id: 'all', label: 'All Bookings', icon: Layers, iconColor: 'text-[#008F83]', count: allUserBookings.length },
                   { id: 'doctor', label: 'Doctor Appointments', icon: Stethoscope, iconColor: 'text-[#0080FF]', count: allUserBookings.filter(b => b?.itemType === 'doctor').length },
@@ -3098,13 +3098,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       key={cat.id}
                       type="button"
                       onClick={() => setServiceCategoryFilter(cat.id)}
-                      className={`px-2 sm:px-2.5 py-1.5 rounded-lg sm:rounded-xl text-[10.5px] sm:text-[11px] font-bold transition shrink-0 cursor-pointer flex items-center gap-1 sm:gap-1.5 shadow-xs ${
+                      className={`flex-1 min-w-fit px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap active:scale-[0.98] ${
                         isActive
                           ? 'bg-[#008F83] text-white border border-[#007A70]'
-                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
+                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
                       }`}
                     >
-                      <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${isActive ? 'text-white' : cat.iconColor}`} />
+                      <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${isActive ? 'text-white' : cat.iconColor}`} />
                       <span>{cat.label} ({cat.count})</span>
                     </button>
                   );
