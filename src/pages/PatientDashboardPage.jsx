@@ -254,6 +254,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [recordsFilter, setRecordsFilter] = useState('all');
   const [recordsSearchQuery, setRecordsSearchQuery] = useState('');
   const [recordsTimeFilter, setRecordsTimeFilter] = useState('all');
+  const [recordsCurrentPage, setRecordsCurrentPage] = useState(1);
+  const [recordsPageSize] = useState(5);
   const [activeRecordMenuId, setActiveRecordMenuId] = useState(null);
   const [isRecordVitalsModalOpen, setIsRecordVitalsModalOpen] = useState(false);
   const [patientVitals, setPatientVitals] = useState(() => {
@@ -5941,6 +5943,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               return true;
             });
 
+            // Paginated records (5 per page to match reference design and align height with right widgets)
+            const totalRecordsPages = Math.max(1, Math.ceil(filteredRecords.length / recordsPageSize));
+            const safeCurrentPage = Math.min(recordsCurrentPage, totalRecordsPages);
+            const paginatedRecords = filteredRecords.slice(
+              (safeCurrentPage - 1) * recordsPageSize,
+              safeCurrentPage * recordsPageSize
+            );
+
             // Handlers
             const handleDownloadAll = () => {
               addToast(`Downloading ${unifiedRecords.length} health records...`, 'success');
@@ -6349,7 +6359,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                              {filteredRecords.map((rec) => {
+                              {paginatedRecords.map((rec) => {
                                 const isPdf = rec.fileType === 'pdf' || rec.documentName.endsWith('.pdf');
                                 const isImg = rec.fileType === 'jpg' || rec.fileType === 'png' || rec.documentName.endsWith('.jpg') || rec.documentName.endsWith('.png');
 
@@ -6510,7 +6520,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                         {/* Mobile Card List View */}
                         <div className="md:hidden divide-y divide-slate-100 p-4 space-y-4">
-                          {filteredRecords.map((rec) => {
+                          {paginatedRecords.map((rec) => {
                             const isPdf = rec.fileType === 'pdf' || rec.documentName.endsWith('.pdf');
                             const isImg = rec.fileType === 'jpg' || rec.fileType === 'png' || rec.documentName.endsWith('.jpg') || rec.documentName.endsWith('.png');
 
@@ -6601,6 +6611,51 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             );
                           })}
                         </div>
+
+                        {/* Pagination Footer - Perfectly balances table height with Storage Usage & Health Insights */}
+                        {filteredRecords.length > recordsPageSize && (
+                          <div className="p-3 sm:p-3.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 bg-slate-50/50">
+                            <span className="font-medium text-slate-500 text-[11px] sm:text-xs">
+                              Showing <span className="font-bold text-slate-800">{(safeCurrentPage - 1) * recordsPageSize + 1}</span> to{' '}
+                              <span className="font-bold text-slate-800">{Math.min(safeCurrentPage * recordsPageSize, filteredRecords.length)}</span> of{' '}
+                              <span className="font-bold text-slate-800">{filteredRecords.length}</span> records
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                disabled={safeCurrentPage === 1}
+                                onClick={() => setRecordsCurrentPage((prev) => Math.max(1, prev - 1))}
+                                className="px-2.5 py-1 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                              >
+                                Previous
+                              </button>
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: totalRecordsPages }, (_, i) => i + 1).map((pageNum) => (
+                                  <button
+                                    key={pageNum}
+                                    type="button"
+                                    onClick={() => setRecordsCurrentPage(pageNum)}
+                                    className={`w-6 h-6 rounded-md text-[11px] font-bold flex items-center justify-center transition cursor-pointer ${
+                                      safeCurrentPage === pageNum
+                                        ? 'bg-[#008F83] text-white shadow-2xs'
+                                        : 'text-slate-600 hover:bg-white border border-transparent hover:border-slate-200'
+                                    }`}
+                                  >
+                                    {pageNum}
+                                  </button>
+                                ))}
+                              </div>
+                              <button
+                                type="button"
+                                disabled={safeCurrentPage === totalRecordsPages}
+                                onClick={() => setRecordsCurrentPage((prev) => Math.min(totalRecordsPages, prev + 1))}
+                                className="px-2.5 py-1 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                              >
+                                Next
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="p-10 text-center space-y-3">
@@ -6616,7 +6671,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
 
                   {/* Right Column: Timeline & Usage Widgets */}
-                  <div className="lg:col-span-4 space-y-4 sm:space-y-5">
+                  <div className="lg:col-span-4 space-y-4 sm:space-y-5 sticky top-6 self-start">
                     {/* Widget 1: My Health Timeline */}
                     <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs space-y-4">
                       <div className="flex items-center gap-2">
