@@ -2987,103 +2987,43 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           {activeMenu === 'bookings' && (
             <div className="space-y-4 sm:space-y-5">
-              {/* Header Hero Banner with Medical Illustration */}
-              <div className="relative rounded-2xl sm:rounded-3xl border border-white/80 bg-white shadow-[0_4px_24px_-4px_rgba(0,143,131,0.07)] p-5 sm:p-6 overflow-hidden flex items-center justify-between">
-                {/* Background soft turquoise wave accent */}
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-[#E1F4FC]/40 to-[#D4F0FA]/70" />
-                
-                {/* Left Text and Icon */}
-                <div className="relative z-10 flex items-center gap-3.5 sm:gap-4 max-w-2xl min-w-0">
-                  <div className="w-12 h-12 rounded-2xl bg-white border border-[#00BFA5]/30 shadow-xs flex items-center justify-center text-[#00A68A] shrink-0">
-                    <div className="relative flex items-center justify-center">
-                      <Calendar className="w-7 h-7 text-[#00A68A]" />
-                      <Plus className="w-3.5 h-3.5 text-[#00A68A] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 stroke-[3]" />
+              {/* Header Hero Banner with Stethoscope & Heart 3D Artwork (Matching Reference Banner) */}
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[110px] sm:min-h-[125px]">
+                {/* Left Text with Vertical Cyan Pill Accent */}
+                <div className="relative z-10 max-w-sm md:max-w-md lg:max-w-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-9 sm:h-10 bg-[#0284C7] rounded-full shrink-0" />
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-[#0B2238] tracking-tight">
+                        My Bookings
+                      </h1>
+                      <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">
+                        Manage and view all services booked through your account (Doctor Appointments, Surgery Packages, Medicine Orders, Lab Tests, Physiotherapy, and Wellness Packages).
+                      </p>
                     </div>
-                  </div>
-                  <div>
-                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                      My Bookings
-                    </h1>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                      Manage and view all services booked through your account (Doctor Appointments, Surgery Packages, Medicine Orders, Lab Tests, Physiotherapy, and Wellness Packages).
-                    </p>
                   </div>
                 </div>
 
-                {/* Right: Healthcare Artwork (Stethoscope, Checklist Clipboard, Medical Shield & Leaves) */}
-                <div className="hidden md:flex items-center justify-end shrink-0 relative w-48 sm:w-56 h-28 pointer-events-none select-none">
-                  <svg viewBox="0 0 240 140" className="w-full h-full object-contain overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#00B4D8" />
-                        <stop offset="100%" stopColor="#0077B6" />
-                      </linearGradient>
-                      <linearGradient id="boardGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#FFFFFF" />
-                        <stop offset="100%" stopColor="#F0F9FF" />
-                      </linearGradient>
-                      <filter id="shadowFilter" x="-10%" y="-10%" width="130%" height="130%">
-                        <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.12" />
-                      </filter>
-                    </defs>
+                {/* Center ECG Wave Graphic */}
+                <div className="hidden lg:block absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 lg:w-56 h-14 pointer-events-none opacity-80">
+                  <img
+                    src="/dashboard/ecg-pulse.png"
+                    alt="Heart Pulse"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
 
-                    {/* Clipboard Background */}
-                    <g transform="translate(110, 10) rotate(8)" filter="url(#shadowFilter)">
-                      <rect x="0" y="10" width="75" height="105" rx="12" fill="url(#boardGrad)" stroke="#0284C7" strokeWidth="2.5" />
-                      <rect x="22" y="2" width="31" height="12" rx="4" fill="#0C4A6E" />
-                      <rect x="27" y="5" width="21" height="5" rx="2.5" fill="#38BDF8" />
-
-                      {/* Checkmark 1 */}
-                      <circle cx="16" cy="32" r="5" fill="#10B981" />
-                      <path d="M14 32 L15.5 33.5 L18.5 30.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="26" y="30" width="36" height="4" rx="2" fill="#BAE6FD" />
-
-                      {/* Checkmark 2 */}
-                      <circle cx="16" cy="48" r="5" fill="#10B981" />
-                      <path d="M14 48 L15.5 49.5 L18.5 46.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="26" y="46" width="30" height="4" rx="2" fill="#BAE6FD" />
-
-                      {/* Checkmark 3 */}
-                      <circle cx="16" cy="64" r="5" fill="#10B981" />
-                      <path d="M14 64 L15.5 65.5 L18.5 62.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="26" y="62" width="34" height="4" rx="2" fill="#BAE6FD" />
-
-                      <rect x="12" y="80" width="50" height="4" rx="2" fill="#E0F2FE" />
-                      <rect x="12" y="90" width="38" height="4" rx="2" fill="#E0F2FE" />
-                    </g>
-
-                    {/* Stethoscope Loops */}
-                    <path
-                      d="M10 65 C10 40, 35 25, 60 25 C85 25, 95 45, 95 65 C95 95, 75 115, 50 115 C30 115, 20 100, 20 85 C20 70, 35 60, 50 60 C70 60, 85 75, 85 95 C85 110, 110 120, 140 105"
-                      fill="none"
-                      stroke="#0B2545"
-                      strokeWidth="4.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path d="M45 28 C45 15, 52 8, 62 8 C72 8, 78 15, 78 28" fill="none" stroke="#64748B" strokeWidth="3" strokeLinecap="round" />
-                    <circle cx="45" cy="18" r="3" fill="#0B2545" />
-                    <circle cx="78" cy="18" r="3" fill="#0B2545" />
-                    <circle cx="20" cy="85" r="7" fill="#00A68A" stroke="#FFFFFF" strokeWidth="2" filter="url(#shadowFilter)" />
-                    <circle cx="20" cy="85" r="3" fill="#0B2545" />
-
-                    {/* Fresh Green Medical Leaves */}
-                    <path d="M175 45 C190 40, 215 50, 215 65 C200 65, 180 60, 175 45 Z" fill="#22C55E" />
-                    <path d="M178 50 C188 47, 205 53, 205 62" stroke="#16A34A" strokeWidth="1" />
-                    <path d="M170 30 C180 20, 200 25, 202 38 C190 40, 178 36, 170 30 Z" fill="#4ADE80" />
-
-                    {/* Medical Shield */}
-                    <g transform="translate(160, 50)" filter="url(#shadowFilter)">
-                      <path
-                        d="M26 0 C38 4, 48 2, 52 0 C52 24, 46 44, 26 56 C6 44, 0 24, 0 0 C4 2, 14 4, 26 0 Z"
-                        fill="url(#shieldGrad)"
-                        stroke="#E0F2FE"
-                        strokeWidth="2"
-                      />
-                      <rect x="22" y="14" width="8" height="26" rx="2" fill="#FFFFFF" />
-                      <rect x="13" y="23" width="26" height="8" rx="2" fill="#FFFFFF" />
-                    </g>
-                  </svg>
+                {/* Right Stethoscope & Heart 3D Graphic */}
+                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-24 sm:h-28 md:h-32 lg:h-36 w-60 sm:w-72 md:w-84 lg:w-[380px] pointer-events-none">
+                  <img
+                    src="/dashboard/stethoscope-heart.png"
+                    alt="Stethoscope and Heart"
+                    className="w-full h-full object-contain object-right drop-shadow-sm select-none"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/dashboard/welcome-banner.jpg';
+                    }}
+                  />
                 </div>
               </div>
 
