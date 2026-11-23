@@ -73,7 +73,10 @@ import {
   Droplet,
   AlertTriangle,
   AlertCircle,
-  ListFilter
+  ListFilter,
+  MoreVertical,
+  BarChart3,
+  Hourglass
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -228,6 +231,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [reportFilter, setReportFilter] = useState('all');
   const [reportSearchQuery, setReportSearchQuery] = useState('');
   const [reportTimeFilter, setReportTimeFilter] = useState('all');
+
+  // Doctor's Prescription Vault States
+  const [rxStatusFilter, setRxStatusFilter] = useState('all');
+  const [rxSearchQuery, setRxSearchQuery] = useState('');
+  const [rxTimeFilter, setRxTimeFilter] = useState('all');
+  const [activeRxMenuId, setActiveRxMenuId] = useState(null);
 
   // Ensure a verified patient session is active so reloading keeps the patient dashboard open
   useEffect(() => {
@@ -1661,7 +1670,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA (Header + Dashboard Body)           */}
       {/* ======================================================== */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
@@ -1821,7 +1830,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' ? 'bg-[#EAF5FB]' : ''}`}>
+        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' || activeMenu === 'prescription' ? 'bg-[#EAF5FB]' : ''}`}>
           {activeMenu === 'dashboard' && (
             <>
               {/* ======================================================== */}
@@ -3371,175 +3380,925 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           {/* UPLOAD DOCTOR'S PRESCRIPTION VAULT VIEW                  */}
           {/* ======================================================== */}
-          {activeMenu === 'prescription' && (
-            <div className="space-y-4 sm:space-y-6">
-              {/* Header Card with Primary Upload Action */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <UploadCloud className="w-6 h-6 text-[#14B8A6]" />
-                    <span>Doctor's Prescription Vault</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Upload handwritten or digital doctor prescriptions for registered pharmacist verification and quick re-orders.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsPrescriptionUploadModalOpen(true)}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
-                >
-                  <UploadCloud className="w-4 h-4" />
-                  <span>Upload New Prescription</span>
-                </button>
-              </div>
+          {activeMenu === 'prescription' && (() => {
+            const totalRxCount = userPrescriptions.length;
+            const underReviewRxCount = userPrescriptions.filter(rx => {
+              const st = String(rx.status || '').toLowerCase();
+              return st.includes('pending') || st.includes('review') || st.includes('audit');
+            }).length;
+            const approvedRxCount = userPrescriptions.filter(rx => {
+              const st = String(rx.status || '').toLowerCase();
+              return st.includes('approved') || st.includes('verified');
+            }).length;
+            const rejectedRxCount = userPrescriptions.filter(rx => {
+              const st = String(rx.status || '').toLowerCase();
+              return st.includes('rejected');
+            }).length;
 
-              {/* Upload Dropzone Hero Card */}
-              <div 
-                onClick={() => setIsPrescriptionUploadModalOpen(true)}
-                className="bg-gradient-to-br from-teal-50/60 via-emerald-50/40 to-white rounded-3xl p-6 sm:p-8 border-2 border-dashed border-[#14B8A6]/40 hover:border-[#14B8A6] transition cursor-pointer text-center group shadow-xs"
-              >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white text-[#14B8A6] border border-teal-100 flex items-center justify-center mx-auto mb-3 shadow-xs group-hover:scale-105 transition-transform">
-                  <UploadCloud className="w-7 h-7 sm:w-8 sm:h-8" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                  Click here to Upload Doctor's Prescription
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
-                  Drag & drop your prescription image (JPG, PNG) or PDF document. Our Guwahati chief pharmacist verifies and pre-fills your medicine cart within 15 minutes.
-                </p>
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-teal-200 text-[#008F83] text-xs font-bold shadow-2xs">
-                  <span>🔒 100% Confidential • Verified by Licensed Pharmacists</span>
-                </div>
-              </div>
+            const filteredPrescriptions = (userPrescriptions || []).filter(rx => {
+              const st = String(rx.status || '').toLowerCase();
+              if (rxStatusFilter === 'under_review' && !st.includes('pending') && !st.includes('review') && !st.includes('audit')) return false;
+              if (rxStatusFilter === 'approved' && !st.includes('approved') && !st.includes('verified')) return false;
+              if (rxStatusFilter === 'rejected' && !st.includes('rejected')) return false;
 
-              {/* Active & Past Prescriptions List */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-800">
-                  Uploaded & Verified Prescriptions ({userPrescriptions.length})
-                </h3>
-                {userPrescriptions.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {userPrescriptions.map((rx) => {
-                      const stLower = String(rx.status || '').toLowerCase();
-                      const isApproved = stLower.includes('approved') || stLower.includes('verified');
-                      const isRejected = stLower.includes('rejected');
-                      return (
-                        <div
-                          key={rx.id}
-                          className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                              <div>
-                                <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
-                                <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName || 'Doctor Prescription'}</h4>
-                                <p className="text-[11px] text-slate-500">{rx.specialty || 'General Care'} • {rx.hospital || rx.clinicName || 'Assam Health Desk'}</p>
+              if (rxSearchQuery.trim()) {
+                const q = rxSearchQuery.trim().toLowerCase();
+                const matchName = String(rx.fileName || '').toLowerCase().includes(q);
+                const matchDoc = String(rx.doctorName || '').toLowerCase().includes(q);
+                const matchHosp = String(rx.hospital || rx.clinicName || '').toLowerCase().includes(q);
+                const matchId = String(rx.id || '').toLowerCase().includes(q);
+                if (!matchName && !matchDoc && !matchHosp && !matchId) return false;
+              }
+              return true;
+            });
+
+            const handleDownloadAllPrescriptions = () => {
+              if (userPrescriptions.length === 0) {
+                addToast('No prescriptions uploaded yet to download.', 'info');
+                return;
+              }
+              userPrescriptions.forEach((rx, idx) => {
+                setTimeout(() => downloadPrescriptionFile(rx), idx * 300);
+              });
+              addToast(`Downloading ${userPrescriptions.length} prescriptions...`, 'success');
+            };
+
+            const handleSetReminders = () => {
+              addToast('Medicine refill and doctor follow-up reminders enabled!', 'success');
+            };
+
+            const handleOrderMedicines = (rx) => {
+              const targetRx = rx || userPrescriptions.find(r => {
+                const st = String(r.status || '').toLowerCase();
+                return st.includes('approved') || st.includes('verified');
+              });
+              if (targetRx) {
+                addToast(`Prescribed medicines from ${targetRx.id} added to cart!`, 'success');
+                openCart();
+              } else {
+                addToast('Your prescriptions are currently being reviewed by our licensed pharmacist.', 'info');
+              }
+            };
+
+            return (
+              <div className="space-y-4 sm:space-y-5">
+                {/* 1. Header Hero Banner with Rx Medical Vector Artwork */}
+                <div className="relative rounded-2xl sm:rounded-3xl border border-white/80 bg-white shadow-[0_4px_24px_-4px_rgba(0,143,131,0.07)] p-5 sm:p-6 overflow-hidden flex items-center justify-between">
+                  {/* Background wave gradient */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-[#E1F4FC]/40 to-[#D4F0FA]/70" />
+
+                  {/* Left: Rx Icon Box & Text */}
+                  <div className="relative z-10 flex items-center gap-3.5 sm:gap-4 max-w-2xl min-w-0">
+                    <div className="w-12 h-12 rounded-2xl bg-[#E8FAF5] border border-teal-100 flex items-center justify-center text-[#00A68A] shrink-0 font-black text-xl select-none shadow-2xs">
+                      <span className="font-serif italic font-extrabold text-2xl tracking-tighter text-[#00A68A]">℞</span>
+                    </div>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Doctor's Prescription Vault
+                      </h1>
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Upload, manage, and track your doctor prescriptions for verified pharmacist review and quick medicine orders.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right: Medical Clipboard, Pill Bottle, Leaves & Shield Artwork */}
+                  <div className="hidden md:flex items-center justify-end shrink-0 relative w-48 sm:w-56 h-28 pointer-events-none select-none">
+                    <svg viewBox="0 0 240 140" className="w-full h-full object-contain overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="rxClipGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#38BDF8" />
+                          <stop offset="100%" stopColor="#0284C7" />
+                        </linearGradient>
+                        <filter id="rxDropShadow" x="-10%" y="-10%" width="130%" height="130%">
+                          <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.12" />
+                        </filter>
+                      </defs>
+
+                      {/* Leaves in background */}
+                      <g opacity="0.95">
+                        <path d="M72 75 C58 60, 52 42, 64 32 C78 24, 90 38, 82 60 Z" fill="#6EE7B7" />
+                        <path d="M58 88 C44 78, 40 60, 50 50 C62 40, 72 54, 65 78 Z" fill="#34D399" />
+                        <path d="M168 70 C182 56, 192 38, 182 28 C170 20, 158 34, 162 55 Z" fill="#6EE7B7" />
+                        <path d="M178 86 C194 76, 198 58, 188 48 C176 38, 166 54, 172 76 Z" fill="#34D399" />
+                      </g>
+
+                      {/* Clipboard */}
+                      <g filter="url(#rxDropShadow)" transform="translate(85, 14)">
+                        <rect x="0" y="8" width="70" height="92" rx="10" fill="#38BDF8" stroke="#0284C7" strokeWidth="2" />
+                        <rect x="18" y="0" width="34" height="14" rx="4" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="1.5" />
+                        <circle cx="35" cy="7" r="3" fill="#64748B" />
+                        <rect x="7" y="15" width="56" height="78" rx="6" fill="#FFFFFF" />
+                        <text x="13" y="37" fontFamily="serif" fontSize="21" fontWeight="bold" fill="#0284C7">℞</text>
+                        <line x1="36" y1="27" x2="55" y2="27" stroke="#93C5FD" strokeWidth="2.5" strokeLinecap="round" />
+                        <line x1="36" y1="34" x2="50" y2="34" stroke="#BAE6FD" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="13" y1="46" x2="57" y2="46" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="13" y1="54" x2="57" y2="54" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="13" y1="62" x2="48" y2="62" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="13" y1="70" x2="40" y2="70" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="13" y1="78" x2="52" y2="78" stroke="#E2E8F0" strokeWidth="2" strokeLinecap="round" />
+                      </g>
+
+                      {/* Pill Bottle */}
+                      <g filter="url(#rxDropShadow)" transform="translate(64, 60)">
+                        <rect x="4" y="0" width="22" height="7" rx="2" fill="#00BFA5" />
+                        <rect x="6" y="6" width="18" height="4" fill="#E0F2FE" />
+                        <rect x="0" y="9" width="30" height="42" rx="6" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="3" y="16" width="24" height="24" rx="2" fill="#E8FAF5" />
+                        <line x1="6" y1="23" x2="24" y2="23" stroke="#00A68A" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="6" y1="28" x2="20" y2="28" stroke="#00BFA5" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="6" y1="33" x2="16" y2="33" stroke="#99F6E4" strokeWidth="1.5" strokeLinecap="round" />
+                        <g transform="translate(18, 44) rotate(-30)">
+                          <rect x="0" y="0" width="14" height="6" rx="3" fill="#00BFA5" />
+                          <rect x="7" y="0" width="7" height="6" rx="3" fill="#38BDF8" />
+                        </g>
+                      </g>
+
+                      {/* Plus Shield Badge */}
+                      <g filter="url(#rxDropShadow)" transform="translate(148, 70)">
+                        <circle cx="20" cy="20" r="20" fill="#00BFA5" />
+                        <circle cx="20" cy="20" r="16.5" fill="#00A68A" />
+                        <rect x="17.5" y="10" width="5" height="20" rx="2.5" fill="#FFFFFF" />
+                        <rect x="10" y="17.5" width="20" height="5" rx="2.5" fill="#FFFFFF" />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+
+                {/* 2. KPI / Stat Metrics Cards Row (4 Cards + Primary Button) */}
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 items-stretch">
+                  {/* Total Prescriptions */}
+                  <div className="bg-white rounded-2xl sm:rounded-[22px] p-4 sm:p-5 border border-blue-100/80 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-[#00A68A]" />
+                    </div>
+                    <div>
+                      <span className="text-xl sm:text-2xl font-black text-slate-900 block leading-tight">
+                        {totalRxCount}
+                      </span>
+                      <span className="text-xs font-bold text-slate-500 block">Total Prescriptions</span>
+                    </div>
+                  </div>
+
+                  {/* Under Review */}
+                  <div className="bg-white rounded-2xl sm:rounded-[22px] p-4 sm:p-5 border border-blue-100/80 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-[#EAF5FB] text-[#0284C7] flex items-center justify-center shrink-0">
+                      <Hourglass className="w-5 h-5 text-[#0284C7]" />
+                    </div>
+                    <div>
+                      <span className="text-xl sm:text-2xl font-black text-slate-900 block leading-tight">
+                        {underReviewRxCount}
+                      </span>
+                      <span className="text-xs font-bold text-slate-500 block">Under Review</span>
+                    </div>
+                  </div>
+
+                  {/* Approved */}
+                  <div className="bg-white rounded-2xl sm:rounded-[22px] p-4 sm:p-5 border border-blue-100/80 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5 text-[#00A68A]" />
+                    </div>
+                    <div>
+                      <span className="text-xl sm:text-2xl font-black text-slate-900 block leading-tight">
+                        {approvedRxCount}
+                      </span>
+                      <span className="text-xs font-bold text-slate-500 block">Approved</span>
+                    </div>
+                  </div>
+
+                  {/* Rejected */}
+                  <div className="bg-white rounded-2xl sm:rounded-[22px] p-4 sm:p-5 border border-blue-100/80 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-[#FDE8E8] text-[#E02424] flex items-center justify-center shrink-0">
+                      <XCircle className="w-5 h-5 text-[#E02424]" />
+                    </div>
+                    <div>
+                      <span className="text-xl sm:text-2xl font-black text-slate-900 block leading-tight">
+                        {rejectedRxCount}
+                      </span>
+                      <span className="text-xs font-bold text-slate-500 block">Rejected</span>
+                    </div>
+                  </div>
+
+                  {/* Action Button: Upload New Prescription */}
+                  <button
+                    type="button"
+                    onClick={() => setIsPrescriptionUploadModalOpen(true)}
+                    className="col-span-2 lg:col-span-1 bg-[#008F83] hover:bg-[#007A70] text-white p-4 sm:p-5 rounded-2xl sm:rounded-[22px] font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition cursor-pointer group"
+                  >
+                    <UploadCloud className="w-5 h-5 text-white/90 group-hover:scale-110 transition-transform shrink-0" />
+                    <span>Upload New Prescription</span>
+                  </button>
+                </div>
+
+                {/* 3. Middle Section: Hero Upload Dropzone Card + How It Works Card */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                  {/* Left: Upload Doctor's Prescription Hero Card with Dashed Border */}
+                  <div
+                    onClick={() => setIsPrescriptionUploadModalOpen(true)}
+                    className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-7 border-2 border-dashed border-[#00BFA5]/60 hover:border-[#00BFA5] shadow-xs flex flex-col sm:flex-row items-center gap-6 cursor-pointer group transition-all"
+                  >
+                    {/* 3D-styled vector illustration */}
+                    <div className="w-36 h-28 shrink-0 relative flex items-center justify-center select-none pointer-events-none group-hover:scale-105 transition-transform">
+                      <svg viewBox="0 0 160 120" className="w-full h-full object-contain overflow-visible" fill="none">
+                        {/* Leaves */}
+                        <path d="M48 65 C38 52, 34 38, 44 30 C56 22, 65 34, 58 52 Z" fill="#6EE7B7" />
+                        <path d="M36 78 C24 70, 20 54, 30 44 C40 36, 50 48, 42 70 Z" fill="#34D399" />
+                        <path d="M125 60 C136 48, 144 32, 136 24 C126 16, 116 28, 120 46 Z" fill="#6EE7B7" />
+                        <path d="M135 74 C148 64, 152 48, 144 40 C134 32, 124 46, 130 66 Z" fill="#34D399" />
+                        {/* Clipboard */}
+                        <rect x="52" y="16" width="56" height="74" rx="8" fill="#38BDF8" stroke="#0284C7" strokeWidth="2" />
+                        <rect x="66" y="10" width="28" height="11" rx="3" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="1.2" />
+                        <circle cx="80" cy="15.5" r="2.5" fill="#64748B" />
+                        <rect x="58" y="22" width="44" height="62" rx="4" fill="#FFFFFF" />
+                        <text x="63" y="40" fontFamily="serif" fontSize="16" fontWeight="bold" fill="#0284C7">℞</text>
+                        <line x1="81" y1="32" x2="96" y2="32" stroke="#93C5FD" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="81" y1="38" x2="92" y2="38" stroke="#BAE6FD" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="63" y1="48" x2="97" y2="48" stroke="#E2E8F0" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="63" y1="54" x2="97" y2="54" stroke="#E2E8F0" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="63" y1="60" x2="90" y2="60" stroke="#E2E8F0" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="63" y1="66" x2="84" y2="66" stroke="#E2E8F0" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="63" y1="72" x2="94" y2="72" stroke="#E2E8F0" strokeWidth="1.5" strokeLinecap="round" />
+                        {/* Bottle */}
+                        <rect x="40" y="52" width="18" height="6" rx="1.5" fill="#00BFA5" />
+                        <rect x="36" y="58" width="26" height="34" rx="5" fill="#FFFFFF" stroke="#0284C7" strokeWidth="1.2" />
+                        <rect x="39" y="64" width="20" height="20" rx="2" fill="#E8FAF5" />
+                        <line x1="42" y1="70" x2="56" y2="70" stroke="#00A68A" strokeWidth="1.5" strokeLinecap="round" />
+                        <line x1="42" y1="74" x2="53" y2="74" stroke="#00BFA5" strokeWidth="1.2" strokeLinecap="round" />
+                        <line x1="42" y1="78" x2="50" y2="78" stroke="#99F6E4" strokeWidth="1.2" strokeLinecap="round" />
+                        {/* Plus Badge */}
+                        <circle cx="106" cy="62" r="16" fill="#00BFA5" />
+                        <circle cx="106" cy="62" r="13" fill="#00A68A" />
+                        <rect x="104" y="54" width="4" height="16" rx="2" fill="#FFFFFF" />
+                        <rect x="98" y="60" width="16" height="4" rx="2" fill="#FFFFFF" />
+                      </svg>
+                    </div>
+
+                    {/* Content & Actions */}
+                    <div className="flex-1 min-w-0 text-center sm:text-left">
+                      <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                        Upload Doctor's Prescription
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Drag & drop your prescription (JPG, PNG, PDF) or click to browse
+                      </p>
+
+                      {/* Requirement Badges */}
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 mt-3">
+                        <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
+                          <span>JPG / PNG / PDF</span>
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
+                          <span>Max 10 MB</span>
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
+                          <span>Secure & Encrypted</span>
+                        </span>
+                      </div>
+
+                      {/* Choose File Button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsPrescriptionUploadModalOpen(true);
+                        }}
+                        className="mt-4 bg-[#008F83] hover:bg-[#007A70] text-white px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs inline-flex items-center gap-2 cursor-pointer transition"
+                      >
+                        <UploadCloud className="w-4 h-4 text-white" />
+                        <span>Choose File</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right: How It Works? Stepper Card */}
+                  <div className="lg:col-span-5 bg-white rounded-3xl p-6 border border-blue-100/80 shadow-xs flex flex-col justify-between">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="w-5 h-5 rounded-full border border-teal-500 text-[#008F83] flex items-center justify-center text-xs font-extrabold select-none">
+                        ⓘ
+                      </span>
+                      <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
+                        How It Works?
+                      </h3>
+                    </div>
+
+                    <div className="space-y-3.5 relative">
+                      {/* Step 1 */}
+                      <div className="flex items-start gap-3 relative">
+                        <div className="w-6 h-6 rounded-full bg-[#E8FAF5] text-[#00A68A] font-extrabold text-xs flex items-center justify-center shrink-0 border border-teal-200 mt-0.5">
+                          1
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900">Upload Prescription</h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                            Add a clear photo or PDF of your prescription.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Connector Line */}
+                      <div className="w-0.5 h-5 bg-blue-100 ml-3 -my-1" />
+
+                      {/* Step 2 */}
+                      <div className="flex items-start gap-3 relative">
+                        <div className="w-6 h-6 rounded-full bg-[#EAF5FB] text-[#0284C7] font-extrabold text-xs flex items-center justify-center shrink-0 border border-blue-200 mt-0.5">
+                          2
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900">Pharmacist Review</h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                            Our licensed pharmacist verifies and processes it.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Connector Line */}
+                      <div className="w-0.5 h-5 bg-blue-100 ml-3 -my-1" />
+
+                      {/* Step 3 */}
+                      <div className="flex items-start gap-3 relative">
+                        <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7E22CE] font-extrabold text-xs flex items-center justify-center shrink-0 border border-purple-200 mt-0.5">
+                          3
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-900">Get Medicines</h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                            Receive a confirmed medicine order with pricing.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Filter Tabs Bar & Search / Time Dropdown */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
+                  {/* Left: Filter Pills */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-none">
+                    <button
+                      type="button"
+                      onClick={() => setRxStatusFilter('all')}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                        rxStatusFilter === 'all'
+                          ? 'bg-[#008F83] text-white shadow-xs'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                      }`}
+                    >
+                      <ListFilter className="w-3.5 h-3.5" />
+                      <span>All Prescriptions ({totalRxCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setRxStatusFilter('under_review')}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                        rxStatusFilter === 'under_review'
+                          ? 'bg-[#008F83] text-white shadow-xs'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                      }`}
+                    >
+                      <Hourglass className="w-3.5 h-3.5 text-blue-500" />
+                      <span>Under Review ({underReviewRxCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setRxStatusFilter('approved')}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                        rxStatusFilter === 'approved'
+                          ? 'bg-[#008F83] text-white shadow-xs'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                      }`}
+                    >
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Approved ({approvedRxCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setRxStatusFilter('rejected')}
+                      className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                        rxStatusFilter === 'rejected'
+                          ? 'bg-[#008F83] text-white shadow-xs'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80'
+                      }`}
+                    >
+                      <X className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Rejected ({rejectedRxCount})</span>
+                    </button>
+                  </div>
+
+                  {/* Right: Search & Time Dropdown */}
+                  <div className="flex items-center gap-2.5 shrink-0 self-end md:self-auto w-full md:w-auto">
+                    <div className="relative flex-1 md:w-56">
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={rxSearchQuery}
+                        onChange={(e) => setRxSearchQuery(e.target.value)}
+                        placeholder="Search prescriptions..."
+                        className="w-full pl-9 pr-3.5 py-2 bg-white border border-slate-200/90 rounded-full text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#00BFA5] focus:ring-1 focus:ring-[#00BFA5] shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="relative shrink-0">
+                      <select
+                        value={rxTimeFilter}
+                        onChange={(e) => setRxTimeFilter(e.target.value)}
+                        className="appearance-none bg-white border border-slate-200/90 rounded-full pl-3.5 pr-8 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-[#00BFA5] cursor-pointer shadow-2xs"
+                      >
+                        <option value="all">All Time</option>
+                        <option value="this_month">This Month</option>
+                        <option value="last_month">Last Month</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Main 2-Column Section: Table on Left + Widgets on Right */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+                  {/* Left Column: Prescriptions Table Card */}
+                  <div className="lg:col-span-8 bg-white rounded-3xl border border-blue-100/80 shadow-xs overflow-hidden">
+                    {filteredPrescriptions.length > 0 ? (
+                      <>
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                                <th className="py-3.5 px-5">Prescription</th>
+                                <th className="py-3.5 px-4">Uploaded On</th>
+                                <th className="py-3.5 px-4">Doctor / Hospital</th>
+                                <th className="py-3.5 px-4">Status</th>
+                                <th className="py-3.5 px-5 text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
+                              {filteredPrescriptions.map((rx) => {
+                                const stLower = String(rx.status || '').toLowerCase();
+                                const isApproved = stLower.includes('approved') || stLower.includes('verified');
+                                const isRejected = stLower.includes('rejected');
+                                const isImage = rx.imagePreview || rx.fileType?.includes('image') || rx.fileName?.match(/\.(jpg|jpeg|png|webp)$/i);
+
+                                return (
+                                  <tr key={rx.id} className="hover:bg-slate-50/70 transition-colors">
+                                    {/* Prescription Document Thumbnail + Name + Size */}
+                                    <td className="py-4 px-5">
+                                      <div className="flex items-center gap-3">
+                                        {/* Document Thumbnail Preview */}
+                                        <div className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs relative">
+                                          {isImage && (rx.imagePreview || rx.fileUrl) ? (
+                                            <img
+                                              src={rx.imagePreview || rx.fileUrl}
+                                              alt={rx.fileName || 'Prescription Preview'}
+                                              className="w-full h-full object-cover"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-1">
+                                              <span className="text-[9px] font-mono font-bold text-rose-500 bg-rose-50 px-1 rounded">PDF</span>
+                                              <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        <div className="min-w-0">
+                                          <p className="font-bold text-slate-900 truncate max-w-[190px]">
+                                            {rx.fileName || `${rx.doctorName ? `Dr_${rx.doctorName.replace(/\s+/g, '_')}_` : ''}Prescription.pdf`}
+                                          </p>
+                                          <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                                            {(rx.fileType || (rx.fileName?.endsWith('.pdf') ? 'PDF' : 'JPG')).toUpperCase()} • {rx.fileSize || '1.2 MB'}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </td>
+
+                                    {/* Uploaded On */}
+                                    <td className="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">
+                                      {rx.uploadedAt || rx.dateOfIssue || '20 Nov 2026, 10:24 AM'}
+                                    </td>
+
+                                    {/* Doctor / Hospital */}
+                                    <td className="py-4 px-4 min-w-[160px]">
+                                      <p className="font-bold text-slate-900">
+                                        {rx.doctorName || 'Dr. R. Sharma'}
+                                      </p>
+                                      <p className="text-[11px] text-slate-500 mt-0.5">
+                                        {rx.hospital || rx.clinicName || 'City Care Hospital'}
+                                      </p>
+                                    </td>
+
+                                    {/* Status Pill Badge */}
+                                    <td className="py-4 px-4 whitespace-nowrap">
+                                      {isApproved ? (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
+                                          <Check className="w-3.5 h-3.5" />
+                                          <span>Approved</span>
+                                        </span>
+                                      ) : isRejected ? (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#FEE2E2] text-[#DC2626] border border-rose-200">
+                                          <X className="w-3.5 h-3.5" />
+                                          <span>Rejected</span>
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#D97706] border border-amber-200">
+                                          <Hourglass className="w-3.5 h-3.5" />
+                                          <span>Under Review</span>
+                                        </span>
+                                      )}
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="py-4 px-5 text-right whitespace-nowrap relative">
+                                      <div className="inline-flex items-center gap-1.5 justify-end">
+                                        {/* View Button */}
+                                        <button
+                                          type="button"
+                                          onClick={() => setSelectedPrescription(rx)}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition cursor-pointer"
+                                        >
+                                          <Eye className="w-3.5 h-3.5 text-teal-600" />
+                                          <span>View</span>
+                                        </button>
+
+                                        {/* Download Icon Button */}
+                                        {(rx.fileUrl || rx.imagePreview) && (
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              downloadPrescriptionFile(rx);
+                                              addToast('Downloading prescription file...', 'info');
+                                            }}
+                                            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                            title="Download Prescription"
+                                          >
+                                            <Download className="w-3.5 h-3.5" />
+                                          </button>
+                                        )}
+
+                                        {/* More Options / Three Dots Menu */}
+                                        <div className="relative">
+                                          <button
+                                            type="button"
+                                            onClick={() => setActiveRxMenuId(activeRxMenuId === rx.id ? null : rx.id)}
+                                            className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                            title="More Actions"
+                                          >
+                                            <MoreVertical className="w-4 h-4" />
+                                          </button>
+
+                                          {/* Dropdown Menu */}
+                                          {activeRxMenuId === rx.id && (
+                                            <div
+                                              onMouseLeave={() => setActiveRxMenuId(null)}
+                                              className="absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-30 text-left"
+                                            >
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  setActiveRxMenuId(null);
+                                                  setSelectedPrescription(rx);
+                                                }}
+                                                className="w-full flex items-center gap-2 px-3.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer"
+                                              >
+                                                <Eye className="w-3.5 h-3.5 text-teal-600" />
+                                                <span>View Document</span>
+                                              </button>
+
+                                              {isApproved && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setActiveRxMenuId(null);
+                                                    handleOrderMedicines(rx);
+                                                  }}
+                                                  className="w-full flex items-center gap-2 px-3.5 py-1.5 text-xs text-[#008F83] font-bold hover:bg-teal-50 cursor-pointer"
+                                                >
+                                                  <ShoppingCart className="w-3.5 h-3.5 text-[#008F83]" />
+                                                  <span>Order Medicines</span>
+                                                </button>
+                                              )}
+
+                                              {(rx.fileUrl || rx.imagePreview) && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setActiveRxMenuId(null);
+                                                    downloadPrescriptionFile(rx);
+                                                    addToast('Downloading prescription file...', 'info');
+                                                  }}
+                                                  className="w-full flex items-center gap-2 px-3.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer"
+                                                >
+                                                  <Download className="w-3.5 h-3.5 text-slate-500" />
+                                                  <span>Download</span>
+                                                </button>
+                                              )}
+
+                                              <button
+                                                type="button"
+                                                onClick={async () => {
+                                                  setActiveRxMenuId(null);
+                                                  if (window.confirm('Are you sure you want to remove this prescription?')) {
+                                                    await deletePrescription(rx.id);
+                                                    addToast('Prescription removed from vault.', 'info');
+                                                  }
+                                                }}
+                                                className="w-full flex items-center gap-2 px-3.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 cursor-pointer"
+                                              >
+                                                <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                                                <span>Delete</span>
+                                              </button>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Mobile Card List View */}
+                        <div className="md:hidden divide-y divide-slate-100 p-4 space-y-4">
+                          {filteredPrescriptions.map((rx) => {
+                            const stLower = String(rx.status || '').toLowerCase();
+                            const isApproved = stLower.includes('approved') || stLower.includes('verified');
+                            const isRejected = stLower.includes('rejected');
+                            const isImage = rx.imagePreview || rx.fileType?.includes('image') || rx.fileName?.match(/\.(jpg|jpeg|png|webp)$/i);
+
+                            return (
+                              <div key={rx.id} className="pt-4 first:pt-0 space-y-3">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                                      {isImage && (rx.imagePreview || rx.fileUrl) ? (
+                                        <img
+                                          src={rx.imagePreview || rx.fileUrl}
+                                          alt={rx.fileName || 'Prescription Preview'}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-1">
+                                          <span className="text-[9px] font-mono font-bold text-rose-500 bg-rose-50 px-1 rounded">PDF</span>
+                                          <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className="font-bold text-slate-900 text-xs truncate">
+                                        {rx.fileName || `${rx.doctorName ? `Dr_${rx.doctorName.replace(/\s+/g, '_')}_` : ''}Prescription.pdf`}
+                                      </p>
+                                      <p className="text-[10px] text-slate-400 mt-0.5">
+                                        {(rx.fileType || (rx.fileName?.endsWith('.pdf') ? 'PDF' : 'JPG')).toUpperCase()} • {rx.fileSize || '1.2 MB'}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    {isApproved ? (
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
+                                        <Check className="w-3 h-3" />
+                                        <span>Approved</span>
+                                      </span>
+                                    ) : isRejected ? (
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE2E2] text-[#DC2626] border border-rose-200">
+                                        <X className="w-3 h-3" />
+                                        <span>Rejected</span>
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#D97706] border border-amber-200">
+                                        <Hourglass className="w-3 h-3" />
+                                        <span>Under Review</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="text-xs text-slate-600 space-y-1 bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                                  <div className="flex justify-between">
+                                    <span className="text-slate-400">Doctor / Hospital:</span>
+                                    <span className="font-bold text-slate-800 text-right">{rx.doctorName || 'Dr. R. Sharma'} ({rx.hospital || rx.clinicName || 'City Care Hospital'})</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-slate-400">Uploaded On:</span>
+                                    <span className="font-medium text-slate-700">{rx.uploadedAt || rx.dateOfIssue || '20 Nov 2026, 10:24 AM'}</span>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-end gap-2 pt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedPrescription(rx)}
+                                    className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5"
+                                  >
+                                    <Eye className="w-3.5 h-3.5 text-teal-600" />
+                                    <span>View</span>
+                                  </button>
+
+                                  {(rx.fileUrl || rx.imagePreview) && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        downloadPrescriptionFile(rx);
+                                        addToast('Downloading prescription file...', 'info');
+                                      }}
+                                      className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                                      title="Download Document"
+                                    >
+                                      <Download className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+
+                                  {isApproved && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOrderMedicines(rx)}
+                                      className="px-3 py-1.5 rounded-lg bg-[#008F83] text-white text-xs font-bold transition flex items-center gap-1.5"
+                                    >
+                                      <ShoppingCart className="w-3.5 h-3.5" />
+                                      <span>Order</span>
+                                    </button>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      if (window.confirm('Are you sure you want to remove this prescription?')) {
+                                        await deletePrescription(rx.id);
+                                        addToast('Prescription removed from vault.', 'info');
+                                      }
+                                    }}
+                                    className="p-1.5 rounded-lg border border-rose-200 text-rose-500 hover:bg-rose-50 transition"
+                                    title="Delete Prescription"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
                               </div>
-                              <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
-                                isApproved
-                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                  : isRejected
-                                    ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                    : 'bg-amber-50 text-amber-700 border border-amber-200'
-                              }`}>
-                                {isApproved ? 'Approved & Verified' : isRejected ? 'Rejected' : 'Pending Audit'}
-                              </span>
-                            </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : (
+                      /* Empty State */
+                      <div className="p-10 sm:p-12 text-center space-y-3">
+                        <div className="w-14 h-14 rounded-2xl bg-[#E8FAF5] text-[#00A68A] border border-teal-100 flex items-center justify-center mx-auto shadow-2xs">
+                          <FileText className="w-7 h-7" />
+                        </div>
+                        <h3 className="text-base font-extrabold text-slate-800">
+                          {rxSearchQuery || rxStatusFilter !== 'all' ? 'No Matching Prescriptions' : 'No Prescriptions in Vault'}
+                        </h3>
+                        <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                          {rxSearchQuery || rxStatusFilter !== 'all'
+                            ? 'No prescriptions match your current search or status filter. Try clearing filters or searching another keyword.'
+                            : "You haven't uploaded any doctor prescriptions yet. Use the upload box above to submit your prescription for verified doorstep medicine fulfillment."}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setIsPrescriptionUploadModalOpen(true)}
+                          className="mt-2 inline-flex items-center gap-2 bg-[#008F83] hover:bg-[#007A70] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
+                        >
+                          <UploadCloud className="w-4 h-4" />
+                          <span>Upload Prescription Now</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
-                            <div className="py-3 text-xs text-slate-600 space-y-1.5">
-                              {rx.fileName && (
-                                <p className="flex items-center gap-1.5">
-                                  <FileText className="w-3.5 h-3.5 text-[#14B8A6] shrink-0" />
-                                  <strong className="text-slate-700">Document:</strong>
-                                  <span className="font-mono text-slate-800 truncate">{rx.fileName}</span>
-                                  {rx.fileSize && <span className="text-[10.5px] text-slate-400">({rx.fileSize})</span>}
-                                </p>
-                              )}
-                              <p><strong className="text-slate-700">Uploaded On:</strong> {rx.uploadedAt || rx.dateOfIssue || 'Recent'}</p>
-                              {rx.notes && (
-                                <p className="text-[11.5px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                                  <strong className="text-slate-700">Instructions:</strong> {rx.notes}
-                                </p>
-                              )}
-                              {rx.pharmacistNotes && (
-                                <p className="text-[11.5px] text-emerald-800 bg-emerald-50/60 p-2 rounded-lg border border-emerald-100">
-                                  <strong className="text-emerald-900">Pharmacist Remarks:</strong> {rx.pharmacistNotes}
-                                </p>
-                              )}
-                            </div>
+                  {/* Right Column: Sidebar Widgets */}
+                  <div className="lg:col-span-4 space-y-4 sm:space-y-5">
+                    {/* Widget 1: Prescription Summary */}
+                    <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs space-y-4">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
+                          Prescription Summary
+                        </h3>
+                      </div>
+
+                      <div className="space-y-3 text-xs text-slate-700">
+                        {/* Total Uploaded */}
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-2.5 font-medium text-slate-600">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#00BFA5]" />
+                            <span>Total Uploaded</span>
+                          </span>
+                          <span className="font-extrabold text-slate-900">{totalRxCount}</span>
+                        </div>
+
+                        {/* Approved */}
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-2.5 font-medium text-slate-600">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
+                            <span>Approved</span>
+                          </span>
+                          <span className="font-extrabold text-slate-900">{approvedRxCount}</span>
+                        </div>
+
+                        {/* Under Review */}
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-2.5 font-medium text-slate-600">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
+                            <span>Under Review</span>
+                          </span>
+                          <span className="font-extrabold text-slate-900">{underReviewRxCount}</span>
+                        </div>
+
+                        {/* Rejected */}
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-2.5 font-medium text-slate-600">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
+                            <span>Rejected</span>
+                          </span>
+                          <span className="font-extrabold text-slate-900">{rejectedRxCount}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Widget 2: Quick Actions */}
+                    <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs space-y-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Zap className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
+                          Quick Actions
+                        </h3>
+                      </div>
+
+                      {/* Action 1: Order Medicines */}
+                      <button
+                        type="button"
+                        onClick={() => handleOrderMedicines()}
+                        className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <ShoppingCart className="w-4 h-4" />
                           </div>
-
-                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-1.5">
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => setSelectedPrescription(rx)}
-                                className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
-                              >
-                                <Eye className="w-3.5 h-3.5 text-[#14B8A6]" />
-                                <span>View Document</span>
-                              </button>
-                              {(rx.fileUrl || rx.imagePreview) && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    downloadPrescriptionFile(rx);
-                                    addToast('Downloading prescription document...', 'info');
-                                  }}
-                                  className="p-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
-                                  title="Download Document"
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  if (window.confirm('Are you sure you want to delete this prescription?')) {
-                                    await deletePrescription(rx.id);
-                                    addToast('Prescription removed from vault.', 'info');
-                                  }
-                                }}
-                                className="p-1.5 rounded-xl border border-rose-100 hover:bg-rose-50 text-rose-500 transition cursor-pointer"
-                                title="Delete Prescription"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Order Medicines
                             </div>
-
-                            {isApproved && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
-                                  openCart();
-                                }}
-                                className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
-                              >
-                                <ShoppingCart className="w-3.5 h-3.5" />
-                                <span>Order</span>
-                              </button>
-                            )}
+                            <div className="text-[10.5px] text-slate-400">
+                              Buy prescribed medicines instantly
+                            </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
-                    <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center mx-auto">
-                      <FileText className="w-7 h-7" />
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors shrink-0" />
+                      </button>
+
+                      {/* Action 2: Set Reminders */}
+                      <button
+                        type="button"
+                        onClick={handleSetReminders}
+                        className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <Bell className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Set Reminders
+                            </div>
+                            <div className="text-[10.5px] text-slate-400">
+                              Get alerts for refills and follow-ups
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors shrink-0" />
+                      </button>
+
+                      {/* Action 3: Download All */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadAllPrescriptions}
+                        className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <Download className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                              Download All
+                            </div>
+                            <div className="text-[10.5px] text-slate-400">
+                              Download all your prescriptions
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors shrink-0" />
+                      </button>
                     </div>
-                    <h3 className="text-base font-extrabold text-slate-800">No Prescriptions Uploaded</h3>
-                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                      You haven't uploaded any doctor prescriptions yet. Use the upload box above to submit your genuine prescription (PDF, JPG, or PNG) for verified doorstep medicine fulfillment.
-                    </p>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ======================================================== */}
           {/* 3. MY DIAGNOSTIC REPORTS VIEW (Refined to Reference)      */}
