@@ -908,6 +908,75 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     });
   }, [allUserBookings, serviceCategoryFilter, bookingFilter]);
 
+  // Real user upcoming appointments for Dashboard Overview
+  const upcomingAppointmentsList = useMemo(() => {
+    return allUserBookings.filter((b) => {
+      const status = (b.bookingStatus || b.status || '').toLowerCase();
+      const isUpcomingStatus = !status.includes('cancel') && !status.includes('complete');
+      const isAppointmentType = b.itemType === 'doctor' || b.itemType === 'lab' || b.itemType === 'physio' || b.itemType === 'surgery' || b.itemType === 'wellness';
+      return isUpcomingStatus && isAppointmentType;
+    }).slice(0, 2);
+  }, [allUserBookings]);
+
+  // Real user recent medicine orders for Dashboard Overview
+  const recentMedicineOrdersList = useMemo(() => {
+    return allUserBookings.filter((b) => b.itemType === 'medicine').slice(0, 2);
+  }, [allUserBookings]);
+
+  // Real user recent lab test bookings for Dashboard Overview
+  const recentLabBookingsList = useMemo(() => {
+    return allUserBookings.filter((b) => b.itemType === 'lab' || b.itemType === 'wellness').slice(0, 2);
+  }, [allUserBookings]);
+
+  // Real user recent diagnostic reports for Dashboard Overview
+  const recentReportsList = useMemo(() => {
+    return (userReports || []).slice(0, 2);
+  }, [userReports]);
+
+  // Helper to extract clean Month and Day badge for upcoming appointments
+  const formatAppointmentDateBadge = (dateStr) => {
+    if (!dateStr) {
+      const d = new Date();
+      return {
+        month: d.toLocaleString('en-US', { month: 'short' }),
+        day: String(d.getDate()).padStart(2, '0')
+      };
+    }
+    const clean = String(dateStr).trim();
+    const d = new Date(clean);
+    if (!isNaN(d.getTime())) {
+      return {
+        month: d.toLocaleString('en-US', { month: 'short' }),
+        day: String(d.getDate()).padStart(2, '0')
+      };
+    }
+    const parts = clean.split(/[-/]/);
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        if (!isNaN(dateObj.getTime())) {
+          return {
+            month: dateObj.toLocaleString('en-US', { month: 'short' }),
+            day: String(dateObj.getDate()).padStart(2, '0')
+          };
+        }
+      } else {
+        const dateObj = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        if (!isNaN(dateObj.getTime())) {
+          return {
+            month: dateObj.toLocaleString('en-US', { month: 'short' }),
+            day: String(dateObj.getDate()).padStart(2, '0')
+          };
+        }
+      }
+    }
+    const now = new Date();
+    return {
+      month: now.toLocaleString('en-US', { month: 'short' }),
+      day: String(now.getDate()).padStart(2, '0')
+    };
+  };
+
   // Harmonized combined bookings across all 6 patient actions
   const combinedBookings = useMemo(() => {
     const labs = labBookings.map((b) => {
@@ -1686,14 +1755,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <Calendar className="w-5 h-5 stroke-[2]" />
                     </div>
-                    <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-0.5">
-                      <TrendingUp className="w-3 h-3" />
-                      <span>+23% this mo</span>
-                    </span>
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {allUserBookings.length > 0 ? allUserBookings.length : 12}
+                      {allUserBookings.length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Total Bookings
@@ -1716,7 +1781,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {upcomingCount > 0 ? upcomingCount : 3}
+                      {upcomingCount}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Upcoming
@@ -1742,7 +1807,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {orders.length > 0 ? orders.length : 4}
+                      {orders.length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Medicine Orders
@@ -1768,7 +1833,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {labBookings.length > 0 ? labBookings.length : 2}
+                      {labBookings.length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Lab Tests
@@ -1794,7 +1859,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {appointments.length > 0 ? appointments.length : 2}
+                      {appointments.length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Appointments
@@ -1817,7 +1882,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {userReports.length > 0 ? userReports.length : 5}
+                      {userReports.length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Reports
@@ -1855,65 +1920,76 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     <div className="space-y-3">
-                      {/* Item 1: Doctor Appointment */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('doctor');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-11 h-12 rounded-xl bg-purple-100 text-purple-700 flex flex-col items-center justify-center shrink-0">
-                            <span className="text-[9px] font-bold uppercase tracking-wider leading-none">Nov</span>
-                            <span className="text-base font-extrabold leading-none mt-0.5">24</span>
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Doctor Appointment
-                            </h4>
-                            <p className="text-[11px] text-slate-600 font-medium truncate mt-0.5">
-                              Dr. Priya Sharma - Cardiologist
-                            </p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">
-                              10:30 AM • In-Clinic
-                            </p>
-                          </div>
-                        </div>
-                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                          Confirmed
-                        </span>
-                      </div>
+                      {upcomingAppointmentsList.length > 0 ? (
+                        upcomingAppointmentsList.map((apt, idx) => {
+                          const dateBadge = formatAppointmentDateBadge(apt.date || apt.preferredDate || apt.bookingDate);
+                          const isDoctor = apt.itemType === 'doctor';
+                          const isLab = apt.itemType === 'lab';
+                          const title = isDoctor ? 'Doctor Appointment' : isLab ? 'Lab Test' : apt.displayType || 'Appointment';
+                          const subtitle = apt.doctorName || apt.serviceName || apt.title || apt.testName || 'Consultation';
+                          const timeStr = apt.time || apt.timeSlot || apt.preferredTime || 'Scheduled Time';
+                          const modeStr = apt.consultationMode || apt.collectionType || (apt.itemType === 'doctor' ? 'In-Clinic' : 'Home Sample');
+                          const statusText = apt.bookingStatus || apt.status || 'Confirmed';
+                          const isConfirmed = statusText.toLowerCase().includes('confirm');
+                          const badgeColor = isDoctor
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-teal-100 text-teal-700';
 
-                      {/* Item 2: Lab Test */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('lab');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-11 h-12 rounded-xl bg-teal-100 text-teal-700 flex flex-col items-center justify-center shrink-0">
-                            <span className="text-[9px] font-bold uppercase tracking-wider leading-none">Nov</span>
-                            <span className="text-base font-extrabold leading-none mt-0.5">25</span>
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Lab Test
-                            </h4>
-                            <p className="text-[11px] text-slate-600 font-medium truncate mt-0.5">
-                              Complete Blood Count (CBC)
-                            </p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">
-                              08:00 AM • Home Sample
-                            </p>
-                          </div>
+                          return (
+                            <div
+                              key={apt.id || apt.bookingId || idx}
+                              onClick={() => {
+                                setActiveMenu('bookings');
+                                if (apt.itemType) setServiceCategoryFilter(apt.itemType);
+                              }}
+                              className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-11 h-12 rounded-xl ${badgeColor} flex flex-col items-center justify-center shrink-0`}>
+                                  <span className="text-[9px] font-bold uppercase tracking-wider leading-none">
+                                    {dateBadge.month}
+                                  </span>
+                                  <span className="text-base font-extrabold leading-none mt-0.5">
+                                    {dateBadge.day}
+                                  </span>
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-slate-900 truncate">
+                                    {title}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-600 font-medium truncate mt-0.5">
+                                    {subtitle}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+                                    {timeStr} • {modeStr}
+                                  </p>
+                                </div>
+                              </div>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${
+                                isConfirmed
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-blue-50 text-blue-700 border-blue-200'
+                              }`}>
+                                {statusText}
+                              </span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-6 px-4 text-center rounded-xl bg-slate-50/60 border border-dashed border-slate-200">
+                          <Calendar className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-xs font-semibold text-slate-600">No upcoming appointments</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Book a doctor consultation or lab test</p>
+                          <button
+                            type="button"
+                            onClick={() => navigate('/doctor-appointment')}
+                            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 text-[#00A887] hover:bg-teal-100 text-xs font-bold transition cursor-pointer"
+                          >
+                            <span>Book Doctor</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                          Scheduled
-                        </span>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2124,58 +2200,62 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     <div className="space-y-3">
-                      {/* Item 1: Metformin 500 mg */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('medicine');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center shrink-0">
-                            <Pill className="w-5 h-5 stroke-[2]" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Metformin 500 mg Tablet
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              3 Packs • Qty: 3 • ₹168
-                            </p>
-                          </div>
-                        </div>
-                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
-                          <Check className="w-3 h-3 stroke-[2.5]" />
-                          <span>Delivered</span>
-                        </span>
-                      </div>
+                      {recentMedicineOrdersList.length > 0 ? (
+                        recentMedicineOrdersList.map((ord, idx) => {
+                          const title = ord.title || ord.serviceName || (ord.medicines?.[0]?.name ? `${ord.medicines[0].name}${ord.medicines.length > 1 ? ` +${ord.medicines.length - 1} more` : ''}` : 'Prescription Medicines');
+                          const amount = ord.totalAmount || ord.amount || ord.price || 0;
+                          const itemCount = ord.medicines?.length || ord.items?.length || ord.quantity || 1;
+                          const statusText = ord.bookingStatus || ord.status || 'Confirmed';
+                          const isDelivered = statusText.toLowerCase().includes('deliver') || statusText.toLowerCase().includes('complete');
 
-                      {/* Item 2: Amlodipine 5 mg */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('medicine');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                            <Pill className="w-5 h-5 stroke-[2]" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Amlodipine 5 mg
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              1 Pack • Qty: 1 • ₹95
-                            </p>
-                          </div>
+                          return (
+                            <div
+                              key={ord.id || ord.bookingId || idx}
+                              onClick={() => {
+                                setActiveMenu('bookings');
+                                setServiceCategoryFilter('medicine');
+                              }}
+                              className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center shrink-0">
+                                  <Pill className="w-5 h-5 stroke-[2]" />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-slate-900 truncate">
+                                    {title}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                                    {itemCount} Item{itemCount > 1 ? 's' : ''} • ₹{amount}
+                                  </p>
+                                </div>
+                              </div>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1 border ${
+                                isDelivered
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-blue-50 text-blue-700 border-blue-200'
+                              }`}>
+                                {isDelivered && <Check className="w-3 h-3 stroke-[2.5]" />}
+                                <span>{statusText}</span>
+                              </span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-6 px-4 text-center rounded-xl bg-slate-50/60 border border-dashed border-slate-200">
+                          <ShoppingCart className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-xs font-semibold text-slate-600">No medicine orders yet</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Order genuine medicines delivered home</p>
+                          <button
+                            type="button"
+                            onClick={() => navigate('/medicines')}
+                            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 text-[#00A887] hover:bg-teal-100 text-xs font-bold transition cursor-pointer"
+                          >
+                            <span>Order Medicines</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                          In Transit
-                        </span>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2205,58 +2285,65 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     <div className="space-y-3">
-                      {/* Item 1: Liver Function Test (LFT) */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('lab');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                            <FlaskConical className="w-5 h-5 stroke-[2]" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Liver Function Test (LFT)
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              Home Collection • ₹699
-                            </p>
-                          </div>
-                        </div>
-                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
-                          <Check className="w-3 h-3 stroke-[2.5]" />
-                          <span>Completed</span>
-                        </span>
-                      </div>
+                      {recentLabBookingsList.length > 0 ? (
+                        recentLabBookingsList.map((lab, idx) => {
+                          const title = lab.serviceName || lab.title || lab.testName || 'Diagnostic Test';
+                          const colType = lab.collectionType || (lab.bookingType === 'home' ? 'Home Collection' : 'Lab Visit');
+                          const amount = lab.totalAmount || lab.amount || lab.price || 0;
+                          const statusText = lab.bookingStatus || lab.status || 'Confirmed';
+                          const isCompleted = statusText.toLowerCase().includes('complete') || statusText.toLowerCase().includes('report') || statusText.toLowerCase().includes('deliver');
+                          const isProcessing = statusText.toLowerCase().includes('process') || statusText.toLowerCase().includes('pending');
 
-                      {/* Item 2: Complete Blood Count (CBC) */}
-                      <div
-                        onClick={() => {
-                          setActiveMenu('bookings');
-                          setServiceCategoryFilter('lab');
-                        }}
-                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                            <FlaskConical className="w-5 h-5 stroke-[2]" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Complete Blood Count (CBC)
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              Lab Visit • ₹299
-                            </p>
-                          </div>
+                          return (
+                            <div
+                              key={lab.id || lab.bookingId || idx}
+                              onClick={() => {
+                                setActiveMenu('bookings');
+                                setServiceCategoryFilter('lab');
+                              }}
+                              className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-10 h-10 rounded-xl ${isCompleted ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} flex items-center justify-center shrink-0`}>
+                                  <FlaskConical className="w-5 h-5 stroke-[2]" />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-slate-900 truncate">
+                                    {title}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                                    {colType} • ₹{amount}
+                                  </p>
+                                </div>
+                              </div>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1 border ${
+                                isCompleted
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : isProcessing
+                                  ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                  : 'bg-blue-50 text-blue-700 border-blue-200'
+                              }`}>
+                                {isCompleted && <Check className="w-3 h-3 stroke-[2.5]" />}
+                                <span>{statusText}</span>
+                              </span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-6 px-4 text-center rounded-xl bg-slate-50/60 border border-dashed border-slate-200">
+                          <FlaskConical className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-xs font-semibold text-slate-600">No lab test bookings yet</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Book certified tests with home sample collection</p>
+                          <button
+                            type="button"
+                            onClick={() => navigate('/diagnostics')}
+                            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-bold transition cursor-pointer"
+                          >
+                            <span>Book Lab Test</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                          Processing
-                        </span>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2283,61 +2370,58 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     <div className="space-y-3">
-                      {/* Report 1: CBC Report */}
-                      <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold text-xs">
-                            PDF
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              CBC Test Report
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              Dr. Amit Sharma • 22 Nov 2026
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            downloadClinicalReport({ test: 'CBC Test Report', date: '22 Nov 2026', id: 'ZM-REP-1029' });
-                            addToast('Official signed PDF report downloaded for CBC Test Report.', 'success');
-                          }}
-                          className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 cursor-pointer"
-                          title="Download Report"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                      </div>
+                      {recentReportsList.length > 0 ? (
+                        recentReportsList.map((rep, idx) => {
+                          const title = rep.test || rep.testName || rep.title || 'Diagnostic Report';
+                          const subtitle = `${rep.doctorName || rep.pathologist || 'Pathology Lab'} • ${rep.date || 'Recent'}`;
 
-                      {/* Report 2: Lipid Profile Report */}
-                      <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold text-xs">
-                            PDF
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate">
-                              Lipid Profile Report
-                            </h4>
-                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                              Dr. Priya Sharma • 15 Nov 2026
-                            </p>
-                          </div>
+                          return (
+                            <div
+                              key={rep.id || idx}
+                              className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold text-xs">
+                                  PDF
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-slate-900 truncate">
+                                    {title}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                                    {subtitle}
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  downloadClinicalReport(rep);
+                                  addToast(`Official signed PDF report downloaded for ${title}.`, 'success');
+                                }}
+                                className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 cursor-pointer"
+                                title="Download Report"
+                              >
+                                <Download className="w-4 h-4" />
+                              </button>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-6 px-4 text-center rounded-xl bg-slate-50/60 border border-dashed border-slate-200">
+                          <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-xs font-semibold text-slate-600">No reports available yet</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Completed lab reports will appear here</p>
+                          <button
+                            type="button"
+                            onClick={() => setActiveMenu('reports')}
+                            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition cursor-pointer"
+                          >
+                            <span>View All Reports</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            downloadClinicalReport({ test: 'Lipid Profile Report', date: '15 Nov 2026', id: 'ZM-REP-1030' });
-                            addToast('Official signed PDF report downloaded for Lipid Profile Report.', 'success');
-                          }}
-                          className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 cursor-pointer"
-                          title="Download Report"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2449,7 +2533,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span className="text-xs font-semibold text-slate-700">Prescriptions</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-[11px] font-bold text-[#00A887]">4 Active</span>
+                          <span className="text-[11px] font-bold text-[#00A887]">{userPrescriptions.length} Active</span>
                           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                         </div>
                       </div>
@@ -2463,7 +2547,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span className="text-xs font-semibold text-slate-700">Lab Reports</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-[11px] font-bold text-blue-600">8 Reports</span>
+                          <span className="text-[11px] font-bold text-blue-600">{userReports.length} Reports</span>
                           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                         </div>
                       </div>
@@ -2480,7 +2564,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <span className="text-xs font-semibold text-slate-700">Doctor Consultations</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-[11px] font-bold text-purple-600">6 Visits</span>
+                          <span className="text-[11px] font-bold text-purple-600">{appointments.length} Visits</span>
                           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                         </div>
                       </div>
@@ -2517,89 +2601,114 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
                     </div>
 
-                    {/* SVG Donut Ring Chart */}
-                    <div className="flex items-center justify-center my-3 relative">
-                      <svg viewBox="0 0 100 100" className="w-28 h-28 transform -rotate-90">
-                        {/* Background track */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="36"
-                          fill="none"
-                          stroke="#F1F5F9"
-                          strokeWidth="12"
-                        />
-                        {/* Segment 1: Medicines (4/12 = 33.3%) */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="36"
-                          fill="none"
-                          stroke="#00BFA5"
-                          strokeWidth="12"
-                          strokeDasharray="75.4 226.2"
-                          strokeDashoffset="0"
-                        />
-                        {/* Segment 2: Packages (4/12 = 33.3%) */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="36"
-                          fill="none"
-                          stroke="#3B82F6"
-                          strokeWidth="12"
-                          strokeDasharray="75.4 226.2"
-                          strokeDashoffset="-75.4"
-                        />
-                        {/* Segment 3: Lab Tests (2/12 = 16.7%) */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="36"
-                          fill="none"
-                          stroke="#F59E0B"
-                          strokeWidth="12"
-                          strokeDasharray="37.7 226.2"
-                          strokeDashoffset="-150.8"
-                        />
-                        {/* Segment 4: Appointments (2/12 = 16.7%) */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="36"
-                          fill="none"
-                          stroke="#8B5CF6"
-                          strokeWidth="12"
-                          strokeDasharray="37.7 226.2"
-                          strokeDashoffset="-188.5"
-                        />
-                      </svg>
-                      {/* Center Count */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span className="text-xl font-black text-slate-900 leading-none">12</span>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total</span>
-                      </div>
-                    </div>
+                    {/* SVG Donut Ring Chart with Real Dynamic Slices */}
+                    {(() => {
+                      const total = allUserBookings.length;
+                      const med = orders.length;
+                      const lab = labBookings.length;
+                      const apt = appointments.length;
+                      const pkg = allUserBookings.filter(b => b.itemType === 'surgery' || b.itemType === 'wellness' || b.itemType === 'physio').length;
+                      const C = 226.2;
+                      const medArc = total > 0 ? (med / total) * C : 0;
+                      const pkgArc = total > 0 ? (pkg / total) * C : 0;
+                      const labArc = total > 0 ? (lab / total) * C : 0;
+                      const aptArc = total > 0 ? (apt / total) * C : 0;
 
-                    {/* Legend */}
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px] font-semibold text-slate-600 pt-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-[#00BFA5]" />
-                        <span>Medicines: 4</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
-                        <span>Lab Tests: 2</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
-                        <span>Appointments: 2</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-[#3B82F6]" />
-                        <span>Packages: 4</span>
-                      </div>
-                    </div>
+                      return (
+                        <>
+                          <div className="flex items-center justify-center my-3 relative">
+                            <svg viewBox="0 0 100 100" className="w-28 h-28 transform -rotate-90">
+                              {/* Background track */}
+                              <circle
+                                cx="50"
+                                cy="50"
+                                r="36"
+                                fill="none"
+                                stroke="#F1F5F9"
+                                strokeWidth="12"
+                              />
+                              {/* Segment 1: Medicines */}
+                              {total > 0 && medArc > 0 && (
+                                <circle
+                                  cx="50"
+                                  cy="50"
+                                  r="36"
+                                  fill="none"
+                                  stroke="#00BFA5"
+                                  strokeWidth="12"
+                                  strokeDasharray={`${medArc} ${C}`}
+                                  strokeDashoffset={0}
+                                />
+                              )}
+                              {/* Segment 2: Packages */}
+                              {total > 0 && pkgArc > 0 && (
+                                <circle
+                                  cx="50"
+                                  cy="50"
+                                  r="36"
+                                  fill="none"
+                                  stroke="#3B82F6"
+                                  strokeWidth="12"
+                                  strokeDasharray={`${pkgArc} ${C}`}
+                                  strokeDashoffset={-medArc}
+                                />
+                              )}
+                              {/* Segment 3: Lab Tests */}
+                              {total > 0 && labArc > 0 && (
+                                <circle
+                                  cx="50"
+                                  cy="50"
+                                  r="36"
+                                  fill="none"
+                                  stroke="#F59E0B"
+                                  strokeWidth="12"
+                                  strokeDasharray={`${labArc} ${C}`}
+                                  strokeDashoffset={-(medArc + pkgArc)}
+                                />
+                              )}
+                              {/* Segment 4: Appointments */}
+                              {total > 0 && aptArc > 0 && (
+                                <circle
+                                  cx="50"
+                                  cy="50"
+                                  r="36"
+                                  fill="none"
+                                  stroke="#8B5CF6"
+                                  strokeWidth="12"
+                                  strokeDasharray={`${aptArc} ${C}`}
+                                  strokeDashoffset={-(medArc + pkgArc + labArc)}
+                                />
+                              )}
+                            </svg>
+                            {/* Center Count */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                              <span className="text-xl font-black text-slate-900 leading-none">{total}</span>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total</span>
+                            </div>
+                          </div>
+
+                          {/* Legend */}
+                          <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px] font-semibold text-slate-600 pt-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#00BFA5]" />
+                              <span>Medicines: {med}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
+                              <span>Lab Tests: {lab}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
+                              <span>Appointments: {apt}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#3B82F6]" />
+                              <span>Packages: {pkg}</span>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
 
@@ -3444,7 +3553,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <Pill className="w-5 h-5 stroke-[2]" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-900">Digital Prescriptions</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">4 active prescriptions verified</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{userPrescriptions.length} active prescriptions verified</p>
                   <span className="text-xs font-bold text-[#00A887] mt-3 inline-block">Manage Prescriptions →</span>
                 </div>
 
@@ -3456,7 +3565,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <FileText className="w-5 h-5 stroke-[2]" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-900">Pathology Reports</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">{userReports.length > 0 ? userReports.length : 8} NABL certified reports</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{userReports.length} NABL certified reports</p>
                   <span className="text-xs font-bold text-blue-600 mt-3 inline-block">View Reports →</span>
                 </div>
 
