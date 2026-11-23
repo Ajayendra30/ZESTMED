@@ -38,6 +38,7 @@ import {
   Activity,
   Stethoscope,
   Scissors,
+  PersonStanding,
   Check,
   CheckCircle2,
   ArrowRight,
@@ -1997,16 +1998,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 {/* Col 2: Quick Actions (8 Icons) */}
                 <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                          <Zap className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-bold text-slate-900 leading-none">Quick Actions</h3>
-                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Frequently used services</p>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Zap className="w-5 h-5 text-emerald-500 fill-emerald-500/10 stroke-[2.4]" />
+                      <h3 className="text-sm font-bold text-slate-900 leading-none">Quick Actions</h3>
                     </div>
 
                     <div className="grid grid-cols-4 gap-2.5 sm:gap-3 mt-3">
@@ -2014,13 +2008,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/diagnostics')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-teal-300 hover:bg-teal-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-sky-300 hover:bg-sky-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <FlaskConical className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-sky-50/80 text-[#0284C7] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <FlaskConical className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Book Lab Test
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Book<br />Lab Test
                         </span>
                       </button>
 
@@ -2028,13 +2022,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/doctor-appointment')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 hover:bg-blue-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-blue-300 hover:bg-blue-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Stethoscope className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-blue-50/80 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Stethoscope className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Book Doctor
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Book<br />Doctor
                         </span>
                       </button>
 
@@ -2042,13 +2036,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/medicines')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-amber-300 hover:bg-amber-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-amber-300 hover:bg-amber-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <ShoppingCart className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-amber-50/80 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Pill className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Order Medicines
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Order<br />Medicines
                         </span>
                       </button>
 
@@ -2056,13 +2050,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/surgeries')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-purple-300 hover:bg-purple-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-purple-300 hover:bg-purple-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Activity className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-purple-50/80 text-[#8B5CF6] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Scissors className="w-5 h-5 stroke-[2.2] transform -rotate-45" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Surgery Packages
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Surgery<br />Packages
                         </span>
                       </button>
 
@@ -2070,13 +2064,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/wellness-packages')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-rose-300 hover:bg-rose-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-rose-300 hover:bg-rose-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <HeartPulse className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-rose-50/80 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <HeartPulse className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Wellness Packages
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Wellness<br />Packages
                         </span>
                       </button>
 
@@ -2084,13 +2078,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => navigate('/physiotherapy')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-cyan-300 hover:bg-cyan-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Activity className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-emerald-50/80 text-[#10B981] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <PersonStanding className="w-5 h-5 stroke-[2.3]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Physiotherapy
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Physiotherapy<br />Book Session
                         </span>
                       </button>
 
@@ -2101,13 +2095,27 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           setActiveMenu('prescription');
                           setIsPrescriptionUploadModalOpen(true);
                         }}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <UploadCloud className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-indigo-50/80 text-[#6366F1] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="w-5 h-5"
+                          >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <path d="M8.5 13.5h2.5a1.8 1.8 0 0 0 0-3.6H8.5v6" />
+                            <path d="m10.5 13.5 2.5 3" />
+                            <path d="m9.5 15.5 2.8-1.8" />
+                          </svg>
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          Upload Prescription
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          Upload<br />Prescription
                         </span>
                       </button>
 
@@ -2115,13 +2123,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       <button
                         type="button"
                         onClick={() => setActiveMenu('reports')}
-                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                        className="p-2 sm:p-2.5 rounded-2xl border border-slate-100 hover:border-sky-300 hover:bg-sky-50/20 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <FileText className="w-4 h-4 stroke-[2]" />
+                        <div className="w-10 h-10 rounded-2xl bg-sky-50/80 text-[#0284C7] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <FileText className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
-                          View Reports
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">
+                          View<br />Reports
                         </span>
                       </button>
                     </div>
