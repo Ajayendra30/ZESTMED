@@ -171,10 +171,41 @@ export function purgeRahulVermaFromStorage() {
       localStorage.setItem('zestmed_patient_orders', storedOrders.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
     }
 
-    // 8. Clean zestmed_patient_lab_bookings
+    // 8. Clean zestmed_patient_lab_bookings & ensure wellness packages are correctly classified
     const storedLabs = localStorage.getItem('zestmed_patient_lab_bookings');
-    if (storedLabs && storedLabs.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_lab_bookings', storedLabs.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
+    if (storedLabs) {
+      let labsStr = storedLabs;
+      if (labsStr.includes('Rahul Verma')) {
+        labsStr = labsStr.replace(/Rahul Verma/gi, 'Ajayendra Shekhar');
+      }
+      try {
+        const parsed = JSON.parse(labsStr);
+        if (Array.isArray(parsed)) {
+          let modified = false;
+          const cleaned = parsed.map(b => {
+            const name = (b.testName || b.name || '').toLowerCase();
+            if (name.includes('wellness') || name.includes('health package')) {
+              if (b.type !== 'Wellness Package' || b.itemType !== 'wellness') {
+                modified = true;
+                return {
+                  ...b,
+                  type: 'Wellness Package',
+                  itemType: 'wellness',
+                  serviceType: 'Wellness Package',
+                  displayType: 'Wellness Health Package',
+                  category: 'Wellness Package'
+                };
+              }
+            }
+            return b;
+          });
+          if (modified) {
+            localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(cleaned));
+          } else if (labsStr !== storedLabs) {
+            localStorage.setItem('zestmed_patient_lab_bookings', labsStr);
+          }
+        }
+      } catch (_) {}
     }
   } catch (_) {}
 }

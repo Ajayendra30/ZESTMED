@@ -6,6 +6,7 @@ import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
 import { bookLabTest } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
+import { isWellnessPackage } from '../utils/itemClassification';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
 import { recordAndPlayNotification } from '../utils/notificationSound';
 import { 
@@ -79,16 +80,20 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
   };
 
   const saveCompletedBooking = async (generatedRef, paymentDetails = null) => {
+    const isPkg = isWellnessPackage(item);
     const pid = paymentDetails?.paymentId || paymentDetails?.razorpay_payment_id || paymentDetails?.transaction_id || paymentDetails?.id;
     const isPaidOnline = Boolean(paymentDetails && pid && pid !== 'PAY_ON_COLLECTION');
     const newLabBooking = {
       id: generatedRef,
       bookingId: generatedRef,
       booking_number: generatedRef,
-      type: 'Diagnostic Lab Test',
-      category: item.category || 'Diagnostic Test',
+      type: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+      itemType: isPkg ? 'wellness' : 'lab',
+      serviceType: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+      displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
+      category: isPkg ? 'Wellness Package' : (item.category || 'Diagnostic Test'),
       testName: item.name,
-      testCode: item.testCode || `DX-${Math.floor(100 + Math.random() * 900)}`,
+      testCode: item.testCode || (isPkg ? 'WEL-PKG' : `DX-${Math.floor(100 + Math.random() * 900)}`),
       bookedDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
       collectionDate: `${selectedDate}, ${selectedSlot.split(' ')[0]} ${selectedSlot.split(' ')[1] || 'AM'}`,
       date: selectedDate,
@@ -127,13 +132,13 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
       // Play audible notification chime & record Book notification
       recordAndPlayNotification({
         type: 'book',
-        title: 'Diagnostic Test Confirmed',
+        title: isPkg ? 'Wellness Package Confirmed' : 'Diagnostic Test Confirmed',
         actionText: `Booking #${generatedRef} Confirmed`,
         desc: `Home collection confirmed for ${item.name}.`,
-        sender: 'Dispur Central Pathology Lab',
-        category: 'Diagnostic Lab Test',
+        sender: isPkg ? 'Zestmed Preventive Health Team' : 'Dispur Central Pathology Lab',
+        category: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
         refId: generatedRef,
-        linkType: 'lab',
+        linkType: isPkg ? 'wellness' : 'lab',
         phone: patientData.phone,
         patientPhone: patientData.phone,
         patientName: patientData.name

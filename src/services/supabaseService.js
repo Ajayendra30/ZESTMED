@@ -804,12 +804,17 @@ export const bookLabTest = async (bookingData) => {
 
   const localList = getLocalData('zestmed_patient_lab_bookings', []);
   const resolvedPhone = bookingData.phone || bookingData.patientPhone || bookingData.contactNumber || '';
+  const isPkg = isWellnessPackage(bookingData);
   const newBooking = {
     ...bookingData,
     phone: resolvedPhone,
     patientPhone: resolvedPhone,
-    id: bookingData.id || `LAB-${Date.now()}`,
-    booking_number: bookingData.booking_number || `LAB-${Date.now()}`,
+    id: bookingData.id || `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}`,
+    booking_number: bookingData.booking_number || `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}`,
+    type: isPkg ? 'Wellness Package' : (bookingData.type || 'Diagnostic Lab Test'),
+    itemType: isPkg ? 'wellness' : (bookingData.itemType || 'lab'),
+    serviceType: isPkg ? 'Wellness Package' : (bookingData.serviceType || 'Diagnostic Lab Test'),
+    category: isPkg ? 'Wellness Package' : (bookingData.category || 'Diagnostic Test'),
     created_at: bookingData.createdAt || new Date().toISOString(),
     status: bookingData.status || 'Pending Collection',
   };
@@ -1263,14 +1268,22 @@ export const getUserBookings = async (user) => {
             const bId = l.booking_number || l.id;
             if (!seenIds.has(String(bId))) {
               seenIds.add(String(bId));
+              const isPkg = isWellnessPackage({
+                name: l.test_name,
+                title: l.test_name,
+                testName: l.test_name,
+                category: l.sample_type,
+                type: l.sample_type,
+                id: bId
+              });
               allResults.push({
                 id: bId,
                 bookingId: bId,
-                serviceType: 'Lab Test',
-                itemType: 'lab',
-                displayType: 'Diagnostic Lab Test',
-                serviceName: l.test_name || 'Diagnostic Laboratory Test',
-                title: l.test_name || 'Diagnostic Lab Test',
+                serviceType: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+                itemType: isPkg ? 'wellness' : 'lab',
+                displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
+                serviceName: l.test_name || (isPkg ? 'Wellness Health Package' : 'Diagnostic Laboratory Test'),
+                title: l.test_name || (isPkg ? 'Wellness Package' : 'Diagnostic Lab Test'),
                 specimen: l.sample_type || 'Blood Sample (NABL Certified)',
                 provider: l.phlebotomist || 'Bikash Das (Phlebotomist)',
                 bookingDateTime: l.created_at || new Date().toISOString(),
@@ -1279,14 +1292,14 @@ export const getUserBookings = async (user) => {
                 appointmentTime: l.collection_slot || 'Morning Collection',
                 date: l.collection_date || 'Scheduled Date',
                 time: l.collection_slot || 'Morning Collection',
-                mode: 'Home Sample Collection',
+                mode: isPkg ? 'Home Health Checkup' : 'Home Sample Collection',
                 location: l.collection_address || 'Guwahati Hub',
                 collectionAddress: l.collection_address || 'Guwahati Hub',
                 paymentStatus: l.payment_status || 'Paid (Online / At Collection)',
                 bookingStatus: l.status || 'Confirmed',
                 status: l.status || 'Confirmed',
-                totalAmount: parseFloat(l.price || 499),
-                price: parseFloat(l.price || 499),
+                totalAmount: parseFloat(l.price || (isPkg ? 1299 : 499)),
+                price: parseFloat(l.price || (isPkg ? 1299 : 499)),
                 patientName: l.patient_name || userName || 'Self',
                 phone: l.phone || rawPhone,
                 source: 'database',
@@ -1466,16 +1479,17 @@ export const getUserBookings = async (user) => {
     const bId = l.bookingId || l.id;
     if (!seenIds.has(String(bId))) {
       seenIds.add(String(bId));
-      const isWellness = (l.category || l.type || '').toLowerCase().includes('wellness');
-      const sType = isWellness ? 'Wellness Package' : 'Lab Test';
+      const isWellness = isWellnessPackage(l) || (l.category || l.type || '').toLowerCase().includes('wellness') || (l.testName || l.name || '').toLowerCase().includes('wellness');
+      const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
       const iType = isWellness ? 'wellness' : 'lab';
+      const dType = isWellness ? 'Wellness Health Package' : 'Diagnostic Lab Test';
 
       allResults.push({
         id: bId,
         bookingId: bId,
         serviceType: sType,
         itemType: iType,
-        displayType: sType,
+        displayType: dType,
         serviceName: l.testName || l.name || sType,
         title: l.testName || l.name || sType,
         specimen: l.specimen || 'Blood / Serum Sample (Barcoded)',

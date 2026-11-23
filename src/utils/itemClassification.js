@@ -68,16 +68,39 @@ export function isLabTestOrPackage(item) {
 export function isWellnessPackage(item) {
   if (!item) return false;
 
-  const type = String(item.type || item.itemType || '').toLowerCase().trim();
+  const type = String(item.type || item.itemType || item.serviceType || item.displayType || '').toLowerCase().trim();
   const cat = String(item.category || item.categoryName || '').toLowerCase().trim();
-  const name = String(item.name || item.title || item.testName || '').toLowerCase().trim();
-  const id = String(item.id || item.itemId || item.testCode || '').toLowerCase().trim();
+  const name = String(item.name || item.title || item.testName || item.serviceName || item.test_name || item.package_name || '').toLowerCase().trim();
+  const id = String(item.id || item.itemId || item.testCode || item.bookingId || item.booking_number || '').toLowerCase().trim();
 
+  // 1. Explicitly avoid matching pure surgery packages
+  if (cat.includes('surgery') || type.includes('surgery') || name.includes('surgery') || id.startsWith('surg-')) {
+    return false;
+  }
+
+  // 2. Explicitly avoid matching doctor consultations
+  if (type === 'doctor' || cat.includes('doctor') || cat.includes('consultation')) {
+    return false;
+  }
+
+  // 3. Explicitly avoid matching pure physiotherapy
+  if (type.includes('physio') || cat.includes('physio') || name.includes('physio')) {
+    return false;
+  }
+
+  // 4. Explicitly avoid matching pure medicines
+  if (['medicine', 'pharma', 'pharmacy', 'drug'].includes(type) || id.startsWith('med-') || id.startsWith('drg-')) {
+    return false;
+  }
+
+  // 5. Positive matches for wellness packages
   return (
-    type === 'package' || type === 'wellness' ||
-    cat.includes('wellness') || cat.includes('health package') ||
+    type === 'package' || type === 'wellness' || type.includes('wellness') ||
+    cat.includes('wellness') || cat.includes('health package') || cat.includes('preventive package') ||
     name.includes('wellness') || name.includes('health package') || name.includes('screening package') ||
-    id.startsWith('pkg-') || id.startsWith('wel-')
+    name.includes('checkup package') || name.includes('citizen package') || name.includes('full body') ||
+    name.includes('heart screen') || name.includes('urological health') ||
+    id.startsWith('pkg-') || id.startsWith('wel-') || id.includes('-wel-') || id.includes('wel')
   );
 }
 
