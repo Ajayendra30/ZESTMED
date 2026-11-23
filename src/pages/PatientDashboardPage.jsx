@@ -79,6 +79,7 @@ import {
   Hourglass,
   Lock,
   Copy,
+  Building,
   Building2,
   Sun,
   SlidersHorizontal,
@@ -4407,7 +4408,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             });
 
             const getTestIconData = (testName = '') => {
-              const lower = testName.toLowerCase();
+              const lower = String(typeof testName === 'object' ? testName?.name : testName || '').toLowerCase();
               if (lower.includes('vitamin')) {
                 return {
                   Icon: Droplet,
@@ -4741,10 +4742,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                       </div>
                                       <div className="min-w-0">
                                         <div className="font-extrabold text-slate-900 group-hover:text-teal-700 transition truncate max-w-[220px] lg:max-w-xs">
-                                          {rep.test}
+                                          {typeof rep.test === 'object' ? (rep.test?.name || 'Diagnostic Test') : (rep.test || 'Diagnostic Test')}
                                         </div>
                                         <div className="text-[11px] text-slate-400 font-normal truncate max-w-[220px] lg:max-w-xs mt-0.5">
-                                          {rep.subtitle}
+                                          {typeof rep.subtitle === 'object' ? (rep.subtitle?.name || '') : (rep.subtitle || '')}
                                         </div>
                                       </div>
                                     </div>
@@ -4847,8 +4848,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     <IconComponent className="w-4 h-4" />
                                   </div>
                                   <div>
-                                    <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{rep.test}</h4>
-                                    <p className="text-[11px] text-slate-400">{rep.subtitle}</p>
+                                    <h4 className="font-bold text-slate-900 text-xs sm:text-sm">
+                                      {typeof rep.test === 'object' ? (rep.test?.name || 'Diagnostic Test') : (rep.test || 'Diagnostic Test')}
+                                    </h4>
+                                    <p className="text-[11px] text-slate-400">
+                                      {typeof rep.subtitle === 'object' ? (rep.subtitle?.name || '') : (rep.subtitle || '')}
+                                    </p>
                                   </div>
                                 </div>
                                 <div>
@@ -4924,7 +4929,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                       <div className="flex items-center gap-3 pt-1">
                         <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
-                          <Building className="w-5 h-5 text-emerald-600" />
+                          <Building2 className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
