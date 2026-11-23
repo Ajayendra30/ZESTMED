@@ -16,7 +16,9 @@ import {
   getPhoneLockoutStatus, 
   normalizePhoneNumber,
   checkUserRegistrationByPhone,
-  getTargetDashboardForRole
+  getTargetDashboardForRole,
+  isAuthorizedAdmin,
+  isAuthorizedLab
 } from '../services/otpAuthService';
 
 function ZestmedLogo() {
@@ -403,22 +405,17 @@ export default function AuthPage() {
       console.warn('Failed restoring pending cart item:', e);
     }
 
-    // 2. Role-Based Redirection
-    if (loggedInUser?.role === 'Admin') {
+    // 2. Role-Based Redirection: Admin -> Admin Dashboard, Lab -> Lab Dashboard, Regular User -> Home Page
+    if (isAuthorizedAdmin(loggedInUser)) {
       navigate('/admin-dashboard', { replace: true });
       return;
-    } else if (loggedInUser?.role === 'Lab Executive') {
+    } else if (isAuthorizedLab(loggedInUser)) {
       navigate('/lab-dashboard', { replace: true });
       return;
     }
 
-    // 3. Return to previous service or dashboard for patients
-    let target = rawReturnParam;
-    if (!target || target.startsWith('/login') || target.startsWith('/auth') || target.startsWith('/register')) {
-      target = '/patient-dashboard';
-    }
-
-    navigate(target, { replace: true, state: { autoOpenBooking: true } });
+    // 3. Regular users must be redirected to the Home page ('/')
+    navigate('/', { replace: true });
   };
 
   const handleChangeNumber = () => {

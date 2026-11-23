@@ -33,6 +33,46 @@ import BookPhysioModal from './components/BookPhysioModal';
 import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
 import FloatingCallWhatsApp from './components/FloatingCallWhatsApp';
 import { getActiveSubdomain } from './utils/subdomain';
+import { isAuthorizedAdmin, isAuthorizedLab } from './services/otpAuthService';
+
+// Authorized Role Route Guards
+function AdminRouteGuard({ children, user, openAuth, navigate, addToast }) {
+  useEffect(() => {
+    if (!user) {
+      addToast('Please login with an authorized administrator account to access the Admin Dashboard.', 'warning');
+      navigate('/', { replace: true });
+      openAuth('login');
+    } else if (!isAuthorizedAdmin(user)) {
+      addToast('Access Denied: The Admin Dashboard is restricted to authorized administrators only.', 'error');
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate, openAuth, addToast]);
+
+  if (!isAuthorizedAdmin(user)) {
+    return null;
+  }
+
+  return children;
+}
+
+function LabRouteGuard({ children, user, openAuth, navigate, addToast }) {
+  useEffect(() => {
+    if (!user) {
+      addToast('Please login with an authorized lab staff account to access the Lab Portal.', 'warning');
+      navigate('/', { replace: true });
+      openAuth('login');
+    } else if (!isAuthorizedLab(user)) {
+      addToast('Access Denied: The Lab Portal is restricted to authorized lab executives only.', 'error');
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate, openAuth, addToast]);
+
+  if (!isAuthorizedLab(user)) {
+    return null;
+  }
+
+  return children;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -115,15 +155,17 @@ function AppContent() {
   // =========================================================================
   if (location.pathname.startsWith('/admin') || activeSubdomain === 'admin') {
     return (
-      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
-        <Routes>
-          <Route path="/admin" element={<AdminDashboardPage />} />
-          <Route path="/admin/*" element={<AdminDashboardPage />} />
-          <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
-          <Route path="*" element={<AdminDashboardPage />} />
-        </Routes>
-        <ToastContainer />
-      </div>
+      <AdminRouteGuard user={user} openAuth={openAuth} navigate={navigate} addToast={addToast}>
+        <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
+          <Routes>
+            <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/*" element={<AdminDashboardPage />} />
+            <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+            <Route path="*" element={<AdminDashboardPage />} />
+          </Routes>
+          <ToastContainer />
+        </div>
+      </AdminRouteGuard>
     );
   }
 
@@ -149,15 +191,17 @@ function AppContent() {
 
   if (!isConsumerDiagnosticPath && (isLabExecutivePath || activeSubdomain === 'lab')) {
     return (
-      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
-        <Routes>
-          <Route path="/lab" element={<LabDashboardPage />} />
-          <Route path="/lab/*" element={<LabDashboardPage />} />
-          <Route path="/lab-dashboard" element={<LabDashboardPage />} />
-          <Route path="*" element={<LabDashboardPage />} />
-        </Routes>
-        <ToastContainer />
-      </div>
+      <LabRouteGuard user={user} openAuth={openAuth} navigate={navigate} addToast={addToast}>
+        <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
+          <Routes>
+            <Route path="/lab" element={<LabDashboardPage />} />
+            <Route path="/lab/*" element={<LabDashboardPage />} />
+            <Route path="/lab-dashboard" element={<LabDashboardPage />} />
+            <Route path="*" element={<LabDashboardPage />} />
+          </Routes>
+          <ToastContainer />
+        </div>
+      </LabRouteGuard>
     );
   }
 

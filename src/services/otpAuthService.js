@@ -36,7 +36,7 @@ export const OTP_CONFIG = {
 
 // Known administrative / staff phone numbers for role-based auto-detection
 export const ROLE_PHONE_DIRECTORY = {
-  admin: ['9279125091', '9999999999', '9876500001'],
+  admin: ['9999999999', '9876500001'],
   lab: ['9876500002', '9876500003', '9127000001'],
 };
 
@@ -406,7 +406,6 @@ export const resendOtpCode = async (phoneNumber) => {
  */
 export const resolveUserRole = (phone, customRole = null) => {
   const clean = normalizePhoneNumber(phone);
-  if (customRole) return customRole;
   if (ROLE_PHONE_DIRECTORY.admin.includes(clean)) return 'Admin';
   if (ROLE_PHONE_DIRECTORY.lab.includes(clean)) return 'Lab Executive';
   return 'Patient';
@@ -421,8 +420,30 @@ export const getTargetDashboardForRole = (role) => {
       return '/lab-dashboard';
     case 'Patient':
     default:
-      return '/patient-dashboard';
+      return '/'; // Regular users are redirected to the Home page
   }
+};
+
+/**
+ * Validates whether a user is an authorized administrator
+ */
+export const isAuthorizedAdmin = (user) => {
+  if (!user) return false;
+  const clean = normalizePhoneNumber(user.phone || user.contact || '');
+  const isAdminPhone = ROLE_PHONE_DIRECTORY.admin.includes(clean);
+  const isAdminEmail = Boolean(user.email && user.email.toLowerCase().includes('admin@zestmed.com'));
+  return (user.role === 'Admin' && (isAdminPhone || isAdminEmail)) || isAdminPhone || isAdminEmail;
+};
+
+/**
+ * Validates whether a user is authorized for the Lab portal
+ */
+export const isAuthorizedLab = (user) => {
+  if (!user) return false;
+  const clean = normalizePhoneNumber(user.phone || user.contact || '');
+  const isLabPhone = ROLE_PHONE_DIRECTORY.lab.includes(clean);
+  const isLabRole = user.role === 'Lab Executive' || user.role === 'Lab Staff';
+  return (isLabRole && isLabPhone) || isLabPhone || isAuthorizedAdmin(user);
 };
 
 /**

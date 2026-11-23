@@ -15,7 +15,9 @@ import {
   getPhoneLockoutStatus, 
   normalizePhoneNumber,
   checkUserRegistrationByPhone,
-  getTargetDashboardForRole
+  getTargetDashboardForRole,
+  isAuthorizedAdmin,
+  isAuthorizedLab
 } from '../services/otpAuthService';
 
 function ZestmedLogo() {
@@ -349,11 +351,13 @@ export default function AuthModal() {
 
     handleClose();
 
-    // 3. Role-Based Redirection
-    if (loggedInUser?.role === 'Admin') {
+    // 3. Role-Based Redirection: Admin -> Admin Dashboard, Lab -> Lab Dashboard, Regular User -> Home Page
+    if (isAuthorizedAdmin(loggedInUser)) {
       navigate('/admin-dashboard');
-    } else if (loggedInUser?.role === 'Lab Executive') {
+    } else if (isAuthorizedLab(loggedInUser)) {
       navigate('/lab-dashboard');
+    } else {
+      navigate('/');
     }
   };
 

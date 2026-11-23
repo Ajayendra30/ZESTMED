@@ -9,7 +9,7 @@ export const initialAdminProfile = {
   organization: 'Zestmed Health Private Limited',
   hq: 'GS Road, Dispur, Guwahati, Assam - 781005',
   email: 'arindam.sharma@zestmed.com',
-  contact: '+91 92791 25091',
+  contact: '+91 99999 99999',
   drugLicenseNo: 'AS-KAM-DL-88421 / 88422',
   gstin: '18AAACZ9901M1ZT',
   kpis: {
