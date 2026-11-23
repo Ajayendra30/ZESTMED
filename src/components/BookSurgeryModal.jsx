@@ -21,7 +21,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
   const [selectedCategory, setSelectedCategory] = useState('All Surgeries');
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [patientForm, setPatientForm] = useState({
-    name: user?.name || '',
+    name: '',
     phone: user?.contact || user?.phone || '',
     age: user?.age || '',
     insuranceType: 'TPA Cashless Mediclaim',
@@ -335,7 +335,7 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
                       required
                       value={patientForm.name}
                       onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
-                      placeholder="e.g. Dhirendra Nath Deka"
+                      placeholder="Enter your full name"
                       className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                     />
                   </div>

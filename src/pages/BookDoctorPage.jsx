@@ -70,7 +70,7 @@ export default function BookDoctorPage() {
   });
   const [preferredSlot, setPreferredSlot] = useState('10:00 AM - Morning Slot');
   const [consultationMode, setConsultationMode] = useState(location.state?.mode || 'Clinic Visit');
-  const [patientName, setPatientName] = useState(user?.name || '');
+  const [patientName, setPatientName] = useState('');
   const [patientPhone, setPatientPhone] = useState(user?.contact || user?.phone || '');
   const [patientEmail, setPatientEmail] = useState(user?.email || '');
   const [medicalNotes, setMedicalNotes] = useState('');
@@ -140,10 +140,9 @@ export default function BookDoctorPage() {
     };
   }, [user]);
 
-  // Sync user info if authenticated
+  // Sync user info if authenticated (keeping patient full name empty by default as requested)
   useEffect(() => {
     if (user) {
-      setPatientName(prev => prev || user.name || '');
       setPatientPhone(prev => prev || user.contact || user.phone || '');
       setPatientEmail(prev => prev || user.email || '');
     }
@@ -591,7 +590,7 @@ export default function BookDoctorPage() {
                         type="text"
                         value={patientName}
                         onChange={(e) => setPatientName(e.target.value)}
-                        placeholder="e.g. Animesh Sarma"
+                        placeholder="Enter your full name"
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 text-slate-800 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#007A64] focus:bg-white transition"
                         required
                       />

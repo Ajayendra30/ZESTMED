@@ -370,7 +370,7 @@ export default function DoctorAppointmentPage() {
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   const [patientForm, setPatientForm] = useState({
-    name: user?.name || '',
+    name: '',
     phone: user?.contact || user?.phone || '',
     age: user?.age || '',
     gender: user?.gender || 'Male',
@@ -379,10 +379,9 @@ export default function DoctorAppointmentPage() {
   });
 
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient') {
+    if (user) {
       setPatientForm((prev) => ({
         ...prev,
-        name: user.name,
         phone: user.contact || user.phone || prev.phone,
         age: user.age || prev.age,
         gender: user.gender || prev.gender
@@ -1701,7 +1700,7 @@ export default function DoctorAppointmentPage() {
                         value={patientForm.name}
                         onChange={(e) => setPatientForm({ ...patientForm, name: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
-                        placeholder="Enter your name"
+                        placeholder="Enter your full name"
                       />
                     </div>
 

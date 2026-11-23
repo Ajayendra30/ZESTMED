@@ -288,7 +288,7 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Enter your name"
+                        placeholder="Enter your full name"
                         className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm sm:text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008F83] focus:bg-white transition"
                       />
                     </div>

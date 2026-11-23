@@ -144,7 +144,7 @@ export default function NewLabJobModal({ isOpen = true, onClose, onAddJob, onCre
                 required
                 value={formData.patientName}
                 onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
-                placeholder="e.g. Bhupen Barman"
+                placeholder="Enter your full name"
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-primary text-slate-800"
               />
             </div>

@@ -107,7 +107,7 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
   const [openFaq, setOpenFaq] = useState(0);
 
   // Form State
-  const [patientName, setPatientName] = useState(user?.name || 'Ajayendra Shekhar');
+  const [patientName, setPatientName] = useState('');
   const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '9279125091');
   const [age, setAge] = useState(user?.age || '32');
   const [gender, setGender] = useState('Male');
@@ -146,11 +146,8 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBookingData, setConfirmedBookingData] = useState(null);
 
-  // Sync patient details if user logs in
+  // Sync patient details if user logs in (keeping patient full name empty by default as requested)
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient') {
-      setPatientName(user.name);
-    }
     if (user?.contact || user?.phone) {
       setMobileNumber(user.contact || user.phone);
     }

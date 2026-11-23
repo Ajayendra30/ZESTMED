@@ -120,7 +120,7 @@ export default function AddAddressModal({ isOpen = true, onClose, onAddAddress }
                 required
                 value={formData.recipientName}
                 onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
-                placeholder="e.g. Ajayendra Shekhar"
+                placeholder="Enter full name"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-primary text-slate-800"
               />
             </div>

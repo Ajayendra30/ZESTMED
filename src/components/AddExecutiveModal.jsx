@@ -95,7 +95,7 @@ export default function AddExecutiveModal({ isOpen = true, onClose, onAddExecuti
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Deepjyoti Kalita"
+              placeholder="Enter your full name"
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-medium"
             />
           </div>

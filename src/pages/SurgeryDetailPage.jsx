@@ -104,7 +104,7 @@ export default function SurgeryDetailPage() {
   const [openFaq, setOpenFaq] = useState(0);
 
   // Form State
-  const [patientName, setPatientName] = useState(user?.name || 'Ajayendra Shekhar');
+  const [patientName, setPatientName] = useState('');
   const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '9876543210');
   const [age, setAge] = useState('45');
   const [gender, setGender] = useState('Male');
@@ -141,11 +141,8 @@ export default function SurgeryDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBookingData, setConfirmedBookingData] = useState(null);
 
-  // Keep patient details in sync if user logs in
+  // Keep patient details in sync if user logs in (keeping patient full name empty by default as requested)
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient') {
-      setPatientName(user.name);
-    }
     if (user?.contact || user?.phone) {
       setMobileNumber(user.contact || user.phone);
     }

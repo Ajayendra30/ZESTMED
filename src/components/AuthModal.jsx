@@ -657,7 +657,7 @@ export default function AuthModal() {
                       required
                       value={profileName}
                       onChange={(e) => setProfileName(e.target.value)}
-                      placeholder="e.g. Arpita Sen"
+                      placeholder="Enter your full name"
                       className="w-full text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-2.5"
                       autoFocus
                     />

@@ -217,7 +217,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                     required
                     value={formData.patientName}
                     onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
-                    placeholder="e.g. Ramesh Chandra Barua"
+                    placeholder="Enter your full name"
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>

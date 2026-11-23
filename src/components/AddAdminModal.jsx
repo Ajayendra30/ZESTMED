@@ -72,7 +72,7 @@ export default function AddAdminModal({ isOpen = true, onClose, onAddAdmin }) {
             <input
               type="text"
               required
-              placeholder="e.g. Dr. Rupjyoti Sharma"
+              placeholder="Enter your full name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-slate-800 font-medium"

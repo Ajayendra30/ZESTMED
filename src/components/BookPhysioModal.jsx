@@ -32,7 +32,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, i
   const [sessionDate, setSessionDate] = useState(new Date().toISOString().split('T')[0]);
   const [sessionSlot, setSessionSlot] = useState('10:00 AM - 11:00 AM');
   const [patientDetails, setPatientDetails] = useState({
-    name: user?.name || '',
+    name: '',
     phone: user?.contact || user?.phone || '',
     age: user?.age || '',
     address: `${currentLocation?.city || 'Dispur'}, Guwahati`,
@@ -436,7 +436,7 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, i
                     required
                     value={patientDetails.name}
                     onChange={(e) => setPatientDetails({ ...patientDetails, name: e.target.value })}
-                    placeholder="e.g. Minati Goswami"
+                    placeholder="Enter your full name"
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>

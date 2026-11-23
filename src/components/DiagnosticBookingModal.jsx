@@ -28,7 +28,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
   const [verifiedPaymentData, setVerifiedPaymentData] = useState(null);
 
   // Form State
-  const [patientName, setPatientName] = useState(user?.name || '');
+  const [patientName, setPatientName] = useState('');
   const [patientAge, setPatientAge] = useState(user?.age || '');
   const [patientGender, setPatientGender] = useState(user?.gender || 'Male');
   const [contactNumber, setContactNumber] = useState(user?.contact || user?.phone || '');
@@ -44,7 +44,6 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
 
   useEffect(() => {
     if (user) {
-      if (!patientName && user.name) setPatientName(user.name);
       if (!contactNumber && (user.contact || user.phone)) setContactNumber(user.contact || user.phone);
       if (!patientAge && user.age) setPatientAge(user.age);
       if (!address && user.address) setAddress(user.address);
@@ -267,7 +266,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
                     required
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
-                    placeholder="e.g. Bhupen Hazarika"
+                    placeholder="Enter your full name"
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border focus:border-primary outline-none"
                   />
                 </div>

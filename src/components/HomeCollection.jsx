@@ -311,7 +311,7 @@ export default function HomeCollection() {
                     required
                     value={scheduleData.patientName}
                     onChange={(e) => setScheduleData({ ...scheduleData, patientName: e.target.value })}
-                    placeholder="e.g. Ramesh Kumar"
+                    placeholder="Enter your full name"
                     className="w-full p-2.5 rounded-xl border border-border focus:border-primary outline-none"
                   />
                 </div>

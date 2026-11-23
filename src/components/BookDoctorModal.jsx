@@ -24,7 +24,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
   const [selectedSlot, setSelectedSlot] = useState('');
   const [paymentMode, setPaymentMode] = useState('online'); // 'online' (Razorpay) or 'clinic'
   const [patientDetails, setPatientDetails] = useState({
-    name: user?.name || '',
+    name: '',
     phone: user?.contact || user?.phone || '',
     age: user?.age || '',
     symptoms: ''
@@ -464,7 +464,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
                     required
                     value={patientDetails.name}
                     onChange={(e) => setPatientDetails({ ...patientDetails, name: e.target.value })}
-                    placeholder="e.g. Bipul Sharma"
+                    placeholder="Enter your full name"
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#008F83] outline-none"
                   />
                 </div>

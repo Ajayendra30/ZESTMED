@@ -2532,6 +2532,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           type="text"
                           value={profileForm.name}
                           onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                          placeholder="Enter your full name"
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-medium focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
