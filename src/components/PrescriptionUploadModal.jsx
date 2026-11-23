@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import { recordAndPlayNotification } from '../utils/notificationSound';
+import { savePrescription, validatePrescriptionFile } from '../services/prescriptionService';
 import { 
   X, UploadCloud, FileText, CheckCircle2, AlertCircle, 
   ShieldCheck, Camera, ArrowRight 
@@ -17,30 +18,30 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
   const [patientNote, setPatientNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedTicketId, setSubmittedTicketId] = useState('');
 
   if (!isOpen) return null;
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const validation = validatePrescriptionFile(file);
+      if (!validation.valid) {
+        addToast(validation.error, 'error');
+        e.target.value = '';
+        return;
+      }
+
       setSelectedFile({
+        rawFile: file,
         name: file.name,
         size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-        preview: URL.createObjectURL(file)
+        type: file.type
       });
     }
   };
 
-  const handleSimulateSampleRx = () => {
-    setSelectedFile({
-      name: 'Sample_Dr_Kulkarni_Prescription.pdf',
-      size: '1.24 MB',
-      preview: null
-    });
-    addToast('Demo prescription sample attached', 'info');
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       if (onClose) onClose();
@@ -54,15 +55,23 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
       return;
     }
 
-    if (!selectedFile) {
-      addToast('Please upload or attach a prescription first', 'error');
+    if (!selectedFile || !selectedFile.rawFile) {
+      addToast('Please upload a genuine prescription file (PDF, JPG, or PNG)', 'error');
       return;
     }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const savedRx = await savePrescription({
+        file: selectedFile.rawFile,
+        user,
+        patientNote
+      });
+
+      const rxRef = savedRx?.id || `ZM-RX-${Date.now().toString().slice(-6)}`;
+      setSubmittedTicketId(rxRef);
       setIsSubmitted(true);
-      const rxRef = `RX-${Date.now().toString().slice(-4)}`;
+
       recordAndPlayNotification({
         type: 'book',
         title: 'Prescription Uploaded',
@@ -76,14 +85,21 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
         patientPhone: user?.phone || user?.contact,
         patientName: user?.name
       });
-      addToast('Prescription submitted for Pharmacist Verification! (Demo)', 'success');
-    }, 1200);
+
+      addToast('Prescription uploaded successfully for Pharmacist Verification!', 'success');
+    } catch (err) {
+      console.error('[PrescriptionUploadModal] Upload error:', err);
+      addToast('Failed to upload prescription. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setIsSubmitted(false);
     setSelectedFile(null);
     setPatientNote('');
+    setSubmittedTicketId('');
     onClose();
   };
 
@@ -124,10 +140,10 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
               Our registered pharmacist is reviewing your prescription ({selectedFile?.name}). You will receive an SMS and WhatsApp notification with medicine pricing and confirmation within 15 minutes.
             </p>
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800 text-left mt-4 space-y-1">
-              <div className="font-semibold">Simulated Workflow Status:</div>
-              <div>• Ticket ID: #RX-ZEST-{Math.floor(10000 + Math.random() * 90000)}</div>
-              <div>• Verification Desk: In Review (Demo)</div>
-              <div>• Pharmacist Call Window: 10:00 AM - 10:30 AM</div>
+              <div className="font-semibold text-emerald-900">Live Prescription Status:</div>
+              <div>• Ticket ID: #{submittedTicketId || 'ZM-RX-PROCESSED'}</div>
+              <div>• Verification Desk: Pending Chief Pharmacist Audit</div>
+              <div>• Review Turnaround: Under 15 Minutes</div>
             </div>
             <button
               onClick={handleReset}
@@ -138,11 +154,11 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
-            {/* Upload Box - Compact on mobile */}
-            <div className="border-2 border-dashed border-[#008F83]/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 text-center bg-teal-50/30 hover:bg-teal-50/60 transition group cursor-pointer relative">
+            {/* Upload Box */}
+            <div className="border-2 border-dashed border-[#008F83]/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center bg-teal-50/30 hover:bg-teal-50/60 transition group cursor-pointer relative">
               <input
                 type="file"
-                accept="image/*,application/pdf"
+                accept="image/png,image/jpeg,image/jpg,image/webp,application/pdf"
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
               />
@@ -158,7 +174,7 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
             </div>
 
             {/* Attached file chip */}
-            {selectedFile ? (
+            {selectedFile && (
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-surface border border-border text-xs">
                 <div className="flex items-center gap-2 truncate">
                   <FileText className="w-4 h-4 text-[#008F83] shrink-0" />
@@ -173,20 +189,9 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
                   Remove
                 </button>
               </div>
-            ) : (
-              <div className="flex justify-center -mt-1">
-                <button
-                  type="button"
-                  onClick={handleSimulateSampleRx}
-                  className="text-[11px] sm:text-xs text-[#008F83] font-semibold hover:underline inline-flex items-center gap-1.5"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Attach demo sample prescription (1-Click Test)</span>
-                </button>
-              </div>
             )}
 
-            {/* Guidelines - Compact & clean on mobile */}
+            {/* Guidelines */}
             <div className="bg-slate-50 rounded-xl p-2.5 sm:p-3 border border-border text-xs space-y-1">
               <span className="font-bold text-slate-800 text-[11px] block">Prescription Requirements:</span>
               <div className="flex items-center gap-1.5 text-slate-600 text-[10.5px]">
@@ -223,7 +228,7 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
               className="w-full bg-[#008F83] hover:bg-[#007A70] text-white py-2.5 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-75 shadow-xs"
             >
               {isSubmitting ? (
-                <span>Submitting Prescription...</span>
+                <span>Uploading & Verifying...</span>
               ) : (
                 <>
                   <span>Submit Prescription</span>

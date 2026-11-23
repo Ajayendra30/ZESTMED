@@ -26,6 +26,9 @@ const userCartsMap = new Map();
 // In-memory persistent notifications store
 const persistentNotifications = [];
 
+// In-memory persistent prescriptions store
+const persistentPrescriptions = [];
+
 export const verifyAuthHeader = (authHeader) => {
   if (!authHeader) return null;
   const parts = authHeader.split(' ');
@@ -566,6 +569,75 @@ export const handleApiRequest = async (req, res) => {
 
     res.statusCode = 200;
     res.end(JSON.stringify({ success: true }));
+    return true;
+  }
+
+  // RX1. Get Prescriptions (Admin gets all, Patient gets their own)
+  if (pathname === '/api/prescriptions' && method === 'GET') {
+    const filterPhone = query.phone ? String(query.phone).replace(/\D/g, '').slice(-10) : '';
+    let filtered = persistentPrescriptions;
+    if (filterPhone) {
+      filtered = persistentPrescriptions.filter(p => {
+        const pPhone = String(p.phone || p.patientPhone || '').replace(/\D/g, '').slice(-10);
+        return pPhone === filterPhone;
+      });
+    }
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(filtered));
+    return true;
+  }
+
+  // RX2. Save / Upload Genuine Prescription
+  if (pathname === '/api/prescriptions' && method === 'POST') {
+    const rx = body || {};
+    if (!rx.id) {
+      rx.id = `ZM-RX-${Date.now().toString().slice(-6)}`;
+    }
+    // Remove if already exists, then add latest to beginning
+    const idx = persistentPrescriptions.findIndex(p => p.id === rx.id);
+    if (idx >= 0) {
+      persistentPrescriptions[idx] = { ...persistentPrescriptions[idx], ...rx };
+    } else {
+      persistentPrescriptions.unshift(rx);
+    }
+    if (persistentPrescriptions.length > 300) {
+      persistentPrescriptions.length = 300;
+    }
+    res.statusCode = 201;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ success: true, prescription: rx }));
+    return true;
+  }
+
+  // RX3. Update Prescription Verification Status (Approve / Reject)
+  if (pathname === '/api/prescriptions/status' && method === 'POST') {
+    const { id, status, pharmacistNotes, medicines } = body || {};
+    const found = persistentPrescriptions.find(p => p.id === id);
+    if (found) {
+      found.status = status || found.status;
+      found.pharmacistNotes = pharmacistNotes !== undefined ? pharmacistNotes : found.pharmacistNotes;
+      if (Array.isArray(medicines) && medicines.length > 0) {
+        found.medicines = medicines;
+      }
+      found.updatedAt = new Date().toISOString();
+    }
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ success: true, prescription: found || null }));
+    return true;
+  }
+
+  // RX4. Delete Prescription
+  if (pathname.startsWith('/api/prescriptions/') && method === 'DELETE') {
+    const rxId = pathname.replace('/api/prescriptions/', '').trim();
+    const idx = persistentPrescriptions.findIndex(p => p.id === rxId);
+    if (idx >= 0) {
+      persistentPrescriptions.splice(idx, 1);
+    }
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ success: true, deletedId: rxId }));
     return true;
   }
 

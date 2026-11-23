@@ -13,6 +13,11 @@ import {
   getUserBookings 
 } from '../services/supabaseService';
 import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
+import { 
+  getUserPrescriptions, 
+  deletePrescription, 
+  downloadPrescriptionFile 
+} from '../services/prescriptionService';
 import {
   Home,
   FlaskConical,
@@ -71,7 +76,6 @@ import {
   initialPatientOrders,
   initialPatientLabBookings,
   initialPatientAppointments,
-  initialPatientPrescriptions,
   initialAssamAddresses
 } from '../mock-data/patientData';
 import DigitalLabReportModal from '../components/DigitalLabReportModal';
@@ -1009,16 +1013,45 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
   }, [user, allUserBookings, isMatchingCurrentUser]);
 
-  // Real or Historical Prescriptions (strictly isolated to verified user)
-  const userPrescriptions = useMemo(() => {
-    if (!user) return [];
-    try {
-      const stored = JSON.parse(localStorage.getItem('zestmed_patient_prescriptions') || '[]');
-      return Array.isArray(stored) ? stored.filter(Boolean).filter(isMatchingCurrentUser) : [];
-    } catch {
-      return [];
-    }
-  }, [user, isMatchingCurrentUser]);
+  // Real Prescriptions (dynamically fetched from Supabase, Backend API & localStorage)
+  const [userPrescriptions, setUserPrescriptions] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPrescriptions = async () => {
+      if (!user) {
+        setUserPrescriptions([]);
+        return;
+      }
+      try {
+        const list = await getUserPrescriptions(user);
+        if (isMounted) {
+          // Exclude any legacy sample records
+          const realList = (list || []).filter(item => 
+            !item.id?.startsWith('ZM-RX-2026-302') && 
+            !item.id?.startsWith('ZM-RX-2026-194') &&
+            !item.id?.startsWith('ZM-RX-2026-088') &&
+            !item.fileName?.includes('Sample_Dr_Kulkarni')
+          );
+          setUserPrescriptions(realList);
+        }
+      } catch (err) {
+        console.warn('[PatientDashboardPage] Error loading prescriptions:', err);
+      }
+    };
+
+    fetchPrescriptions();
+
+    const handlePrescriptionUpdate = () => fetchPrescriptions();
+    window.addEventListener('storage', handlePrescriptionUpdate);
+    window.addEventListener('zestmed_prescription_updated', handlePrescriptionUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handlePrescriptionUpdate);
+      window.removeEventListener('zestmed_prescription_updated', handlePrescriptionUpdate);
+    };
+  }, [user]);
 
   // Filtered Real User Bookings for My Bookings View
   const filteredUserBookings = useMemo(() => {
@@ -3201,57 +3234,111 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </h3>
                 {userPrescriptions.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {userPrescriptions.map((rx) => (
-                      <div
-                        key={rx.id}
-                        className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                            <div>
-                              <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
-                              <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName || 'Prescription Document'}</h4>
-                              <p className="text-[11px] text-slate-500">{rx.specialty || 'General Care'} • {rx.hospital || 'Assam Health Desk'}</p>
+                    {userPrescriptions.map((rx) => {
+                      const stLower = String(rx.status || '').toLowerCase();
+                      const isApproved = stLower.includes('approved') || stLower.includes('verified');
+                      const isRejected = stLower.includes('rejected');
+                      return (
+                        <div
+                          key={rx.id}
+                          className="bg-white rounded-2xl border border-slate-100 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                              <div>
+                                <span className="font-mono text-xs font-bold text-[#14B8A6]">{rx.id}</span>
+                                <h4 className="text-sm font-extrabold text-slate-900 mt-0.5">{rx.doctorName || 'Doctor Prescription'}</h4>
+                                <p className="text-[11px] text-slate-500">{rx.specialty || 'General Care'} • {rx.hospital || rx.clinicName || 'Assam Health Desk'}</p>
+                              </div>
+                              <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
+                                isApproved
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : isRejected
+                                    ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                              }`}>
+                                {isApproved ? 'Approved & Verified' : isRejected ? 'Rejected' : 'Pending Audit'}
+                              </span>
                             </div>
-                            <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
-                              String(rx.status || '').toLowerCase().includes('verified')
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : 'bg-amber-50 text-amber-700 border border-amber-200'
-                            }`}>
-                              {rx.status || 'Verified'}
-                            </span>
+
+                            <div className="py-3 text-xs text-slate-600 space-y-1.5">
+                              {rx.fileName && (
+                                <p className="flex items-center gap-1.5">
+                                  <FileText className="w-3.5 h-3.5 text-[#14B8A6] shrink-0" />
+                                  <strong className="text-slate-700">Document:</strong>
+                                  <span className="font-mono text-slate-800 truncate">{rx.fileName}</span>
+                                  {rx.fileSize && <span className="text-[10.5px] text-slate-400">({rx.fileSize})</span>}
+                                </p>
+                              )}
+                              <p><strong className="text-slate-700">Uploaded On:</strong> {rx.uploadedAt || rx.dateOfIssue || 'Recent'}</p>
+                              {rx.notes && (
+                                <p className="text-[11.5px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                  <strong className="text-slate-700">Instructions:</strong> {rx.notes}
+                                </p>
+                              )}
+                              {rx.pharmacistNotes && (
+                                <p className="text-[11.5px] text-emerald-800 bg-emerald-50/60 p-2 rounded-lg border border-emerald-100">
+                                  <strong className="text-emerald-900">Pharmacist Remarks:</strong> {rx.pharmacistNotes}
+                                </p>
+                              )}
+                            </div>
                           </div>
 
-                          <div className="py-3 text-xs text-slate-600 space-y-1">
-                            <p><strong className="text-slate-700">Issued On:</strong> {rx.dateOfIssue || 'Recent'}</p>
-                            <p><strong className="text-slate-700">Valid Until:</strong> {rx.expiryDate || 'Standard Validity'}</p>
-                            <p><strong className="text-slate-700">Medications:</strong> {Array.isArray(rx.medicines) ? rx.medicines.map(m => m?.name).filter(Boolean).join(', ') : (rx.medicines || 'Prescribed Medicines')}</p>
+                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedPrescription(rx)}
+                                className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Eye className="w-3.5 h-3.5 text-[#14B8A6]" />
+                                <span>View Document</span>
+                              </button>
+                              {(rx.fileUrl || rx.imagePreview) && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    downloadPrescriptionFile(rx);
+                                    addToast('Downloading prescription document...', 'info');
+                                  }}
+                                  className="p-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+                                  title="Download Document"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  if (window.confirm('Are you sure you want to delete this prescription?')) {
+                                    await deletePrescription(rx.id);
+                                    addToast('Prescription removed from vault.', 'info');
+                                  }
+                                }}
+                                className="p-1.5 rounded-xl border border-rose-100 hover:bg-rose-50 text-rose-500 transition cursor-pointer"
+                                title="Delete Prescription"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {isApproved && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
+                                  openCart();
+                                }}
+                                className="px-3 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <ShoppingCart className="w-3.5 h-3.5" />
+                                <span>Order</span>
+                              </button>
+                            )}
                           </div>
                         </div>
-
-                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedPrescription(rx)}
-                            className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>View Details</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              addToast(`Prescribed medicines from ${rx.id} added to cart!`, 'success');
-                              openCart();
-                            }}
-                            className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white text-xs font-bold shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            <span>Order Medicines</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
@@ -3260,7 +3347,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
                     <h3 className="text-base font-extrabold text-slate-800">No Prescriptions Uploaded</h3>
                     <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                      You haven't uploaded any doctor prescriptions yet. Use the upload box above to submit your prescription for verified doorstep medicine fulfillment.
+                      You haven't uploaded any doctor prescriptions yet. Use the upload box above to submit your genuine prescription (PDF, JPG, or PNG) for verified doorstep medicine fulfillment.
                     </p>
                   </div>
                 )}

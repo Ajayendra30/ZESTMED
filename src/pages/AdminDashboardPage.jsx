@@ -21,6 +21,12 @@ import {
   updateOrderStatus
 } from '../services/supabaseService';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { 
+  getAllPrescriptions, 
+  updatePrescriptionStatus, 
+  deletePrescription, 
+  downloadPrescriptionFile 
+} from '../services/prescriptionService';
 import {
   Menu,
   Search,
@@ -1284,9 +1290,10 @@ export default function AdminDashboardPage() {
     addToast(`Phlebotomist ${execName} assigned to #${bookingId}`, 'success');
   };
 
-  const handleApprovePrescription = (rxId, remarks) => {
+  const handleApprovePrescription = async (rxId, remarks) => {
     const rx = prescriptionsList.find((p) => p.id === rxId);
-    setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Approved', remarks } : p)));
+    await updatePrescriptionStatus(rxId, 'Approved', remarks);
+    setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Approved', remarks, pharmacistNotes: remarks } : p)));
 
     if (rx) {
       const generatedOrder = {
@@ -1294,7 +1301,7 @@ export default function AdminDashboardPage() {
         orderId: `#ORD-RX-${rxId.replace(/\D/g, '') || Date.now()}`,
         customer: rx.patient || rx.patientName || 'Patient',
         patientName: rx.patient || rx.patientName || 'Patient',
-        phone: rx.phone || '+91 92791 25091',
+        phone: rx.phone || rx.patientPhone || '+91 92791 25091',
         deliveryAddress: 'Guwahati Express Delivery Hub, Dispur',
         items: rx.items || 'Prescribed Medications (Verified)',
         paymentMethod: 'Cash / UPI on Delivery',
@@ -1436,19 +1443,40 @@ export default function AdminDashboardPage() {
   const [prescriptionsList, setPrescriptionsList] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_prescriptions');
-      return saved ? JSON.parse(saved) : [
-        { id: 'RX-9821', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', phone: '+91 92791 25091', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
-        { id: 'RX-9822', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', phone: '+91 98765 43210', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
-        { id: 'RX-9823', patient: 'Priya Sharma', patientName: 'Priya Sharma', phone: '+91 94350 12345', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
-      ];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.filter(p => !p.id?.startsWith('RX-982') && !p.fileName?.includes('Sample_Dr_Kulkarni'));
+        }
+      }
+      return [];
     } catch {
-      return [
-        { id: 'RX-9821', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', phone: '+91 92791 25091', doctor: 'Dr. B. K. Sarma (MD)', date: 'Nov 12, 2026', items: 'Metformin 500mg, Rosuvastatin 10mg', status: 'Approved' },
-        { id: 'RX-9822', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', phone: '+91 98765 43210', doctor: 'Dr. D. Goswami (Cardiologist)', date: 'Nov 13, 2026', items: 'Telmisartan 40mg, Atorvastatin 20mg', status: 'Pending Audit' },
-        { id: 'RX-9823', patient: 'Priya Sharma', patientName: 'Priya Sharma', phone: '+91 94350 12345', doctor: 'Dr. S. Roy (General Med)', date: 'Nov 14, 2026', items: 'Thyroxine 50mcg', status: 'Pending Audit' }
-      ];
+      return [];
     }
   });
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPrescriptions = async () => {
+      try {
+        const list = await getAllPrescriptions();
+        if (isMounted && Array.isArray(list)) {
+          setPrescriptionsList(list);
+        }
+      } catch (err) {
+        console.warn('[AdminDashboardPage] Error loading prescriptions:', err);
+      }
+    };
+    fetchPrescriptions();
+    const handleRxUpdate = () => fetchPrescriptions();
+    window.addEventListener('storage', handleRxUpdate);
+    window.addEventListener('zestmed_prescription_updated', handleRxUpdate);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('storage', handleRxUpdate);
+      window.removeEventListener('zestmed_prescription_updated', handleRxUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -4627,61 +4655,88 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {prescriptionsList.map((rx) => (
-                  <div key={rx.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="text-xs font-mono font-bold text-teal-600">{rx.id}</span>
-                        <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient}</h3>
-                      </div>
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : rx.status === 'Rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
-                      }`}>
-                        {rx.status}
-                      </span>
-                    </div>
-
-                    <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
-                      <div>Doctor: <strong className="text-slate-800">{rx.doctor}</strong></div>
-                      <div>Uploaded: <span className="text-slate-500 font-mono">{rx.date}</span></div>
-                      <div className="pt-1">Rx Medicines: <strong className="text-slate-800">{rx.items}</strong></div>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => setAuditingRx(rx)}
-                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition cursor-pointer"
-                        title="Audit prescription and verify medications"
-                      >
-                        Audit / View
-                      </button>
-                      {rx.status !== 'Approved' && (
-                        <button
-                          type="button"
-                          onClick={() => handleApprovePrescription(rx.id)}
-                          className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs cursor-pointer"
-                        >
-                          Approve & Dispense
-                        </button>
-                      )}
-                      {rx.status !== 'Rejected' && rx.status !== 'Approved' && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPrescriptionsList((prev) => prev.map((it) => (it.id === rx.id ? { ...it, status: 'Rejected' } : it)));
-                            addToast(`Prescription ${rx.id} marked as rejected.`, 'info');
-                          }}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl text-xs font-semibold transition cursor-pointer"
-                        >
-                          Reject
-                        </button>
-                      )}
-                    </div>
+              {prescriptionsList.length === 0 ? (
+                <div className="bg-white rounded-2xl p-10 border border-slate-100 shadow-sm text-center space-y-3">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-50 text-[#008F83] flex items-center justify-center mx-auto">
+                    <FileText className="w-7 h-7" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-base font-extrabold text-slate-800">No Prescriptions in Audit Queue</h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    All patient-uploaded doctor prescriptions (PDF, JPG, PNG) will appear here in real-time for Chief Pharmacist verification and dispensing approval.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {prescriptionsList.map((rx) => (
+                    <div key={rx.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3 flex flex-col justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span className="text-xs font-mono font-bold text-teal-600">{rx.id}</span>
+                            <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rx.patient || rx.patientName || 'Verified Patient'}</h3>
+                            <p className="text-[11px] text-slate-500">{rx.phone || rx.patientPhone || 'Guwahati Hub'}</p>
+                          </div>
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                            rx.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : rx.status === 'Rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'
+                          }`}>
+                            {rx.status || 'Pending Audit'}
+                          </span>
+                        </div>
+
+                        <div className="text-xs space-y-1 bg-slate-50 p-3 rounded-xl text-slate-600">
+                          <div>Doctor: <strong className="text-slate-800">{rx.doctor || rx.doctorName || 'Medical Practitioner'}</strong></div>
+                          <div>Uploaded: <span className="text-slate-500 font-mono">{rx.uploadedAt || rx.date || 'Recent'}</span></div>
+                          {rx.fileName && <div>File: <span className="text-slate-700 font-mono truncate block">{rx.fileName}</span></div>}
+                          <div className="pt-1">Rx Medicines: <strong className="text-slate-800">{rx.items || (Array.isArray(rx.medicines) && rx.medicines.length > 0 ? rx.medicines.map(m => m.name).join(', ') : 'Pending Pharmacist Mapping')}</strong></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => setAuditingRx(rx)}
+                          className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition cursor-pointer"
+                          title="Audit prescription and verify medications"
+                        >
+                          Audit / View
+                        </button>
+                        {(rx.fileUrl || rx.imagePreview) && (
+                          <button
+                            type="button"
+                            onClick={() => downloadPrescriptionFile(rx)}
+                            className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition cursor-pointer"
+                            title="Download Document"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {rx.status !== 'Approved' && (
+                          <button
+                            type="button"
+                            onClick={() => handleApprovePrescription(rx.id)}
+                            className="flex-1 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition text-center shadow-xs cursor-pointer"
+                          >
+                            Approve
+                          </button>
+                        )}
+                        {rx.status !== 'Rejected' && rx.status !== 'Approved' && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await updatePrescriptionStatus(rx.id, 'Rejected', 'Prescription rejected by Chief Pharmacist');
+                              setPrescriptionsList((prev) => prev.map((it) => (it.id === rx.id ? { ...it, status: 'Rejected' } : it)));
+                              addToast(`Prescription ${rx.id} marked as rejected.`, 'info');
+                            }}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl text-xs font-semibold transition cursor-pointer"
+                          >
+                            Reject
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -5392,8 +5447,9 @@ export default function AdminDashboardPage() {
             handleApprovePrescription(rxId, remarks);
             setAuditingRx(null);
           }}
-          onReject={(rxId, reason) => {
-            setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Rejected', rejectReason: reason } : p)));
+          onReject={async (rxId, reason) => {
+            await updatePrescriptionStatus(rxId, 'Rejected', reason);
+            setPrescriptionsList((prev) => prev.map((p) => (p.id === rxId ? { ...p, status: 'Rejected', rejectReason: reason, pharmacistNotes: reason } : p)));
             addToast(`Prescription ${rxId} rejected: ${reason}`, 'info');
             setAuditingRx(null);
           }}
