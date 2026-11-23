@@ -7,7 +7,7 @@ import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
 import { 
   ArrowLeft, Smartphone, ShieldCheck, ChevronDown, 
-  RotateCcw, CheckCircle2, X, User 
+  RotateCcw, X 
 } from 'lucide-react';
 import { getRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
@@ -56,49 +56,9 @@ export default function AuthPage() {
   const { addItem } = useCart();
 
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [fullName, setFullName] = useState(() => {
-    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
-      return user.name;
-    }
-    try {
-      const saved = localStorage.getItem('zestmed_patient_profile');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Rahul Verma') {
-          return parsed.name;
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    return '';
-  });
   const [step, setStep] = useState(1); // 1: Phone input, 2: OTP verification
   const [otp, setOtp] = useState(['', '', '', '']);
   const [resendCountdown, setResendCountdown] = useState(30);
-  const [detectedPatient, setDetectedPatient] = useState(null);
-
-  useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
-      setFullName(user.name);
-      if (user.contact || user.phone) {
-        setPhoneNumber(normalizePhone(user.contact || user.phone));
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const clean = normalizePhone(phoneNumber);
-    if (clean.length === 10) {
-      const found = getRegisteredPatient(clean);
-      setDetectedPatient(found);
-      if (found?.name && found.name !== 'Verified Patient' && !found.name.startsWith('Patient ') && found.name !== 'Rahul Verma') {
-        setFullName(found.name);
-      }
-    } else {
-      setDetectedPatient(null);
-    }
-  }, [phoneNumber]);
 
   // Countdown timer for OTP resend
   useEffect(() => {
@@ -121,10 +81,9 @@ export default function AuthPage() {
     setStep(2);
     setOtp(['', '', '', '']);
     setResendCountdown(30);
-    const rawResolved = (fullName.trim() || user?.name || detectedPatient?.name || 'Ajayendra Shekhar').trim();
-    const resolvedName = rawResolved === 'Rahul Verma' ? 'Ajayendra Shekhar' : rawResolved;
-    if (resolvedName && resolvedName !== 'Verified Patient') {
-      addToast(`OTP sent for ${resolvedName}: 1234`, 'info');
+    const registered = getRegisteredPatient(clean);
+    if (registered?.name && registered.name !== 'Verified Patient' && registered.name !== 'Rahul Verma') {
+      addToast(`OTP sent for ${registered.name}: 1234`, 'info');
     } else {
       addToast('Demo OTP sent: 1234', 'info');
     }
@@ -183,8 +142,9 @@ export default function AuthPage() {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    const rawResolved = (fullName.trim() || user?.name || detectedPatient?.name || 'Ajayendra Shekhar').trim();
-    const resolvedName = rawResolved === 'Rahul Verma' ? 'Ajayendra Shekhar' : rawResolved;
+    const clean = normalizePhone(phoneNumber);
+    const registered = getRegisteredPatient(clean);
+    const resolvedName = (registered?.name && registered.name !== 'Rahul Verma') ? registered.name : '';
     loginWithPhoneOtp(phoneNumber, resolvedName);
     handlePostLoginRedirect();
   };
@@ -368,31 +328,6 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                {/* Patient Full Name Input */}
-                <div className="space-y-1 text-left">
-                  <label className="block text-xs font-bold text-slate-700">
-                    Patient Full Name
-                  </label>
-                  <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
-                    <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
-                      <User className="w-4 h-4" />
-                    </div>
-                    <input
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Enter your full name"
-                      className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-3"
-                    />
-                  </div>
-                  {detectedPatient?.name && (
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#007A64] font-semibold mt-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
-                      <span>Verified Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
-                    </div>
-                  )}
-                </div>
-
                 {/* Primary CTA: Send OTP Button */}
                 <button
                   type="submit"
@@ -413,11 +348,6 @@ export default function AuthPage() {
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Enter the 4-digit verification code sent to <strong className="text-slate-800">+91 {phoneNumber}</strong>
-                  {(fullName.trim() || detectedPatient?.name) && (
-                    <span className="block text-[#007A64] font-semibold mt-1">
-                      Patient: <strong className="text-slate-900 font-bold">{fullName.trim() || detectedPatient?.name}</strong>
-                    </span>
-                  )}
                 </p>
               </div>
 

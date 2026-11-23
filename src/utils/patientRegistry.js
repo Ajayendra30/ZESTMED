@@ -79,8 +79,14 @@ export function normalizePhone(phone) {
 
 export function purgeRahulVermaFromStorage() {
   try {
-    // 1. Clean zestmed_user
+    // If not logged in, ensure no stale profiles remain in localStorage
     const storedUser = localStorage.getItem('zestmed_user');
+    if (!storedUser) {
+      localStorage.removeItem('zestmed_patient_profile');
+      localStorage.removeItem('patient_profile');
+    }
+
+    // 1. Clean zestmed_user
     if (storedUser) {
       const u = JSON.parse(storedUser);
       if (u?.name === 'Rahul Verma' || (u?.email && u.email.includes('rahul.verma'))) {
