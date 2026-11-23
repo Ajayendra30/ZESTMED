@@ -82,6 +82,7 @@ import PrescriptionUploadModal from '../components/PrescriptionUploadModal';
 import BookingDetailModal from '../components/BookingDetailModal';
 import NotificationPopover, { DEFAULT_NOTIFICATIONS } from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
+import { fetchUserNotifications, subscribeToNotifications } from '../services/notificationService';
 import AuthModal from '../components/AuthModal';
 import { getMockReportDetails, downloadClinicalReport, shareClinicalReport } from '../utils/reportGenerator';
 
@@ -140,151 +141,48 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     return false;
   }, [user]);
 
-  // Patient Real-Time Notifications (strictly isolated to current verified user)
-  const [patientNotifications, setPatientNotifications] = useState(() => {
-    if (!user) return [];
-    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
-    try {
-      const stored = localStorage.getItem('zestmed_patient_notifications');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed.filter(item => {
-            const itemPhone = normalizePhone(item.phone || item.patientPhone || item.contact || '');
-            if (cleanUserPhone && itemPhone) return cleanUserPhone === itemPhone;
-            if (user.id && item.userId) return String(user.id) === String(item.userId);
-            return false;
-          });
-        }
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  });
+  // Patient Real-Time Notifications (connected to backend, database & real-time events)
+  const [patientNotifications, setPatientNotifications] = useState(DEFAULT_NOTIFICATIONS);
 
-  // Listen for new patient notifications & bookings and trigger audible alert chime
   useEffect(() => {
-    const handleNewPatientAlert = (e) => {
+    let isMounted = true;
+    const loadNotifs = async () => {
       try {
-        // 1. Direct notification in event detail
-        if (e?.detail?.notification) {
-          const incoming = e.detail.notification;
-          if (isMatchingCurrentUser(incoming)) {
-            setPatientNotifications((prev) => {
-              if (prev.some((n) => n.id === incoming.id)) return prev;
-              playNotificationSound();
-              return [incoming, ...prev];
-            });
-            return;
+        const notifs = await fetchUserNotifications(user?.phone || user?.contact, user);
+        if (isMounted) {
+          if (notifs && notifs.length > 0) {
+            setPatientNotifications(notifs);
+          } else {
+            setPatientNotifications(DEFAULT_NOTIFICATIONS);
           }
         }
-
-        // 2. Load from zestmed_patient_notifications
-        const storedNotifs = JSON.parse(localStorage.getItem('zestmed_patient_notifications') || '[]');
-        const userNotifs = storedNotifs.filter(isMatchingCurrentUser);
-        if (userNotifs.length > 0) {
-          const latest = userNotifs[0];
-          setPatientNotifications((prev) => {
-            if (prev.some((n) => n.id === latest.id)) return prev;
-            playNotificationSound();
-            return [latest, ...prev];
-          });
-          return;
-        }
-
-        // 3. Check medicine orders (BUY)
-        const storedOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
-        const userOrders = storedOrders.filter(isMatchingCurrentUser);
-        if (userOrders.length > 0) {
-          const latest = userOrders[0];
-          const notifId = `pat-ord-${latest.id || latest.orderId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: 'ZESTMED Express Pharmacy',
-            avatar: 'ZM',
-            avatarBg: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-            actionText: `Order #${latest.id || latest.orderId} Confirmed`,
-            time: 'Just now',
-            desc: `Your order for ${Array.isArray(latest.items) ? latest.items.length : 1} medicine item(s) has been placed successfully.`,
-            category: 'Medicine Order',
-            status: 'Confirmed',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: 'order',
-            notifType: 'buy'
-          };
-          setPatientNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-
-        // 4. Check lab bookings (BOOK)
-        const storedLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        const userLabs = storedLabs.filter(isMatchingCurrentUser);
-        if (userLabs.length > 0) {
-          const latest = userLabs[0];
-          const notifId = `pat-lab-${latest.id || latest.bookingId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: 'Dispur Central Pathology Lab',
-            avatar: 'LB',
-            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `Booking #${latest.bookingId || latest.id} Confirmed`,
-            time: 'Just now',
-            desc: `Home collection confirmed for ${latest.testName || latest.name || 'Diagnostic Test'}.`,
-            category: 'Diagnostic Lab Test',
-            status: 'Confirmed',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: 'lab',
-            notifType: 'book'
-          };
-          setPatientNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-
-        // 5. Check appointments (BOOK)
-        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        const userAppointments = stored.filter(isMatchingCurrentUser);
-        if (userAppointments.length > 0) {
-          const latest = userAppointments[0];
-          const notifId = `pat-${latest.id || latest.bookingId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: latest.doctor || latest.doctorName || latest.therapist || 'ZESTMED Healthcare Desk',
-            avatar: 'ZM',
-            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `Booking #${latest.bookingId || latest.booking_number || latest.id || 'ZM-NEW'} Confirmed`,
-            time: 'Just now',
-            desc: `Your ${latest.type || latest.title || 'appointment'} scheduled for ${latest.date || 'upcoming date'} (${latest.time || latest.slot || ''}) is confirmed.`,
-            category: latest.category || 'Consultation & Care',
-            status: 'Confirmed',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: latest.category === 'lab' ? 'lab' : 'appointment',
-            notifType: 'book'
-          };
-          setPatientNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-      } catch (_) {}
+      } catch (err) {
+        console.warn('[PatientDashboard] Notifications load warning:', err);
+      }
     };
 
-    window.addEventListener('zestmed_booking_updated', handleNewPatientAlert);
-    window.addEventListener('storage', handleNewPatientAlert);
-    window.addEventListener('zestmed_new_notification', handleNewPatientAlert);
+    loadNotifs();
+
+    // Subscribe to real-time events across windows, tabs and database
+    const unsubscribe = subscribeToNotifications((incoming) => {
+      if (incoming) {
+        setPatientNotifications((prev) => {
+          if (prev.some((n) => n.id === incoming.id || (n.refId && n.refId === incoming.refId && n.notifType === incoming.notifType))) {
+            return prev;
+          }
+          playNotificationSound();
+          return [incoming, ...prev];
+        });
+      } else {
+        loadNotifs();
+      }
+    }, 'Patient', user?.phone || user?.contact);
+
     return () => {
-      window.removeEventListener('zestmed_booking_updated', handleNewPatientAlert);
-      window.removeEventListener('storage', handleNewPatientAlert);
-      window.removeEventListener('zestmed_new_notification', handleNewPatientAlert);
+      isMounted = false;
+      unsubscribe();
     };
-  }, [isMatchingCurrentUser]);
+  }, [user]);
 
   // Modals State
   const [selectedReportBooking, setSelectedReportBooking] = useState(null);
@@ -1627,7 +1525,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                {patientNotifications.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+                    {patientNotifications.length > 9 ? '9+' : patientNotifications.length}
+                  </span>
+                )}
               </button>
 
               {/* Notifications Popover matching Reference Images (Dark UI with Settings) */}

@@ -129,11 +129,14 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
         type: 'book',
         title: 'Diagnostic Test Confirmed',
         actionText: `Booking #${generatedRef} Confirmed`,
-        desc: `Home collection confirmed for ${item.name} on ${selectedDate} (${selectedTimeSlot}). Field phlebotomist assigned.`,
+        desc: `Home collection confirmed for ${item.name}.`,
         sender: 'Dispur Central Pathology Lab',
         category: 'Diagnostic Lab Test',
         refId: generatedRef,
-        linkType: 'lab'
+        linkType: 'lab',
+        phone: patientData.phone,
+        patientPhone: patientData.phone,
+        patientName: patientData.name
       });
 
       // Save to Supabase PostgreSQL database

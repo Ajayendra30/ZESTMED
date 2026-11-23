@@ -55,6 +55,7 @@ import DigitalLabReportModal from '../components/DigitalLabReportModal';
 import NewLabJobModal from '../components/NewLabJobModal';
 import NotificationPopover from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
+import { fetchLabNotifications, subscribeToNotifications } from '../services/notificationService';
 
 export default function LabDashboardPage() {
   const navigate = useNavigate();
@@ -278,62 +279,41 @@ export default function LabDashboardPage() {
 
   // Listen for real-time lab bookings & sample updates and trigger audible alert chime
   useEffect(() => {
-    const handleNewLabAlert = (e) => {
+    let isMounted = true;
+    const loadNotifs = async () => {
       try {
-        if (e?.detail?.notification && (e.detail.notification.linkType === 'lab' || e.detail.notification.category?.toLowerCase().includes('lab'))) {
-          const incoming = e.detail.notification;
-          const labNotifId = `lab-${incoming.id}`;
-          const newNotif = {
-            ...incoming,
-            id: labNotifId,
-            sender: 'Lab Order Dispatch',
-            actionText: incoming.actionText || 'New Lab Order',
-            desc: incoming.desc,
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-          };
-          setLabNotifications((prev) => {
-            if (prev.some((n) => n.id === labNotifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-          return;
+        const notifs = await fetchLabNotifications();
+        if (isMounted) {
+          if (notifs && notifs.length > 0) {
+            setLabNotifications(notifs);
+          } else {
+            setLabNotifications(DEFAULT_LAB_NOTIFICATIONS);
+          }
         }
-
-        const stored = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        if (stored.length > 0) {
-          const latest = stored[0];
-          const notifId = `lab-${latest.id || latest.bookingId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: 'Lab Order Dispatch',
-            avatar: 'LB',
-            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `Booking #${latest.bookingId || latest.booking_number || latest.id || 'LB-NEW'} Confirmed`,
-            time: 'Just now',
-            desc: `New home sample collection booking for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || ''}). Specimen: ${latest.specimen || 'Blood / Serum Sample'}.`,
-            category: 'Home Sample Collection',
-            status: 'New Job',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: 'assigned'
-          };
-          setLabNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-      } catch (_) {}
+      } catch (err) {
+        console.warn('[LabDashboard] Notifications load warning:', err);
+      }
     };
 
-    window.addEventListener('zestmed_booking_updated', handleNewLabAlert);
-    window.addEventListener('storage', handleNewLabAlert);
-    window.addEventListener('zestmed_lab_updated', handleNewLabAlert);
-    window.addEventListener('zestmed_new_notification', handleNewLabAlert);
+    loadNotifs();
+
+    const unsubscribe = subscribeToNotifications((incoming) => {
+      if (incoming && (incoming.targetDashboards?.includes('lab') || incoming.category?.toLowerCase().includes('lab') || incoming.linkType === 'lab')) {
+        setLabNotifications((prev) => {
+          if (prev.some((n) => n.id === incoming.id || (n.refId && n.refId === incoming.refId && n.notifType === incoming.notifType))) {
+            return prev;
+          }
+          playNotificationSound();
+          return [incoming, ...prev];
+        });
+      } else {
+        loadNotifs();
+      }
+    }, 'Lab');
+
     return () => {
-      window.removeEventListener('zestmed_booking_updated', handleNewLabAlert);
-      window.removeEventListener('storage', handleNewLabAlert);
-      window.removeEventListener('zestmed_lab_updated', handleNewLabAlert);
-      window.removeEventListener('zestmed_new_notification', handleNewLabAlert);
+      isMounted = false;
+      unsubscribe();
     };
   }, []);
 
@@ -1169,7 +1149,11 @@ export default function LabDashboardPage() {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                {labNotifications.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+                    {labNotifications.length > 9 ? '9+' : labNotifications.length}
+                  </span>
+                )}
               </button>
 
               {/* Notifications Popover matching User Dashboard System */}

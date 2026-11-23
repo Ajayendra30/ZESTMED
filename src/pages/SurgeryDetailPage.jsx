@@ -262,9 +262,12 @@ export default function SurgeryDetailPage() {
         actionText: `Booking #${bookingPayload.id} Confirmed`,
         desc: `Surgery consultation reserved for ${surgery.title} on ${bookingPayload.date}. Lead surgeon & care manager assigned.`,
         sender: 'ZESTMED Surgery Care Desk',
-        category: 'Surgery Package',
+        category: 'Surgery Consultation',
         refId: bookingPayload.id,
-        linkType: 'surgery'
+        linkType: 'surgery',
+        phone: bookingPayload.phone,
+        patientPhone: bookingPayload.phone,
+        patientName: bookingPayload.patientName
       });
 
       setConfirmedBookingData(bookingPayload);
@@ -281,9 +284,12 @@ export default function SurgeryDetailPage() {
         actionText: `Booking #${bookingPayload.id} Confirmed`,
         desc: `Surgery consultation reserved for ${surgery.title} on ${bookingPayload.date}.`,
         sender: 'ZESTMED Surgery Care Desk',
-        category: 'Surgery Package',
+        category: 'Surgery Consultation',
         refId: bookingPayload.id,
-        linkType: 'surgery'
+        linkType: 'surgery',
+        phone: bookingPayload.phone,
+        patientPhone: bookingPayload.phone,
+        patientName: bookingPayload.patientName
       });
 
       addToast('Surgery package booked successfully!', 'success');

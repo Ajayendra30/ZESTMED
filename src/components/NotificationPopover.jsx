@@ -7,69 +7,43 @@ import { playNotificationSound } from '../utils/notificationSound';
 // Healthcare notifications tailored for ZESTMED project with website branding
 export const DEFAULT_NOTIFICATIONS = [
   {
-    id: 1,
+    id: 'notif-doc-demo',
     sender: 'Dr. Amit Sharma',
-    avatar: 'AS',
+    avatar: 'ZM',
     avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-    actionText: 'is confirmed: Tomorrow 04:30 PM',
-    time: '10m ago',
-    desc: 'Consultation scheduled at Zestmed Polyclinic Hub, Guwahati. Tap to review token & directions.',
-    category: 'Doctor Consultation',
+    actionText: 'Booking #ZM-DOC-9732-7390 Confirmed',
+    time: 'Just now',
+    desc: 'Your Doctor Appointment scheduled for 2026-11-23 (10:00 AM - Morning Slot) is confirmed.',
+    category: 'doctor',
     status: 'Confirmed',
     statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     linkType: 'doctor'
   },
   {
-    id: 2,
+    id: 'notif-lab-demo',
     sender: 'Dispur Central Pathology Lab',
     avatar: 'LB',
-    avatarBg: 'bg-emerald-50 text-emerald-700 border border-emerald-200/80',
-    actionText: 'is ready: Complete Blood Count (CBC)',
-    time: '45m ago',
-    desc: 'Your CBC report is verified by Dr. Pranabesh Sarma (MD Pathology). Available for download.',
-    category: 'Diagnostic Lab Report',
-    status: 'Ready',
-    statusBadge: 'bg-teal-50 text-teal-700 border border-teal-200',
+    avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+    actionText: 'Booking #ZM-LAB-2026-4329 Confirmed',
+    time: 'Just now',
+    desc: 'Home collection confirmed for Liver Function Test (LFT).',
+    category: 'Diagnostic Lab Test',
+    status: 'Confirmed',
+    statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     linkType: 'lab'
   },
   {
-    id: 3,
-    sender: 'Bikash Das (Phlebotomist)',
-    avatar: 'BD',
-    avatarBg: 'bg-sky-50 text-sky-700 border border-sky-200/80',
-    actionText: 'is assigned: Home Sample Collection',
-    time: '2 h ago',
-    desc: 'Vaccinated technician assigned with barcoded collection tubes for your home sample collection.',
-    category: 'Home Sample Collection',
-    status: 'Assigned',
-    statusBadge: 'bg-sky-50 text-sky-700 border border-sky-200',
-    linkType: 'phlebo'
-  },
-  {
-    id: 4,
-    sender: 'Zestmed Express Pharmacy',
+    id: 'notif-ord-demo',
+    sender: 'ZESTMED Express Pharmacy',
     avatar: 'ZM',
-    avatarBg: 'bg-teal-50 text-[#008F83] border border-teal-200/80',
-    actionText: 'is dispatched: Order #ORD-2026-9045',
-    time: '3 h ago',
-    desc: 'Cold-chain medicine pack verified by Chief Pharmacist and out for express delivery in Dispur.',
-    category: 'Pharmacy Order',
-    status: 'Out for Delivery',
-    statusBadge: 'bg-amber-50 text-amber-700 border border-amber-200',
+    avatarBg: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+    actionText: 'Order #ZM-ORD-2026-4329 Confirmed',
+    time: 'Just now',
+    desc: 'Your order for 3 items (Metformin 500 mg, Vitamin D3) is confirmed.',
+    category: 'Medicine Order',
+    status: 'Confirmed',
+    statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     linkType: 'order'
-  },
-  {
-    id: 5,
-    sender: 'Guwahati Pharmacy Desk',
-    avatar: 'RX',
-    avatarBg: 'bg-purple-50 text-purple-700 border border-purple-200/80',
-    actionText: 'is verified: Prescription #RX-8842',
-    time: 'Yesterday',
-    desc: 'All prescribed medicines validated and pre-filled in your cart with genuine batch verification.',
-    category: 'Prescription Vault',
-    status: 'Verified',
-    statusBadge: 'bg-purple-50 text-purple-700 border border-purple-200',
-    linkType: 'rx'
   }
 ];
 
@@ -266,50 +240,60 @@ export default function NotificationPopover({
 
           {/* Scrollable Notifications List */}
           <div className="overflow-y-auto px-3 py-2 space-y-2.5 max-h-[400px] custom-popover-scrollbar">
-            {notifications.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => {
-                  if (onNotificationClick) onNotificationClick(item);
-                }}
-                className="group flex items-start gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition cursor-pointer"
-              >
-                {/* Circular Initial Avatar */}
+            {notifications && notifications.length > 0 ? (
+              notifications.map((item) => (
                 <div
-                  className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-[11px] shadow-2xs ${item.avatarBg}`}
+                  key={item.id}
+                  onClick={() => {
+                    if (onNotificationClick) onNotificationClick(item);
+                  }}
+                  className="group flex items-start gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition cursor-pointer"
                 >
-                  {item.avatar}
-                </div>
-
-                {/* Content Column */}
-                <div className="flex-1 min-w-0">
-                  {/* Sender & Action Line */}
-                  <div className="text-xs text-slate-800 leading-tight">
-                    <strong className="text-slate-900 font-bold">{item.sender}</strong>{' '}
-                    <span className="text-slate-600 font-normal">{item.actionText}</span>
+                  {/* Circular Initial Avatar */}
+                  <div
+                    className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-[11px] shadow-2xs ${item.avatarBg}`}
+                  >
+                    {item.avatar}
                   </div>
 
-                  {/* Time ago */}
-                  <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                    {item.time}
-                  </span>
+                  {/* Content Column */}
+                  <div className="flex-1 min-w-0">
+                    {/* Sender & Action Line */}
+                    <div className="text-xs text-slate-800 leading-tight">
+                      <strong className="text-slate-900 font-bold">{item.sender}</strong>{' '}
+                      <span className="text-slate-600 font-normal">{item.actionText}</span>
+                    </div>
 
-                  {/* Inner Card Preview Box */}
-                  <div className="bg-slate-50 rounded-xl p-2.5 mt-1.5 border border-slate-100 group-hover:border-teal-200/60 group-hover:bg-teal-50/30 transition">
-                    <p className="text-[11px] text-slate-600 font-normal leading-relaxed">
-                      {item.desc}
-                    </p>
-                    <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-400 font-medium flex-wrap">
-                      <span>{item.category}</span>
-                      <span>·</span>
-                      <span className={`px-1.5 py-0.2 rounded-md font-semibold text-[10px] ${item.statusBadge}`}>
-                        {item.status}
-                      </span>
+                    {/* Time ago */}
+                    <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
+                      {item.time || 'Just now'}
+                    </span>
+
+                    {/* Inner Card Preview Box matching Reference Image */}
+                    <div className="bg-[#F0FDFA]/70 rounded-xl p-2.5 mt-1.5 border border-teal-100/90 group-hover:border-teal-300 group-hover:bg-teal-50 transition">
+                      <p className="text-[11px] text-slate-700 font-normal leading-relaxed">
+                        {item.desc}
+                      </p>
+                      <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium flex-wrap">
+                        <span>{item.category}</span>
+                        <span>·</span>
+                        <span className={`px-1.5 py-0.2 rounded-md font-semibold text-[10px] ${item.statusBadge || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+                          {item.status || 'Confirmed'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="py-8 px-4 text-center">
+                <div className="w-10 h-10 mx-auto rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-2">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <p className="text-xs font-semibold text-slate-700">No new notifications</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">Your bookings and order updates will appear here in real time.</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       )}

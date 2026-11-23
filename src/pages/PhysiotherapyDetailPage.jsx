@@ -286,9 +286,12 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
         actionText: `Session #${bookingPayload.id} Confirmed`,
         desc: `${bookingPayload.serviceName} booked for ${bookingPayload.patientName} on ${bookingPayload.date} (${bookingPayload.time}). Certified therapist assigned.`,
         sender: 'ZESTMED Physiotherapy Care',
-        category: 'Physiotherapy & Rehab',
+        category: 'Physiotherapy',
         refId: bookingPayload.id,
-        linkType: 'appointment'
+        linkType: 'physio',
+        phone: bookingPayload.phone,
+        patientPhone: bookingPayload.phone,
+        patientName: bookingPayload.patientName
       });
 
       setConfirmedBookingData(bookingPayload);
@@ -310,9 +313,12 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
         actionText: `Session #${bookingPayload.id} Confirmed`,
         desc: `${bookingPayload.serviceName} booked for ${bookingPayload.patientName} on ${bookingPayload.date} (${bookingPayload.time}). Certified therapist assigned.`,
         sender: 'ZESTMED Physiotherapy Care',
-        category: 'Physiotherapy & Rehab',
+        category: 'Physiotherapy',
         refId: bookingPayload.id,
-        linkType: 'appointment'
+        linkType: 'physio',
+        phone: bookingPayload.phone,
+        patientPhone: bookingPayload.phone,
+        patientName: bookingPayload.patientName
       });
 
       setConfirmedBookingData(bookingPayload);

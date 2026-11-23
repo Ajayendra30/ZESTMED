@@ -143,11 +143,13 @@ export function triggerNotificationSound(force = false) {
   window.dispatchEvent(new CustomEvent('zestmed_play_notification_sound', { detail: { force } }));
 }
 
+import { createNotification } from '../services/notificationService';
+
 /**
  * Records a Buy or Book notification and plays the notification chime immediately:
  * - Plays the audio chime (Web Audio API synth + HTML5 Audio fallback).
- * - Saves the notification in persistent storage ('zestmed_patient_notifications').
- * - Dispatches 'zestmed_new_notification', 'zestmed_booking_updated', and 'storage'.
+ * - Saves the notification in persistent storage and connects to backend & database.
+ * - Dispatches 'zestmed_new_notification', 'zestmed_booking_updated', BroadcastChannel, and 'storage'.
  * 
  * @param {Object} options
  * @param {'buy' | 'book'} options.type - 'buy' for product/medicine purchases, 'book' for service bookings
@@ -159,71 +161,13 @@ export function triggerNotificationSound(force = false) {
  * @param {string} [options.refId] - Booking or Order reference ID
  * @param {string} [options.linkType] - Link type for dashboard navigation ('order', 'appointment', 'lab', 'surgery')
  * @param {string} [options.status] - Status (default 'Confirmed')
+ * @param {string} [options.phone] - Patient phone number
  */
-export function recordAndPlayNotification({
-  type = 'book',
-  title = '',
-  actionText = '',
-  desc = '',
-  sender = '',
-  category = '',
-  refId = '',
-  linkType = '',
-  status = 'Confirmed'
-}) {
+export function recordAndPlayNotification(options = {}) {
   if (typeof window === 'undefined') return null;
 
-  const isBuy = String(type).toLowerCase() === 'buy';
-
-  // 1. Play notification chime immediately
-  playNotificationSound(true);
-
-  // 2. Build structured notification
-  const notifId = `notif-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-  const defaultSender = isBuy ? 'ZESTMED Pharmacy Desk' : 'ZESTMED Healthcare Desk';
-  const defaultAction = isBuy
-    ? `Order ${refId ? `#${refId} ` : ''}Confirmed`
-    : `Booking ${refId ? `#${refId} ` : ''}Confirmed`;
-  const defaultDesc = isBuy
-    ? `Your medicine order ${refId ? `(#${refId}) ` : ''}has been placed successfully. Chief Pharmacist verification in progress.`
-    : `Your service booking ${refId ? `(#${refId}) ` : ''}has been scheduled and confirmed.`;
-
-  const newNotif = {
-    id: notifId,
-    sender: sender || defaultSender,
-    avatar: isBuy ? 'ZM' : 'BK',
-    avatarBg: isBuy
-      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-      : 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-    actionText: actionText || defaultAction,
-    time: 'Just now',
-    desc: desc || defaultDesc,
-    category: category || (isBuy ? 'Medicine Order' : 'Service Booking'),
-    status: status || 'Confirmed',
-    statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    linkType: linkType || (isBuy ? 'order' : 'appointment'),
-    notifType: isBuy ? 'buy' : 'book',
-    refId: refId || '',
-    timestamp: Date.now()
-  };
-
-  // 3. Persist to localStorage for Patient Dashboard
-  try {
-    const existing = JSON.parse(localStorage.getItem('zestmed_patient_notifications') || '[]');
-    localStorage.setItem(
-      'zestmed_patient_notifications',
-      JSON.stringify([newNotif, ...existing.filter((n) => n.id !== notifId)].slice(0, 50))
-    );
-  } catch (_) {}
-
-  // 4. Dispatch events for cross-tab and cross-component reactivity
-  try {
-    window.dispatchEvent(new CustomEvent('zestmed_new_notification', { detail: { notification: newNotif, force: true } }));
-    window.dispatchEvent(new CustomEvent('zestmed_booking_updated', { detail: { type, refId, notification: newNotif } }));
-    window.dispatchEvent(new Event('storage'));
-  } catch (_) {}
-
-  return newNotif;
+  // Delegate directly to the centralized notification service
+  return createNotification(options);
 }
 
 // Auto-unlock AudioContext on user interaction

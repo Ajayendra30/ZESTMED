@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
+import { recordAndPlayNotification } from '../utils/notificationSound';
 import { 
   X, UploadCloud, FileText, CheckCircle2, AlertCircle, 
   ShieldCheck, Camera, ArrowRight 
@@ -61,6 +62,20 @@ export default function PrescriptionUploadModal({ isOpen, onClose }) {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
+      const rxRef = `RX-${Date.now().toString().slice(-4)}`;
+      recordAndPlayNotification({
+        type: 'book',
+        title: 'Prescription Uploaded',
+        actionText: `Prescription #${rxRef} Uploaded`,
+        desc: `Prescription (${selectedFile.name}) submitted for pharmacist review. Medicine cart will be prepared within 15 minutes.`,
+        sender: 'Guwahati Pharmacy Desk',
+        category: 'Prescription Vault',
+        refId: rxRef,
+        linkType: 'rx',
+        phone: user?.phone || user?.contact,
+        patientPhone: user?.phone || user?.contact,
+        patientName: user?.name
+      });
       addToast('Prescription submitted for Pharmacist Verification! (Demo)', 'success');
     }, 1200);
   };

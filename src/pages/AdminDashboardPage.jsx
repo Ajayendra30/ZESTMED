@@ -97,6 +97,7 @@ import AddCategoryModal from '../components/AddCategoryModal';
 import AuditPrescriptionModal from '../components/AuditPrescriptionModal';
 import NotificationPopover from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
+import { fetchAdminNotifications, subscribeToNotifications } from '../services/notificationService';
 import { openStatutoryDocumentPdf, downloadStatutoryDocumentPdf, downloadOrderInvoicePdf, openClinicalReportPdf } from '../utils/pdfGenerator';
 
 export default function AdminDashboardPage() {
@@ -1696,112 +1697,41 @@ export default function AdminDashboardPage() {
 
   // Listen for real-time bookings & notifications and trigger audible alert chime
   useEffect(() => {
-    const handleNewAdminAlert = (e) => {
+    let isMounted = true;
+    const loadNotifs = async () => {
       try {
-        // 1. Direct notification in event detail
-        if (e?.detail?.notification) {
-          const incoming = e.detail.notification;
-          const adminNotifId = `adm-${incoming.id}`;
-          const newNotif = {
-            ...incoming,
-            id: adminNotifId,
-            sender: incoming.sender || 'Live Patient Alert',
-            actionText: incoming.actionText || 'New Activity',
-            desc: incoming.desc,
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-          };
-          setAdminNotifications((prev) => {
-            if (prev.some((n) => n.id === adminNotifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-          return;
+        const notifs = await fetchAdminNotifications();
+        if (isMounted) {
+          if (notifs && notifs.length > 0) {
+            setAdminNotifications(notifs);
+          } else {
+            setAdminNotifications(DEFAULT_ADMIN_NOTIFICATIONS);
+          }
         }
-
-        // 2. Check medicine orders (BUY)
-        const storedOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
-        if (storedOrders.length > 0) {
-          const latest = storedOrders[0];
-          const notifId = `admin-ord-${latest.id || latest.orderId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: 'Customer Medicine Order',
-            avatar: 'ZM',
-            avatarBg: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-            actionText: `Order #${latest.id || latest.orderId} Placed`,
-            time: 'Just now',
-            desc: `New pharmacy order placed by ${latest.customer || latest.patientName || 'Customer'} (Total: ₹${latest.total || latest.totalAmount || 0}).`,
-            category: 'Medicine Order',
-            status: 'Confirmed',
-            statusBadge: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-            linkType: 'orders'
-          };
-          setAdminNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-
-        // 3. Check lab bookings (BOOK)
-        const storedLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-        if (storedLabs.length > 0) {
-          const latest = storedLabs[0];
-          const notifId = `admin-lab-${latest.id || latest.bookingId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: latest.type || 'Diagnostic Booking',
-            avatar: 'LB',
-            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `Booking #${latest.bookingId || latest.id} Confirmed`,
-            time: 'Just now',
-            desc: `Home collection booking for ${latest.testName || latest.name || 'Test'} (${latest.patientName || 'Patient'}).`,
-            category: 'Lab Bookings',
-            status: 'Confirmed',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: 'lab-bookings'
-          };
-          setAdminNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-
-        // 4. Check clinical appointments (BOOK)
-        const stored = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        if (stored.length > 0) {
-          const latest = stored[0];
-          const notifId = `admin-${latest.id || latest.bookingId || Date.now()}`;
-          const newNotif = {
-            id: notifId,
-            sender: latest.type || latest.serviceName || 'New Patient Booking',
-            avatar: 'ZM',
-            avatarBg: 'bg-teal-50 text-[#007A64] border border-teal-200/80',
-            actionText: `Booking #${latest.bookingId || latest.booking_number || latest.id || 'ZM-NEW'} Confirmed`,
-            time: 'Just now',
-            desc: `New ${latest.type || 'service'} booking confirmed for ${latest.patientName || latest.name || 'Patient'} (${latest.phone || latest.mobileNumber || ''}).`,
-            category: latest.category || 'Clinical Booking',
-            status: 'Confirmed',
-            statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-            linkType: latest.isSurgery ? 'bookings-surgery' : latest.isPhysio ? 'appointments-physio' : 'appointments-doctor'
-          };
-          setAdminNotifications((prev) => {
-            if (prev.some((n) => n.id === notifId)) return prev;
-            playNotificationSound();
-            return [newNotif, ...prev];
-          });
-        }
-      } catch (_) {}
+      } catch (err) {
+        console.warn('[AdminDashboard] Notifications load error:', err);
+      }
     };
 
-    window.addEventListener('zestmed_booking_updated', handleNewAdminAlert);
-    window.addEventListener('storage', handleNewAdminAlert);
-    window.addEventListener('zestmed_new_notification', handleNewAdminAlert);
+    loadNotifs();
+
+    const unsubscribe = subscribeToNotifications((incoming) => {
+      if (incoming) {
+        setAdminNotifications((prev) => {
+          if (prev.some((n) => n.id === incoming.id || (n.refId && n.refId === incoming.refId && n.notifType === incoming.notifType))) {
+            return prev;
+          }
+          playNotificationSound();
+          return [incoming, ...prev];
+        });
+      } else {
+        loadNotifs();
+      }
+    }, 'Admin');
+
     return () => {
-      window.removeEventListener('zestmed_booking_updated', handleNewAdminAlert);
-      window.removeEventListener('storage', handleNewAdminAlert);
-      window.removeEventListener('zestmed_new_notification', handleNewAdminAlert);
+      isMounted = false;
+      unsubscribe();
     };
   }, []);
 
@@ -2358,7 +2288,11 @@ export default function AdminDashboardPage() {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                {adminNotifications.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+                    {adminNotifications.length > 9 ? '9+' : adminNotifications.length}
+                  </span>
+                )}
               </button>
 
               {/* Notifications Popover matching User Dashboard System */}

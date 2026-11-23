@@ -106,12 +106,15 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         recordAndPlayNotification({
           type: 'buy',
           title: 'Medicine Order Confirmed',
-          actionText: `Order #${newOrder.id} Placed & Confirmed`,
-          desc: `Pharmacy order for ${newOrder.items.length} items (${newOrder.items.map((i) => i.name).slice(0, 2).join(', ')}${newOrder.items.length > 2 ? '...' : ''}) confirmed. Express cold-pack delivery in Guwahati.`,
+          actionText: `Order #${newOrder.id} Confirmed`,
+          desc: `Your order for ${newOrder.items.length} items (${newOrder.items.map((i) => i.name).slice(0, 2).join(', ')}${newOrder.items.length > 2 ? '...' : ''}) is confirmed.`,
           sender: 'ZESTMED Express Pharmacy',
           category: 'Medicine Order',
           refId: newOrder.id,
-          linkType: 'order'
+          linkType: 'order',
+          phone: newOrder.phone,
+          patientPhone: newOrder.phone,
+          patientName: newOrder.patientName
         });
 
         // Save order to Supabase PostgreSQL database
@@ -175,11 +178,14 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
             type: 'book',
             title: `${b.type} Confirmed`,
             actionText: `Booking #${b.bookingId} Confirmed`,
-            desc: `Home collection confirmed for ${b.testName} scheduled on ${b.date}.`,
-            sender: 'ZESTMED Diagnostics Hub',
-            category: b.category,
+            desc: `Home collection confirmed for ${b.testName}.`,
+            sender: b.labName || 'Dispur Central Pathology Lab',
+            category: 'Diagnostic Lab Test',
             refId: b.bookingId,
-            linkType: 'lab'
+            linkType: 'lab',
+            phone: b.phone,
+            patientPhone: b.phone,
+            patientName: b.patientName
           });
         });
 

@@ -23,6 +23,9 @@ import { createPaymentOrder, verifyPaymentSignature } from './razorpayService.js
 // In-memory persistent user cart storage keyed by user identifier
 const userCartsMap = new Map();
 
+// In-memory persistent notifications store
+const persistentNotifications = [];
+
 export const verifyAuthHeader = (authHeader) => {
   if (!authHeader) return null;
   const parts = authHeader.split(' ');
@@ -455,6 +458,114 @@ export const handleApiRequest = async (req, res) => {
       user: authenticatedUser,
       status: 'Confirmed'
     }));
+    return true;
+  }
+
+  // ========================================================================
+  // NOTIFICATIONS API ENDPOINTS (Real-Time Notification Pipeline)
+  // ========================================================================
+
+  // N1. Get Notifications
+  if (pathname === '/api/notifications' && method === 'GET') {
+    const phone = url.searchParams.get('phone') || (authenticatedUser?.phone || '');
+    const cleanPhone = phone ? String(phone).replace(/\D/g, '').slice(-10) : '';
+    const role = url.searchParams.get('role') || (authenticatedUser?.role || '');
+    const dashboard = url.searchParams.get('dashboard') || '';
+
+    let filtered = [...persistentNotifications];
+
+    if (dashboard === 'admin' || role === 'Admin') {
+      filtered = filtered.filter(n => !n.targetDashboards || n.targetDashboards.includes('admin'));
+    } else if (dashboard === 'lab' || role === 'Lab Executive' || role === 'Lab Staff') {
+      filtered = filtered.filter(n => 
+        (n.targetDashboards && n.targetDashboards.includes('lab')) || 
+        (n.category && String(n.category).toLowerCase().includes('lab')) ||
+        (n.linkType === 'lab')
+      );
+    } else if (cleanPhone) {
+      filtered = filtered.filter(n => {
+        const notifPhone = String(n.phone || n.patientPhone || '').replace(/\D/g, '').slice(-10);
+        return !notifPhone || notifPhone === cleanPhone;
+      });
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify({
+      success: true,
+      count: filtered.length,
+      notifications: filtered
+    }));
+    return true;
+  }
+
+  // N2. Create / Dispatch Notification
+  if (pathname === '/api/notifications' && method === 'POST') {
+    const notifData = body || {};
+    const notifId = notifData.id || `notif-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const cleanPhone = String(notifData.phone || notifData.patientPhone || authenticatedUser?.phone || '').replace(/\D/g, '').slice(-10);
+
+    const newNotif = {
+      id: notifId,
+      sender: notifData.sender || 'ZESTMED Healthcare Desk',
+      avatar: notifData.avatar || 'ZM',
+      avatarBg: notifData.avatarBg || 'bg-teal-50 text-[#007A64] border border-teal-200/80',
+      actionText: notifData.actionText || 'Notification Confirmed',
+      time: notifData.time || 'Just now',
+      desc: notifData.desc || 'Your healthcare request has been processed.',
+      category: notifData.category || 'General',
+      status: notifData.status || 'Confirmed',
+      statusBadge: notifData.statusBadge || 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      linkType: notifData.linkType || 'order',
+      notifType: notifData.notifType || notifData.type || 'book',
+      refId: notifData.refId || '',
+      phone: cleanPhone,
+      patientPhone: cleanPhone,
+      patientName: notifData.patientName || authenticatedUser?.name || 'Patient',
+      userId: notifData.userId || authenticatedUser?.id || '',
+      read: Boolean(notifData.read),
+      targetDashboards: Array.isArray(notifData.targetDashboards) ? notifData.targetDashboards : ['patient', 'admin'],
+      createdAt: notifData.createdAt || new Date().toISOString(),
+      timestamp: notifData.timestamp || Date.now()
+    };
+
+    // Deduplicate and prepend
+    const existingIndex = persistentNotifications.findIndex(n => n.id === notifId || (n.refId && n.refId === newNotif.refId && n.notifType === newNotif.notifType));
+    if (existingIndex >= 0) {
+      persistentNotifications[existingIndex] = { ...persistentNotifications[existingIndex], ...newNotif };
+    } else {
+      persistentNotifications.unshift(newNotif);
+    }
+
+    if (persistentNotifications.length > 200) {
+      persistentNotifications.length = 200;
+    }
+
+    res.statusCode = 201;
+    res.end(JSON.stringify({
+      success: true,
+      notification: newNotif
+    }));
+    return true;
+  }
+
+  // N3. Mark Notification(s) as Read
+  if (pathname === '/api/notifications/mark-read' && method === 'POST') {
+    const { id, all, phone } = body || {};
+    const cleanPhone = phone ? String(phone).replace(/\D/g, '').slice(-10) : '';
+
+    if (all) {
+      persistentNotifications.forEach(n => {
+        if (!cleanPhone || String(n.phone).replace(/\D/g, '').slice(-10) === cleanPhone) {
+          n.read = true;
+        }
+      });
+    } else if (id) {
+      const found = persistentNotifications.find(n => n.id === id);
+      if (found) found.read = true;
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify({ success: true }));
     return true;
   }
 

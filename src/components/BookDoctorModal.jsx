@@ -133,12 +133,15 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
         recordAndPlayNotification({
           type: 'book',
           title: 'Doctor Appointment Confirmed',
-          actionText: `Appointment #${apptId} Confirmed`,
-          desc: `Consultation confirmed with ${selectedDoctor.name} (${selectedDoctor.specialty}) for ${selectedSlot?.date || 'scheduled date'} (${selectedSlot?.time || ''}).`,
+          actionText: `Booking #${apptId} Confirmed`,
+          desc: `Your Doctor Appointment scheduled for ${selectedSlot?.date || 'scheduled date'} (${selectedSlot?.time || ''}) is confirmed.`,
           sender: selectedDoctor.name,
-          category: 'Doctor Consultation',
+          category: 'doctor',
           refId: apptId,
-          linkType: 'appointment'
+          linkType: 'doctor',
+          phone: patientData.phone,
+          patientPhone: patientData.phone,
+          patientName: patientData.name
         });
       } catch (notifyErr) {
         console.warn('Audio/Notification record ignored:', notifyErr);

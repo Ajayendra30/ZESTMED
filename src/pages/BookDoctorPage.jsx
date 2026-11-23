@@ -352,12 +352,16 @@ export default function BookDoctorPage() {
         recordAndPlayNotification({
           type: 'book',
           title: 'Doctor Appointment Confirmed',
-          actionText: `Appointment #${refNumber} Confirmed`,
-          desc: `Consultation confirmed with ${docName} (${docSpecialty}) for ${consultationDate} (${preferredSlot}).`,
+          actionText: `Booking #${refNumber} Confirmed`,
+          desc: `Your Doctor Appointment scheduled for ${consultationDate} (${preferredSlot}) is confirmed.`,
           sender: docName,
-          category: 'Doctor Consultation',
+          category: 'doctor',
           refId: refNumber,
-          linkType: 'appointment'
+          linkType: 'doctor',
+          phone: patientPhone.trim(),
+          patientPhone: patientPhone.trim(),
+          patientName: patientName.trim(),
+          userId: user?.id || null
         });
       } catch (notifErr) {
         console.warn('Notification sound/record warning:', notifErr);

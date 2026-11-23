@@ -118,9 +118,12 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, i
         actionText: `Session #${bookingRef} Confirmed`,
         desc: `${serviceType} scheduled with ${selectedPhysio.name} for ${sessionDate} (${sessionSlot}).`,
         sender: selectedPhysio.name,
-        category: 'Physiotherapy & Rehab',
+        category: 'Physiotherapy',
         refId: bookingRef,
-        linkType: 'appointment'
+        linkType: 'physio',
+        phone: patientData.phone,
+        patientPhone: patientData.phone,
+        patientName: patientData.name
       });
 
       // Save to Supabase PostgreSQL database

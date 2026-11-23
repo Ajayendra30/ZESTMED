@@ -540,12 +540,15 @@ export default function DoctorAppointmentPage() {
         recordAndPlayNotification({
           type: 'book',
           title: 'Doctor Appointment Confirmed',
-          actionText: `Appointment #${apptId} Confirmed`,
-          desc: `Consultation confirmed with ${bookingDoctor?.name} (${bookingDoctor?.specialty}) for ${newBooking.date} (${newBooking.time}).`,
-          sender: bookingDoctor?.name,
-          category: 'Doctor Consultation',
+          actionText: `Booking #${apptId} Confirmed`,
+          desc: `Your Doctor Appointment scheduled for ${newBooking.date} (${newBooking.time}) is confirmed.`,
+          sender: bookingDoctor?.name || 'Dr. Amit Sharma',
+          category: 'doctor',
           refId: apptId,
-          linkType: 'appointment'
+          linkType: 'doctor',
+          phone: bookingData.phone,
+          patientPhone: bookingData.phone,
+          patientName: bookingData.name
         });
       } catch (notifyErr) {
         console.warn('Audio/Notification record ignored:', notifyErr);

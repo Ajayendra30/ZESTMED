@@ -115,9 +115,12 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
           actionText: `Consultation #${bookingRef} Confirmed`,
           desc: `Surgery consultation reserved for ${selectedPackage.title}. Lead surgeon & care manager assigned.`,
           sender: 'ZESTMED Surgery Care Desk',
-          category: 'Surgery Package',
+          category: 'Surgery Consultation',
           refId: bookingRef,
-          linkType: 'surgery'
+          linkType: 'surgery',
+          phone: patientData.phone,
+          patientPhone: patientData.phone,
+          patientName: patientData.name
         });
 
         // Save to Supabase PostgreSQL database
