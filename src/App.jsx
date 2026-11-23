@@ -32,6 +32,7 @@ import BookDoctorModal from './components/BookDoctorModal';
 import BookPhysioModal from './components/BookPhysioModal';
 import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
 import FloatingCallWhatsApp from './components/FloatingCallWhatsApp';
+import ErrorBoundary from './components/ErrorBoundary';
 import { getActiveSubdomain } from './utils/subdomain';
 
 function AppContent() {
@@ -136,17 +137,19 @@ function AppContent() {
 
   if (isPatientDashboardPath) {
     return (
-      <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
-        <PatientDashboardPage
-          onOpenPrescriptionModal={handleOpenPrescriptionRequest}
-        />
-        <CartDrawer
-          onOpenPrescriptionModal={handleOpenPrescriptionRequest}
-        />
-        <LocationModal />
-        <AuthModal />
-        <ToastContainer />
-      </div>
+      <ErrorBoundary>
+        <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
+          <PatientDashboardPage
+            onOpenPrescriptionModal={handleOpenPrescriptionRequest}
+          />
+          <CartDrawer
+            onOpenPrescriptionModal={handleOpenPrescriptionRequest}
+          />
+          <LocationModal />
+          <AuthModal />
+          <ToastContainer />
+        </div>
+      </ErrorBoundary>
     );
   }
 

@@ -94,15 +94,16 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const { addToast } = useToast();
 
   // Navigation State (persisted across reloads and tab navigation)
+  const validMenus = ['dashboard', 'bookings', 'prescription', 'reports', 'profile', 'records', 'settings'];
   const [activeMenu, setActiveMenu] = useState(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab') || urlParams.get('menu');
-      if (tabParam && tabParam !== 'notifications') return tabParam;
+      if (tabParam && validMenus.includes(tabParam)) return tabParam;
       const openParam = urlParams.get('open');
       if (openParam === 'prescription') return 'prescription';
       const saved = sessionStorage.getItem('zestmed_patient_active_tab');
-      return saved && saved !== 'notifications' ? saved : 'dashboard';
+      return saved && validMenus.includes(saved) ? saved : 'dashboard';
     } catch {
       return 'dashboard';
     }
@@ -110,7 +111,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   useEffect(() => {
     try {
-      sessionStorage.setItem('zestmed_patient_active_tab', activeMenu);
+      if (validMenus.includes(activeMenu)) {
+        sessionStorage.setItem('zestmed_patient_active_tab', activeMenu);
+      }
     } catch (_) {}
   }, [activeMenu]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -136,8 +139,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       return String(user.id) === String(item.userId || item.user_id);
     }
     if (user.email && (item.userEmail || item.user_email || item.email)) {
-      const itemEmail = (item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
-      if (itemEmail && itemEmail === (user.email || '').trim().toLowerCase()) return true;
+      const itemEmail = String(item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
+      if (itemEmail && itemEmail === String(user.email || '').trim().toLowerCase()) return true;
     }
     return false;
   }, [user]);
@@ -741,13 +744,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const formattedMedicineBookings = useMemo(() => {
     if (!user) return [];
     return (orders || [])
+      .filter(Boolean)
       .filter(isMatchingCurrentUser)
       .map((o) => {
+        if (!o) return null;
         // Guarantee only genuine medicines are displayed in medicine order preview
-        const medOnlyItems = Array.isArray(o.items) ? o.items.filter(it => !isLabTestOrPackage(it)) : [];
-        const displayItems = medOnlyItems.length > 0 ? medOnlyItems : (o.items || []);
+        const medOnlyItems = Array.isArray(o.items) ? o.items.filter(it => it && !isLabTestOrPackage(it)) : [];
+        const displayItems = medOnlyItems.length > 0 ? medOnlyItems : (Array.isArray(o.items) ? o.items.filter(Boolean) : []);
         const itemNames = displayItems.length > 0
-          ? displayItems.map((it) => it.name).filter(Boolean).join(', ')
+          ? displayItems.map((it) => it?.name).filter(Boolean).join(', ')
           : 'Prescription Medicines';
         
         return {
@@ -781,16 +786,21 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           source: 'orders',
           rawOrder: o
         };
-      });
+      })
+      .filter(Boolean);
   }, [orders, user, isMatchingCurrentUser]);
 
   // Formatted Lab Bookings from local labBookings state so they appear under their respective categories
   const formattedLabBookings = useMemo(() => {
     if (!user) return [];
     return (labBookings || [])
+      .filter(Boolean)
       .filter(isMatchingCurrentUser)
       .map((l) => {
-        const isWellness = isWellnessPackage(l) || (l.testName || l.name || '').toLowerCase().includes('wellness') || (l.category || l.type || '').toLowerCase().includes('wellness');
+        if (!l) return null;
+        const testNameStr = String(l.testName || l.name || '');
+        const catStr = String(l.category?.name || l.category || l.type || '');
+        const isWellness = isWellnessPackage(l) || testNameStr.toLowerCase().includes('wellness') || catStr.toLowerCase().includes('wellness');
         const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
         const iType = isWellness ? 'wellness' : 'lab';
         const dType = isWellness ? 'Wellness Health Package' : 'Diagnostic Lab Test';
@@ -804,7 +814,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           serviceName: l.testName || l.name || sType,
           title: l.testName || l.name || sType,
           specimen: l.specimen || (isWellness ? 'Blood & Serum Sample (Fasting)' : 'Blood / Serum Sample (Barcoded)'),
-          provider: l.phlebotomist?.name || l.phlebotomist || (isWellness ? 'Preventive Health Diagnostics Team' : 'Bikash Das (Phlebotomist)'),
+          provider: l.phlebotomist?.name || (typeof l.phlebotomist === 'string' ? l.phlebotomist : '') || (isWellness ? 'Preventive Health Diagnostics Team' : 'Bikash Das (Phlebotomist)'),
           bookingDateTime: l.createdAt || l.bookedDate || new Date().toISOString(),
           createdAt: l.createdAt || l.bookedDate || new Date().toISOString(),
           appointmentDate: l.date || l.collectionDate || 'Tomorrow',
@@ -825,7 +835,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           phone: l.phone || l.patientPhone || (user?.phone || user?.contact || ''),
           source: 'local_lab'
         };
-      });
+      })
+      .filter(Boolean);
   }, [labBookings, user, isMatchingCurrentUser]);
 
   // Combined real user bookings (Database/Synced + Local persistent medicine orders + Local lab bookings)
@@ -834,21 +845,25 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     const map = new Map();
     // 1. Unified database/synced userBookings
     (userBookings || [])
+      .filter(Boolean)
       .filter(isMatchingCurrentUser)
       .forEach((b) => {
-        const key = String(b.bookingId || b.id);
+        if (!b) return;
+        const key = String(b.bookingId || b.id || Math.random());
         map.set(key, b);
       });
     // 2. Local medicine orders (ensuring pure medicines appear in Medicine Orders)
-    (formattedMedicineBookings || []).forEach((mb) => {
-      const key = String(mb.bookingId || mb.id);
+    (formattedMedicineBookings || []).filter(Boolean).forEach((mb) => {
+      if (!mb) return;
+      const key = String(mb.bookingId || mb.id || Math.random());
       if (!map.has(key)) {
         map.set(key, mb);
       }
     });
     // 3. Local lab test & wellness bookings
-    (formattedLabBookings || []).forEach((lb) => {
-      const key = String(lb.bookingId || lb.id);
+    (formattedLabBookings || []).filter(Boolean).forEach((lb) => {
+      if (!lb) return;
+      const key = String(lb.bookingId || lb.id || Math.random());
       if (!map.has(key)) {
         map.set(key, lb);
       }
@@ -856,11 +871,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
     // CRITICAL: Strictly classify each booking into its dedicated category
     return Array.from(map.values())
+      .filter(Boolean)
       .map((b) => {
-        const titleStr = (b.serviceName || b.title || b.name || b.testName || '').toLowerCase();
-        const catStr = (b.category || '').toLowerCase();
-        const typeStr = (b.type || b.serviceType || b.displayType || '').toLowerCase();
+        const titleStr = String(b.serviceName || b.title || b.name || b.testName || '').toLowerCase();
+        const catStr = String(b.category?.name || b.category || '').toLowerCase();
+        const typeStr = String(b.type?.name || b.type || b.serviceType || b.displayType || '').toLowerCase();
         const idStr = String(b.bookingId || b.id || '').toLowerCase();
+        const providerStr = String(b.provider?.name || (typeof b.provider === 'string' ? b.provider : '') || '').toLowerCase();
 
         // 1. Surgery Package
         if (
@@ -885,8 +902,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           catStr.includes('physio') ||
           typeStr.includes('physio') ||
           titleStr.includes('physio') ||
-          (b.provider || '').toLowerCase().includes('mpt') ||
-          (b.provider || '').toLowerCase().includes('physio') ||
+          providerStr.includes('mpt') ||
+          providerStr.includes('physio') ||
           idStr.includes('phy')
         ) {
           return {
@@ -962,8 +979,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         };
       })
       .sort((a, b) => {
-        const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
-        const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
+        const timeA = new Date(a?.bookingDateTime || a?.createdAt || 0).getTime() || 0;
+        const timeB = new Date(b?.bookingDateTime || b?.createdAt || 0).getTime() || 0;
         return timeB - timeA;
       });
   }, [userBookings, formattedMedicineBookings, formattedLabBookings, user, isMatchingCurrentUser]);
@@ -971,21 +988,21 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Real or Historical Diagnostic Reports (strictly isolated to verified user)
   const userReports = useMemo(() => {
     if (!user) return [];
-    const completedLabs = allUserBookings.filter(b => b.itemType === 'lab' && (
-      (b.status || '').toLowerCase().includes('report') ||
-      (b.status || '').toLowerCase().includes('publish') ||
-      (b.status || '').toLowerCase().includes('complete')
+    const completedLabs = (allUserBookings || []).filter(b => b?.itemType === 'lab' && (
+      String(b.status || '').toLowerCase().includes('report') ||
+      String(b.status || '').toLowerCase().includes('publish') ||
+      String(b.status || '').toLowerCase().includes('complete')
     )).map((l, idx) => ({
-      test: l.serviceName || l.title || 'Diagnostic Test',
-      date: l.date || 'Recent',
-      id: `ZM-REP-${l.bookingId || idx + 1}`,
+      test: l?.serviceName || l?.title || 'Diagnostic Test',
+      date: l?.date || 'Recent',
+      id: `ZM-REP-${l?.bookingId || idx + 1}`,
       status: 'Ready',
       pathologist: 'Dr. Pranabesh Sarma, MD Pathology'
     }));
 
     try {
       const stored = JSON.parse(localStorage.getItem('zestmed_patient_reports') || '[]');
-      const userStored = Array.isArray(stored) ? stored.filter(isMatchingCurrentUser) : [];
+      const userStored = Array.isArray(stored) ? stored.filter(Boolean).filter(isMatchingCurrentUser) : [];
       return [...userStored, ...completedLabs];
     } catch {
       return completedLabs;
@@ -997,7 +1014,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     if (!user) return [];
     try {
       const stored = JSON.parse(localStorage.getItem('zestmed_patient_prescriptions') || '[]');
-      return Array.isArray(stored) ? stored.filter(isMatchingCurrentUser) : [];
+      return Array.isArray(stored) ? stored.filter(Boolean).filter(isMatchingCurrentUser) : [];
     } catch {
       return [];
     }
@@ -1005,7 +1022,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Filtered Real User Bookings for My Bookings View
   const filteredUserBookings = useMemo(() => {
-    return allUserBookings.filter((b) => {
+    return (allUserBookings || []).filter(Boolean).filter((b) => {
       // Category filter
       if (serviceCategoryFilter !== 'all') {
         if (serviceCategoryFilter === 'lab' && b.itemType !== 'lab') return false;
@@ -1017,7 +1034,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       }
 
       // Status filter
-      const st = (b.bookingStatus || b.status || '').toLowerCase();
+      const st = String(b.bookingStatus || b.status || '').toLowerCase();
       if (bookingFilter === 'confirmed') {
         return st.includes('confirm') || st.includes('schedule') || st.includes('out') || st.includes('deliver');
       }
@@ -1037,22 +1054,22 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Real user upcoming appointments for Dashboard Overview
   const upcomingAppointmentsList = useMemo(() => {
-    return allUserBookings.filter((b) => {
-      const status = (b.bookingStatus || b.status || '').toLowerCase();
+    return (allUserBookings || []).filter(Boolean).filter((b) => {
+      const status = String(b.bookingStatus || b.status || '').toLowerCase();
       const isUpcomingStatus = !status.includes('cancel') && !status.includes('complete');
-      const isAppointmentType = b.itemType === 'doctor' || b.itemType === 'lab' || b.itemType === 'physio' || b.itemType === 'surgery' || b.itemType === 'wellness';
+      const isAppointmentType = b.itemType === 'doctor' || b.itemType === 'lab' || b.itemType === 'physio' || b.itemType === 'physiotherapy' || b.itemType === 'surgery' || b.itemType === 'wellness';
       return isUpcomingStatus && isAppointmentType;
     }).slice(0, 2);
   }, [allUserBookings]);
 
   // Real user recent medicine orders for Dashboard Overview
   const recentMedicineOrdersList = useMemo(() => {
-    return allUserBookings.filter((b) => b.itemType === 'medicine').slice(0, 2);
+    return (allUserBookings || []).filter(b => b?.itemType === 'medicine').slice(0, 2);
   }, [allUserBookings]);
 
   // Real user recent lab test bookings for Dashboard Overview (Diagnostic lab tests only)
   const recentLabBookingsList = useMemo(() => {
-    return allUserBookings.filter((b) => b.itemType === 'lab').slice(0, 2);
+    return (allUserBookings || []).filter(b => b?.itemType === 'lab').slice(0, 2);
   }, [allUserBookings]);
 
   // Real user recent diagnostic reports for Dashboard Overview
@@ -1062,41 +1079,43 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Helper to extract clean Month and Day badge for upcoming appointments
   const formatAppointmentDateBadge = (dateStr) => {
-    if (!dateStr) {
-      const d = new Date();
-      return {
-        month: d.toLocaleString('en-US', { month: 'short' }),
-        day: String(d.getDate()).padStart(2, '0')
-      };
-    }
-    const clean = String(dateStr).trim();
-    const d = new Date(clean);
-    if (!isNaN(d.getTime())) {
-      return {
-        month: d.toLocaleString('en-US', { month: 'short' }),
-        day: String(d.getDate()).padStart(2, '0')
-      };
-    }
-    const parts = clean.split(/[-/]/);
-    if (parts.length === 3) {
-      if (parts[0].length === 4) {
-        const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        if (!isNaN(dateObj.getTime())) {
-          return {
-            month: dateObj.toLocaleString('en-US', { month: 'short' }),
-            day: String(dateObj.getDate()).padStart(2, '0')
-          };
-        }
-      } else {
-        const dateObj = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-        if (!isNaN(dateObj.getTime())) {
-          return {
-            month: dateObj.toLocaleString('en-US', { month: 'short' }),
-            day: String(dateObj.getDate()).padStart(2, '0')
-          };
+    try {
+      if (!dateStr) {
+        const d = new Date();
+        return {
+          month: d.toLocaleString('en-US', { month: 'short' }),
+          day: String(d.getDate()).padStart(2, '0')
+        };
+      }
+      const clean = String(dateStr).trim();
+      const d = new Date(clean);
+      if (!isNaN(d.getTime())) {
+        return {
+          month: d.toLocaleString('en-US', { month: 'short' }),
+          day: String(d.getDate()).padStart(2, '0')
+        };
+      }
+      const parts = clean.split(/[-/]/);
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          if (!isNaN(dateObj.getTime())) {
+            return {
+              month: dateObj.toLocaleString('en-US', { month: 'short' }),
+              day: String(dateObj.getDate()).padStart(2, '0')
+            };
+          }
+        } else {
+          const dateObj = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+          if (!isNaN(dateObj.getTime())) {
+            return {
+              month: dateObj.toLocaleString('en-US', { month: 'short' }),
+              day: String(dateObj.getDate()).padStart(2, '0')
+            };
+          }
         }
       }
-    }
+    } catch (_) {}
     const now = new Date();
     return {
       month: now.toLocaleString('en-US', { month: 'short' }),
@@ -1106,8 +1125,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Harmonized combined bookings across all 6 patient actions
   const combinedBookings = useMemo(() => {
-    const labs = labBookings.map((b) => {
-      const isWellness = (b.category || '').toLowerCase().includes('wellness') || (b.type || '').toLowerCase().includes('wellness');
+    const labs = (labBookings || []).filter(Boolean).map((b) => {
+      const isWellness = String(b.category?.name || b.category || '').toLowerCase().includes('wellness') || String(b.type || '').toLowerCase().includes('wellness');
       return {
         ...b,
         id: b.id || b.bookingId,
@@ -1115,18 +1134,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         itemType: isWellness ? 'wellness' : 'lab',
         displayType: isWellness ? 'Wellness Package' : 'Diagnostic Lab Test',
         title: b.testName || b.name || 'Diagnostic Test',
-        date: b.date || b.bookedDate || 'Nov 18, 2026',
+        date: b.date || b.collectionDate || b.bookedDate || 'Nov 18, 2026',
         time: b.time || '10:00 AM',
         mode: b.collectionAddress ? 'Home Collection' : (b.mode || 'Home Collection'),
         location: b.collectionAddress || 'Guwahati Hub',
-        provider: b.labExecutive || b.phlebotomist?.name || 'Bikash Das (Phlebotomist)',
+        provider: b.labExecutive || b.phlebotomist?.name || (typeof b.phlebotomist === 'string' ? b.phlebotomist : '') || 'Bikash Das (Phlebotomist)',
         price: b.price || 499,
         status: b.status || 'Confirmed'
       };
     });
 
-    const appts = appointments.map((a) => {
-      const cat = (a.category || a.type || '').toLowerCase();
+    const appts = (appointments || []).filter(Boolean).map((a) => {
+      const cat = String(a.category?.name || a.category || a.type || '').toLowerCase();
       let itemType = 'doctor';
       let displayType = 'Doctor Appointment';
       if (cat.includes('physio')) {
@@ -1161,7 +1180,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [labBookings, appointments]);
 
   const filteredBookings = useMemo(() => {
-    return combinedBookings.filter((b) => {
+    return (combinedBookings || []).filter(Boolean).filter((b) => {
       // Category filter
       if (serviceCategoryFilter !== 'all') {
         if (serviceCategoryFilter === 'lab' && b.itemType !== 'lab') return false;
@@ -1172,17 +1191,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       }
 
       // Status filter
+      const st = String(b.status || '').toLowerCase();
       if (bookingFilter === 'confirmed') {
-        return (b.status || '').toLowerCase().includes('confirm') || (b.status || '').toLowerCase().includes('schedule');
+        return st.includes('confirm') || st.includes('schedule');
       }
       if (bookingFilter === 'report-ready') {
-        return (b.status || '').toLowerCase().includes('report') || (b.status || '').toLowerCase().includes('publish');
+        return st.includes('report') || st.includes('publish');
       }
       if (bookingFilter === 'completed') {
-        return (b.status || '').toLowerCase().includes('complete');
+        return st.includes('complete');
       }
       if (bookingFilter === 'cancelled') {
-        return (b.status || '').toLowerCase().includes('cancel');
+        return st.includes('cancel');
       }
 
       return true;
@@ -1190,14 +1210,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [combinedBookings, serviceCategoryFilter, bookingFilter]);
 
   const upcomingCount = useMemo(() => {
-    return allUserBookings.filter(
-      (b) => !(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !(b.bookingStatus || b.status || '').toLowerCase().includes('complete')
+    return (allUserBookings || []).filter(
+      (b) => b && !String(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !String(b.bookingStatus || b.status || '').toLowerCase().includes('complete')
     ).length;
   }, [allUserBookings]);
 
   const upcomingList = useMemo(() => {
-    return allUserBookings
-      .filter((b) => !(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !(b.bookingStatus || b.status || '').toLowerCase().includes('complete'))
+    return (allUserBookings || [])
+      .filter((b) => b && !String(b.bookingStatus || b.status || '').toLowerCase().includes('cancel') && !String(b.bookingStatus || b.status || '').toLowerCase().includes('complete'))
       .slice(0, 3);
   }, [allUserBookings]);
 
@@ -1279,7 +1299,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   const handleOpenReportModal = (testName, dateStr, reportId, pathologist) => {
     // Find matching booking or create demo mock object with full diagnostic parameters
-    const existing = labBookings.find((b) => b.testName.toLowerCase().includes(testName.toLowerCase().slice(0, 5)));
+    const existing = (labBookings || []).find((b) => b && String(b.testName || b.name || '').toLowerCase().includes(String(testName || '').toLowerCase().slice(0, 5)));
     const detailed = getMockReportDetails(testName, dateStr, reportId || existing?.id, pathologist);
     setSelectedReportBooking({
       ...detailed,
@@ -1344,8 +1364,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   const currentHour = new Date().getHours();
   const greetingText = currentHour < 12 ? 'Good Morning' : currentHour < 17 ? 'Good Afternoon' : 'Good Evening';
-  const patientFullName = user?.name || profileForm.name || 'Patient';
-  const patientFirstName = patientFullName.split(' ')[0] || 'Patient';
+  const patientFullName = typeof user?.name === 'string' && user.name.trim() ? user.name : (typeof profileForm?.name === 'string' && profileForm.name.trim() ? profileForm.name : 'Patient');
+  const patientFirstName = String(patientFullName).split(' ')[0] || 'Patient';
   const patientUHID = user?.uhid || profileForm.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284');
 
   // Active Patient Dashboard View
@@ -1938,7 +1958,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {allUserBookings.filter(b => b.itemType === 'medicine').length}
+                      {allUserBookings.filter(b => b?.itemType === 'medicine').length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Medicine Orders
@@ -1964,7 +1984,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {allUserBookings.filter(b => b.itemType === 'lab').length}
+                      {allUserBookings.filter(b => b?.itemType === 'lab').length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Lab Tests
@@ -1990,7 +2010,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                      {allUserBookings.filter(b => b.itemType === 'doctor').length}
+                      {allUserBookings.filter(b => b?.itemType === 'doctor').length}
                     </div>
                     <div className="text-xs font-semibold text-slate-500 mt-1">
                       Appointments
@@ -2057,10 +2077,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           const isDoctor = apt.itemType === 'doctor';
                           const isLab = apt.itemType === 'lab';
                           const title = isDoctor ? 'Doctor Appointment' : isLab ? 'Lab Test' : apt.displayType || 'Appointment';
-                          const subtitle = apt.doctorName || apt.serviceName || apt.title || apt.testName || 'Consultation';
+                          const subtitle = typeof (apt.doctorName || apt.serviceName || apt.title || apt.testName) === 'object' ? (apt.doctorName?.name || apt.serviceName?.name || 'Consultation') : String(apt.doctorName || apt.serviceName || apt.title || apt.testName || 'Consultation');
                           const timeStr = apt.time || apt.timeSlot || apt.preferredTime || 'Scheduled Time';
                           const modeStr = apt.consultationMode || apt.collectionType || (apt.itemType === 'doctor' ? 'In-Clinic' : 'Home Sample');
-                          const statusText = apt.bookingStatus || apt.status || 'Confirmed';
+                          const statusText = String(apt.bookingStatus || apt.status || 'Confirmed');
                           const isConfirmed = statusText.toLowerCase().includes('confirm');
                           const badgeColor = isDoctor
                             ? 'bg-purple-100 text-purple-700'
@@ -2343,7 +2363,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           const title = ord.title || ord.serviceName || (ord.medicines?.[0]?.name ? `${ord.medicines[0].name}${ord.medicines.length > 1 ? ` +${ord.medicines.length - 1} more` : ''}` : 'Prescription Medicines');
                           const amount = ord.totalAmount || ord.amount || ord.price || 0;
                           const itemCount = ord.medicines?.length || ord.items?.length || ord.quantity || 1;
-                          const statusText = ord.bookingStatus || ord.status || 'Confirmed';
+                          const statusText = String(ord.bookingStatus || ord.status || 'Confirmed');
                           const isDelivered = statusText.toLowerCase().includes('deliver') || statusText.toLowerCase().includes('complete');
 
                           return (
@@ -2428,7 +2448,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           const title = lab.serviceName || lab.title || lab.testName || 'Diagnostic Test';
                           const colType = lab.collectionType || (lab.bookingType === 'home' ? 'Home Collection' : 'Lab Visit');
                           const amount = lab.totalAmount || lab.amount || lab.price || 0;
-                          const statusText = lab.bookingStatus || lab.status || 'Confirmed';
+                          const statusText = String(lab.bookingStatus || lab.status || 'Confirmed');
                           const isCompleted = statusText.toLowerCase().includes('complete') || statusText.toLowerCase().includes('report') || statusText.toLowerCase().includes('deliver');
                           const isProcessing = statusText.toLowerCase().includes('process') || statusText.toLowerCase().includes('pending');
 
@@ -2926,12 +2946,12 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
                 {[
                   { id: 'all', label: `All Bookings (${allUserBookings.length})` },
-                  { id: 'doctor', label: `Doctor Appointments (${allUserBookings.filter(b => b.itemType === 'doctor').length})` },
-                  { id: 'surgery', label: `Surgery Packages (${allUserBookings.filter(b => b.itemType === 'surgery').length})` },
-                  { id: 'medicine', label: `Medicine Orders (${allUserBookings.filter(b => b.itemType === 'medicine').length})` },
-                  { id: 'lab', label: `Lab Tests (${allUserBookings.filter(b => b.itemType === 'lab').length})` },
-                  { id: 'physiotherapy', label: `Physiotherapy (${allUserBookings.filter(b => b.itemType === 'physiotherapy').length})` },
-                  { id: 'wellness', label: `Wellness Packages (${allUserBookings.filter(b => b.itemType === 'wellness').length})` }
+                  { id: 'doctor', label: `Doctor Appointments (${allUserBookings.filter(b => b?.itemType === 'doctor').length})` },
+                  { id: 'surgery', label: `Surgery Packages (${allUserBookings.filter(b => b?.itemType === 'surgery').length})` },
+                  { id: 'medicine', label: `Medicine Orders (${allUserBookings.filter(b => b?.itemType === 'medicine').length})` },
+                  { id: 'lab', label: `Lab Tests (${allUserBookings.filter(b => b?.itemType === 'lab').length})` },
+                  { id: 'physiotherapy', label: `Physiotherapy (${allUserBookings.filter(b => b?.itemType === 'physiotherapy').length})` },
+                  { id: 'wellness', label: `Wellness Packages (${allUserBookings.filter(b => b?.itemType === 'wellness').length})` }
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -3012,7 +3032,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       ? ShoppingCart
                       : FlaskConical;
 
-                    const statusLower = (b.bookingStatus || b.status || 'Confirmed').toLowerCase();
+                    const statusLower = String(b.bookingStatus || b.status || 'Confirmed').toLowerCase();
                     const isCancelled = statusLower.includes('cancel');
                     const isCompleted = statusLower.includes('complete') || statusLower.includes('deliver') || statusLower.includes('report') || statusLower.includes('publish');
                     const isPending = statusLower.includes('pending') || statusLower.includes('process');
@@ -3058,7 +3078,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <div>
                               <div className="flex flex-wrap items-center gap-2">
                                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition">
-                                  {b.serviceName || b.title}
+                                  {typeof (b.serviceName || b.title) === 'object' ? (b.serviceName?.name || b.title?.name || 'Service') : (b.serviceName || b.title)}
                                 </h3>
                                 <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md border ${
                                   isWellness
@@ -3073,7 +3093,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     ? 'bg-sky-50 text-sky-700 border-sky-200'
                                     : 'bg-teal-50 text-[#007A64] border-teal-200'
                                 }`}>
-                                  {b.serviceType || b.displayType}
+                                  {typeof (b.serviceType || b.displayType) === 'object' ? (b.serviceType?.name || b.displayType?.name || 'Service') : (b.serviceType || b.displayType)}
                                 </span>
                               </div>
                               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1 font-mono">
@@ -3081,7 +3101,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                   ID: {b.bookingId || b.id}
                                 </span>
                                 <span className="text-slate-400 font-sans">
-                                  • Patient: <strong className="text-slate-700">{(!b.patientName || b.patientName === 'Rahul Verma') ? (user?.name || 'Self') : b.patientName}</strong>
+                                  • Patient: <strong className="text-slate-700">{(!b.patientName || b.patientName === 'Rahul Verma') ? (user?.name || 'Self') : (typeof b.patientName === 'object' ? b.patientName?.name : b.patientName)}</strong>
                                 </span>
                               </div>
                             </div>
@@ -3139,13 +3159,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <CreditCard className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                               <span className={`px-2 py-0.5 rounded-md font-semibold text-xs ${
-                                (b.paymentStatus || '').toLowerCase().includes('clinic') || (b.paymentStatus || '').toLowerCase().includes('post-session')
+                                String(b.paymentStatus || '').toLowerCase().includes('clinic') || String(b.paymentStatus || '').toLowerCase().includes('post-session')
                                   ? 'bg-amber-50 text-amber-800 border border-amber-200'
                                   : 'bg-emerald-50/80 text-emerald-800 border border-emerald-200'
                               }`}>
                                 {b.paymentStatus || 'Paid (Verified)'}
                               </span>
-                              {((b.paymentStatus || '').toLowerCase().includes('clinic') || (b.paymentStatus || '').toLowerCase().includes('post-session') || (b.paymentStatus || '').toLowerCase().includes('collection')) && !isCancelled && (
+                              {(String(b.paymentStatus || '').toLowerCase().includes('clinic') || String(b.paymentStatus || '').toLowerCase().includes('post-session') || String(b.paymentStatus || '').toLowerCase().includes('collection')) && !isCancelled && (
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -3291,7 +3311,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               <p className="text-[11px] text-slate-500">{rx.specialty || 'General Care'} • {rx.hospital || 'Assam Health Desk'}</p>
                             </div>
                             <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full ${
-                              (rx.status || '').toLowerCase().includes('verified')
+                              String(rx.status || '').toLowerCase().includes('verified')
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                 : 'bg-amber-50 text-amber-700 border border-amber-200'
                             }`}>
@@ -3302,7 +3322,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <div className="py-3 text-xs text-slate-600 space-y-1">
                             <p><strong className="text-slate-700">Issued On:</strong> {rx.dateOfIssue || 'Recent'}</p>
                             <p><strong className="text-slate-700">Valid Until:</strong> {rx.expiryDate || 'Standard Validity'}</p>
-                            <p><strong className="text-slate-700">Medications:</strong> {rx.medicines?.map(m => m.name).join(', ') || 'Prescribed Medicines'}</p>
+                            <p><strong className="text-slate-700">Medications:</strong> {Array.isArray(rx.medicines) ? rx.medicines.map(m => m?.name).filter(Boolean).join(', ') : (rx.medicines || 'Prescribed Medicines')}</p>
                           </div>
                         </div>
 

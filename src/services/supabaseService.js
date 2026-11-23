@@ -1408,7 +1408,7 @@ export const getUserBookings = async (user) => {
     const bId = a.bookingId || a.id;
     if (!seenIds.has(String(bId))) {
       seenIds.add(String(bId));
-      const cat = (a.category || a.type || '').toLowerCase();
+      const cat = String(a?.category?.name || a?.category || a?.type || '').toLowerCase();
       let sType = 'Doctor Appointment';
       let iType = 'doctor';
       if (a.isPhysio || cat.includes('physio')) {
@@ -1479,7 +1479,9 @@ export const getUserBookings = async (user) => {
     const bId = l.bookingId || l.id;
     if (!seenIds.has(String(bId))) {
       seenIds.add(String(bId));
-      const isWellness = isWellnessPackage(l) || (l.category || l.type || '').toLowerCase().includes('wellness') || (l.testName || l.name || '').toLowerCase().includes('wellness');
+      const cat = String(l?.category?.name || l?.category || l?.type || '').toLowerCase();
+      const testName = String(l?.testName || l?.name || '').toLowerCase();
+      const isWellness = isWellnessPackage(l) || cat.includes('wellness') || testName.includes('wellness');
       const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
       const iType = isWellness ? 'wellness' : 'lab';
       const dType = isWellness ? 'Wellness Health Package' : 'Diagnostic Lab Test';

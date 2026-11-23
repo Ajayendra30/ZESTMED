@@ -41,6 +41,12 @@ window.addEventListener('beforeunload', () => {
   } catch (_) {}
 });
 
+// Auto-reload if an outdated deployment chunk was cached by the browser
+window.addEventListener('vite:preloadError', (event) => {
+  console.warn('[Vite preload error detected, reloading page]:', event);
+  window.location.reload();
+});
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
