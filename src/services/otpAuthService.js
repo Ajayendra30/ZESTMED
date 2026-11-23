@@ -217,6 +217,18 @@ export const requestOtp = async (phoneNumber) => {
     };
   }
 
+  // Disallow login access for Admin and Lab Executive roles through website login
+  const isAdminOrLab = ROLE_PHONE_DIRECTORY.admin.includes(clean) || ROLE_PHONE_DIRECTORY.lab.includes(clean);
+  const regCheck = await checkUserRegistrationByPhone(clean);
+  const isExistingStaffOrAdmin = regCheck.exists && (regCheck.user?.role === 'Admin' || regCheck.user?.role === 'Lab Executive' || regCheck.user?.role === 'Lab Staff');
+
+  if (isAdminOrLab || isExistingStaffOrAdmin) {
+    return {
+      success: false,
+      error: 'Login access for Admin and Lab Executive roles is disabled. Only regular users can log in through the website.',
+    };
+  }
+
   // Check Rate Limit
   const rateLimit = checkRateLimit(clean);
   if (!rateLimit.allowed) {
@@ -231,9 +243,6 @@ export const requestOtp = async (phoneNumber) => {
   const now = Date.now();
   const expiresAt = now + OTP_CONFIG.EXPIRY_SECONDS * 1000;
   const resendCooldownUntil = now + OTP_CONFIG.RESEND_COOLDOWN_SECONDS * 1000;
-
-  // Check whether this number is already an existing user or a new user
-  const regCheck = await checkUserRegistrationByPhone(clean);
 
   // Store active OTP session in sessionStorage
   const otpSession = {
@@ -283,6 +292,18 @@ export const verifyOtpCode = async (phoneNumber, enteredOtp) => {
       success: false,
       isLocked: true,
       error: `This mobile number is temporarily locked. Try again in ${lockout.remainingMinutes} minute(s).`,
+    };
+  }
+
+  // Disallow login access for Admin and Lab Executive roles through website login
+  const isAdminOrLab = ROLE_PHONE_DIRECTORY.admin.includes(clean) || ROLE_PHONE_DIRECTORY.lab.includes(clean);
+  const regCheck = await checkUserRegistrationByPhone(clean);
+  const isExistingStaffOrAdmin = regCheck.exists && (regCheck.user?.role === 'Admin' || regCheck.user?.role === 'Lab Executive' || regCheck.user?.role === 'Lab Staff');
+
+  if (isAdminOrLab || isExistingStaffOrAdmin) {
+    return {
+      success: false,
+      error: 'Login access for Admin and Lab Executive roles is disabled. Only regular users can log in through the website.',
     };
   }
 
@@ -365,9 +386,7 @@ export const verifyOtpCode = async (phoneNumber, enteredOtp) => {
   // 5. Successful Verification! Clear OTP session
   sessionStorage.removeItem(`zestmed_otp_${clean}`);
 
-  // Determine user account status
-  const regCheck = await checkUserRegistrationByPhone(clean);
-
+  // Return verified status using already checked registration
   return {
     success: true,
     phone: clean,
@@ -405,45 +424,37 @@ export const resendOtpCode = async (phoneNumber) => {
  * 13. Determine User Role and Target Dashboard
  */
 export const resolveUserRole = (phone, customRole = null) => {
-  const clean = normalizePhoneNumber(phone);
-  if (ROLE_PHONE_DIRECTORY.admin.includes(clean)) return 'Admin';
-  if (ROLE_PHONE_DIRECTORY.lab.includes(clean)) return 'Lab Executive';
+  // Website login only permits regular users ('Patient')
   return 'Patient';
 };
 
 export const getTargetDashboardForRole = (role) => {
-  switch (role) {
-    case 'Admin':
-      return '/admin-dashboard';
-    case 'Lab Executive':
-    case 'Lab Staff':
-      return '/lab-dashboard';
-    case 'Patient':
-    default:
-      return '/'; // Regular users are redirected to the Home page
-  }
+  // Regular users are redirected to the Home page ('/')
+  return '/';
 };
 
 /**
  * Validates whether a user is an authorized administrator
+ * Regular users logging in through the website can never access the Admin Dashboard
  */
 export const isAuthorizedAdmin = (user) => {
-  if (!user) return false;
+  if (!user || user.role !== 'Admin') return false;
   const clean = normalizePhoneNumber(user.phone || user.contact || '');
   const isAdminPhone = ROLE_PHONE_DIRECTORY.admin.includes(clean);
   const isAdminEmail = Boolean(user.email && user.email.toLowerCase().includes('admin@zestmed.com'));
-  return (user.role === 'Admin' && (isAdminPhone || isAdminEmail)) || isAdminPhone || isAdminEmail;
+  return isAdminPhone || isAdminEmail;
 };
 
 /**
  * Validates whether a user is authorized for the Lab portal
+ * Regular users logging in through the website can never access the Lab Executive Dashboard
  */
 export const isAuthorizedLab = (user) => {
   if (!user) return false;
-  const clean = normalizePhoneNumber(user.phone || user.contact || '');
-  const isLabPhone = ROLE_PHONE_DIRECTORY.lab.includes(clean);
   const isLabRole = user.role === 'Lab Executive' || user.role === 'Lab Staff';
-  return (isLabRole && isLabPhone) || isLabPhone || isAuthorizedAdmin(user);
+  if (!isLabRole) return false;
+  const clean = normalizePhoneNumber(user.phone || user.contact || '');
+  return ROLE_PHONE_DIRECTORY.lab.includes(clean);
 };
 
 /**

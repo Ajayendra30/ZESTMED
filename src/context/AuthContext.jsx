@@ -14,7 +14,8 @@ import {
   recordLoginHistory,
   resolveUserRole,
   getTargetDashboardForRole,
-  checkUserRegistrationByPhone
+  checkUserRegistrationByPhone,
+  ROLE_PHONE_DIRECTORY
 } from '../services/otpAuthService';
 
 const AuthContext = createContext(null);
@@ -106,6 +107,13 @@ export const AuthProvider = ({ children }) => {
   const loginWithPhoneOtp = (phoneNumber, name = '', extraData = {}) => {
     purgeRahulVermaFromStorage();
     const cleanPhone = normalizePhone(phoneNumber);
+
+    // Disallow login for Admin and Lab Executive roles
+    if (ROLE_PHONE_DIRECTORY.admin.includes(cleanPhone) || ROLE_PHONE_DIRECTORY.lab.includes(cleanPhone)) {
+      addToast('Login access for Admin and Lab Executive roles is disabled.', 'error');
+      return null;
+    }
+
     const registered = getRegisteredPatient(cleanPhone);
 
     // Check if there is a saved profile name in localStorage

@@ -15,10 +15,7 @@ import {
   resendOtpCode, 
   getPhoneLockoutStatus, 
   normalizePhoneNumber,
-  checkUserRegistrationByPhone,
-  getTargetDashboardForRole,
-  isAuthorizedAdmin,
-  isAuthorizedLab
+  checkUserRegistrationByPhone
 } from '../services/otpAuthService';
 
 function ZestmedLogo() {
@@ -191,10 +188,10 @@ export default function AuthPage() {
               </button>
             )}
             <button
-              onClick={() => navigate(getTargetDashboardForRole(user.role))}
+              onClick={() => navigate('/')}
               className={`w-full py-3 rounded-2xl ${hasReturnUrl ? 'bg-slate-100 hover:bg-slate-200 text-slate-800' : 'bg-[#007A64] hover:bg-[#006852] text-white'} font-bold text-sm shadow-md transition cursor-pointer`}
             >
-              Go to Dashboard
+              Go to Home Page
             </button>
             <button
               onClick={() => {
@@ -398,16 +395,7 @@ export default function AuthPage() {
       console.warn('Failed restoring pending cart item:', e);
     }
 
-    // 2. Role-Based Redirection: Admin -> Admin Dashboard, Lab -> Lab Dashboard, Regular User -> Home Page
-    if (isAuthorizedAdmin(loggedInUser)) {
-      navigate('/admin-dashboard', { replace: true });
-      return;
-    } else if (isAuthorizedLab(loggedInUser)) {
-      navigate('/lab-dashboard', { replace: true });
-      return;
-    }
-
-    // 3. Regular users must be redirected to the Home page ('/')
+    // 2. Regular users must be redirected to the Home page ('/')
     navigate('/', { replace: true });
   };
 
