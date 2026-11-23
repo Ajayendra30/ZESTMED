@@ -1759,17 +1759,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </div>
 
         {/* Bottom Sidebar Help Card with Doctor Assistant */}
-        <div className="p-3 shrink-0 relative z-10">
-          <div className="rounded-2xl p-3.5 bg-gradient-to-br from-[#123053] via-[#0E2845] to-[#0A1C30] border border-blue-400/20 relative overflow-hidden shadow-lg">
-            <div className="relative z-10 max-w-[125px]">
-              <div className="text-white font-bold text-xs tracking-tight">Need Help?</div>
-              <p className="text-slate-300 text-[10px] leading-tight mt-0.5">
+        <div className="p-3.5 pt-12 sm:pt-14 shrink-0 relative z-10">
+          <div className="rounded-2xl p-4 sm:p-4.5 bg-gradient-to-br from-[#123053] via-[#0E2845] to-[#0A1C30] border border-blue-400/20 relative shadow-xl">
+            <div className="relative z-10 max-w-[120px] sm:max-w-[125px]">
+              <div className="text-white font-extrabold text-xs sm:text-sm tracking-tight">Need Help?</div>
+              <p className="text-slate-300 text-[10.5px] sm:text-xs leading-tight mt-1 font-medium">
                 Talk to our Health Assistant
               </p>
               <button
                 type="button"
                 onClick={() => addToast('Connecting to 24/7 ZESTMED Health Assistant...', 'info')}
-                className="mt-2.5 inline-flex items-center gap-1 bg-[#00BFA5] hover:bg-[#00A887] text-white text-[11px] font-bold px-3 py-1 rounded-lg shadow-sm transition cursor-pointer"
+                className="mt-3.5 inline-flex items-center gap-1.5 bg-[#00BFA5] hover:bg-[#00A887] text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition cursor-pointer active:scale-95"
               >
                 <span>Chat Now</span>
               </button>
@@ -1777,7 +1777,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
             <img
               src="/dashboard/doctor-assistant.png"
               alt="Health Assistant"
-              className="absolute -bottom-1 -right-1 w-20 sm:w-22 h-auto object-contain pointer-events-none drop-shadow-md select-none"
+              className="absolute bottom-0 right-0 w-28 sm:w-32 lg:w-34 h-auto object-contain pointer-events-none drop-shadow-2xl select-none"
             />
           </div>
         </div>
