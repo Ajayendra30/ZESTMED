@@ -69,7 +69,11 @@ import {
   TrendingUp,
   Layers,
   XCircle,
-  BriefcaseMedical
+  BriefcaseMedical,
+  Droplet,
+  AlertTriangle,
+  AlertCircle,
+  ListFilter
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -219,6 +223,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
   const [isPrescriptionUploadModalOpen, setIsPrescriptionUploadModalOpen] = useState(false);
+
+  // Diagnostic Reports Page States
+  const [reportFilter, setReportFilter] = useState('all');
+  const [reportSearchQuery, setReportSearchQuery] = useState('');
+  const [reportTimeFilter, setReportTimeFilter] = useState('all');
 
   // Ensure a verified patient session is active so reloading keeps the patient dashboard open
   useEffect(() => {
@@ -995,24 +1004,55 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Real or Historical Diagnostic Reports (strictly isolated to verified user)
   const userReports = useMemo(() => {
     if (!user) return [];
-    const completedLabs = (allUserBookings || []).filter(b => b?.itemType === 'lab' && (
-      String(b.status || '').toLowerCase().includes('report') ||
-      String(b.status || '').toLowerCase().includes('publish') ||
-      String(b.status || '').toLowerCase().includes('complete')
-    )).map((l, idx) => ({
-      test: l?.serviceName || l?.title || 'Diagnostic Test',
-      date: l?.date || 'Recent',
-      id: `ZM-REP-${l?.bookingId || idx + 1}`,
-      status: 'Ready',
-      pathologist: 'Dr. Pranabesh Sarma, MD Pathology'
-    }));
+    
+    // 1. All real lab test bookings of the current user
+    const labBookings = (allUserBookings || []).filter(b => b?.itemType === 'lab' || isLabTestOrPackage(b));
+    
+    const mappedLabReports = labBookings.map((l, idx) => {
+      const st = String(l?.status || l?.bookingStatus || '').toLowerCase();
+      const isReady = st.includes('report') || st.includes('publish') || st.includes('ready') || st.includes('complete');
+      const hasAbnormal = Boolean(l?.hasAbnormal);
+      const testName = typeof (l?.serviceName || l?.title) === 'object'
+        ? (l?.serviceName?.name || l?.title?.name || 'Diagnostic Test')
+        : (l?.serviceName || l?.title || 'Diagnostic Test');
 
+      let subtitle = l?.parametersSummary || l?.specimen || '';
+      if (!subtitle) {
+        const lower = testName.toLowerCase();
+        if (lower.includes('vitamin d')) subtitle = '25-Hydroxy Vitamin D';
+        else if (lower.includes('cbc') || lower.includes('blood count')) subtitle = 'Hemogram';
+        else if (lower.includes('lipid')) subtitle = 'Cholesterol, HDL, LDL, Triglycerides';
+        else if (lower.includes('thyroid')) subtitle = 'Thyroid Function Test';
+        else if (lower.includes('liver') || lower.includes('lft')) subtitle = 'SGPT, SGOT, Bilirubin, ALP';
+        else if (lower.includes('kidney') || lower.includes('kft')) subtitle = 'Creatinine, Urea, Uric Acid';
+        else subtitle = 'Clinical Diagnostic Parameter Profile';
+      }
+
+      return {
+        test: testName,
+        subtitle,
+        date: l?.appointmentDate || l?.date || 'Recent',
+        id: l?.bookingId || l?.id || `ZM-LAB-${Date.now().toString().slice(-5)}`,
+        status: hasAbnormal ? 'Action Required' : isReady ? 'Ready' : 'Pending',
+        pathologist: l?.reportingDoctor || 'Dr. Pranabesh Sarma, MD Pathology',
+        raw: l,
+        hasAbnormal
+      };
+    });
+
+    // 2. Any stored patient reports in localStorage
     try {
       const stored = JSON.parse(localStorage.getItem('zestmed_patient_reports') || '[]');
       const userStored = Array.isArray(stored) ? stored.filter(Boolean).filter(isMatchingCurrentUser) : [];
-      return [...userStored, ...completedLabs];
+      const map = new Map();
+      [...userStored, ...mappedLabReports].forEach(item => {
+        if (item && item.id) {
+          map.set(item.id, item);
+        }
+      });
+      return Array.from(map.values());
     } catch {
-      return completedLabs;
+      return mappedLabReports;
     }
   }, [user, allUserBookings, isMatchingCurrentUser]);
 
@@ -1621,7 +1661,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA (Header + Dashboard Body)           */}
       {/* ======================================================== */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto w-full transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' ? 'bg-[#EAF5FB]' : 'bg-[#F4F7FB]'}`}>
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 sticky top-0 z-20">
           {/* Left: Hamburger + Search Input */}
@@ -1781,7 +1821,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </header>
 
         {/* Dashboard Canvas */}
-        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' ? 'bg-[#EAF5FB]' : ''}`}>
+        <main className={`p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden transition-colors ${activeMenu === 'bookings' || activeMenu === 'reports' ? 'bg-[#EAF5FB]' : ''}`}>
           {activeMenu === 'dashboard' && (
             <>
               {/* ======================================================== */}
@@ -3502,113 +3542,639 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
           {/* ======================================================== */}
-          {/* 3. MY DIAGNOSTIC REPORTS VIEW                            */}
+          {/* 3. MY DIAGNOSTIC REPORTS VIEW (Refined to Reference)      */}
           {/* ======================================================== */}
-          {activeMenu === 'reports' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FileText className="w-6 h-6 text-[#14B8A6]" />
-                    <span>My Diagnostic Test Reports</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Digital reports authorized by certified MD Pathologists (Dispur Central Laboratory).
-                  </p>
+          {activeMenu === 'reports' && (() => {
+            const totalReportsCount = userReports.length;
+            const completedReportsCount = userReports.filter(r => String(r.status || '').toLowerCase().includes('ready') || String(r.status || '').toLowerCase().includes('complete') || String(r.status || '').toLowerCase().includes('publish')).length;
+            const pendingReportsCount = userReports.filter(r => String(r.status || '').toLowerCase().includes('pending') || String(r.status || '').toLowerCase().includes('assign') || String(r.status || '').toLowerCase().includes('process')).length;
+            const actionRequiredCount = userReports.filter(r => Boolean(r.hasAbnormal) || String(r.status || '').toLowerCase().includes('action')).length;
+
+            const filteredReports = (userReports || []).filter(r => {
+              const st = String(r.status || '').toLowerCase();
+              if (reportFilter === 'completed' && !st.includes('ready') && !st.includes('complete') && !st.includes('publish')) return false;
+              if (reportFilter === 'pending' && !st.includes('pending') && !st.includes('assign') && !st.includes('process')) return false;
+              if (reportFilter === 'action_required' && !r.hasAbnormal && !st.includes('action')) return false;
+
+              if (reportSearchQuery.trim()) {
+                const q = reportSearchQuery.trim().toLowerCase();
+                const matchName = String(r.test || '').toLowerCase().includes(q);
+                const matchId = String(r.id || '').toLowerCase().includes(q);
+                const matchSub = String(r.subtitle || '').toLowerCase().includes(q);
+                if (!matchName && !matchId && !matchSub) return false;
+              }
+              return true;
+            });
+
+            const getTestIconData = (testName = '') => {
+              const lower = testName.toLowerCase();
+              if (lower.includes('vitamin')) {
+                return {
+                  Icon: Droplet,
+                  bg: 'bg-rose-50 text-rose-500 border border-rose-100'
+                };
+              }
+              if (lower.includes('cbc') || lower.includes('blood') || lower.includes('hemogram')) {
+                return {
+                  Icon: FlaskConical,
+                  bg: 'bg-purple-50 text-purple-600 border border-purple-100'
+                };
+              }
+              if (lower.includes('lipid') || lower.includes('cholesterol')) {
+                return {
+                  Icon: FlaskConical,
+                  bg: 'bg-blue-50 text-blue-600 border border-blue-100'
+                };
+              }
+              if (lower.includes('thyroid')) {
+                return {
+                  Icon: Heart,
+                  bg: 'bg-rose-50 text-rose-500 border border-rose-100'
+                };
+              }
+              if (lower.includes('liver') || lower.includes('lft')) {
+                return {
+                  Icon: Layers,
+                  bg: 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                };
+              }
+              return {
+                Icon: FlaskConical,
+                bg: 'bg-teal-50 text-[#00A68A] border border-teal-100'
+              };
+            };
+
+            const handleDownloadAllReports = () => {
+              if (userReports.length === 0) {
+                addToast('No diagnostic reports available to download.', 'info');
+                return;
+              }
+              userReports.forEach((rep, i) => {
+                setTimeout(() => downloadClinicalReport(rep), i * 350);
+              });
+              addToast(`Downloading ${userReports.length} diagnostic reports...`, 'success');
+            };
+
+            const handleShareAllReports = () => {
+              if (userReports.length === 0) {
+                addToast('No diagnostic reports available to share.', 'info');
+                return;
+              }
+              if (navigator.share) {
+                navigator.share({
+                  title: 'ZESTMED Diagnostic Reports',
+                  text: `Diagnostic test reports for ${user?.name || 'Patient'} from ZESTMED Dispur Central Laboratory.`,
+                  url: window.location.href
+                }).catch(() => {});
+              } else {
+                navigator.clipboard?.writeText(window.location.href);
+                addToast('Secure link to reports copied to clipboard!', 'success');
+              }
+            };
+
+            return (
+              <div className="space-y-4 sm:space-y-5">
+                {/* 1. Header Hero Banner with Microscope & Test Tubes Artwork */}
+                <div className="relative rounded-2xl sm:rounded-3xl border border-white/80 bg-white shadow-[0_4px_24px_-4px_rgba(0,143,131,0.07)] p-5 sm:p-6 overflow-hidden flex items-center justify-between">
+                  {/* Background wave gradient */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-[#E1F4FC]/40 to-[#D4F0FA]/70" />
+
+                  {/* Left: Document Icon & Text */}
+                  <div className="relative z-10 flex items-center gap-3.5 sm:gap-4 max-w-2xl min-w-0">
+                    <div className="w-12 h-12 rounded-2xl bg-white border border-[#00BFA5]/30 shadow-xs flex items-center justify-center text-[#00A68A] shrink-0">
+                      <FileText className="w-6 h-6 text-[#00A68A]" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        My Diagnostic Test Reports
+                      </h1>
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Access, download, and manage your lab test reports from certified diagnostic partners.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right: Microscope & Chemical Test Tube Rack Artwork */}
+                  <div className="hidden md:flex items-center justify-end shrink-0 relative w-48 sm:w-56 h-28 pointer-events-none select-none">
+                    <svg viewBox="0 0 240 140" className="w-full h-full object-contain overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="microscopeGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#38BDF8" />
+                          <stop offset="100%" stopColor="#0284C7" />
+                        </linearGradient>
+                        <linearGradient id="tubeLiquid" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#38BDF8" />
+                          <stop offset="100%" stopColor="#0EA5E9" />
+                        </linearGradient>
+                        <filter id="reportShadow" x="-10%" y="-10%" width="130%" height="130%">
+                          <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.12" />
+                        </filter>
+                      </defs>
+
+                      {/* Microscope Illustration */}
+                      <g transform="translate(25, 12)" filter="url(#reportShadow)">
+                        <rect x="10" y="96" width="60" height="12" rx="6" fill="#0C4A6E" />
+                        <rect x="25" y="88" width="30" height="10" rx="3" fill="#0284C7" />
+                        <path d="M55 88 C70 80, 75 55, 65 35 C55 15, 35 22, 35 32" fill="none" stroke="url(#microscopeGrad)" strokeWidth="9" strokeLinecap="round" />
+                        <rect x="22" y="10" width="14" height="28" rx="4" transform="rotate(-25 22 10)" fill="#0C4A6E" />
+                        <rect x="20" y="6" width="18" height="6" rx="2" transform="rotate(-25 20 6)" fill="#38BDF8" />
+                        <circle cx="36" cy="46" r="8" fill="#0C4A6E" />
+                        <rect x="33" y="52" width="7" height="14" rx="2" fill="#0284C7" />
+                        <rect x="32" y="64" width="9" height="3" rx="1" fill="#BAE6FD" />
+                        <rect x="15" y="68" width="45" height="5" rx="2" fill="#0C4A6E" />
+                        <rect x="28" y="66" width="20" height="2" rx="1" fill="#E0F2FE" />
+                        <circle cx="38" cy="67" r="1.5" fill="#38BDF8" />
+                        <circle cx="62" cy="58" r="6" fill="#0C4A6E" />
+                        <circle cx="62" cy="58" r="3" fill="#38BDF8" />
+                      </g>
+
+                      {/* Test Tube Rack with 4 tubes */}
+                      <g transform="translate(130, 30)" filter="url(#reportShadow)">
+                        <rect x="0" y="45" width="85" height="4" rx="2" fill="#0284C7" />
+                        <rect x="0" y="78" width="85" height="5" rx="2.5" fill="#0C4A6E" />
+                        <rect x="4" y="45" width="4" height="36" rx="2" fill="#0284C7" />
+                        <rect x="77" y="45" width="4" height="36" rx="2" fill="#0284C7" />
+
+                        {/* Tube 1 */}
+                        <rect x="14" y="15" width="11" height="58" rx="5.5" fill="#F0F9FF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="15.5" y="32" width="8" height="39" rx="4" fill="url(#tubeLiquid)" />
+                        <circle cx="19.5" cy="45" r="1.5" fill="#FFFFFF" opacity="0.8" />
+                        <circle cx="21" cy="55" r="1" fill="#FFFFFF" opacity="0.8" />
+
+                        {/* Tube 2 */}
+                        <rect x="29" y="8" width="11" height="65" rx="5.5" fill="#F0F9FF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="30.5" y="22" width="8" height="49" rx="4" fill="url(#tubeLiquid)" />
+                        <circle cx="34.5" cy="35" r="1.5" fill="#FFFFFF" opacity="0.8" />
+                        <circle cx="36" cy="48" r="1" fill="#FFFFFF" opacity="0.8" />
+                        <circle cx="33" cy="58" r="1.5" fill="#FFFFFF" opacity="0.8" />
+
+                        {/* Tube 3 */}
+                        <rect x="44" y="18" width="11" height="55" rx="5.5" fill="#F0F9FF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="45.5" y="38" width="8" height="33" rx="4" fill="url(#tubeLiquid)" />
+                        <circle cx="49.5" cy="50" r="1.5" fill="#FFFFFF" opacity="0.8" />
+
+                        {/* Tube 4 */}
+                        <rect x="59" y="12" width="11" height="61" rx="5.5" fill="#F0F9FF" stroke="#0284C7" strokeWidth="1.5" />
+                        <rect x="60.5" y="28" width="8" height="43" rx="4" fill="url(#tubeLiquid)" />
+                        <circle cx="64.5" cy="42" r="1.5" fill="#FFFFFF" opacity="0.8" />
+                        <circle cx="63" cy="55" r="1" fill="#FFFFFF" opacity="0.8" />
+                      </g>
+                    </svg>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => navigate('/diagnostics')}
-                  className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Book Another Test</span>
-                </button>
-              </div>
 
-              {/* Reports Grid */}
-              {userReports.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {userReports.map((rep, idx) => (
-                    <div
-                      key={rep.id || idx}
-                      className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:border-teal-200 transition space-y-4"
+                {/* 2. Top Metrics / KPI Cards Row + Book Button */}
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                  {/* Card 1: Total Reports */}
+                  <div className="bg-white rounded-2xl p-4 border border-blue-100/70 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-slate-500">Total Reports</div>
+                      <div className="text-2xl font-black text-slate-900 leading-none mt-1">{totalReportsCount}</div>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Tests Completed */}
+                  <div className="bg-white rounded-2xl p-4 border border-blue-100/70 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                      <FlaskConical className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-slate-500">Tests Completed</div>
+                      <div className="text-2xl font-black text-slate-900 leading-none mt-1">{completedReportsCount}</div>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Reports Pending */}
+                  <div className="bg-white rounded-2xl p-4 border border-blue-100/70 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center shrink-0">
+                      <Clock className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-slate-500">Reports Pending</div>
+                      <div className="text-2xl font-black text-slate-900 leading-none mt-1">{pendingReportsCount}</div>
+                    </div>
+                  </div>
+
+                  {/* Card 4: Action Required */}
+                  <div className="bg-white rounded-2xl p-4 border border-blue-100/70 shadow-xs flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0">
+                      <AlertCircle className="w-5 h-5 text-rose-600" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-slate-500">Action Required</div>
+                      <div className="text-2xl font-black text-slate-900 leading-none mt-1">{actionRequiredCount}</div>
+                    </div>
+                  </div>
+
+                  {/* Button: Book Another Test */}
+                  <div className="col-span-2 sm:col-span-2 md:col-span-4 lg:col-span-1 flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => navigate('/diagnostics')}
+                      className="w-full h-full min-h-[58px] bg-[#008F83] hover:bg-[#007A64] text-white px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs cursor-pointer transition"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                            <FileCheck className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-bold text-slate-900">{rep.test}</h3>
-                            <p className="text-xs text-slate-400 font-mono mt-0.5">
-                              {rep.id} • {rep.date}
-                            </p>
-                          </div>
+                      <Plus className="w-4 h-4 text-white" />
+                      <span>Book Another Test</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Filter Pills Bar & Search Row */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                  {/* Left Filter Pills */}
+                  <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 custom-scrollbar">
+                    <button
+                      type="button"
+                      onClick={() => setReportFilter('all')}
+                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold transition shrink-0 cursor-pointer flex items-center gap-2 shadow-xs ${
+                        reportFilter === 'all'
+                          ? 'bg-[#008F83] text-white border border-[#007A70]'
+                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <ListFilter className="w-4 h-4 shrink-0" />
+                      <span>All Reports ({totalReportsCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setReportFilter('completed')}
+                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold transition shrink-0 cursor-pointer flex items-center gap-2 shadow-xs ${
+                        reportFilter === 'completed'
+                          ? 'bg-[#008F83] text-white border border-[#007A70]'
+                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${reportFilter === 'completed' ? 'text-white' : 'text-blue-500'}`} />
+                      <span>Completed ({completedReportsCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setReportFilter('pending')}
+                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold transition shrink-0 cursor-pointer flex items-center gap-2 shadow-xs ${
+                        reportFilter === 'pending'
+                          ? 'bg-[#008F83] text-white border border-[#007A70]'
+                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Clock className={`w-3.5 h-3.5 shrink-0 ${reportFilter === 'pending' ? 'text-white' : 'text-blue-500'}`} />
+                      <span>Pending ({pendingReportsCount})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setReportFilter('action_required')}
+                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-[13px] font-bold transition shrink-0 cursor-pointer flex items-center gap-2 shadow-xs ${
+                        reportFilter === 'action_required'
+                          ? 'bg-[#008F83] text-white border border-[#007A70]'
+                          : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${reportFilter === 'action_required' ? 'text-white' : 'text-rose-500'}`} />
+                      <span>Action Required ({actionRequiredCount})</span>
+                    </button>
+                  </div>
+
+                  {/* Right Search Box & Dropdown */}
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <div className="relative flex-1 sm:w-64">
+                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={reportSearchQuery}
+                        onChange={(e) => setReportSearchQuery(e.target.value)}
+                        placeholder="Search by test name, Lab ID..."
+                        className="w-full bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl pl-9 pr-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 outline-none focus:border-[#008F83] shadow-2xs"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = reportTimeFilter === 'all' ? 'month' : reportTimeFilter === 'month' ? 'year' : 'all';
+                        setReportTimeFilter(next);
+                      }}
+                      className="bg-white border border-slate-200/90 text-slate-700 rounded-xl sm:rounded-2xl px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-2xs cursor-pointer hover:bg-slate-50 shrink-0"
+                    >
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{reportTimeFilter === 'all' ? 'All Time' : reportTimeFilter === 'month' ? 'This Month' : 'This Year'}</span>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Main 2-Column Content: Reports Table (Left) + Widgets (Right) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+                  {/* Left Column: Reports Table */}
+                  <div className="lg:col-span-8 xl:col-span-9 bg-white rounded-2xl sm:rounded-[22px] border border-blue-100/80 shadow-[0_4px_16px_-4px_rgba(0,143,131,0.06)] overflow-hidden">
+                    {/* Desktop View Table */}
+                    <div className="hidden md:block overflow-x-auto custom-scrollbar">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-100 bg-slate-50/40 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <th className="pl-6 py-3.5">Test Name</th>
+                            <th className="py-3.5">Lab ID</th>
+                            <th className="py-3.5">Test Date</th>
+                            <th className="py-3.5">Report Status</th>
+                            <th className="pr-6 py-3.5 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100/80 text-xs text-slate-700">
+                          {filteredReports.length > 0 ? (
+                            filteredReports.map((rep, idx) => {
+                              const iconData = getTestIconData(rep.test);
+                              const IconComponent = iconData.Icon;
+                              const isReady = String(rep.status).toLowerCase().includes('ready') || String(rep.status).toLowerCase().includes('complete') || String(rep.status).toLowerCase().includes('publish');
+                              const isAction = rep.hasAbnormal || String(rep.status).toLowerCase().includes('action');
+
+                              return (
+                                <tr key={rep.id || idx} className="hover:bg-slate-50/60 transition group">
+                                  {/* Test Name + Icon + Subtitle */}
+                                  <td className="pl-6 py-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform ${iconData.bg}`}>
+                                        <IconComponent className="w-4 h-4" />
+                                      </div>
+                                      <div className="min-w-0">
+                                        <div className="font-extrabold text-slate-900 group-hover:text-teal-700 transition truncate max-w-[220px] lg:max-w-xs">
+                                          {rep.test}
+                                        </div>
+                                        <div className="text-[11px] text-slate-400 font-normal truncate max-w-[220px] lg:max-w-xs mt-0.5">
+                                          {rep.subtitle}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+
+                                  {/* Lab ID */}
+                                  <td className="py-4 font-mono font-medium text-slate-700">
+                                    {rep.id}
+                                  </td>
+
+                                  {/* Test Date */}
+                                  <td className="py-4 font-medium text-slate-600">
+                                    {rep.date}
+                                  </td>
+
+                                  {/* Report Status */}
+                                  <td className="py-4">
+                                    {isAction ? (
+                                      <span className="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
+                                        <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
+                                        <span>Action Required</span>
+                                      </span>
+                                    ) : isReady ? (
+                                      <span className="bg-[#E8FAF5] text-[#007A64] border border-[#B3EBDC] px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64]" />
+                                        <span>Ready</span>
+                                      </span>
+                                    ) : (
+                                      <span className="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
+                                        <Clock className="w-3.5 h-3.5 text-amber-500" />
+                                        <span>Pending</span>
+                                      </span>
+                                    )}
+                                  </td>
+
+                                  {/* Actions Buttons: View Report, Download, Share */}
+                                  <td className="pr-6 py-4 text-right">
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
+                                        className="border border-slate-200 hover:bg-slate-50 text-slate-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                                      >
+                                        <Eye className="w-3.5 h-3.5 text-slate-600" />
+                                        <span>View Report</span>
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          downloadClinicalReport(rep);
+                                          addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                                        }}
+                                        className="border border-slate-200 hover:bg-slate-50 p-1.5 rounded-full text-slate-600 transition shadow-2xs cursor-pointer"
+                                        title="Download Official PDF Report"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => shareClinicalReport(rep, addToast)}
+                                        className="border border-slate-200 hover:bg-slate-50 p-1.5 rounded-full text-slate-600 transition shadow-2xs cursor-pointer"
+                                        title="Share with Doctor"
+                                      >
+                                        <Share2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          ) : (
+                            <tr>
+                              <td colSpan={5} className="py-12 text-center text-slate-400">
+                                <FlaskConical className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+                                <p className="font-semibold text-slate-700 text-sm">No Diagnostic Reports Found</p>
+                                <p className="text-xs text-slate-400 mt-0.5">No reports match your current filter or search criteria.</p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Card Layout for smaller screens */}
+                    <div className="block md:hidden divide-y divide-slate-100 p-4 space-y-3.5">
+                      {filteredReports.length > 0 ? (
+                        filteredReports.map((rep, idx) => {
+                          const iconData = getTestIconData(rep.test);
+                          const IconComponent = iconData.Icon;
+                          const isReady = String(rep.status).toLowerCase().includes('ready') || String(rep.status).toLowerCase().includes('complete') || String(rep.status).toLowerCase().includes('publish');
+                          const isAction = rep.hasAbnormal || String(rep.status).toLowerCase().includes('action');
+
+                          return (
+                            <div key={rep.id || idx} className="pt-3.5 first:pt-0 space-y-2.5">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-center gap-2.5">
+                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${iconData.bg}`}>
+                                    <IconComponent className="w-4 h-4" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{rep.test}</h4>
+                                    <p className="text-[11px] text-slate-400">{rep.subtitle}</p>
+                                  </div>
+                                </div>
+                                <div>
+                                  {isAction ? (
+                                    <span className="bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1">
+                                      <AlertCircle className="w-3 h-3 text-rose-500" /> Action
+                                    </span>
+                                  ) : isReady ? (
+                                    <span className="bg-[#E8FAF5] text-[#007A64] border border-[#B3EBDC] px-2.5 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1">
+                                      <CheckCircle2 className="w-3 h-3 text-[#007A64]" /> Ready
+                                    </span>
+                                  ) : (
+                                    <span className="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold inline-flex items-center gap-1">
+                                      <Clock className="w-3 h-3 text-amber-500" /> Pending
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between text-[11px] text-slate-500">
+                                <span>Lab ID: <strong className="font-mono text-slate-700">{rep.id}</strong></span>
+                                <span>Date: <strong className="text-slate-700">{rep.date}</strong></span>
+                              </div>
+
+                              <div className="flex items-center justify-between pt-1 gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
+                                  className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 py-1.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-1 shadow-2xs"
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-slate-600" />
+                                  <span>View Report</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    downloadClinicalReport(rep);
+                                    addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                                  }}
+                                  className="p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => shareClinicalReport(rep, addToast)}
+                                  className="p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                >
+                                  <Share2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-8 text-center text-slate-400">
+                          <p className="font-semibold text-slate-700 text-xs">No Diagnostic Reports Found</p>
                         </div>
-                        <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
-                          {rep.status || 'Ready'}
-                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column: 3 Widgets */}
+                  <div className="lg:col-span-4 xl:col-span-3 space-y-4">
+                    {/* Widget 1: Your Lab Partner */}
+                    <div className="bg-white rounded-2xl border border-blue-100/80 p-4 shadow-xs space-y-3">
+                      <div className="flex items-center gap-2">
+                        <FlaskConical className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                          Your Lab Partner
+                        </h3>
                       </div>
 
-                      <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl flex items-center justify-between">
-                        <span>Pathologist: <strong className="text-slate-700">{rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology'}</strong></span>
-                        <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
-                      </div>
-
-                      <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
-                          className="px-3.5 py-1.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>View Report</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            downloadClinicalReport(rep);
-                            addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
-                          }}
-                          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200 cursor-pointer"
-                          title="Download PDF"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => shareClinicalReport(rep, addToast)}
-                          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition border border-slate-200 cursor-pointer"
-                          title="Share with Doctor"
-                        >
-                          <Share2 className="w-4 h-4" />
-                        </button>
+                      <div className="flex items-center gap-3 pt-1">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                          <Building className="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 truncate">
+                              Dispur Central Laboratory
+                            </h4>
+                            <span className="bg-[#E8FAF5] text-[#007A64] border border-[#B3EBDC] px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 inline-flex items-center gap-0.5">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" /> Verified
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                            NABL Certified • Guwahati, Assam
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-100 shadow-sm text-center space-y-3">
-                  <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto">
-                    <FileText className="w-7 h-7" />
+
+                    {/* Widget 2: Quick Actions */}
+                    <div className="bg-white rounded-2xl border border-blue-100/80 p-4 shadow-xs space-y-2.5">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-[#00A68A]" />
+                        <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                          Quick Actions
+                        </h3>
+                      </div>
+
+                      <div className="space-y-1 pt-1 text-xs font-semibold text-slate-700">
+                        <div
+                          onClick={() => navigate('/diagnostics')}
+                          className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Calendar className="w-4 h-4 text-[#00A68A]" />
+                            <span>Book a New Test</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        </div>
+
+                        <div
+                          onClick={handleDownloadAllReports}
+                          className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Download className="w-4 h-4 text-[#00A68A]" />
+                            <span>Download All Reports</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        </div>
+
+                        <div
+                          onClick={handleShareAllReports}
+                          className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Share2 className="w-4 h-4 text-[#00A68A]" />
+                            <span>Share Reports</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Widget 3: Health Insights */}
+                    <div className="bg-white rounded-2xl border border-blue-100/80 p-4 shadow-xs space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Activity className="w-4 h-4 text-[#00A68A]" />
+                          <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                            Health Insights
+                          </h3>
+                        </div>
+                        <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
+                      </div>
+
+                      <div className="pt-1">
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Your latest diagnostic report indicators are within optimal clinical reference ranges.
+                        </p>
+                        <div className="mt-2 text-right">
+                          <span className="bg-[#E8FAF5] text-[#007A64] border border-[#B3EBDC] px-2.5 py-0.5 rounded-full text-[10.5px] font-bold">
+                            Normal
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-base font-extrabold text-slate-800">No Diagnostic Test Reports Found</h3>
-                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                    You do not have any published test reports yet. When you complete a diagnostic test with our certified labs, your verified reports and digital signatures will appear here.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/diagnostics')}
-                    className="mt-2 inline-flex items-center gap-2 bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Book a Diagnostic Test</span>
-                  </button>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            );
+          })()}
 
           {/* ======================================================== */}
           {/* 5. MY PROFILE VIEW                                       */}
