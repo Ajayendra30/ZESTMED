@@ -1715,7 +1715,7 @@ export default function DoctorAppointmentPage() {
                         value={patientForm.phone}
                         onChange={(e) => setPatientForm({ ...patientForm, phone: e.target.value })}
                         className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 outline-none focus:border-[#007A64]"
-                        placeholder="9876543210"
+                        placeholder="Enter 10-digit mobile number"
                       />
                     </div>
                   </div>

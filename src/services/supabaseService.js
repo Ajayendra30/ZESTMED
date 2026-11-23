@@ -1,6 +1,7 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { MOCK_DOCTORS, matchesSpecialty } from '../mock-data/doctorsData';
 import { getAuthenticatedUser, getAuthToken } from '../utils/authGuard';
+import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 
 /**
  * ==============================================================================
@@ -1297,40 +1298,84 @@ export const getUserBookings = async (user) => {
         if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
           ordersRes.value.data.filter(isMatchingUser).forEach((o) => {
             const bId = o.order_number || o.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              const itemNames = Array.isArray(o.items) && o.items.length > 0
-                ? o.items.map((i) => i.name).filter(Boolean).join(', ')
-                : 'Prescription Medicines';
-              const isWellness = itemNames.toLowerCase().includes('wellness') || itemNames.toLowerCase().includes('package');
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: isWellness ? 'Wellness Package' : 'Medicine Order',
-                itemType: isWellness ? 'wellness' : 'medicine',
-                displayType: isWellness ? 'Wellness Health Package' : 'Pharmacy Medicine Order',
-                serviceName: itemNames,
-                title: itemNames,
-                items: o.items || [],
-                provider: 'Zestmed Certified Pharma Hub',
-                bookingDateTime: o.created_at || new Date().toISOString(),
-                createdAt: o.created_at || new Date().toISOString(),
-                appointmentDate: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
-                appointmentTime: 'Express Delivery Hub',
-                date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
-                time: 'Doorstep Delivery',
-                mode: 'Express Home Delivery',
-                location: o.delivery_address || 'Guwahati, Assam',
-                deliveryAddress: o.delivery_address || 'Guwahati, Assam',
-                paymentStatus: o.payment_status || o.payment_method || 'Paid (COD / Online)',
-                bookingStatus: o.order_status || o.status || 'Processing',
-                status: o.order_status || o.status || 'Processing',
-                totalAmount: parseFloat(o.total_amount || 0),
-                price: parseFloat(o.total_amount || 0),
-                patientName: o.patient_name || userName || 'Self',
-                phone: o.phone || rawPhone,
-                source: 'database',
-              });
+            const items = Array.isArray(o.items) ? o.items : [];
+            const testItems = items.filter(it => isLabTestOrPackage(it));
+            const medItems = items.filter(it => !isLabTestOrPackage(it));
+
+            // Extract any test/package items as distinct lab bookings
+            testItems.forEach((t, idx) => {
+              const isPkg = isWellnessPackage(t);
+              const labId = String(bId).replace('ORD', isPkg ? 'WEL' : 'LAB') + (testItems.length > 1 ? `-${idx + 1}` : '');
+              if (!seenIds.has(labId)) {
+                seenIds.add(labId);
+                allResults.push({
+                  id: labId,
+                  bookingId: labId,
+                  serviceType: isPkg ? 'Wellness Package' : 'Lab Test',
+                  itemType: isPkg ? 'wellness' : 'lab',
+                  displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
+                  serviceName: t.name || 'Diagnostic Lab Test',
+                  title: t.name || 'Diagnostic Lab Test',
+                  specimen: 'Blood / Serum Sample (Barcoded)',
+                  provider: 'Bikash Das (Phlebotomist)',
+                  bookingDateTime: o.created_at || new Date().toISOString(),
+                  createdAt: o.created_at || new Date().toISOString(),
+                  appointmentDate: 'Tomorrow',
+                  appointmentTime: '07:30 AM - Home Collection',
+                  date: 'Tomorrow',
+                  time: '07:30 AM - Home Collection',
+                  mode: 'Home Sample Collection',
+                  location: o.delivery_address || 'Guwahati Hub',
+                  collectionAddress: o.delivery_address || 'Guwahati Hub',
+                  paymentStatus: o.payment_status || o.payment_method || 'Paid (Verified)',
+                  bookingStatus: o.order_status || o.status || 'Confirmed',
+                  status: o.order_status || o.status || 'Confirmed',
+                  totalAmount: parseFloat(t.price || 499),
+                  price: parseFloat(t.price || 499),
+                  patientName: o.patient_name || userName || 'Self',
+                  phone: o.phone || rawPhone,
+                  source: 'database_test',
+                });
+              }
+            });
+
+            // If genuine medicines are present, emit pure medicine order
+            if (medItems.length > 0 || testItems.length === 0) {
+              if (!seenIds.has(String(bId))) {
+                seenIds.add(String(bId));
+                const displayItems = medItems.length > 0 ? medItems : items;
+                const itemNames = displayItems.length > 0
+                  ? displayItems.map((i) => i.name).filter(Boolean).join(', ')
+                  : 'Prescription Medicines';
+                allResults.push({
+                  id: bId,
+                  bookingId: bId,
+                  serviceType: 'Medicine Order',
+                  itemType: 'medicine',
+                  displayType: 'Medicine Order',
+                  serviceName: itemNames,
+                  title: itemNames,
+                  items: displayItems,
+                  provider: 'Zestmed Certified Pharma Hub',
+                  bookingDateTime: o.created_at || new Date().toISOString(),
+                  createdAt: o.created_at || new Date().toISOString(),
+                  appointmentDate: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+                  appointmentTime: 'Express Delivery Hub',
+                  date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+                  time: 'Doorstep Delivery',
+                  mode: 'Express Home Delivery',
+                  location: o.delivery_address || 'Guwahati, Assam',
+                  deliveryAddress: o.delivery_address || 'Guwahati, Assam',
+                  paymentStatus: o.payment_status || o.payment_method || 'Paid (COD / Online)',
+                  bookingStatus: o.order_status || o.status || 'Processing',
+                  status: o.order_status || o.status || 'Processing',
+                  totalAmount: parseFloat(o.total_amount || 0),
+                  price: parseFloat(o.total_amount || 0),
+                  patientName: o.patient_name || userName || 'Self',
+                  phone: o.phone || rawPhone,
+                  source: 'database',
+                });
+              }
             }
           });
         }
@@ -1459,41 +1504,85 @@ export const getUserBookings = async (user) => {
 
   localOrders.forEach((o) => {
     const bId = o.id || o.order_number;
-    if (!seenIds.has(String(bId))) {
-      seenIds.add(String(bId));
-      const itemNames = Array.isArray(o.items) && o.items.length > 0
-        ? o.items.map((i) => i.name).filter(Boolean).join(', ')
-        : 'Prescription Medicines';
-      const isWellness = itemNames.toLowerCase().includes('wellness') || itemNames.toLowerCase().includes('package');
+    const items = Array.isArray(o.items) ? o.items : [];
+    const testItems = items.filter(it => isLabTestOrPackage(it));
+    const medItems = items.filter(it => !isLabTestOrPackage(it));
 
-      allResults.push({
-        id: bId,
-        bookingId: bId,
-        serviceType: isWellness ? 'Wellness Package' : 'Medicine Order',
-        itemType: isWellness ? 'wellness' : 'medicine',
-        displayType: isWellness ? 'Wellness Health Package' : 'Medicine Order',
-        serviceName: itemNames,
-        title: itemNames,
-        items: o.items || [],
-        provider: 'Zestmed Certified Pharmacy Hub',
-        bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
-        createdAt: o.createdAt || new Date().toISOString(),
-        appointmentDate: o.date || 'Today',
-        appointmentTime: o.time || 'Express Delivery',
-        date: o.date || 'Today',
-        time: o.time || 'Express Delivery',
-        mode: 'Doorstep Delivery',
-        location: o.deliveryAddress || 'Guwahati, Assam',
-        deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
-        paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
-        bookingStatus: o.status || o.order_status || 'Processing',
-        status: o.status || o.order_status || 'Processing',
-        totalAmount: parseFloat(o.totalAmount || o.total || 0),
-        price: parseFloat(o.totalAmount || o.total || 0),
-        patientName: o.patientName || userName || 'Self',
-        phone: o.phone || rawPhone,
-        source: 'local',
-      });
+    // Extract any test items from local orders into Lab Bookings
+    testItems.forEach((t, idx) => {
+      const isPkg = isWellnessPackage(t);
+      const labId = String(bId).replace('ORD', isPkg ? 'WEL' : 'LAB') + (testItems.length > 1 ? `-${idx + 1}` : '');
+      if (!seenIds.has(labId)) {
+        seenIds.add(labId);
+        allResults.push({
+          id: labId,
+          bookingId: labId,
+          serviceType: isPkg ? 'Wellness Package' : 'Lab Test',
+          itemType: isPkg ? 'wellness' : 'lab',
+          displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
+          serviceName: t.name || 'Diagnostic Lab Test',
+          title: t.name || 'Diagnostic Lab Test',
+          specimen: 'Blood / Serum Sample (Barcoded)',
+          provider: 'Bikash Das (Phlebotomist)',
+          bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+          createdAt: o.createdAt || new Date().toISOString(),
+          appointmentDate: o.date || 'Tomorrow',
+          appointmentTime: '07:30 AM - Home Collection',
+          date: o.date || 'Tomorrow',
+          time: '07:30 AM - Home Collection',
+          mode: 'Home Sample Collection',
+          location: o.deliveryAddress || 'Guwahati Hub',
+          collectionAddress: o.deliveryAddress || 'Guwahati Hub',
+          paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
+          bookingStatus: o.status || 'Confirmed',
+          status: o.status || 'Confirmed',
+          totalAmount: parseFloat(t.price || 499),
+          price: parseFloat(t.price || 499),
+          patientName: o.patientName || userName || 'Self',
+          phone: o.phone || rawPhone,
+          source: 'local_test',
+        });
+      }
+    });
+
+    // If pure medicines are present, emit pure medicine order
+    if (medItems.length > 0 || testItems.length === 0) {
+      if (!seenIds.has(String(bId))) {
+        seenIds.add(String(bId));
+        const displayItems = medItems.length > 0 ? medItems : items;
+        const itemNames = displayItems.length > 0
+          ? displayItems.map((i) => i.name).filter(Boolean).join(', ')
+          : 'Prescription Medicines';
+
+        allResults.push({
+          id: bId,
+          bookingId: bId,
+          serviceType: 'Medicine Order',
+          itemType: 'medicine',
+          displayType: 'Medicine Order',
+          serviceName: itemNames,
+          title: itemNames,
+          items: displayItems,
+          provider: 'Zestmed Certified Pharmacy Hub',
+          bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+          createdAt: o.createdAt || new Date().toISOString(),
+          appointmentDate: o.date || 'Today',
+          appointmentTime: o.time || 'Express Delivery',
+          date: o.date || 'Today',
+          time: o.time || 'Express Delivery',
+          mode: 'Doorstep Delivery',
+          location: o.deliveryAddress || 'Guwahati, Assam',
+          deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
+          paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
+          bookingStatus: o.status || o.order_status || 'Processing',
+          status: o.status || o.order_status || 'Processing',
+          totalAmount: parseFloat(o.totalAmount || o.total || 0),
+          price: parseFloat(o.totalAmount || o.total || 0),
+          patientName: o.patientName || userName || 'Self',
+          phone: o.phone || rawPhone,
+          source: 'local',
+        });
+      }
     }
   });
 

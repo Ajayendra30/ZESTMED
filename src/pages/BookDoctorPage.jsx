@@ -292,28 +292,34 @@ export default function BookDoctorPage() {
 
     try {
       const refNumber = `ZM-DOC-${Date.now().toString().slice(-4)}-${Math.floor(1000 + Math.random() * 9000)}`;
-      
+      const docName = chosenDoctor?.name || 'Specialist Physician';
+      const docSpecialty = chosenDoctor?.specialty || selectedSpecialty || 'General Physician';
+      const docDegree = chosenDoctor?.degree || 'MBBS, MD';
+      const docHospital = chosenDoctor?.hospital || 'Zestmed Polyclinic Hub, Guwahati';
+      const docFee = chosenDoctor?.fee || 600;
+      const docAvatar = chosenDoctor?.avatar;
+
       const newBooking = {
         id: refNumber,
         bookingId: refNumber,
         appointment_number: refNumber,
         type: 'Doctor Appointment',
         category: 'doctor',
-        title: chosenDoctor.name,
-        doctor: chosenDoctor.name,
-        doctorName: chosenDoctor.name,
-        doctorSpecialty: chosenDoctor.specialty,
-        specialty: chosenDoctor.specialty,
-        doctorDegree: chosenDoctor.degree || 'MBBS, MD',
-        doctorHospital: chosenDoctor.hospital || 'Zestmed Polyclinic Hub, Guwahati',
-        hospital: chosenDoctor.hospital || 'Zestmed Polyclinic Hub, Guwahati',
-        doctorAvatar: chosenDoctor.avatar,
+        title: docName,
+        doctor: docName,
+        doctorName: docName,
+        doctorSpecialty: docSpecialty,
+        specialty: docSpecialty,
+        doctorDegree: docDegree,
+        doctorHospital: docHospital,
+        hospital: docHospital,
+        doctorAvatar: docAvatar,
         date: consultationDate,
         time: preferredSlot,
         slot: `${consultationDate}, ${preferredSlot}`,
         mode: consultationMode,
-        fee: chosenDoctor.fee || 600,
-        price: chosenDoctor.fee || 600,
+        fee: docFee,
+        price: docFee,
         patientName: patientName.trim(),
         patientPhone: patientPhone.trim(),
         phone: patientPhone.trim(),
@@ -336,8 +342,10 @@ export default function BookDoctorPage() {
         console.warn('Supabase booking sync warning:', dbErr);
       }
 
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      try {
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      } catch (_) {}
 
       // 2. Play audible chime & record Book notification
       try {
@@ -345,8 +353,8 @@ export default function BookDoctorPage() {
           type: 'book',
           title: 'Doctor Appointment Confirmed',
           actionText: `Appointment #${refNumber} Confirmed`,
-          desc: `Consultation confirmed with ${chosenDoctor.name} (${chosenDoctor.specialty}) for ${consultationDate} (${preferredSlot}).`,
-          sender: chosenDoctor.name,
+          desc: `Consultation confirmed with ${docName} (${docSpecialty}) for ${consultationDate} (${preferredSlot}).`,
+          sender: docName,
           category: 'Doctor Consultation',
           refId: refNumber,
           linkType: 'appointment'
@@ -356,8 +364,10 @@ export default function BookDoctorPage() {
       }
 
       setConfirmedTicket(savedBooking || newBooking);
-      loadAppointments();
-      addToast(`Appointment scheduled with ${chosenDoctor.name}!`, 'success');
+      try {
+        loadAppointments();
+      } catch (_) {}
+      addToast(`Appointment scheduled with ${docName}!`, 'success');
     } catch (err) {
       console.error('Failed to book appointment:', err);
       addToast('Unable to complete booking. Please try again.', 'error');

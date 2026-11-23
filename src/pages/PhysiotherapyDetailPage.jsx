@@ -108,11 +108,11 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
 
   // Form State
   const [patientName, setPatientName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '9279125091');
-  const [age, setAge] = useState(user?.age || '32');
+  const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '');
+  const [age, setAge] = useState(user?.age || '');
   const [gender, setGender] = useState('Male');
   const [sessionMode, setSessionMode] = useState('In-Clinic Session'); // 'In-Clinic Session' | 'At-Home Session'
-  const [address, setAddress] = useState(user?.address || 'House No. 12, Zoo Road, Guwahati, Assam');
+  const [address, setAddress] = useState(user?.address || '');
   const [serviceChangeModalOpen, setServiceChangeModalOpen] = useState(false);
 
   // Schedule State (default: 24 November 2026 matching reference)
@@ -769,7 +769,7 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
                         required
                         value={mobileNumber}
                         onChange={(e) => setMobileNumber(e.target.value)}
-                        placeholder="9876543210"
+                        placeholder="Enter 10-digit mobile number"
                         className="w-full px-4 py-2.5 rounded-r-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#007A64]"
                       />
                     </div>
@@ -855,7 +855,7 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
                       rows={3}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      placeholder={sessionMode === 'At-Home Session' ? 'Enter complete doorstep address with house no., locality, Guwahati' : 'Enter preferred clinic area e.g. Zoo Road, GS Road, Guwahati'}
+                      placeholder={sessionMode === 'At-Home Session' ? 'Enter complete doorstep address with house no., locality, city' : 'Enter preferred clinic area or locality, Guwahati'}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#007A64]"
                     />
                   </div>

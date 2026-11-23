@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { placeMedicineOrder, bookLabTest } from '../services/supabaseService';
+import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 import { enforceAuth } from '../utils/authGuard';
 import { recordAndPlayNotification } from '../utils/notificationSound';
 import { 
@@ -53,27 +54,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     setIsRazorpayOpen(false);
     setCheckoutComplete(true);
 
-    // Helper to identify package or test items vs pure medicines
-    const isPackageOrTestItem = (i) => {
-      const type = (i.type || i.itemType || '').toLowerCase();
-      const cat = (i.category || '').toLowerCase();
-      const name = (i.name || '').toLowerCase();
-      return (
-        type === 'test' || 
-        type === 'package' || 
-        cat === 'diagnostic test' || 
-        cat === 'health package' ||
-        cat.includes('wellness') ||
-        name.includes('wellness package') ||
-        name.includes('health package') ||
-        name.includes('screening package') ||
-        Array.isArray(i.tests) ||
-        Boolean(i.turnaroundTime)
-      );
-    };
-
-    // 1. Process Medicine Orders
-    const medicineItems = cartItems.filter(i => !isPackageOrTestItem(i));
+    // 1. Process Medicine Orders (pure medicines only)
+    const medicineItems = cartItems.filter(i => !isLabTestOrPackage(i));
     if (medicineItems.length > 0) {
       const orderMedTotal = medicineItems.reduce((acc, curr) => acc + (curr.price * (curr.quantity || 1)), 0);
       const newOrder = {
@@ -139,19 +121,17 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
       }
     }
 
-    // 2. Process Diagnostic Tests or Wellness Packages
-    const diagnosticOrPackageItems = cartItems.filter(i => isPackageOrTestItem(i));
+    // 2. Process Diagnostic Tests or Wellness Packages (strictly isolated into Lab Bookings)
+    const diagnosticOrPackageItems = cartItems.filter(i => isLabTestOrPackage(i));
     if (diagnosticOrPackageItems.length > 0) {
       try {
         const existingBookings = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
         const newBookings = diagnosticOrPackageItems.map(item => {
-          const isPkg = (item.type || item.itemType || '').toLowerCase() === 'package' || 
-                        (item.category || '').toLowerCase().includes('wellness') ||
-                        (item.name || '').toLowerCase().includes('wellness') ||
-                        (item.name || '').toLowerCase().includes('package');
+          const isPkg = isWellnessPackage(item);
           return {
             id: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
             bookingId: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+            booking_number: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
             type: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
             testName: item.name,
             testCode: isPkg ? 'WEL-PKG' : (item.testCode || 'DX-781'),
@@ -166,8 +146,12 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
             userId: user?.id || null,
             userEmail: user?.email || '',
             status: 'Confirmed',
+            paymentStatus: 'Paid (UPI / Razorpay Verified)',
+            paymentMethod: `Razorpay (${paymentData?.method || 'UPI'} - Verified)`,
+            paymentId: paymentData?.paymentId || '',
+            orderId: paymentData?.orderId || '',
             price: item.price || 0,
-            totalAmount: item.price || 0,
+            totalAmount: (item.price || 0) * (item.quantity || 1),
             specimen: isPkg ? 'Blood & Serum Sample (Fasting)' : (item.specimen || 'Blood / Serum Sample (NABL Barcoded)'),
             collectionAddress: user?.address || 'Dispur, Guwahati - 781005',
             phlebotomist: {

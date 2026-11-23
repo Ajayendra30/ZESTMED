@@ -12,6 +12,7 @@ import {
   updateBookingPaymentStatus,
   getUserBookings 
 } from '../services/supabaseService';
+import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 import {
   Home,
   FlaskConical,
@@ -455,59 +456,98 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   }, [user, isMatchingCurrentUser]);
 
   // Sanitize orders so wellness packages and lab tests never contaminate medicine orders
+  // Handles both purely package/lab orders AND mixed orders (containing medicines + lab tests)
   useEffect(() => {
     try {
       const rawOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
       if (Array.isArray(rawOrders) && rawOrders.length > 0) {
-        const isNonMedicine = (o) => {
-          if (!Array.isArray(o.items) || o.items.length === 0) return false;
-          return o.items.every(it => {
-            const n = (it.name || '').toLowerCase();
-            const t = (it.type || it.itemType || '').toLowerCase();
-            const c = (it.category || '').toLowerCase();
-            return (
-              t === 'package' || t === 'test' ||
-              c.includes('wellness') || c.includes('package') || c.includes('diagnostic') ||
-              n.includes('wellness') || n.includes('package') || n.includes('screening') || n.includes('test')
-            );
-          });
-        };
+        let hasChanges = false;
+        const existingLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+        const updatedLabs = [...existingLabs];
+        const sanitizedOrders = [];
 
-        const packageOrders = rawOrders.filter(isNonMedicine);
-        const medicineOrders = rawOrders.filter(o => !isNonMedicine(o));
+        rawOrders.forEach((order) => {
+          if (!Array.isArray(order.items) || order.items.length === 0) {
+            sanitizedOrders.push(order);
+            return;
+          }
 
-        if (packageOrders.length > 0) {
-          const existingLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-          const migratedBookings = packageOrders.flatMap(po => {
-            return (po.items || []).map((it, idx) => ({
-              id: po.id ? po.id.replace('ORD', 'WEL') : `ZM-WEL-${Date.now()}-${idx}`,
-              bookingId: po.order_number ? po.order_number.replace('ORD', 'WEL') : (po.id || `ZM-WEL-${Date.now()}`),
-              type: 'Wellness Package',
-              testName: it.name,
-              category: 'Wellness Package',
-              bookedDate: po.date || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-              date: po.date || 'Tomorrow',
-              time: po.time || '08:00 AM - Home Collection',
-              patientName: po.patientName || 'Self',
-              phone: po.phone || '',
-              status: po.status || 'Confirmed',
-              price: po.totalAmount || it.price,
-              totalAmount: po.totalAmount || it.price,
-              collectionAddress: po.deliveryAddress || 'Guwahati, Assam',
-              paymentMethod: po.paymentMethod || 'Razorpay (UPI - Verified)'
-            }));
-          });
+          const medItems = order.items.filter(it => !isLabTestOrPackage(it));
+          const testItems = order.items.filter(it => isLabTestOrPackage(it));
 
-          const labMap = new Map();
-          [...migratedBookings, ...existingLabs].forEach(item => {
-            const key = item.bookingId || item.id;
-            if (key) labMap.set(key, item);
-          });
-          const updatedLabs = Array.from(labMap.values());
+          // If there are lab tests or wellness packages in this order, extract them into lab bookings
+          if (testItems.length > 0) {
+            hasChanges = true;
+            testItems.forEach((testItem, idx) => {
+              const isPkg = isWellnessPackage(testItem);
+              const labId = order.id 
+                ? order.id.replace('ORD', isPkg ? 'WEL' : 'LAB') + (testItems.length > 1 ? `-${idx + 1}` : '')
+                : `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}-${idx + 1}`;
 
+              const alreadyExists = updatedLabs.some(l => 
+                String(l.id || l.bookingId) === String(labId) || 
+                (l.testName === testItem.name && l.phone === order.phone)
+              );
+
+              if (!alreadyExists) {
+                updatedLabs.unshift({
+                  id: labId,
+                  bookingId: labId,
+                  booking_number: labId,
+                  type: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+                  testName: testItem.name,
+                  category: isPkg ? 'Wellness Package' : (testItem.category || 'Diagnostic Test'),
+                  bookedDate: order.date || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+                  collectionDate: 'Tomorrow, 07:30 AM',
+                  date: order.date || 'Tomorrow',
+                  time: '07:30 AM - Home Collection',
+                  patientName: order.patientName || user?.name || 'Self',
+                  phone: order.phone || user?.phone || '',
+                  patientPhone: order.phone || user?.phone || '',
+                  userId: order.userId || user?.id || null,
+                  userEmail: order.userEmail || user?.email || '',
+                  status: order.status || 'Confirmed',
+                  paymentStatus: order.paymentStatus || 'Paid (UPI / Razorpay Verified)',
+                  paymentMethod: order.paymentMethod || 'Razorpay (UPI - Verified)',
+                  price: testItem.price || 499,
+                  totalAmount: (testItem.price || 499) * (testItem.quantity || 1),
+                  specimen: isPkg ? 'Blood & Serum Sample (Fasting)' : (testItem.specimen || 'Blood / Serum Sample (NABL Barcoded)'),
+                  collectionAddress: order.deliveryAddress || user?.address || 'Dispur, Guwahati - 781005',
+                  phlebotomist: {
+                    name: 'Bikash Das',
+                    id: 'ZM-PHL-AS-14',
+                    phone: '+91 92791 25091',
+                    vaccinated: true
+                  },
+                  reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (Reg No. AMC-29182-AS)',
+                  parametersSummary: `${testItem.name} - Home Sample Collection Booked`,
+                  createdAt: order.createdAt || new Date().toISOString()
+                });
+              }
+            });
+
+            // If genuine medicines remain in this order, keep it with only medicines
+            if (medItems.length > 0) {
+              const medTotal = medItems.reduce((acc, curr) => acc + (curr.price * (curr.quantity || 1)), 0);
+              sanitizedOrders.push({
+                ...order,
+                items: medItems,
+                totalAmount: medTotal + (medTotal > 499 ? 0 : 49),
+                mrpTotal: medItems.reduce((acc, curr) => acc + ((curr.mrp || curr.price * 1.25) * (curr.quantity || 1)), 0),
+                savings: Math.round(medItems.reduce((acc, curr) => acc + (((curr.mrp || curr.price * 1.25) - curr.price) * (curr.quantity || 1)), 0)),
+                deliveryFee: medTotal > 499 ? 0 : 49
+              });
+            }
+          } else {
+            // Pure medicine order
+            sanitizedOrders.push(order);
+          }
+        });
+
+        if (hasChanges) {
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(sanitizedOrders));
           localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updatedLabs));
-          localStorage.setItem('zestmed_patient_orders', JSON.stringify(medicineOrders));
-          setOrders(medicineOrders.filter(isMatchingCurrentUser));
+          setOrders(sanitizedOrders.filter(isMatchingCurrentUser));
           setLabBookings(updatedLabs.filter(isMatchingCurrentUser));
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
@@ -516,7 +556,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     } catch (e) {
       console.warn('Error sanitizing orders:', e);
     }
-  }, [isMatchingCurrentUser]);
+  }, [isMatchingCurrentUser, user]);
 
   const [addresses, setAddresses] = useState(() => {
     if (!user) return [];
@@ -780,8 +820,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     return (orders || [])
       .filter(isMatchingCurrentUser)
       .map((o) => {
-        const itemNames = Array.isArray(o.items) && o.items.length > 0
-          ? o.items.map((it) => it.name).filter(Boolean).join(', ')
+        // Guarantee only genuine medicines are displayed in medicine order preview
+        const medOnlyItems = Array.isArray(o.items) ? o.items.filter(it => !isLabTestOrPackage(it)) : [];
+        const displayItems = medOnlyItems.length > 0 ? medOnlyItems : (o.items || []);
+        const itemNames = displayItems.length > 0
+          ? displayItems.map((it) => it.name).filter(Boolean).join(', ')
           : 'Prescription Medicines';
         
         return {
@@ -792,7 +835,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           displayType: 'Medicine Order',
           serviceName: itemNames,
           title: itemNames,
-          items: o.items || [],
+          items: displayItems,
           trackingSteps: o.trackingSteps || [],
           provider: o.hub || 'Zestmed Certified Pharmacy Hub',
           bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
@@ -818,20 +861,72 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       });
   }, [orders, user, isMatchingCurrentUser]);
 
-  // Combined real user bookings (Database/Synced + Local persistent medicine orders)
+  // Formatted Lab Bookings from local labBookings state so they ALWAYS appear in My Bookings under Lab Tests
+  const formattedLabBookings = useMemo(() => {
+    if (!user) return [];
+    return (labBookings || [])
+      .filter(isMatchingCurrentUser)
+      .map((l) => {
+        const isWellness = isWellnessPackage(l);
+        const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
+        const iType = isWellness ? 'wellness' : 'lab';
+
+        return {
+          id: l.id || l.bookingId || l.booking_number,
+          bookingId: l.bookingId || l.booking_number || l.id,
+          serviceType: sType,
+          itemType: iType,
+          displayType: sType,
+          serviceName: l.testName || l.name || sType,
+          title: l.testName || l.name || sType,
+          specimen: l.specimen || 'Blood / Serum Sample (Barcoded)',
+          provider: l.phlebotomist?.name || l.phlebotomist || 'Bikash Das (Phlebotomist)',
+          bookingDateTime: l.createdAt || l.bookedDate || new Date().toISOString(),
+          createdAt: l.createdAt || l.bookedDate || new Date().toISOString(),
+          appointmentDate: l.date || l.collectionDate || 'Tomorrow',
+          appointmentTime: l.time || '07:30 AM - Home Collection',
+          date: l.date || l.collectionDate || 'Tomorrow',
+          time: l.time || '07:30 AM - Home Collection',
+          mode: l.collectionAddress ? 'Home Sample Collection' : 'Lab Visit',
+          location: l.collectionAddress || 'Guwahati Hub',
+          collectionAddress: l.collectionAddress || 'Guwahati Hub',
+          paymentStatus: l.paymentStatus || 'Paid (UPI / Razorpay Verified)',
+          paymentMethod: l.paymentMethod || 'Razorpay (UPI - Verified)',
+          bookingStatus: l.status || 'Confirmed',
+          status: l.status || 'Confirmed',
+          totalAmount: parseFloat(l.totalAmount || l.price || 499),
+          price: parseFloat(l.price || l.totalAmount || 499),
+          patientName: l.patientName || user?.name || 'Self',
+          patient: l.patientName || user?.name || 'Self',
+          phone: l.phone || l.patientPhone || (user?.phone || user?.contact || ''),
+          source: 'local_lab'
+        };
+      });
+  }, [labBookings, user, isMatchingCurrentUser]);
+
+  // Combined real user bookings (Database/Synced + Local persistent medicine orders + Local lab bookings)
   const allUserBookings = useMemo(() => {
     if (!user) return [];
     const map = new Map();
+    // 1. Unified database/synced userBookings
     (userBookings || [])
       .filter(isMatchingCurrentUser)
       .forEach((b) => {
         const key = String(b.bookingId || b.id);
         map.set(key, b);
       });
+    // 2. Local medicine orders (ensuring pure medicines appear in Medicine Orders)
     (formattedMedicineBookings || []).forEach((mb) => {
       const key = String(mb.bookingId || mb.id);
       if (!map.has(key)) {
         map.set(key, mb);
+      }
+    });
+    // 3. Local lab test bookings (ensuring booked tests always appear under Lab Tests)
+    (formattedLabBookings || []).forEach((lb) => {
+      const key = String(lb.bookingId || lb.id);
+      if (!map.has(key)) {
+        map.set(key, lb);
       }
     });
     return Array.from(map.values())
@@ -840,7 +935,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
         return timeB - timeA;
       });
-  }, [userBookings, formattedMedicineBookings, user, isMatchingCurrentUser]);
+  }, [userBookings, formattedMedicineBookings, formattedLabBookings, user, isMatchingCurrentUser]);
 
   // Real or Historical Diagnostic Reports (strictly isolated to verified user)
   const userReports = useMemo(() => {

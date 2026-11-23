@@ -105,10 +105,10 @@ export default function SurgeryDetailPage() {
 
   // Form State
   const [patientName, setPatientName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '9876543210');
-  const [age, setAge] = useState('45');
+  const [mobileNumber, setMobileNumber] = useState(user?.contact || user?.phone || '');
+  const [age, setAge] = useState(user?.age || '');
   const [gender, setGender] = useState('Male');
-  const [address, setAddress] = useState('House No. 12, Zoo Road, Guwahati, Assam');
+  const [address, setAddress] = useState(user?.address || '');
 
   // Schedule State (default: 24 November 2026 matching reference image)
   const [selectedDay, setSelectedDay] = useState(24);
@@ -722,7 +722,7 @@ export default function SurgeryDetailPage() {
                         required
                         value={mobileNumber}
                         onChange={(e) => setMobileNumber(e.target.value)}
-                        placeholder="9876543210"
+                        placeholder="Enter 10-digit mobile number"
                         className="w-full px-4 py-2.5 rounded-r-xl border border-slate-200 text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#007A64]"
                       />
                     </div>
