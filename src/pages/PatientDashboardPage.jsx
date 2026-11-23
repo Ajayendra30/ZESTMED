@@ -3889,15 +3889,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     {filteredPrescriptions.length > 0 ? (
                       <>
                         {/* Desktop Table View */}
-                        <div className="hidden md:block overflow-x-auto">
-                          <table className="w-full text-left border-collapse">
+                        <div className="hidden md:block overflow-x-auto scrollbar-none">
+                          <table className="w-full text-left border-collapse table-auto">
                             <thead>
-                              <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
-                                <th className="py-3.5 px-5">Prescription</th>
-                                <th className="py-3.5 px-4">Uploaded On</th>
-                                <th className="py-3.5 px-4">Doctor / Hospital</th>
-                                <th className="py-3.5 px-4">Status</th>
-                                <th className="py-3.5 px-5 text-right">Actions</th>
+                              <tr className="border-b border-slate-100 text-[10px] sm:text-[10.5px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                                <th className="py-2.5 sm:py-3 px-3 sm:px-4">Prescription</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap">Uploaded On</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3">Doctor / Hospital</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3 text-center whitespace-nowrap">Status</th>
+                                <th className="py-2.5 sm:py-3 px-3 sm:px-4 text-right whitespace-nowrap">Actions</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
@@ -3905,34 +3905,45 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                 const stLower = String(rx.status || '').toLowerCase();
                                 const isApproved = stLower.includes('approved') || stLower.includes('verified');
                                 const isRejected = stLower.includes('rejected');
-                                const isImage = rx.imagePreview || rx.fileType?.includes('image') || rx.fileName?.match(/\.(jpg|jpeg|png|webp)$/i);
+                                const isPdf = Boolean(
+                                  (rx.fileName && rx.fileName.toLowerCase().endsWith('.pdf')) ||
+                                  (rx.fileType && rx.fileType.toLowerCase().includes('pdf'))
+                                );
+                                const isImage = !isPdf && Boolean(
+                                  rx.fileType?.includes('image') ||
+                                  rx.fileName?.match(/\.(jpg|jpeg|png|webp)$/i) ||
+                                  (rx.imagePreview && !rx.imagePreview.includes('.pdf'))
+                                );
 
                                 return (
                                   <tr key={rx.id} className="hover:bg-slate-50/70 transition-colors">
                                     {/* Prescription Document Thumbnail + Name + Size */}
-                                    <td className="py-4 px-5">
-                                      <div className="flex items-center gap-3">
+                                    <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                                      <div className="flex items-center gap-2 sm:gap-2.5">
                                         {/* Document Thumbnail Preview */}
-                                        <div className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs relative">
+                                        <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs relative">
                                           {isImage && (rx.imagePreview || rx.fileUrl) ? (
                                             <img
                                               src={rx.imagePreview || rx.fileUrl}
                                               alt={rx.fileName || 'Prescription Preview'}
                                               className="w-full h-full object-cover"
+                                              onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                              }}
                                             />
                                           ) : (
-                                            <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-1">
-                                              <span className="text-[9px] font-mono font-bold text-rose-500 bg-rose-50 px-1 rounded">PDF</span>
-                                              <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                                            <div className="w-full h-full bg-slate-50 flex flex-col items-center justify-center p-0.5">
+                                              <span className="text-[8px] font-mono font-bold text-rose-500 bg-rose-50 px-1 rounded">PDF</span>
+                                              <FileText className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
                                             </div>
                                           )}
                                         </div>
 
                                         <div className="min-w-0">
-                                          <p className="font-bold text-slate-900 truncate max-w-[190px]">
+                                          <p className="font-bold text-slate-900 truncate max-w-[110px] sm:max-w-[130px] lg:max-w-[150px] text-[11px] sm:text-xs" title={rx.fileName || 'Prescription'}>
                                             {rx.fileName || `${rx.doctorName ? `Dr_${rx.doctorName.replace(/\s+/g, '_')}_` : ''}Prescription.pdf`}
                                           </p>
-                                          <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                                          <p className="text-[10px] text-slate-400 mt-0.5 font-medium truncate">
                                             {(rx.fileType || (rx.fileName?.endsWith('.pdf') ? 'PDF' : 'JPG')).toUpperCase()} • {rx.fileSize || '1.2 MB'}
                                           </p>
                                         </div>
@@ -3940,50 +3951,62 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     </td>
 
                                     {/* Uploaded On */}
-                                    <td className="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">
-                                      {rx.uploadedAt || rx.dateOfIssue || '20 Nov 2026, 10:24 AM'}
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3 text-slate-600 whitespace-nowrap">
+                                      {(() => {
+                                        const raw = rx.uploadedAt || rx.dateOfIssue || '20 Nov 2026, 10:24 AM';
+                                        const commaIdx = raw.indexOf(',');
+                                        if (commaIdx !== -1) {
+                                          return (
+                                            <div className="leading-tight">
+                                              <p className="font-semibold text-slate-800 text-[11px]">{raw.slice(0, commaIdx).trim()}</p>
+                                              <p className="text-[10px] text-slate-400 mt-0.5">{raw.slice(commaIdx + 1).trim()}</p>
+                                            </div>
+                                          );
+                                        }
+                                        return <span className="font-medium text-[11px]">{raw}</span>;
+                                      })()}
                                     </td>
 
                                     {/* Doctor / Hospital */}
-                                    <td className="py-4 px-4 min-w-[160px]">
-                                      <p className="font-bold text-slate-900">
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3">
+                                      <p className="font-bold text-slate-900 text-[11px] sm:text-xs truncate max-w-[100px] sm:max-w-[120px] lg:max-w-[140px]" title={rx.doctorName || 'Dr. R. Sharma'}>
                                         {rx.doctorName || 'Dr. R. Sharma'}
                                       </p>
-                                      <p className="text-[11px] text-slate-500 mt-0.5">
+                                      <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[100px] sm:max-w-[120px] lg:max-w-[140px]" title={rx.hospital || rx.clinicName || 'City Care Hospital'}>
                                         {rx.hospital || rx.clinicName || 'City Care Hospital'}
                                       </p>
                                     </td>
 
                                     {/* Status Pill Badge */}
-                                    <td className="py-4 px-4 whitespace-nowrap">
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap text-center">
                                       {isApproved ? (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
-                                          <Check className="w-3.5 h-3.5" />
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
+                                          <Check className="w-3 h-3" />
                                           <span>Approved</span>
                                         </span>
                                       ) : isRejected ? (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#FEE2E2] text-[#DC2626] border border-rose-200">
-                                          <X className="w-3.5 h-3.5" />
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE2E2] text-[#DC2626] border border-rose-200">
+                                          <X className="w-3 h-3" />
                                           <span>Rejected</span>
                                         </span>
                                       ) : (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#D97706] border border-amber-200">
-                                          <Hourglass className="w-3.5 h-3.5" />
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#D97706] border border-amber-200">
+                                          <Hourglass className="w-3 h-3" />
                                           <span>Under Review</span>
                                         </span>
                                       )}
                                     </td>
 
                                     {/* Actions */}
-                                    <td className="py-4 px-5 text-right whitespace-nowrap relative">
-                                      <div className="inline-flex items-center gap-1.5 justify-end">
+                                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-right whitespace-nowrap relative">
+                                      <div className="inline-flex items-center gap-1 justify-end">
                                         {/* View Button */}
                                         <button
                                           type="button"
                                           onClick={() => setSelectedPrescription(rx)}
-                                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-[#008F83] hover:bg-slate-100 transition cursor-pointer"
+                                          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10.5px] font-bold text-slate-700 hover:text-[#008F83] hover:bg-teal-50 transition cursor-pointer border border-slate-200/60"
                                         >
-                                          <Eye className="w-3.5 h-3.5 text-teal-600" />
+                                          <Eye className="w-3 h-3 text-teal-600" />
                                           <span>View</span>
                                         </button>
 
@@ -3995,10 +4018,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                               downloadPrescriptionFile(rx);
                                               addToast('Downloading prescription file...', 'info');
                                             }}
-                                            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                            className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition cursor-pointer"
                                             title="Download Prescription"
                                           >
-                                            <Download className="w-3.5 h-3.5" />
+                                            <Download className="w-3 h-3" />
                                           </button>
                                         )}
 
@@ -4007,10 +4030,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                           <button
                                             type="button"
                                             onClick={() => setActiveRxMenuId(activeRxMenuId === rx.id ? null : rx.id)}
-                                            className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                            className="p-1 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-md transition cursor-pointer"
                                             title="More Actions"
                                           >
-                                            <MoreVertical className="w-4 h-4" />
+                                            <MoreVertical className="w-3.5 h-3.5" />
                                           </button>
 
                                           {/* Dropdown Menu */}
@@ -6314,15 +6337,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     {filteredRecords.length > 0 ? (
                       <>
                         {/* Desktop Table View */}
-                        <div className="hidden md:block overflow-x-auto">
-                          <table className="w-full text-left border-collapse">
+                        <div className="hidden md:block overflow-x-auto scrollbar-none">
+                          <table className="w-full text-left border-collapse table-auto">
                             <thead>
-                              <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
-                                <th className="py-3.5 px-5">Document</th>
-                                <th className="py-3.5 px-4">Type</th>
-                                <th className="py-3.5 px-4">Date</th>
-                                <th className="py-3.5 px-4">Source / Doctor</th>
-                                <th className="py-3.5 px-5 text-right">Actions</th>
+                              <tr className="border-b border-slate-100 text-[10px] sm:text-[10.5px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                                <th className="py-2.5 sm:py-3 px-3 sm:px-4">Document</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap">Type</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap">Date</th>
+                                <th className="py-2.5 sm:py-3 px-2 sm:px-3">Source / Doctor</th>
+                                <th className="py-2.5 sm:py-3 px-3 sm:px-4 text-right whitespace-nowrap">Actions</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
@@ -6333,10 +6356,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                 return (
                                   <tr key={rec.id} className="hover:bg-slate-50/70 transition-colors">
                                     {/* Document Name + Size */}
-                                    <td className="py-4 px-5">
-                                      <div className="flex items-center gap-3">
+                                    <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                                      <div className="flex items-center gap-2 sm:gap-2.5">
                                         {/* Colored Document Icon */}
-                                        <div className={`w-9 h-11 rounded-lg flex flex-col items-center justify-center p-1 shrink-0 shadow-2xs border ${
+                                        <div className={`w-8 h-10 rounded-lg flex flex-col items-center justify-center p-1 shrink-0 shadow-2xs border ${
                                           rec.category === 'prescription'
                                             ? 'bg-rose-50 border-rose-200 text-rose-500'
                                             : rec.category === 'report'
@@ -6345,17 +6368,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                                 ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
                                                 : 'bg-teal-50 border-teal-200 text-teal-600'
                                         }`}>
-                                          <span className="text-[8px] font-mono font-bold leading-none uppercase">
+                                          <span className="text-[7.5px] font-mono font-bold leading-none uppercase">
                                             {isPdf ? 'PDF' : isImg ? 'IMG' : 'DOC'}
                                           </span>
-                                          <FileText className="w-4 h-4 mt-1 opacity-80" />
+                                          <FileText className="w-3.5 h-3.5 mt-0.5 opacity-80" />
                                         </div>
 
                                         <div className="min-w-0">
-                                          <p className="font-bold text-slate-900 truncate max-w-[210px]">
+                                          <p className="font-bold text-slate-900 truncate max-w-[120px] sm:max-w-[150px] lg:max-w-[180px] text-[11px] sm:text-xs" title={rec.documentName}>
                                             {rec.documentName}
                                           </p>
-                                          <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                                          <p className="text-[10px] text-slate-400 mt-0.5 font-medium truncate">
                                             {rec.size}
                                           </p>
                                         </div>
@@ -6363,62 +6386,62 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     </td>
 
                                     {/* Type Badge */}
-                                    <td className="py-4 px-4 whitespace-nowrap">
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap">
                                       {rec.category === 'prescription' ? (
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
                                           Prescription
                                         </span>
                                       ) : rec.category === 'report' ? (
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#EAF5FB] text-[#0284C7] border border-blue-200">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5FB] text-[#0284C7] border border-blue-200">
                                           Lab Report
                                         </span>
                                       ) : rec.category === 'consultation' ? (
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#F3E8FF] text-[#7E22CE] border border-purple-200">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8FF] text-[#7E22CE] border border-purple-200">
                                           Consultation
                                         </span>
                                       ) : (
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#CCFBF1] text-[#0D9488] border border-teal-200">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#CCFBF1] text-[#0D9488] border border-teal-200">
                                           Vitals
                                         </span>
                                       )}
                                     </td>
 
                                     {/* Date */}
-                                    <td className="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3 text-slate-600 font-medium whitespace-nowrap text-[11px]">
                                       {rec.date}
                                     </td>
 
                                     {/* Source / Doctor */}
-                                    <td className="py-4 px-4 min-w-[160px]">
-                                      <p className="font-bold text-slate-900">
+                                    <td className="py-2.5 sm:py-3 px-2 sm:px-3">
+                                      <p className="font-bold text-slate-900 text-[11px] sm:text-xs truncate max-w-[110px] sm:max-w-[130px] lg:max-w-[150px]" title={rec.source}>
                                         {rec.source}
                                       </p>
-                                      <p className="text-[11px] text-slate-500 mt-0.5">
+                                      <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[110px] sm:max-w-[130px] lg:max-w-[150px]" title={rec.subSource}>
                                         {rec.subSource}
                                       </p>
                                     </td>
 
                                     {/* Actions */}
-                                    <td className="py-4 px-5 text-right whitespace-nowrap relative">
-                                      <div className="inline-flex items-center gap-1.5 justify-end">
+                                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-right whitespace-nowrap relative">
+                                      <div className="inline-flex items-center gap-1 justify-end">
                                         {/* View Button */}
                                         <button
                                           type="button"
                                           onClick={() => handleViewRecord(rec)}
-                                          className="p-1.5 text-slate-500 hover:text-[#008F83] hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                          className="p-1 text-slate-500 hover:text-[#008F83] hover:bg-slate-100 rounded-md transition cursor-pointer"
                                           title="View Document"
                                         >
-                                          <Eye className="w-4 h-4" />
+                                          <Eye className="w-3.5 h-3.5" />
                                         </button>
 
                                         {/* Download Button */}
                                         <button
                                           type="button"
                                           onClick={() => handleDownloadRecord(rec)}
-                                          className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                          className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition cursor-pointer"
                                           title="Download Document"
                                         >
-                                          <Download className="w-4 h-4" />
+                                          <Download className="w-3.5 h-3.5" />
                                         </button>
 
                                         {/* More Options / Three Dots */}
@@ -6426,10 +6449,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                           <button
                                             type="button"
                                             onClick={() => setActiveRecordMenuId(activeRecordMenuId === rec.id ? null : rec.id)}
-                                            className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                            className="p-1 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-md transition cursor-pointer"
                                             title="More Actions"
                                           >
-                                            <MoreVertical className="w-4 h-4" />
+                                            <MoreVertical className="w-3.5 h-3.5" />
                                           </button>
 
                                           {/* Dropdown Menu */}
