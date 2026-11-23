@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
 import { 
-  X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown 
+  X, ArrowLeft, Smartphone, ShieldCheck, ChevronDown, User, CheckCircle2 
 } from 'lucide-react';
 import { getRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
@@ -46,19 +46,49 @@ export default function AuthModal() {
   const { addToast } = useToast();
 
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [fullName, setFullName] = useState(() => {
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
+      return user.name;
+    }
+    try {
+      const saved = localStorage.getItem('zestmed_patient_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Rahul Verma') {
+          return parsed.name;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return '';
+  });
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(['', '', '', '']);
   const [resendCountdown, setResendCountdown] = useState(30);
+  const [detectedPatient, setDetectedPatient] = useState(null);
 
-  // Reset form when modal opens
   useEffect(() => {
-    if (isAuthModalOpen) {
-      setStep(1);
-      setPhoneNumber('');
-      setOtp(['', '', '', '']);
-      setResendCountdown(30);
+    if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Rahul Verma') {
+      setFullName(user.name);
+      if (user.contact || user.phone) {
+        setPhoneNumber(normalizePhone(user.contact || user.phone));
+      }
     }
-  }, [isAuthModalOpen]);
+  }, [user, isAuthModalOpen]);
+
+  useEffect(() => {
+    const clean = normalizePhone(phoneNumber);
+    if (clean.length === 10) {
+      const found = getRegisteredPatient(clean);
+      setDetectedPatient(found);
+      if (found?.name && found.name !== 'Verified Patient' && !found.name.startsWith('Patient ') && found.name !== 'Rahul Verma') {
+        setFullName(found.name);
+      }
+    } else {
+      setDetectedPatient(null);
+    }
+  }, [phoneNumber]);
 
   useEffect(() => {
     let timer;
@@ -82,9 +112,9 @@ export default function AuthModal() {
     setStep(2);
     setOtp(['', '', '', '']);
     setResendCountdown(30);
-    const registered = getRegisteredPatient(clean);
-    if (registered?.name && registered.name !== 'Verified Patient' && registered.name !== 'Rahul Verma') {
-      addToast(`OTP sent for ${registered.name}: 1234`, 'info');
+    const resolvedName = (fullName.trim() || user?.name || detectedPatient?.name || '').trim();
+    if (resolvedName && resolvedName !== 'Verified Patient') {
+      addToast(`OTP sent for ${resolvedName}: 1234`, 'info');
     } else {
       addToast('Demo OTP sent: 1234', 'info');
     }
@@ -152,9 +182,8 @@ export default function AuthModal() {
       addToast('Please enter the complete 4-digit OTP', 'error');
       return;
     }
-    const clean = normalizePhone(phoneNumber);
-    const registered = getRegisteredPatient(clean);
-    const resolvedName = (registered?.name && registered.name !== 'Rahul Verma') ? registered.name : '';
+    const rawResolved = (fullName.trim() || user?.name || detectedPatient?.name || 'Ajayendra Shekhar').trim();
+    const resolvedName = rawResolved === 'Rahul Verma' ? 'Ajayendra Shekhar' : rawResolved;
     loginWithPhoneOtp(phoneNumber, resolvedName);
     handlePostLoginFlow();
   };
@@ -174,6 +203,8 @@ export default function AuthModal() {
   const handleClose = () => {
     setStep(1);
     setPhoneNumber('');
+    setFullName(user?.name || '');
+    setDetectedPatient(null);
     setOtp(['', '', '', '']);
     closeAuth();
   };
@@ -232,7 +263,7 @@ export default function AuthModal() {
                 </p>
               </div>
 
-              <form onSubmit={handleSendOtp} className="space-y-4">
+              <form onSubmit={handleSendOtp} className="space-y-3.5">
                 <div className="space-y-1 text-left">
                   <label className="block text-xs font-bold text-slate-700">
                     Mobile Number *
@@ -259,6 +290,31 @@ export default function AuthModal() {
                   </div>
                 </div>
 
+                {/* Patient Full Name Input */}
+                <div className="space-y-1 text-left">
+                  <label className="block text-xs font-bold text-slate-700">
+                    Patient Full Name
+                  </label>
+                  <div className="flex items-center rounded-2xl border border-slate-200 focus-within:border-[#007A64] focus-within:ring-2 focus-within:ring-[#007A64]/15 transition bg-white px-3 py-2 sm:py-2.5 shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-[#E6F7F2] text-[#007A64] flex items-center justify-center shrink-0">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="w-full text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent pl-3"
+                    />
+                  </div>
+                  {detectedPatient?.name && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#007A64] font-semibold mt-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#007A64] shrink-0" />
+                      <span>Verified Account: <strong className="text-slate-900 font-bold">{detectedPatient.name}</strong></span>
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="submit"
                   className="w-full py-3.5 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-[0.98] cursor-pointer text-center"
@@ -276,6 +332,11 @@ export default function AuthModal() {
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
                   Enter the 4-digit code sent to <strong className="text-slate-800">+91 {phoneNumber}</strong>
+                  {(fullName.trim() || detectedPatient?.name) && (
+                    <span className="block text-[#007A64] font-semibold mt-1">
+                      Patient: <strong className="text-slate-900 font-bold">{fullName.trim() || detectedPatient?.name}</strong>
+                    </span>
+                  )}
                 </p>
               </div>
 

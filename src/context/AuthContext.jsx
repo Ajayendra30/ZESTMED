@@ -77,28 +77,27 @@ export const AuthProvider = ({ children }) => {
     const cleanPhone = normalizePhone(phoneNumber);
     const registered = getRegisteredPatient(cleanPhone);
 
-    // Check if there is a saved profile name in localStorage for this specific phone number
+    // Check if there is a saved profile name in localStorage
     let savedProfileName = '';
     try {
       const savedProfile = localStorage.getItem('zestmed_patient_profile');
       if (savedProfile) {
         const parsed = JSON.parse(savedProfile);
-        const parsedPhone = normalizePhone(parsed?.phone || parsed?.contact || '');
-        if (parsedPhone && parsedPhone === cleanPhone && parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient') && parsed.name !== 'Rahul Verma') {
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient') && parsed.name !== 'Rahul Verma') {
           savedProfileName = parsed.name;
         }
       }
     } catch (_) {}
 
-    // Resolve actual registered patient name
+    // Resolve actual registered patient name (avoid generic 'Patient' or 'Rahul Verma')
     const resolvedName = (name && name.trim() && name.trim() !== 'Verified Patient' && !name.trim().startsWith('Patient') && name.trim() !== 'Rahul Verma')
       ? name.trim()
       : (registered && registered.name && registered.name !== 'Verified Patient' && !registered.name.startsWith('Patient') && registered.name !== 'Rahul Verma')
       ? registered.name
-      : (savedProfileName || 'Verified Patient');
+      : (savedProfileName || 'Ajayendra Shekhar');
 
-    // Save newly provided patient name to central registry if valid
-    if (resolvedName && resolvedName !== 'Verified Patient' && !resolvedName.startsWith('Patient') && resolvedName !== 'Rahul Verma') {
+    // Save newly provided patient name to central registry
+    if (resolvedName && !resolvedName.startsWith('Patient') && resolvedName !== 'Rahul Verma') {
       saveRegisteredPatient(cleanPhone, resolvedName);
     }
 
@@ -146,16 +145,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    try {
-      localStorage.removeItem('zestmed_user');
-      localStorage.removeItem('zestmed_patient_profile');
-      localStorage.removeItem('patient_profile');
-      localStorage.removeItem('zestmed_patient_notifications');
-      localStorage.removeItem('zestmed_patient_reports');
-      localStorage.removeItem('zestmed_patient_prescriptions');
-      localStorage.removeItem('zestmed_saved_addresses');
-      sessionStorage.clear();
-    } catch (_) {}
     addToast('You have been logged out successfully.', 'info');
   };
 

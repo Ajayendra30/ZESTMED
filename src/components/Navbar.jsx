@@ -30,7 +30,16 @@ export default function Navbar({
     if (user?.name && user.name !== 'Verified Patient' && !user.name.startsWith('Patient ') && user.name !== 'Patient' && user.name !== 'Rahul Verma') {
       return user.name;
     }
-    return user?.name || 'User';
+    try {
+      const saved = localStorage.getItem('zestmed_patient_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.name && parsed.name !== 'Verified Patient' && !parsed.name.startsWith('Patient ') && parsed.name !== 'Patient' && parsed.name !== 'Rahul Verma') {
+          return parsed.name;
+        }
+      }
+    } catch (_) {}
+    return 'Ajayendra Shekhar';
   };
   const displayName = getDisplayName();
   const displayInitial = (displayName.charAt(0) || 'A').toUpperCase();
