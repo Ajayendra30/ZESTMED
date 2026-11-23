@@ -54,7 +54,13 @@ import {
   Share2,
   FileCheck,
   RotateCcw,
-  CreditCard
+  CreditCard,
+  Settings,
+  Sparkles,
+  HeartPulse,
+  PieChart,
+  Scale,
+  TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -94,9 +100,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       const openParam = urlParams.get('open');
       if (openParam === 'prescription') return 'prescription';
       const saved = sessionStorage.getItem('zestmed_patient_active_tab');
-      return saved && saved !== 'notifications' ? saved : 'bookings';
+      return saved && saved !== 'notifications' ? saved : 'dashboard';
     } catch {
-      return 'bookings';
+      return 'dashboard';
     }
   });
 
@@ -1295,16 +1301,16 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
           {/* Navigation Items */}
           <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
-            {/* Dashboard (Active Pill) */}
+            {/* 1. Dashboard (Active Pill) */}
             <button
               type="button"
               onClick={() => {
                 setActiveMenu('dashboard');
                 setIsSidebarOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'dashboard'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -1312,20 +1318,85 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>Dashboard</span>
             </button>
 
-            {/* Book Lab Test */}
+            {/* 2. Book Lab Test */}
             <button
               type="button"
               onClick={() => {
                 setIsSidebarOpen(false);
                 navigate('/diagnostics');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
             >
               <FlaskConical className="w-4 h-4" />
               <span>Book Lab Test</span>
             </button>
 
-            {/* My Bookings */}
+            {/* 3. Doctor Appointment */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate('/doctor-appointment');
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
+            >
+              <Stethoscope className="w-4 h-4" />
+              <span>Doctor Appointment</span>
+            </button>
+
+            {/* 4. Medicine Store */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate('/medicines');
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              <span>Medicine Store</span>
+            </button>
+
+            {/* 5. Surgery Packages */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate('/surgeries');
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
+            >
+              <Activity className="w-4 h-4" />
+              <span>Surgery Packages</span>
+            </button>
+
+            {/* 6. Wellness Packages */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate('/wellness-packages');
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
+            >
+              <HeartPulse className="w-4 h-4" />
+              <span>Wellness Packages</span>
+            </button>
+
+            {/* 7. Physiotherapy */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate('/physiotherapy');
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition cursor-pointer"
+            >
+              <Activity className="w-4 h-4" />
+              <span>Physiotherapy</span>
+            </button>
+
+            {/* 8. My Bookings */}
             <button
               type="button"
               onClick={() => {
@@ -1334,9 +1405,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 setIsSidebarOpen(false);
                 addToast('Viewing My Bookings', 'info');
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'bookings'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'bookings' && serviceCategoryFilter !== 'medicine'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -1344,20 +1415,44 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Bookings</span>
             </button>
 
-            {/* Medicine Store */}
+            {/* 9. My Orders */}
             <button
               type="button"
               onClick={() => {
+                setActiveMenu('bookings');
+                setServiceCategoryFilter('medicine');
                 setIsSidebarOpen(false);
-                navigate('/medicines');
+                addToast('Viewing Medicine Orders', 'info');
               }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-[#94A3B8] hover:text-white hover:bg-white/5 transition"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'bookings' && serviceCategoryFilter === 'medicine'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
             >
-              <ShoppingCart className="w-4 h-4" />
-              <span>Medicine Store</span>
+              <Package className="w-4 h-4" />
+              <span>My Orders</span>
             </button>
 
-            {/* Upload Prescription */}
+            {/* 10. My Reports */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveMenu('reports');
+                setIsSidebarOpen(false);
+                addToast('Viewing Verified Pathology Reports', 'info');
+              }}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'reports'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>My Reports</span>
+            </button>
+
+            {/* 11. Upload Prescription */}
             <button
               type="button"
               onClick={() => {
@@ -1368,43 +1463,43 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'prescription'
-                  ? 'bg-[#102A45] text-white shadow-sm ring-1 ring-teal-500/40'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
-              <UploadCloud className={`w-4 h-4 ${activeMenu === 'prescription' ? 'text-[#14B8A6]' : ''}`} />
+              <UploadCloud className="w-4 h-4" />
               <span>Upload Prescription</span>
             </button>
 
-            {/* My Reports */}
+            {/* 12. Health Records */}
             <button
               type="button"
               onClick={() => {
-                setActiveMenu('reports');
+                setActiveMenu('records');
                 setIsSidebarOpen(false);
-                addToast('Viewing Verified Pathology Reports', 'info');
+                addToast('Viewing Health Records', 'info');
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
-                activeMenu === 'reports'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'records'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
-              <FileText className="w-4 h-4" />
-              <span>My Reports</span>
+              <ShieldCheck className="w-4 h-4" />
+              <span>Health Records</span>
             </button>
 
-            {/* My Profile */}
+            {/* 13. My Profile */}
             <button
               type="button"
               onClick={() => {
                 setActiveMenu('profile');
                 setIsSidebarOpen(false);
-                addToast('UHID: ZM-PAT-781001 (Dispur, Assam)', 'info');
+                addToast('UHID: ' + patientUHID, 'info');
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
                 activeMenu === 'profile'
-                  ? 'bg-[#14B8A6] text-white shadow-sm'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
                   : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
               }`}
             >
@@ -1412,7 +1507,25 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <span>My Profile</span>
             </button>
 
-            {/* Logout */}
+            {/* 14. Settings */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveMenu('settings');
+                setIsSidebarOpen(false);
+                addToast('Account & Security Settings', 'info');
+              }}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
+                activeMenu === 'settings'
+                  ? 'bg-[#00BFA5] text-white shadow-sm'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+              <span>Settings</span>
+            </button>
+
+            {/* 15. Logout */}
             <button
               type="button"
               onClick={handleLogout}
@@ -1424,13 +1537,27 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           </div>
         </div>
 
-        {/* Bottom Sidebar Brand Graphic & Tagline */}
-        <div className="p-4 pt-0 shrink-0 text-center relative z-10">
-          <div className="bg-[#0e2c47]/80 rounded-2xl p-3 border border-white/5 backdrop-blur-xs shadow-inner">
-            <SidebarClipboardGraphic />
-            <p className="text-white font-semibold text-xs tracking-wide mt-2">
-              Your Health, Our Priority
-            </p>
+        {/* Bottom Sidebar Help Card with Doctor Assistant */}
+        <div className="p-3 shrink-0 relative z-10">
+          <div className="rounded-2xl p-3.5 bg-gradient-to-br from-[#123053] via-[#0E2845] to-[#0A1C30] border border-blue-400/20 relative overflow-hidden shadow-lg">
+            <div className="relative z-10 max-w-[125px]">
+              <div className="text-white font-bold text-xs tracking-tight">Need Help?</div>
+              <p className="text-slate-300 text-[10px] leading-tight mt-0.5">
+                Talk to our Health Assistant
+              </p>
+              <button
+                type="button"
+                onClick={() => addToast('Connecting to 24/7 ZESTMED Health Assistant...', 'info')}
+                className="mt-2.5 inline-flex items-center gap-1 bg-[#00BFA5] hover:bg-[#00A887] text-white text-[11px] font-bold px-3 py-1 rounded-lg shadow-sm transition cursor-pointer"
+              >
+                <span>Chat Now</span>
+              </button>
+            </div>
+            <img
+              src="/dashboard/doctor-assistant.png"
+              alt="Health Assistant"
+              className="absolute -bottom-1 -right-1 w-20 sm:w-22 h-auto object-contain pointer-events-none drop-shadow-md select-none"
+            />
           </div>
         </div>
 
@@ -1462,14 +1589,20 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search medicines, lab tests..."
-                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 sm:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition"
+                placeholder="Search medicines, lab tests, doctors, packages..."
+                className="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#00BFA5] focus:ring-1 focus:ring-[#00BFA5] transition"
               />
             </div>
           </div>
 
-          {/* Right: Cart, Notification Bell & User Profile */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          {/* Right: Location, Cart, Notification Bell & User Profile */}
+          <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+            {/* Location Pill */}
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+              <MapPin className="w-3.5 h-3.5 text-[#00BFA5]" />
+              <span>{profileForm.city?.split(',')[0] || 'Gurugram'}</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            </div>
             {/* Cart Icon with Live Badge */}
             <button
               type="button"
@@ -1531,7 +1664,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 className="flex items-center gap-2 hover:opacity-90 transition text-left"
               >
                 {/* Circular Patient Photo Avatar */}
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#14B8A6]/20 bg-slate-100 shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-[#00BFA5]/25 bg-slate-100 shrink-0">
                   <img
                     src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(patientFullName)}&background=14B8A6&color=fff`}
                     alt={patientFullName}
@@ -1593,471 +1726,1035 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         <main className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full max-w-full overflow-x-hidden">
           {activeMenu === 'dashboard' && (
             <>
-          {/* ======================================================== */}
-          {/* 3. HERO GREETING BANNER WITH STETHOSCOPE GRAPHIC         */}
-          {/* ======================================================== */}
-          <div className="relative rounded-2xl p-4 sm:p-6 overflow-hidden border border-[#D5EAEF] bg-gradient-to-r from-[#EEF7F9] via-[#E8F4F6] to-[#DBEFF3] shadow-xs">
-            <div className="relative z-10 max-w-xl">
-              <h1 className="text-xl sm:text-2xl font-black text-[#0B2238] tracking-tight flex items-center gap-2">
-                <span>{greetingText}, {patientFirstName}</span>
-                <span className="text-xl sm:text-2xl inline-block transform hover:rotate-12 transition-transform select-none">👋</span>
-              </h1>
-              <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">
-                Welcome to your ZESTMED health dashboard. Here's your health summary.
-              </p>
-            </div>
+              {/* ======================================================== */}
+              {/* ROW 1: WELCOME GREETING BANNER                           */}
+              {/* ======================================================== */}
+              <div className="relative rounded-2xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-5 sm:p-6 shadow-xs flex items-center justify-between min-h-[115px]">
+                <div className="relative z-10 max-w-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-9 sm:h-10 bg-[#0284C7] rounded-full shrink-0" />
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-black text-[#0B2238] tracking-tight flex items-center gap-2">
+                        <span>{greetingText}, {patientFirstName}</span>
+                        <span className="text-xl sm:text-2xl inline-block transform hover:rotate-12 transition-transform select-none">👋</span>
+                      </h1>
+                      <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">
+                        Welcome to your <span className="font-bold text-[#0B2238]">ZESTMED</span> health dashboard. Here's your health summary.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Realistic Stethoscope Graphic on the Right */}
-            <StethoscopeGraphic />
-          </div>
+                {/* Center ECG Wave Graphic */}
+                <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 lg:w-60 h-16 pointer-events-none opacity-85">
+                  <img
+                    src="/dashboard/ecg-pulse.png"
+                    alt="Heart Pulse"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
 
-          {/* ======================================================== */}
-          {/* 4. TOP 4 METRIC KPI CARDS ROW                            */}
-          {/* ======================================================== */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {/* Card 1: Total Bookings */}
-            <div
-              onClick={() => setActiveMenu('bookings')}
-              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
-              </div>
-              <div>
-                <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                  Total Bookings
-                </div>
-                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {allUserBookings.length}
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
-                  <span>View All →</span>
+                {/* Right Stethoscope & Heart Graphic */}
+                <div className="relative z-10 shrink-0 hidden sm:block h-20 sm:h-24 w-44 sm:w-56 pointer-events-none">
+                  <img
+                    src="/dashboard/stethoscope-heart.png"
+                    alt="Stethoscope and Heart"
+                    className="w-full h-full object-contain object-right drop-shadow-sm select-none"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/dashboard/welcome-banner.jpg';
+                    }}
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* Card 2: Upcoming Appointments */}
-            <div
-              onClick={() => setActiveMenu('bookings')}
-              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
-              </div>
-              <div>
-                <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                  Upcoming
-                </div>
-                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {upcomingCount}
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-0.5">
-                  <span>Scheduled →</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Medicine Orders */}
-            <div
-              onClick={() => {
-                setActiveMenu('bookings');
-                setServiceCategoryFilter('medicine');
-                addToast('Viewing Medicine Orders in My Bookings', 'info');
-              }}
-              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center shrink-0">
-                <Package className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
-              </div>
-              <div>
-                <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                  Orders
-                </div>
-                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {allUserBookings.filter(b => b.itemType === 'medicine').length}
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold text-sky-600 mt-0.5 flex items-center gap-0.5">
-                  <span>Track in Bookings →</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4: Reports Available */}
-            <div
-              onClick={() => setActiveMenu('reports')}
-              className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4 hover:shadow-md hover:border-teal-300 transition cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2]" />
-              </div>
-              <div>
-                <div className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                  Reports
-                </div>
-                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                  {userReports.length}
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold text-purple-600 mt-0.5 flex items-center gap-0.5">
-                  <span>Download →</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* 5. MIDDLE SECTION: UPCOMING APPOINTMENTS + QUICK ACTIONS  */}
-          {/* ======================================================== */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Card: Upcoming Appointments (~58% width) */}
-            <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#14B8A6]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Upcoming Appointments
-                  </h3>
-                </div>
-                <button
-                  type="button"
+              {/* ======================================================== */}
+              {/* ROW 2: 6 TOP STAT KPI CARDS                              */}
+              {/* ======================================================== */}
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5 sm:gap-4">
+                {/* 1. Total Bookings */}
+                <div
                   onClick={() => {
                     setActiveMenu('bookings');
-                    addToast('Displaying full laboratory appointments list (Assam Hub)', 'info');
+                    setServiceCategoryFilter('all');
                   }}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-blue-200 transition cursor-pointer flex flex-col justify-between"
                 >
-                  <span>View All</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Dynamically Rendered Patient Appointments */}
-              <div className="space-y-3 pt-1">
-                {upcomingList.length > 0 ? (
-                  upcomingList.map((item, idx) => {
-                    const isBlue = item.itemType === 'doctor' || item.itemType === 'surgery' || idx % 2 === 1;
-                    const dateParts = String(item.date || 'Nov 18').replace(/,/g, '').split(' ');
-                    const monthText = dateParts.find(p => isNaN(p) && p.length >= 3) || 'Nov';
-                    const dayText = dateParts.find(p => !isNaN(p)) || String(15 + idx * 3);
-
-                    return (
-                      <div
-                        key={item.id || item.bookingId || idx}
-                        onClick={() => setActiveMenu('bookings')}
-                        className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/70 hover:bg-slate-50 transition border border-slate-100 gap-2 cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                          {/* Date box */}
-                          <div
-                            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl border flex flex-col items-center justify-center shrink-0 ${
-                              isBlue
-                                ? 'bg-[#EFF6FF] border-blue-100 text-[#2563EB]'
-                                : 'bg-[#E8F8F5] border-emerald-100 text-[#00A884]'
-                            }`}
-                          >
-                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none">
-                              {monthText.slice(0, 3)}
-                            </span>
-                            <span className="text-base sm:text-lg font-black leading-none mt-0.5 sm:mt-1">
-                              {dayText}
-                            </span>
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 truncate group-hover:text-[#14B8A6] transition">
-                              {item.title}
-                            </h4>
-                            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">
-                              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                              <span className="truncate">
-                                {item.time} • {item.mode || item.displayType}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <span
-                          className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shrink-0 ${
-                            isBlue
-                              ? 'bg-blue-50 text-blue-600 border border-blue-200/80'
-                              : 'bg-emerald-50 text-emerald-600 border border-emerald-200/80'
-                          }`}
-                        >
-                          {item.status || 'Confirmed'}
-                        </span>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                    <p className="font-semibold text-slate-700">No upcoming appointments scheduled</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Book a doctor, lab test, physiotherapy, or wellness checkup anytime.</p>
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <Calendar className="w-5 h-5 stroke-[2]" />
+                    </div>
+                    <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-0.5">
+                      <TrendingUp className="w-3 h-3" />
+                      <span>+23% this mo</span>
+                    </span>
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right Card: Quick Actions (~42% width) */}
-            <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-5 h-5 text-[#14B8A6]" />
-                <h3 className="text-sm font-bold text-slate-900">
-                  Quick Actions
-                </h3>
-              </div>
-
-              {/* 4 Quick Action Buttons matching row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 my-auto">
-                {/* 1. Book Lab Test */}
-                <button
-                  type="button"
-                  onClick={() => navigate('/diagnostics')}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
-                >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <FlaskConical className="w-5 h-5 stroke-[2]" />
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {allUserBookings.length > 0 ? allUserBookings.length : 12}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Total Bookings
+                    </div>
                   </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
-                    Book Lab Test
-                  </span>
-                </button>
-
-                {/* 2. Order Medicines */}
-                <button
-                  type="button"
-                  onClick={() => navigate('/medicines')}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group"
-                >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Pill className="w-5 h-5 stroke-[2]" />
-                  </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
-                    Order Medicines
-                  </span>
-                </button>
-
-                {/* 3. Upload Prescription */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMenu('prescription');
-                    setIsPrescriptionUploadModalOpen(true);
-                    addToast('Opening Doctor\'s Prescription Upload Vault', 'info');
-                  }}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
-                >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Upload className="w-5 h-5 stroke-[2]" />
-                  </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
-                    Upload Prescription
-                  </span>
-                </button>
-
-                {/* 4. View My Reports */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMenu('reports');
-                    addToast('Viewing Diagnostic Reports', 'info');
-                  }}
-                  className="bg-white border border-slate-100 hover:border-[#14B8A6] hover:shadow-xs p-2.5 sm:p-3 rounded-2xl flex flex-col items-center text-center gap-2 transition group cursor-pointer"
-                >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <FileText className="w-5 h-5 stroke-[2]" />
-                  </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
-                    View My Reports
-                  </span>
-                </button>
-              </div>
-              <div className="pt-2" />
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* 6. BOTTOM SECTION: MEDICINE ORDERS + REPORTS + HEALTH TIPS*/}
-          {/* ======================================================== */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
-            {/* Card 1: Recent Medicine Orders (~38% width -> lg:col-span-5) */}
-            <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-[#14B8A6]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Recent Medicine Orders
-                  </h3>
                 </div>
-                <button
-                  type="button"
+
+                {/* 2. Upcoming */}
+                <div
+                  onClick={() => {
+                    setActiveMenu('bookings');
+                    setBookingFilter('all');
+                  }}
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-purple-200 transition cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                      <Clock className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {upcomingCount > 0 ? upcomingCount : 3}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Upcoming
+                    </div>
+                    <div className="text-[11px] font-bold text-purple-600 hover:underline mt-1.5 flex items-center gap-1">
+                      <span>View Details →</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Medicine Orders */}
+                <div
                   onClick={() => {
                     setActiveMenu('bookings');
                     setServiceCategoryFilter('medicine');
-                    addToast('Viewing Medicine Orders in My Bookings', 'info');
                   }}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-teal-200 transition cursor-pointer flex flex-col justify-between"
                 >
-                  <span>View in Bookings</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center">
+                      <ShoppingCart className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {orders.length > 0 ? orders.length : 4}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Medicine Orders
+                    </div>
+                    <div className="text-[11px] font-bold text-[#00A887] hover:underline mt-1.5 flex items-center gap-1">
+                      <span>Track Orders →</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Lab Tests */}
+                <div
+                  onClick={() => {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('lab');
+                  }}
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-amber-200 transition cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                      <FlaskConical className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {labBookings.length > 0 ? labBookings.length : 2}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Lab Tests
+                    </div>
+                    <div className="text-[11px] font-bold text-amber-600 hover:underline mt-1.5 flex items-center gap-1">
+                      <span>View Tests →</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Appointments */}
+                <div
+                  onClick={() => {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('doctor');
+                  }}
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-emerald-200 transition cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <Stethoscope className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {appointments.length > 0 ? appointments.length : 2}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Appointments
+                    </div>
+                    <div className="text-[11px] font-bold text-emerald-600 hover:underline mt-1.5 flex items-center gap-1">
+                      <span>View Appointments →</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 6. Reports */}
+                <div
+                  onClick={() => setActiveMenu('reports')}
+                  className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-indigo-200 transition cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                      <FileText className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                      {userReports.length > 0 ? userReports.length : 5}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                      Reports
+                    </div>
+                    <div className="text-[11px] font-bold text-indigo-600 hover:underline mt-1.5 flex items-center gap-1">
+                      <span>View Reports →</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Dynamically Rendered Patient Medicine Orders */}
-              <div className="space-y-3 pt-1">
-                {allUserBookings.filter(b => b.itemType === 'medicine').length > 0 ? (
-                  allUserBookings.filter(b => b.itemType === 'medicine').slice(0, 3).map((ord) => (
-                    <div
-                      key={ord.id || ord.bookingId}
-                      onClick={() => handleOpenOrderModal(ord.items?.[0]?.name || ord.serviceName || 'Medicine', ord.bookingId || ord.id)}
-                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <MedicineBoxThumb type="paracetamol" />
-                        <div className="min-w-0">
-                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#14B8A6] transition truncate">
-                            {ord.items?.[0]?.name || ord.serviceName || 'Prescription Medicines'}
-                          </h4>
-                          <p className="text-[11px] text-slate-400 font-medium mt-0.5 truncate">
-                            Order #{ord.bookingId || ord.id} • {ord.date || 'Recent'}
-                          </p>
+              {/* ======================================================== */}
+              {/* ROW 3: 3-COLUMN MIDDLE SECTION (Upcoming, Quick, Promo)  */}
+              {/* ======================================================== */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+                {/* Col 1: Upcoming Appointments */}
+                <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center">
+                          <Calendar className="w-4 h-4" />
                         </div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          Upcoming Appointments
+                        </h3>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                          {ord.status || 'Confirmed'}
+                      <button
+                        type="button"
+                        onClick={() => setActiveMenu('bookings')}
+                        className="text-xs font-semibold text-[#00A887] hover:underline cursor-pointer"
+                      >
+                        View All →
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Item 1: Doctor Appointment */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('doctor');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-11 h-12 rounded-xl bg-purple-100 text-purple-700 flex flex-col items-center justify-center shrink-0">
+                            <span className="text-[9px] font-bold uppercase tracking-wider leading-none">Nov</span>
+                            <span className="text-base font-extrabold leading-none mt-0.5">24</span>
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Doctor Appointment
+                            </h4>
+                            <p className="text-[11px] text-slate-600 font-medium truncate mt-0.5">
+                              Dr. Priya Sharma - Cardiologist
+                            </p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">
+                              10:30 AM • In-Clinic
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                          Confirmed
                         </span>
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+
+                      {/* Item 2: Lab Test */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('lab');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-11 h-12 rounded-xl bg-teal-100 text-teal-700 flex flex-col items-center justify-center shrink-0">
+                            <span className="text-[9px] font-bold uppercase tracking-wider leading-none">Nov</span>
+                            <span className="text-base font-extrabold leading-none mt-0.5">25</span>
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Lab Test
+                            </h4>
+                            <p className="text-[11px] text-slate-600 font-medium truncate mt-0.5">
+                              Complete Blood Count (CBC)
+                            </p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">
+                              08:00 AM • Home Sample
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                          Scheduled
+                        </span>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                    <p className="font-semibold text-slate-700">No medicine orders yet</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Order medicines from our pharmacy store with fast delivery.</p>
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Card 2: Recent Reports (~35% width -> lg:col-span-4) */}
-            <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#14B8A6]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Recent Reports
-                  </h3>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMenu('reports');
-                    addToast('Opening digital reports archive', 'info');
-                  }}
-                  className="text-xs font-semibold text-[#14B8A6] hover:underline flex items-center gap-1"
-                >
-                  <span>View All</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+
+                {/* Col 2: Quick Actions (8 Icons) */}
+                <div className="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                          <Zap className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-none">Quick Actions</h3>
+                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Frequently used services</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-2.5 sm:gap-3 mt-3">
+                      {/* 1. Book Lab Test */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/diagnostics')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-teal-300 hover:bg-teal-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <FlaskConical className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Book Lab Test
+                        </span>
+                      </button>
+
+                      {/* 2. Book Doctor */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/doctor-appointment')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 hover:bg-blue-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Stethoscope className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Book Doctor
+                        </span>
+                      </button>
+
+                      {/* 3. Order Medicines */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/medicines')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-amber-300 hover:bg-amber-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <ShoppingCart className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Order Medicines
+                        </span>
+                      </button>
+
+                      {/* 4. Surgery Packages */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/surgeries')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-purple-300 hover:bg-purple-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Activity className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Surgery Packages
+                        </span>
+                      </button>
+
+                      {/* 5. Wellness Packages */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/wellness-packages')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-rose-300 hover:bg-rose-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <HeartPulse className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Wellness Packages
+                        </span>
+                      </button>
+
+                      {/* 6. Physiotherapy */}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/physiotherapy')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-cyan-300 hover:bg-cyan-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Activity className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Physiotherapy
+                        </span>
+                      </button>
+
+                      {/* 7. Upload Prescription */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenu('prescription');
+                          setIsPrescriptionUploadModalOpen(true);
+                        }}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <UploadCloud className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          Upload Prescription
+                        </span>
+                      </button>
+
+                      {/* 8. View Reports */}
+                      <button
+                        type="button"
+                        onClick={() => setActiveMenu('reports')}
+                        className="p-2 sm:p-2.5 rounded-xl border border-slate-100 hover:border-emerald-300 hover:bg-emerald-50/30 flex flex-col items-center text-center gap-1.5 transition group cursor-pointer"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <FileText className="w-4 h-4 stroke-[2]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight">
+                          View Reports
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 3: Consult Top Doctors Online Promo Card */}
+                <div className="lg:col-span-4 relative rounded-2xl p-5 bg-gradient-to-br from-[#EDE9FE] via-[#F3E8FF] to-[#E0E7FF] border border-[#DDD6FE] shadow-xs overflow-hidden flex flex-col justify-between min-h-[220px]">
+                  <div className="relative z-10 max-w-[210px]">
+                    <span className="bg-purple-600 text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full inline-block tracking-wider mb-2">
+                      SPECIALIST CARE
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-[#3B0764] leading-snug">
+                      Consult Top Doctors Online
+                    </h3>
+                    <ul className="mt-2 space-y-1 text-[11px] text-purple-950 font-medium">
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-purple-600 shrink-0 stroke-[2.5]" />
+                        <span>50+ Specialties Available</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-purple-600 shrink-0 stroke-[2.5]" />
+                        <span>Instant Video Consultation</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-purple-600 shrink-0 stroke-[2.5]" />
+                        <span>Verified Digital Prescription</span>
+                      </li>
+                    </ul>
+
+                    <button
+                      type="button"
+                      onClick={() => navigate('/doctor-appointment')}
+                      className="mt-4 inline-flex items-center gap-1.5 bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition cursor-pointer"
+                    >
+                      <span>Book Appointment</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Female doctor cutout graphic */}
+                  <img
+                    src="/dashboard/consult-doctor-female.png"
+                    alt="Consult Doctor"
+                    className="absolute -bottom-1 -right-2 w-36 sm:w-44 h-auto object-contain pointer-events-none drop-shadow-md select-none"
+                  />
+                </div>
               </div>
 
-              {/* Dynamically Rendered Diagnostic Reports */}
-              <div className="space-y-3 pt-1">
-                {userReports.length > 0 ? (
-                  userReports.slice(0, 3).map((rep, idx) => (
-                    <div key={rep.id || idx} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-bold text-slate-900 truncate">
-                          {rep.test}
-                        </h4>
-                        <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          {rep.date}
-                        </p>
+              {/* ======================================================== */}
+              {/* ROW 4: 3-COLUMN RECENT ACTIVITY SECTION                  */}
+              {/* ======================================================== */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                {/* Card 1: Recent Medicine Orders */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center">
+                          <ShoppingCart className="w-4 h-4" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          Recent Medicine Orders
+                        </h3>
                       </div>
                       <button
                         type="button"
                         onClick={() => {
-                          downloadClinicalReport({ test: rep.test, date: rep.date, id: rep.id });
-                          addToast(`Official signed PDF report downloaded for ${rep.test}.`, 'success');
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('medicine');
                         }}
-                        className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 ml-2"
-                        title="Download Report"
+                        className="text-xs font-semibold text-[#00A887] hover:underline cursor-pointer"
                       >
-                        <Download className="w-4 h-4" />
+                        View All →
                       </button>
                     </div>
-                  ))
-                ) : (
-                  <div className="py-6 text-center text-xs text-slate-500 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                    <p className="font-semibold text-slate-700">No diagnostic reports yet</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Book a lab test to receive certified digital reports.</p>
-                  </div>
-                )}
-              </div>
-            </div>
 
-            {/* Card 3: Health Tips (~27% width -> lg:col-span-3) */}
-            <div className="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Heart className="w-5 h-5 text-emerald-500 fill-emerald-500" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Health Tips
-                  </h3>
+                    <div className="space-y-3">
+                      {/* Item 1: Metformin 500 mg */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('medicine');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center shrink-0">
+                            <Pill className="w-5 h-5 stroke-[2]" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Metformin 500 mg Tablet
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              3 Packs • Qty: 3 • ₹168
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[2.5]" />
+                          <span>Delivered</span>
+                        </span>
+                      </div>
+
+                      {/* Item 2: Amlodipine 5 mg */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('medicine');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <Pill className="w-5 h-5 stroke-[2]" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Amlodipine 5 mg
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              1 Pack • Qty: 1 • ₹95
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                          In Transit
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Illustration + Tip Content */}
-                <div className="flex items-start gap-3">
-                  <HeartHealthGraphic />
+                {/* Card 2: Recent Lab Test Bookings */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
                   <div>
-                    <h4 className="text-xs font-extrabold text-[#0B2238] leading-tight">
-                      {healthTips[healthTipIndex].title}
-                    </h4>
-                    <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-                      {healthTips[healthTipIndex].text}
-                    </p>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                          <FlaskConical className="w-4 h-4" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          Recent Lab Test Bookings
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('lab');
+                        }}
+                        className="text-xs font-semibold text-[#00A887] hover:underline cursor-pointer"
+                      >
+                        View All →
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Item 1: Liver Function Test (LFT) */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('lab');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <FlaskConical className="w-5 h-5 stroke-[2]" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Liver Function Test (LFT)
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              Home Collection • ₹699
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[2.5]" />
+                          <span>Completed</span>
+                        </span>
+                      </div>
+
+                      {/* Item 2: Complete Blood Count (CBC) */}
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('lab');
+                        }}
+                        className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition cursor-pointer flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                            <FlaskConical className="w-5 h-5 stroke-[2]" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Complete Blood Count (CBC)
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              Lab Visit • ₹299
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                          Processing
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card 3: Recent Reports */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          Recent Reports
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveMenu('reports')}
+                        className="text-xs font-semibold text-[#00A887] hover:underline cursor-pointer"
+                      >
+                        View All →
+                      </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Report 1: CBC Report */}
+                      <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold text-xs">
+                            PDF
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              CBC Test Report
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              Dr. Amit Sharma • 22 Nov 2026
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            downloadClinicalReport({ test: 'CBC Test Report', date: '22 Nov 2026', id: 'ZM-REP-1029' });
+                            addToast('Official signed PDF report downloaded for CBC Test Report.', 'success');
+                          }}
+                          className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 cursor-pointer"
+                          title="Download Report"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Report 2: Lipid Profile Report */}
+                      <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 font-bold text-xs">
+                            PDF
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 truncate">
+                              Lipid Profile Report
+                            </h4>
+                            <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                              Dr. Priya Sharma • 15 Nov 2026
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            downloadClinicalReport({ test: 'Lipid Profile Report', date: '15 Nov 2026', id: 'ZM-REP-1030' });
+                            addToast('Official signed PDF report downloaded for Lipid Profile Report.', 'success');
+                          }}
+                          className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition shrink-0 cursor-pointer"
+                          title="Download Report"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Carousel Navigation at Bottom */}
-              <div className="flex items-center justify-between pt-4 mt-2 border-t border-slate-50">
-                <button
-                  type="button"
-                  onClick={handlePrevHealthTip}
-                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
-                  title="Previous Tip"
-                >
-                  <span className="text-sm font-bold leading-none select-none">‹</span>
-                </button>
+              {/* ======================================================== */}
+              {/* ROW 5: 4-COLUMN HEALTH OVERVIEW & INSIGHTS               */}
+              {/* ======================================================== */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {/* Col 1: Health Metrics */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                          <Activity className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-none">Health Metrics</h3>
+                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Track Your Health</p>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* 3 Pagination Indicator Dots */}
-                <div className="flex items-center gap-1.5">
-                  {healthTips.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setHealthTipIndex(i)}
-                      className={`transition-all duration-200 ${
-                        healthTipIndex === i
-                          ? 'w-4 h-1.5 rounded-full bg-[#14B8A6]'
-                          : 'w-1.5 h-1.5 rounded-full bg-slate-300 hover:bg-slate-400'
-                      }`}
-                    />
-                  ))}
+                    <div className="grid grid-cols-2 gap-2.5 mt-3">
+                      {/* Heart Rate */}
+                      <div className="p-2.5 rounded-xl bg-rose-50/40 border border-rose-100">
+                        <div className="flex items-center justify-between text-rose-500">
+                          <Heart className="w-4 h-4 fill-rose-500" />
+                          <span className="text-[9px] font-bold uppercase text-emerald-600">Normal</span>
+                        </div>
+                        <div className="text-lg font-black text-slate-900 mt-1 leading-none">
+                          72 <span className="text-[10px] font-normal text-slate-400">bpm</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          Heart Rate
+                        </div>
+                      </div>
+
+                      {/* Blood Pressure */}
+                      <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100">
+                        <div className="flex items-center justify-between text-blue-500">
+                          <Activity className="w-4 h-4" />
+                          <span className="text-[9px] font-bold uppercase text-emerald-600">Optimal</span>
+                        </div>
+                        <div className="text-lg font-black text-slate-900 mt-1 leading-none">
+                          117/72 <span className="text-[10px] font-normal text-slate-400">mmHg</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          Blood Pressure
+                        </div>
+                      </div>
+
+                      {/* Weight */}
+                      <div className="p-2.5 rounded-xl bg-amber-50/40 border border-amber-100">
+                        <div className="flex items-center justify-between text-amber-500">
+                          <Scale className="w-4 h-4" />
+                          <span className="text-[9px] font-bold uppercase text-emerald-600">Ideal</span>
+                        </div>
+                        <div className="text-lg font-black text-slate-900 mt-1 leading-none">
+                          60 <span className="text-[10px] font-normal text-slate-400">kg</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          Weight
+                        </div>
+                      </div>
+
+                      {/* BMI */}
+                      <div className="p-2.5 rounded-xl bg-emerald-50/40 border border-emerald-100">
+                        <div className="flex items-center justify-between text-emerald-600">
+                          <Activity className="w-4 h-4" />
+                          <span className="bg-emerald-100 text-emerald-700 text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                            Normal
+                          </span>
+                        </div>
+                        <div className="text-lg font-black text-slate-900 mt-1 leading-none">
+                          22.9
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          Body Mass Index
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleNextHealthTip}
-                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
-                  title="Next Tip"
-                >
-                  <span className="text-sm font-bold leading-none select-none">›</span>
-                </button>
+                {/* Col 2: Health Records */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-none">Health Records</h3>
+                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Manage your medical history</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="divide-y divide-slate-100 mt-2">
+                      <div
+                        onClick={() => setActiveMenu('records')}
+                        className="py-2.5 flex items-center justify-between hover:bg-slate-50 px-1 rounded-lg transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Pill className="w-4 h-4 text-slate-400" />
+                          <span className="text-xs font-semibold text-slate-700">Prescriptions</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[11px] font-bold text-[#00A887]">4 Active</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setActiveMenu('reports')}
+                        className="py-2.5 flex items-center justify-between hover:bg-slate-50 px-1 rounded-lg transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <FileText className="w-4 h-4 text-slate-400" />
+                          <span className="text-xs font-semibold text-slate-700">Lab Reports</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[11px] font-bold text-blue-600">8 Reports</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => {
+                          setActiveMenu('bookings');
+                          setServiceCategoryFilter('doctor');
+                        }}
+                        className="py-2.5 flex items-center justify-between hover:bg-slate-50 px-1 rounded-lg transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Stethoscope className="w-4 h-4 text-slate-400" />
+                          <span className="text-xs font-semibold text-slate-700">Doctor Consultations</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[11px] font-bold text-purple-600">6 Visits</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => setActiveMenu('records')}
+                        className="py-2.5 flex items-center justify-between hover:bg-slate-50 px-1 rounded-lg transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Clock className="w-4 h-4 text-slate-400" />
+                          <span className="text-xs font-semibold text-slate-700">Medical History</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[11px] font-bold text-emerald-600">Up to date</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 3: My Bookings Summary (Donut Chart) */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                          <PieChart className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-none">My Bookings Summary</h3>
+                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Distribution of services</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* SVG Donut Ring Chart */}
+                    <div className="flex items-center justify-center my-3 relative">
+                      <svg viewBox="0 0 100 100" className="w-28 h-28 transform -rotate-90">
+                        {/* Background track */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#F1F5F9"
+                          strokeWidth="12"
+                        />
+                        {/* Segment 1: Medicines (4/12 = 33.3%) */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#00BFA5"
+                          strokeWidth="12"
+                          strokeDasharray="75.4 226.2"
+                          strokeDashoffset="0"
+                        />
+                        {/* Segment 2: Packages (4/12 = 33.3%) */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#3B82F6"
+                          strokeWidth="12"
+                          strokeDasharray="75.4 226.2"
+                          strokeDashoffset="-75.4"
+                        />
+                        {/* Segment 3: Lab Tests (2/12 = 16.7%) */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#F59E0B"
+                          strokeWidth="12"
+                          strokeDasharray="37.7 226.2"
+                          strokeDashoffset="-150.8"
+                        />
+                        {/* Segment 4: Appointments (2/12 = 16.7%) */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#8B5CF6"
+                          strokeWidth="12"
+                          strokeDasharray="37.7 226.2"
+                          strokeDashoffset="-188.5"
+                        />
+                      </svg>
+                      {/* Center Count */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span className="text-xl font-black text-slate-900 leading-none">12</span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total</span>
+                      </div>
+                    </div>
+
+                    {/* Legend */}
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px] font-semibold text-slate-600 pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#00BFA5]" />
+                        <span>Medicines: 4</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
+                        <span>Lab Tests: 2</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#8B5CF6]" />
+                        <span>Appointments: 2</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#3B82F6]" />
+                        <span>Packages: 4</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Col 4: Health Tips */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-none">Health Tips</h3>
+                          <p className="text-[10px] text-slate-400 font-medium mt-0.5">Daily Wellness</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addToast('More daily wellness tips coming soon!', 'info')}
+                        className="text-[11px] font-semibold text-[#00A887] hover:underline cursor-pointer"
+                      >
+                        View All →
+                      </button>
+                    </div>
+
+                    {/* Dumbbells & Water Bottle Graphic */}
+                    <div className="w-full h-24 rounded-xl bg-slate-50/70 border border-slate-100 flex items-center justify-center p-2 overflow-hidden my-2">
+                      <img
+                        src="/dashboard/health-tips-water.png"
+                        alt="Stay Hydrated"
+                        className="h-full w-auto object-contain drop-shadow-xs"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <h4 className="text-xs font-bold text-slate-900">
+                        Stay Hydrated
+                      </h4>
+                      <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                        Drink at least 8-10 glasses of water daily to maintain optimal energy levels and kidney function.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Carousel Indicators */}
+                  <div className="flex items-center justify-center gap-1.5 pt-3 mt-1 border-t border-slate-50">
+                    <span className="w-4 h-1.5 rounded-full bg-[#00A887]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
             </>
           )}
 
+          {/* ======================================================== */}
+          {/* ======================================================== */}
           {/* ======================================================== */}
           {/* ======================================================== */}
           {/* 1. MY BOOKINGS VIEW                                      */}
@@ -2804,6 +3501,172 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           )}
 
 
+          {/* ======================================================== */}
+          {/* HEALTH RECORDS VIEW                                      */}
+          {/* ======================================================== */}
+          {activeMenu === 'records' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <ShieldCheck className="w-6 h-6 text-[#00BFA5]" />
+                    <span>Health Records Vault</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Manage and view your verified prescriptions, diagnostic lab reports, doctor consultation summaries, and medical history.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu('prescription');
+                    setIsPrescriptionUploadModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#00BFA5] hover:bg-[#00A887] text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer self-start sm:self-auto"
+                >
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Upload Document</span>
+                </button>
+              </div>
+
+              {/* 4 Records Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div
+                  onClick={() => {
+                    setActiveMenu('prescription');
+                    setIsPrescriptionUploadModalOpen(true);
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-teal-200 transition cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#00A887] flex items-center justify-center mb-3">
+                    <Pill className="w-5 h-5 stroke-[2]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Digital Prescriptions</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">4 active prescriptions verified</p>
+                  <span className="text-xs font-bold text-[#00A887] mt-3 inline-block">Manage Prescriptions →</span>
+                </div>
+
+                <div
+                  onClick={() => setActiveMenu('reports')}
+                  className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-blue-200 transition cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                    <FileText className="w-5 h-5 stroke-[2]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Pathology Reports</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">{userReports.length > 0 ? userReports.length : 8} NABL certified reports</p>
+                  <span className="text-xs font-bold text-blue-600 mt-3 inline-block">View Reports →</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setActiveMenu('bookings');
+                    setServiceCategoryFilter('doctor');
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-purple-200 transition cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+                    <Stethoscope className="w-4 h-4 stroke-[2]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Doctor Consultations</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Clinical notes & visit summaries</p>
+                  <span className="text-xs font-bold text-purple-600 mt-3 inline-block">View Consultations →</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setActiveMenu('dashboard');
+                  }}
+                  className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-emerald-200 transition cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+                    <Activity className="w-4 h-4 stroke-[2]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">Vitals & Health Metrics</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">BP, Heart Rate, BMI tracked</p>
+                  <span className="text-xs font-bold text-emerald-600 mt-3 inline-block">View Metrics →</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* SETTINGS VIEW                                            */}
+          {/* ======================================================== */}
+          {activeMenu === 'settings' && (
+            <div className="space-y-4 sm:space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-[#00BFA5]" />
+                  <span>Settings & Preferences</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage your account security, notification alerts, communication preferences, and data privacy.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {/* Security Card */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#00BFA5]" />
+                    <span>Account Security & Authentication</span>
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div>
+                        <p className="font-bold text-slate-900">OTP Mobile Verification</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Each login requires a secure 6-digit one-time code.</p>
+                      </div>
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        Active
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div>
+                        <p className="font-bold text-slate-900">One Number, One User Policy</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Your phone number {user?.phone || user?.contact || profileForm.phone} is uniquely linked.</p>
+                      </div>
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        Enforced
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notifications Preferences */}
+                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-[#00BFA5]" />
+                    <span>Notification Channels</span>
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div>
+                        <p className="font-bold text-slate-900">SMS & WhatsApp Alerts</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Live order dispatches, test collection updates & reports.</p>
+                      </div>
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        Enabled
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div>
+                        <p className="font-bold text-slate-900">Email Reports</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Digital signed lab reports sent to {profileForm.email}.</p>
+                      </div>
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        Enabled
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
         </main>
       </div>
 
