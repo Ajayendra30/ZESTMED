@@ -79,42 +79,6 @@ function AppContent() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Ensure redirect to Home page if the website was reloaded,
-  // EXCEPT for Admin, Lab, and Patient dashboards which must stay on their respective pages on reload.
-  useEffect(() => {
-    try {
-      const currentPath = location.pathname.toLowerCase();
-      const isAdminPath = currentPath.startsWith('/admin') || currentPath === '/admin-dashboard' || activeSubdomain === 'admin';
-      const isLabPath =
-        currentPath === '/lab' ||
-        currentPath.startsWith('/lab/') ||
-        currentPath === '/lab-dashboard' ||
-        currentPath.startsWith('/lab-dashboard/') ||
-        activeSubdomain === 'lab';
-      const isPatientPath =
-        currentPath === '/patient-dashboard' ||
-        currentPath.startsWith('/patient-dashboard/') ||
-        currentPath === '/patient' ||
-        currentPath.startsWith('/patient/');
-
-      if (isAdminPath || isLabPath || isPatientPath) {
-        return;
-      }
-
-      const navEntries = window.performance?.getEntriesByType?.('navigation');
-      const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
-      const isReloadByLegacy = window.performance?.navigation?.type === 1;
-      const isReloadBySession = sessionStorage.getItem('zestmed_is_reloading') === 'true';
-
-      if (isReloadByEntries || isReloadByLegacy || isReloadBySession) {
-        sessionStorage.removeItem('zestmed_is_reloading');
-        if (location.pathname !== '/' || location.search || location.hash) {
-          navigate('/', { replace: true });
-        }
-      }
-    } catch (_) {}
-  }, []);
-
   // Global Interactive Modals for New Core Services
   const [isDoctorModalOpen, setIsDoctorModalOpen] = useState(false);
   const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
