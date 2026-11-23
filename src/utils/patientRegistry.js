@@ -227,6 +227,25 @@ export function getRegisteredPatient(phone) {
   return null;
 }
 
+/**
+ * Validates "One Number, One User" uniqueness.
+ * Prevents multiple user accounts from being created using the same phone number.
+ */
+export function checkPhoneUniqueness(phone, currentUserId = null) {
+  const cleanPhone = normalizePhone(phone);
+  if (!cleanPhone) return { isUnique: true };
+
+  const existing = getRegisteredPatient(cleanPhone);
+  if (existing) {
+    if (currentUserId && (existing.id === currentUserId || existing.cleanPhone === cleanPhone)) {
+      return { isUnique: true, existingUser: existing };
+    }
+    return { isUnique: false, existingUser: existing };
+  }
+
+  return { isUnique: true, existingUser: null };
+}
+
 export function saveRegisteredPatient(phone, name, extraData = {}) {
   const cleanPhone = normalizePhone(phone);
   if (!cleanPhone || !name || name === 'Verified Patient' || name === 'Rahul Verma') return null;

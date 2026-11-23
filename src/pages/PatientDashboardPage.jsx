@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
-import { saveRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
+import { saveRegisteredPatient, normalizePhone, checkPhoneUniqueness } from '../utils/patientRegistry';
+import { getLoginHistory } from '../services/otpAuthService';
 import { 
   updateDoctorAppointmentStatus, 
   updateLabBookingStatus, 
@@ -1023,6 +1024,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     if (!profileForm.name.trim()) {
       addToast('Please enter your full legal name.', 'error');
       return;
+    }
+
+    // Enforce "One Number, One User": prevent changing to a phone number owned by another user
+    const cleanNewPhone = normalizePhone(profileForm.phone);
+    const cleanCurrentPhone = normalizePhone(user?.phone || user?.contact || patientPhone);
+    if (cleanNewPhone && cleanNewPhone !== cleanCurrentPhone) {
+      const uniqueness = checkPhoneUniqueness(cleanNewPhone, user?.id);
+      if (!uniqueness.isUnique) {
+        addToast('This mobile number is already linked to another user account. One mobile number can only be linked to one user.', 'error');
+        return;
+      }
     }
 
     const updatedProfile = {
@@ -2632,6 +2644,64 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       )}
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Login History & Security Audit Card */}
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
+                    <span>Login History & Security Activity</span>
+                  </h3>
+                  <span className="text-[11px] text-slate-400 font-medium">Session Status: Active (Protected)</span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Recent authentication and session activity linked to this mobile number.
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-100 text-slate-400 font-bold text-[11px]">
+                        <th className="pb-2">Date & Time</th>
+                        <th className="pb-2">Method</th>
+                        <th className="pb-2">Mobile / Identity</th>
+                        <th className="pb-2">Status</th>
+                        <th className="pb-2">Device / IP</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {getLoginHistory().length > 0 ? (
+                        getLoginHistory().slice(0, 5).map((log) => (
+                          <tr key={log.id} className="text-slate-700">
+                            <td className="py-2.5 font-medium whitespace-nowrap">
+                              {new Date(log.timestamp).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                            </td>
+                            <td className="py-2.5 capitalize">{log.method?.replace(/_/g, ' ')}</td>
+                            <td className="py-2.5 font-mono text-[11px]">{log.phone}</td>
+                            <td className="py-2.5">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                log.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                                log.status === 'LOCKED' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                                'bg-rose-50 text-rose-700 border border-rose-200'
+                              }`}>
+                                {log.status}
+                              </span>
+                            </td>
+                            <td className="py-2.5 text-slate-500 text-[11px] max-w-[200px] truncate" title={log.userAgent}>
+                              {log.ip}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="py-4 text-center text-slate-400">
+                            No recent login events recorded.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

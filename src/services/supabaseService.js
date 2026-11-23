@@ -66,6 +66,47 @@ export const getPatientProfile = async (phone) => {
   return registry[phone] || null;
 };
 
+/**
+ * Enforces database-level phone number uniqueness:
+ * Checks whether the given phone is already bound to another profile id.
+ */
+export const checkDatabasePhoneUniqueness = async (phone, currentUserId = null) => {
+  const clean = normalizePhone(phone);
+  if (!clean) return { isUnique: true };
+
+  if (isSupabaseConfigured()) {
+    try {
+      const query = supabase
+        .from('profiles')
+        .select('id, phone, full_name')
+        .eq('phone', clean);
+
+      const { data, error } = await query;
+      if (!error && Array.isArray(data) && data.length > 0) {
+        // If currentUserId is passed, ensure it is the same user
+        if (currentUserId && data.some((p) => p.id === currentUserId)) {
+          return { isUnique: true, existingProfile: data[0] };
+        }
+        return { isUnique: false, existingProfile: data[0] };
+      }
+    } catch (err) {
+      console.warn('[SupabaseService] checkDatabasePhoneUniqueness error:', err);
+    }
+  }
+
+  // Check local registry uniqueness
+  const registry = getLocalData('zestmed_patient_registry', {});
+  const existing = registry[clean];
+  if (existing) {
+    if (currentUserId && existing.id === currentUserId) {
+      return { isUnique: true, existingProfile: existing };
+    }
+    return { isUnique: false, existingProfile: existing };
+  }
+
+  return { isUnique: true, existingProfile: null };
+};
+
 export const savePatientProfile = async (profileData) => {
   if (!profileData || !profileData.phone) return null;
 
