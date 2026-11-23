@@ -7064,15 +7064,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
 
                 {/* 3. Main 3-Column Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
                   {/* ======================================================== */}
                   {/* COLUMN 1: Account Security & Authentication + Privacy   */}
                   {/* ======================================================== */}
-                  <div className="lg:col-span-5 space-y-4 sm:space-y-5">
+                  <div className="lg:col-span-5 flex flex-col justify-between gap-4 sm:gap-5">
                     {/* Card 1.1: Account Security & Authentication */}
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-4">
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs flex-1 flex flex-col justify-between">
                       {/* Header */}
-                      <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <Lock className="w-4 h-4 text-[#00A68A]" />
                           <h3 className="text-sm font-black text-slate-900 tracking-tight">
@@ -7086,13 +7086,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
 
                       {/* Items */}
-                      <div className="space-y-3">
+                      <div className="divide-y divide-slate-100">
                         {/* 1. OTP Mobile Verification */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3 transition">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Smartphone className="w-4 h-4" />
-                            </div>
+                            <Smartphone className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">OTP Mobile Verification</h4>
                               <p className="text-[10.5px] text-slate-500">Each login requires a secure 6-digit one-time code.</p>
@@ -7107,11 +7105,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 2. One Number, One User Policy */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3 transition">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <User className="w-4 h-4" />
-                            </div>
+                            <User className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">One Number, One User Policy</h4>
                               <p className="text-[10.5px] text-slate-500 truncate">
@@ -7130,12 +7126,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         {/* 3. Change Password */}
                         <div
                           onClick={handleChangePassword}
-                          className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80 cursor-pointer group"
+                          className="flex items-center justify-between py-2.5 sm:py-3 hover:bg-slate-50/60 -mx-1.5 px-1.5 rounded-xl transition cursor-pointer group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                              <Key className="w-4 h-4" />
-                            </div>
+                            <Key className="w-4 h-4 text-[#00A68A] shrink-0 group-hover:scale-105 transition-transform" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
                                 Change Password
@@ -7147,11 +7141,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 4. Two-Factor Authentication (2FA) */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <ShieldCheck className="w-4 h-4" />
-                            </div>
+                            <ShieldCheck className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">Two-Factor Authentication (2FA)</h4>
                               <p className="text-[10.5px] text-slate-500">Add an extra layer of security to your account.</p>
@@ -7175,9 +7167,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     {/* Card 1.2: Privacy & Data */}
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5">
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs">
                       {/* Header */}
-                      <div className="pb-1 border-b border-slate-100">
+                      <div className="pb-2 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <ShieldAlert className="w-4 h-4 text-[#00A68A]" />
                           <h3 className="text-sm font-black text-slate-900 tracking-tight">
@@ -7190,16 +7182,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
 
                       {/* Items */}
-                      <div className="space-y-2">
+                      <div className="divide-y divide-slate-100">
                         {/* 1. Manage Health Data */}
                         <div
                           onClick={() => setActiveMenu('records')}
-                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                          className="flex items-center justify-between py-2.5 sm:py-3 hover:bg-slate-50/60 -mx-1.5 px-1.5 rounded-xl transition cursor-pointer group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                              <FileText className="w-4 h-4" />
-                            </div>
+                            <FileText className="w-4 h-4 text-[#00A68A] shrink-0 group-hover:scale-105 transition-transform" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
                                 Manage Health Data
@@ -7213,12 +7203,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         {/* 2. Download My Data */}
                         <div
                           onClick={handleDownloadMyData}
-                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                          className="flex items-center justify-between py-2.5 sm:py-3 hover:bg-slate-50/60 -mx-1.5 px-1.5 rounded-xl transition cursor-pointer group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                              <Download className="w-4 h-4" />
-                            </div>
+                            <Download className="w-4 h-4 text-[#00A68A] shrink-0 group-hover:scale-105 transition-transform" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
                                 Download My Data
@@ -7232,12 +7220,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         {/* 3. Data & Privacy Policy */}
                         <div
                           onClick={() => addToast('Opening ZESTMED Healthcare Data Protection & Privacy Policy...', 'info')}
-                          className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
+                          className="flex items-center justify-between py-2.5 sm:py-3 hover:bg-slate-50/60 -mx-1.5 px-1.5 rounded-xl transition cursor-pointer group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                              <Lock className="w-4 h-4" />
-                            </div>
+                            <Lock className="w-4 h-4 text-[#00A68A] shrink-0 group-hover:scale-105 transition-transform" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
                                 Data & Privacy Policy
@@ -7254,11 +7240,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   {/* ======================================================== */}
                   {/* COLUMN 2: Notification Channels + Communication Prefs   */}
                   {/* ======================================================== */}
-                  <div className="lg:col-span-4 space-y-4 sm:space-y-5">
+                  <div className="lg:col-span-4 flex flex-col justify-between gap-4 sm:gap-5">
                     {/* Card 2.1: Notification Channels */}
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-4">
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs flex-1 flex flex-col justify-between">
                       {/* Header */}
-                      <div className="pb-1 border-b border-slate-100">
+                      <div className="pb-2 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <Bell className="w-4 h-4 text-[#00A68A]" />
                           <h3 className="text-sm font-black text-slate-900 tracking-tight">
@@ -7271,13 +7257,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
 
                       {/* Items */}
-                      <div className="space-y-3">
+                      <div className="divide-y divide-slate-100">
                         {/* 1. SMS & WhatsApp Alerts */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3 transition">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Mail className="w-4 h-4" />
-                            </div>
+                            <Mail className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">SMS & WhatsApp Alerts</h4>
                               <p className="text-[10.5px] text-slate-500">Live order dispatches, test collection updates & reports.</p>
@@ -7292,11 +7276,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 2. Email Reports */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3 transition">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Mail className="w-4 h-4" />
-                            </div>
+                            <Mail className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">Email Reports</h4>
                               <p className="text-[10.5px] text-slate-500">Digital signed lab reports sent to your email.</p>
@@ -7311,11 +7293,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 3. In-App Notifications */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3 transition">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Bell className="w-4 h-4" />
-                            </div>
+                            <Bell className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">In-App Notifications</h4>
                               <p className="text-[10.5px] text-slate-500">Receive real-time updates inside the app.</p>
@@ -7332,9 +7312,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     </div>
 
                     {/* Card 2.2: Communication Preferences */}
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs space-y-3.5">
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100/80 shadow-xs">
                       {/* Header */}
-                      <div className="pb-1 border-b border-slate-100">
+                      <div className="pb-2 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <SlidersHorizontal className="w-4 h-4 text-[#00A68A]" />
                           <h3 className="text-sm font-black text-slate-900 tracking-tight">
@@ -7347,13 +7327,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       </div>
 
                       {/* Items with Toggles */}
-                      <div className="space-y-3">
+                      <div className="divide-y divide-slate-100">
                         {/* 1. Lab Test Updates */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <FlaskConical className="w-4 h-4" />
-                            </div>
+                            <FlaskConical className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">Lab Test Updates</h4>
                               <p className="text-[10.5px] text-slate-500">Booking, sample collection, and report status.</p>
@@ -7374,11 +7352,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 2. Appointment Updates */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Calendar className="w-4 h-4" />
-                            </div>
+                            <Calendar className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">Appointment Updates</h4>
                               <p className="text-[10.5px] text-slate-500">Reminders, confirmations, and follow-ups.</p>
@@ -7399,11 +7375,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                         </div>
 
                         {/* 3. Order & Medicine Updates */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/60 border border-slate-100/80">
+                        <div className="flex items-center justify-between py-2.5 sm:py-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0">
-                              <Package className="w-4 h-4" />
-                            </div>
+                            <Package className="w-4 h-4 text-[#00A68A] shrink-0" />
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">Order & Medicine Updates</h4>
                               <p className="text-[10.5px] text-slate-500">Order confirmation, dispatch, and delivery status.</p>
@@ -7429,131 +7403,133 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                   {/* ======================================================== */}
                   {/* COLUMN 3: Preferences, Connected Accounts & Danger Zone */}
                   {/* ======================================================== */}
-                  <div className="lg:col-span-3 space-y-4 sm:space-y-5">
+                  <div className="lg:col-span-3 flex flex-col justify-between gap-4 sm:gap-5 h-full">
                     {/* Card 3.1: Language, Theme, Billing & Connected Accounts */}
-                    <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs space-y-4">
-                      {/* 1. Language Preference */}
-                      <div className="space-y-1.5 pb-3 border-b border-slate-100">
-                        <div className="flex items-center justify-between">
+                    <div className="bg-white rounded-3xl p-5 border border-blue-100/80 shadow-xs flex-1 flex flex-col justify-between">
+                      <div className="divide-y divide-slate-100">
+                        {/* 1. Language Preference */}
+                        <div className="pb-3 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Globe className="w-4 h-4 text-[#00A68A]" />
+                              <h4 className="text-xs font-bold text-slate-900">Language Preference</h4>
+                            </div>
+                            <select
+                              value={settingsLanguage}
+                              onChange={(e) => {
+                                setSettingsLanguage(e.target.value);
+                                addToast(`Language set to ${e.target.value}`, 'success');
+                              }}
+                              className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none"
+                            >
+                              <option value="English">English</option>
+                              <option value="Assamese">অসমীয়া (Assamese)</option>
+                              <option value="Hindi">हिन्दी (Hindi)</option>
+                              <option value="Bengali">বাংলা (Bengali)</option>
+                            </select>
+                          </div>
+                          <p className="text-[10.5px] text-slate-400">Choose your preferred language.</p>
+                        </div>
+
+                        {/* 2. Theme */}
+                        <div className="py-3 space-y-2">
                           <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-[#00A68A]" />
-                            <h4 className="text-xs font-bold text-slate-900">Language Preference</h4>
+                            <Moon className="w-4 h-4 text-[#00A68A]" />
+                            <h4 className="text-xs font-bold text-slate-900">Theme</h4>
                           </div>
-                          <select
-                            value={settingsLanguage}
-                            onChange={(e) => {
-                              setSettingsLanguage(e.target.value);
-                              addToast(`Language set to ${e.target.value}`, 'success');
-                            }}
-                            className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 cursor-pointer focus:outline-none"
-                          >
-                            <option value="English">English</option>
-                            <option value="Assamese">অসমীয়া (Assamese)</option>
-                            <option value="Hindi">हिन्दी (Hindi)</option>
-                            <option value="Bengali">বাংলা (Bengali)</option>
-                          </select>
+                          <p className="text-[10.5px] text-slate-400">Customize your display experience.</p>
+                          <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSettingsTheme('light');
+                                addToast('Light theme active', 'info');
+                              }}
+                              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                settingsTheme === 'light'
+                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                              }`}
+                            >
+                              <Sun className="w-3.5 h-3.5" />
+                              <span>Light</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSettingsTheme('dark');
+                                addToast('Dark mode preference saved.', 'info');
+                              }}
+                              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                settingsTheme === 'dark'
+                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                              }`}
+                            >
+                              <Moon className="w-3.5 h-3.5" />
+                              <span>Dark</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSettingsTheme('system');
+                                addToast('System theme enabled.', 'info');
+                              }}
+                              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                                settingsTheme === 'system'
+                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
+                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                              }`}
+                            >
+                              <Monitor className="w-3.5 h-3.5" />
+                              <span>System</span>
+                            </button>
+                          </div>
                         </div>
-                        <p className="text-[10.5px] text-slate-400">Choose your preferred language.</p>
-                      </div>
 
-                      {/* 2. Theme */}
-                      <div className="space-y-2 pb-3 border-b border-slate-100">
-                        <div className="flex items-center gap-2">
-                          <Moon className="w-4 h-4 text-[#00A68A]" />
-                          <h4 className="text-xs font-bold text-slate-900">Theme</h4>
+                        {/* 3. Billing & Payment Settings */}
+                        <div
+                          onClick={() => addToast('Opening Billing & Razorpay/UPI Payment Methods...', 'info')}
+                          className="flex items-center justify-between py-2.5 hover:bg-slate-50/60 -mx-1 px-1 rounded-xl transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-full bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <CreditCard className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Billing & Payment Settings
+                              </h4>
+                              <p className="text-[10px] text-slate-400 truncate">Manage saved payment methods, invoices, and refunds.</p>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                         </div>
-                        <p className="text-[10.5px] text-slate-400">Customize your display experience.</p>
-                        <div className="grid grid-cols-3 gap-1.5 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSettingsTheme('light');
-                              addToast('Light theme active', 'info');
-                            }}
-                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                              settingsTheme === 'light'
-                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
-                            }`}
-                          >
-                            <Sun className="w-3.5 h-3.5" />
-                            <span>Light</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSettingsTheme('dark');
-                              addToast('Dark mode preference saved.', 'info');
-                            }}
-                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                              settingsTheme === 'dark'
-                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
-                            }`}
-                          >
-                            <Moon className="w-3.5 h-3.5" />
-                            <span>Dark</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSettingsTheme('system');
-                              addToast('System theme enabled.', 'info');
-                            }}
-                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                              settingsTheme === 'system'
-                                ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
-                            }`}
-                          >
-                            <Monitor className="w-3.5 h-3.5" />
-                            <span>System</span>
-                          </button>
-                        </div>
-                      </div>
 
-                      {/* 3. Billing & Payment Settings */}
-                      <div
-                        onClick={() => addToast('Opening Billing & Razorpay/UPI Payment Methods...', 'info')}
-                        className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-7 h-7 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <CreditCard className="w-3.5 h-3.5" />
+                        {/* 4. Linked Accounts */}
+                        <div
+                          onClick={() => addToast('Google OAuth identity linked to +91 9279125091', 'info')}
+                          className="flex items-center justify-between py-2.5 hover:bg-slate-50/60 -mx-1 px-1 rounded-xl transition cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-full bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                              <Link2 className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
+                                Linked Accounts
+                              </h4>
+                              <p className="text-[10px] text-slate-400 truncate">Manage connected accounts (e.g., Google).</p>
+                            </div>
                           </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
-                              Billing & Payment Settings
-                            </h4>
-                            <p className="text-[10px] text-slate-400 truncate">Manage saved payment methods, invoices, and refunds.</p>
-                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
-                      </div>
-
-                      {/* 4. Linked Accounts */}
-                      <div
-                        onClick={() => addToast('Google OAuth identity linked to +91 9279125091', 'info')}
-                        className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-7 h-7 rounded-xl bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <Link2 className="w-3.5 h-3.5" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#008F83] transition-colors">
-                              Linked Accounts
-                            </h4>
-                            <p className="text-[10px] text-slate-400 truncate">Manage connected accounts (e.g., Google).</p>
-                          </div>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 ml-1" />
                       </div>
                     </div>
 
                     {/* Card 3.2: Danger Zone */}
-                    <div className="bg-[#FFF5F5] rounded-3xl p-5 border border-rose-100 shadow-xs space-y-3">
-                      <div className="flex items-center gap-2 pb-1 border-b border-rose-100">
+                    <div className="bg-[#FFF5F5] rounded-3xl p-5 border border-rose-100 shadow-xs space-y-3 mt-auto">
+                      <div className="flex items-center gap-2 pb-1.5 border-b border-rose-100">
                         <AlertTriangle className="w-4 h-4 text-rose-500" />
                         <h4 className="text-xs font-black text-rose-600">Danger Zone</h4>
                       </div>
