@@ -302,7 +302,59 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const [settingsAppointmentUpdates, setSettingsAppointmentUpdates] = useState(true);
   const [settingsOrderUpdates, setSettingsOrderUpdates] = useState(true);
   const [settingsLanguage, setSettingsLanguage] = useState('English');
-  const [settingsTheme, setSettingsTheme] = useState('light');
+  const [settingsTheme, setSettingsTheme] = useState(() => {
+    try {
+      return localStorage.getItem('zestmed_theme') || 'light';
+    } catch (_) {
+      return 'light';
+    }
+  });
+
+  const applyAppTheme = (themeName) => {
+    try {
+      localStorage.setItem('zestmed_theme', themeName);
+      const isDark = themeName === 'dark' || (themeName === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (_) {}
+  };
+
+  const handleSelectTheme = (themeName) => {
+    setSettingsTheme(themeName);
+    applyAppTheme(themeName);
+    if (themeName === 'dark') {
+      addToast('Dark theme activated.', 'success');
+    } else if (themeName === 'light') {
+      addToast('Light theme activated.', 'info');
+    } else {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      addToast(`System theme enabled (${isDark ? 'Dark mode' : 'Light mode'}).`, 'info');
+    }
+  };
+
+  // Sync theme on initial load and listen to system preference changes
+  useEffect(() => {
+    const current = localStorage.getItem('zestmed_theme') || 'light';
+    setSettingsTheme(current);
+    applyAppTheme(current);
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemChange = (e) => {
+      const cur = localStorage.getItem('zestmed_theme') || 'light';
+      if (cur === 'system') {
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    };
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+  }, []);
 
   // Ensure a verified patient session is active so reloading keeps the patient dashboard open
   useEffect(() => {
@@ -7441,14 +7493,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <div className="grid grid-cols-3 gap-1.5 pt-0.5">
                             <button
                               type="button"
-                              onClick={() => {
-                                setSettingsTheme('light');
-                                addToast('Light theme active', 'info');
-                              }}
+                              onClick={() => handleSelectTheme('light')}
                               className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                                 settingsTheme === 'light'
-                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                                  ? 'bg-[#E8FAF5] dark:bg-[#008F83] text-[#00A68A] dark:text-white border border-teal-200 dark:border-teal-500 shadow-2xs'
+                                  : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent'
                               }`}
                             >
                               <Sun className="w-3.5 h-3.5" />
@@ -7456,14 +7505,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
-                                setSettingsTheme('dark');
-                                addToast('Dark mode preference saved.', 'info');
-                              }}
+                              onClick={() => handleSelectTheme('dark')}
                               className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                                 settingsTheme === 'dark'
-                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                                  ? 'bg-[#E8FAF5] dark:bg-[#008F83] text-[#00A68A] dark:text-white border border-teal-200 dark:border-teal-500 shadow-2xs'
+                                  : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent'
                               }`}
                             >
                               <Moon className="w-3.5 h-3.5" />
@@ -7471,14 +7517,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
-                                setSettingsTheme('system');
-                                addToast('System theme enabled.', 'info');
-                              }}
+                              onClick={() => handleSelectTheme('system')}
                               className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                                 settingsTheme === 'system'
-                                  ? 'bg-[#E8FAF5] text-[#00A68A] border border-teal-200 shadow-2xs'
-                                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                                  ? 'bg-[#E8FAF5] dark:bg-[#008F83] text-[#00A68A] dark:text-white border border-teal-200 dark:border-teal-500 shadow-2xs'
+                                  : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent'
                               }`}
                             >
                               <Monitor className="w-3.5 h-3.5" />
