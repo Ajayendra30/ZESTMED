@@ -144,6 +144,24 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
   // Patient Real-Time Notifications (connected to backend, database & real-time events)
   const [patientNotifications, setPatientNotifications] = useState(DEFAULT_NOTIFICATIONS);
+  const [readNotificationVersion, setReadNotificationVersion] = useState(0);
+
+  useEffect(() => {
+    const handleReadSync = () => setReadNotificationVersion((v) => v + 1);
+    window.addEventListener('zestmed_notifications_read', handleReadSync);
+    return () => window.removeEventListener('zestmed_notifications_read', handleReadSync);
+  }, []);
+
+  const unreadNotificationCount = useMemo(() => {
+    try {
+      const readIds = new Set(JSON.parse(localStorage.getItem('zestmed_read_notification_ids') || '[]'));
+      return (patientNotifications || []).filter(
+        (n) => !n.read && !n.isRead && !readIds.has(String(n.id)) && (!n.refId || !readIds.has(String(n.refId)))
+      ).length;
+    } catch {
+      return patientNotifications.length;
+    }
+  }, [patientNotifications, readNotificationVersion]);
 
   useEffect(() => {
     let isMounted = true;
@@ -1595,9 +1613,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                {patientNotifications.length > 0 && (
+                {unreadNotificationCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
-                    {patientNotifications.length > 9 ? '9+' : patientNotifications.length}
+                    {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
                   </span>
                 )}
               </button>
@@ -1607,6 +1625,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
                 notifications={patientNotifications}
+                onMarkAllAsRead={() => setReadNotificationVersion((v) => v + 1)}
                 onNotificationClick={(n) => {
                   setIsNotificationsOpen(false);
                   if (n.linkType === 'lab') {

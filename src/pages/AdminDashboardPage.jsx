@@ -1694,6 +1694,24 @@ export default function AdminDashboardPage() {
   ];
 
   const [adminNotifications, setAdminNotifications] = useState(DEFAULT_ADMIN_NOTIFICATIONS);
+  const [readNotifVer, setReadNotifVer] = useState(0);
+
+  useEffect(() => {
+    const handleSync = () => setReadNotifVer((v) => v + 1);
+    window.addEventListener('zestmed_notifications_read', handleSync);
+    return () => window.removeEventListener('zestmed_notifications_read', handleSync);
+  }, []);
+
+  const unreadAdminNotificationCount = useMemo(() => {
+    try {
+      const readIds = new Set(JSON.parse(localStorage.getItem('zestmed_read_notification_ids') || '[]'));
+      return (adminNotifications || []).filter(
+        (n) => !n.read && !n.isRead && !readIds.has(String(n.id)) && (!n.refId || !readIds.has(String(n.refId)))
+      ).length;
+    } catch {
+      return adminNotifications.length;
+    }
+  }, [adminNotifications, readNotifVer]);
 
   // Listen for real-time bookings & notifications and trigger audible alert chime
   useEffect(() => {
@@ -2288,9 +2306,9 @@ export default function AdminDashboardPage() {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                {adminNotifications.length > 0 && (
+                {unreadAdminNotificationCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
-                    {adminNotifications.length > 9 ? '9+' : adminNotifications.length}
+                    {unreadAdminNotificationCount > 9 ? '9+' : unreadAdminNotificationCount}
                   </span>
                 )}
               </button>
@@ -2300,6 +2318,7 @@ export default function AdminDashboardPage() {
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
                 notifications={adminNotifications}
+                onMarkAllAsRead={() => setReadNotifVer((v) => v + 1)}
                 onNotificationClick={handleAdminNotificationClick}
               />
             </div>

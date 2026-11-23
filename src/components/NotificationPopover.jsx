@@ -1,6 +1,6 @@
 // src/components/NotificationPopover.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { Settings, ChevronLeft, Check, Bell, Volume2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Settings, ChevronLeft, Check, CheckCheck, Bell, Volume2, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { playNotificationSound } from '../utils/notificationSound';
 
@@ -96,11 +96,78 @@ export default function NotificationPopover({
   inline = false,
   onClose = () => {},
   notifications = DEFAULT_NOTIFICATIONS,
-  onNotificationClick
+  onNotificationClick,
+  onMarkAllAsRead
 }) {
   const { addToast } = useToast();
   const [view, setView] = useState('list'); // 'list' | 'settings'
   const popoverRef = useRef(null);
+
+  // Track read notification IDs in localStorage for instant 1-click read state
+  const [readIds, setReadIds] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('zestmed_read_notification_ids') || '[]');
+      return new Set(stored.map(String));
+    } catch {
+      return new Set();
+    }
+  });
+
+  // Calculate unread items
+  const isItemUnread = (item) => {
+    if (!item) return false;
+    if (item.read || item.isRead) return false;
+    const id = String(item.id || '');
+    const refId = String(item.refId || '');
+    if (id && readIds.has(id)) return false;
+    if (refId && readIds.has(refId)) return false;
+    return true;
+  };
+
+  const unreadCount = useMemo(() => {
+    return (notifications || []).filter(isItemUnread).length;
+  }, [notifications, readIds]);
+
+  const handleMarkAllAsRead = (e) => {
+    if (e) e.stopPropagation();
+    const allIds = (notifications || []).flatMap((n) => [n.id, n.refId]).filter(Boolean).map(String);
+    const updated = new Set([...readIds, ...allIds]);
+    setReadIds(updated);
+    try {
+      localStorage.setItem('zestmed_read_notification_ids', JSON.stringify(Array.from(updated)));
+      // Also mark read: true in zestmed_patient_notifications in localStorage if present
+      const stored = JSON.parse(localStorage.getItem('zestmed_patient_notifications') || '[]');
+      if (Array.isArray(stored) && stored.length > 0) {
+        const marked = stored.map((n) => ({ ...n, read: true, isRead: true }));
+        localStorage.setItem('zestmed_patient_notifications', JSON.stringify(marked));
+      }
+    } catch (_) {}
+
+    if (onMarkAllAsRead) {
+      onMarkAllAsRead();
+    }
+    // Dispatch global event so header bell badge and other views update immediately
+    window.dispatchEvent(new Event('zestmed_notifications_read'));
+    addToast('All notifications marked as read', 'success');
+  };
+
+  const handleItemClick = (item) => {
+    const id = String(item.id || '');
+    const refId = String(item.refId || '');
+    if ((id && !readIds.has(id)) || (refId && !readIds.has(refId))) {
+      const updated = new Set(readIds);
+      if (id) updated.add(id);
+      if (refId) updated.add(refId);
+      setReadIds(updated);
+      try {
+        localStorage.setItem('zestmed_read_notification_ids', JSON.stringify(Array.from(updated)));
+      } catch (_) {}
+      window.dispatchEvent(new Event('zestmed_notifications_read'));
+    }
+    if (onNotificationClick) {
+      onNotificationClick(item);
+    }
+  };
 
   // Settings State loaded from LocalStorage
   const [settings, setSettings] = useState(() => {
@@ -219,72 +286,110 @@ export default function NotificationPopover({
       {view === 'list' && (
         <div className="flex flex-col max-h-[460px]">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 bg-slate-50/60">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+          <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100 bg-slate-50/60">
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-sm font-bold text-slate-900 tracking-tight shrink-0">
                 Notifications
               </h3>
-              <span className="text-[10px] font-bold text-[#008F83] bg-teal-50 border border-teal-200/60 px-1.5 py-0.2 rounded-full">
-                {notifications?.length || 0} New
-              </span>
+              {unreadCount > 0 ? (
+                <span className="text-[10px] font-bold text-[#008F83] bg-teal-50 border border-teal-200/60 px-1.5 py-0.2 rounded-full shrink-0">
+                  {unreadCount} New
+                </span>
+              ) : (
+                <span className="text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.2 rounded-full shrink-0">
+                  All read
+                </span>
+              )}
             </div>
-            <button
-              type="button"
-              onClick={() => setView('settings')}
-              className="p-1 text-slate-400 hover:text-[#008F83] rounded-lg hover:bg-slate-100 transition cursor-pointer"
-              title="Notification settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+
+            <div className="flex items-center gap-1 shrink-0">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleMarkAllAsRead}
+                  className="text-[11px] font-bold text-[#008F83] hover:text-[#007A64] hover:bg-teal-50 px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
+                  title="Mark all notifications as read"
+                >
+                  <CheckCheck className="w-3.5 h-3.5 stroke-[2.4]" />
+                  <span>Mark as read</span>
+                </button>
+              )}
+              {unreadCount === 0 && (notifications?.length || 0) > 0 && (
+                <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 px-1">
+                  <CheckCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Read</span>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setView('settings')}
+                className="p-1 text-slate-400 hover:text-[#008F83] rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                title="Notification settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Scrollable Notifications List */}
-          <div className="overflow-y-auto px-3 py-2 space-y-2.5 max-h-[400px] custom-popover-scrollbar">
+          <div className="overflow-y-auto px-3 py-2 space-y-2.5 max-h-[380px] custom-popover-scrollbar">
             {notifications && notifications.length > 0 ? (
-              notifications.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    if (onNotificationClick) onNotificationClick(item);
-                  }}
-                  className="group flex items-start gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition cursor-pointer"
-                >
-                  {/* Circular Initial Avatar */}
+              notifications.map((item) => {
+                const unread = isItemUnread(item);
+                return (
                   <div
-                    className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-[11px] shadow-2xs ${item.avatarBg}`}
+                    key={item.id}
+                    onClick={() => handleItemClick(item)}
+                    className={`group flex items-start gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition cursor-pointer ${
+                      unread ? '' : 'opacity-70'
+                    }`}
                   >
-                    {item.avatar}
-                  </div>
-
-                  {/* Content Column */}
-                  <div className="flex-1 min-w-0">
-                    {/* Sender & Action Line */}
-                    <div className="text-xs text-slate-800 leading-tight">
-                      <strong className="text-slate-900 font-bold">{item.sender}</strong>{' '}
-                      <span className="text-slate-600 font-normal">{item.actionText}</span>
+                    {/* Circular Initial Avatar */}
+                    <div
+                      className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-[11px] shadow-2xs ${item.avatarBg}`}
+                    >
+                      {item.avatar}
                     </div>
 
-                    {/* Time ago */}
-                    <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                      {item.time || 'Just now'}
-                    </span>
+                    {/* Content Column */}
+                    <div className="flex-1 min-w-0">
+                      {/* Sender & Action Line */}
+                      <div className="text-xs text-slate-800 leading-tight flex items-start justify-between gap-1">
+                        <div>
+                          <strong className="text-slate-900 font-bold">{item.sender}</strong>{' '}
+                          <span className="text-slate-600 font-normal">{item.actionText}</span>
+                        </div>
+                        {unread && (
+                          <span className="w-2 h-2 rounded-full bg-[#008F83] shrink-0 mt-0.5" title="Unread" />
+                        )}
+                      </div>
 
-                    {/* Inner Card Preview Box matching Reference Image */}
-                    <div className="bg-[#F0FDFA]/70 rounded-xl p-2.5 mt-1.5 border border-teal-100/90 group-hover:border-teal-300 group-hover:bg-teal-50 transition">
-                      <p className="text-[11px] text-slate-700 font-normal leading-relaxed">
-                        {item.desc}
-                      </p>
-                      <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium flex-wrap">
-                        <span>{item.category}</span>
-                        <span>·</span>
-                        <span className={`px-1.5 py-0.2 rounded-md font-semibold text-[10px] ${item.statusBadge || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
-                          {item.status || 'Confirmed'}
-                        </span>
+                      {/* Time ago */}
+                      <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
+                        {item.time || 'Just now'}
+                      </span>
+
+                      {/* Inner Card Preview Box matching Reference Image */}
+                      <div className={`rounded-xl p-2.5 mt-1.5 border transition ${
+                        unread
+                          ? 'bg-[#F0FDFA]/70 border-teal-100/90 group-hover:border-teal-300 group-hover:bg-teal-50'
+                          : 'bg-slate-50/60 border-slate-100 group-hover:bg-slate-50'
+                      }`}>
+                        <p className="text-[11px] text-slate-700 font-normal leading-relaxed">
+                          {item.desc}
+                        </p>
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium flex-wrap">
+                          <span>{item.category}</span>
+                          <span>·</span>
+                          <span className={`px-1.5 py-0.2 rounded-md font-semibold text-[10px] ${item.statusBadge || 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+                            {item.status || 'Confirmed'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="py-8 px-4 text-center">
                 <div className="w-10 h-10 mx-auto rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-2">
@@ -295,6 +400,20 @@ export default function NotificationPopover({
               </div>
             )}
           </div>
+
+          {/* Bottom Action Footer for 1-click Read */}
+          {unreadCount > 0 && (
+            <div className="p-2 border-t border-slate-100 bg-slate-50/60 text-center">
+              <button
+                type="button"
+                onClick={handleMarkAllAsRead}
+                className="w-full py-1.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#008F83] text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <CheckCheck className="w-4 h-4 stroke-[2.2]" />
+                <span>Mark all as read ({unreadCount})</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
 

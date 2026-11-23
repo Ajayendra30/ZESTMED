@@ -276,6 +276,24 @@ export default function LabDashboardPage() {
   ];
 
   const [labNotifications, setLabNotifications] = useState(DEFAULT_LAB_NOTIFICATIONS);
+  const [readNotifVer, setReadNotifVer] = useState(0);
+
+  useEffect(() => {
+    const handleSync = () => setReadNotifVer((v) => v + 1);
+    window.addEventListener('zestmed_notifications_read', handleSync);
+    return () => window.removeEventListener('zestmed_notifications_read', handleSync);
+  }, []);
+
+  const unreadLabNotificationCount = useMemo(() => {
+    try {
+      const readIds = new Set(JSON.parse(localStorage.getItem('zestmed_read_notification_ids') || '[]'));
+      return (labNotifications || []).filter(
+        (n) => !n.read && !n.isRead && !readIds.has(String(n.id)) && (!n.refId || !readIds.has(String(n.refId)))
+      ).length;
+    } catch {
+      return labNotifications.length;
+    }
+  }, [labNotifications, readNotifVer]);
 
   // Listen for real-time lab bookings & sample updates and trigger audible alert chime
   useEffect(() => {
@@ -1149,9 +1167,9 @@ export default function LabDashboardPage() {
                 title="Notifications"
               >
                 <Bell className="w-5 h-5" />
-                {labNotifications.length > 0 && (
+                {unreadLabNotificationCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
-                    {labNotifications.length > 9 ? '9+' : labNotifications.length}
+                    {unreadLabNotificationCount > 9 ? '9+' : unreadLabNotificationCount}
                   </span>
                 )}
               </button>
@@ -1161,6 +1179,7 @@ export default function LabDashboardPage() {
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
                 notifications={labNotifications}
+                onMarkAllAsRead={() => setReadNotifVer((v) => v + 1)}
                 onNotificationClick={handleLabNotificationClick}
               />
             </div>
