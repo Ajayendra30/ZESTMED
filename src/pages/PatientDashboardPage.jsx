@@ -1762,7 +1762,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* ======================================================== */}
               {/* ROW 2: 6 TOP STAT KPI CARDS                              */}
               {/* ======================================================== */}
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5 sm:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-3.5 sm:gap-4">
                 {/* 1. Total Bookings */}
                 <div
                   onClick={() => {
@@ -1780,8 +1780,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <div className="text-2xl font-black text-slate-900 tracking-tight leading-none">
                       {allUserBookings.length}
                     </div>
-                    <div className="text-xs font-semibold text-slate-500 mt-1">
+                    <div className="text-xs font-semibold text-slate-500 mt-1 whitespace-nowrap">
                       Total Bookings
+                    </div>
+                    <div className="text-[11px] font-bold text-blue-600 hover:underline mt-1.5 flex items-center gap-1 whitespace-nowrap">
+                      <span>View All →</span>
                     </div>
                   </div>
                 </div>
