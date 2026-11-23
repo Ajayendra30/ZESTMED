@@ -1955,7 +1955,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               {/* ======================================================== */}
               {/* ROW 1: WELCOME GREETING BANNER                           */}
               {/* ======================================================== */}
-              <div className="relative rounded-2xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[120px] sm:min-h-[130px]">
+              <div className="relative rounded-2xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[135px] sm:min-h-[150px] lg:min-h-[160px]">
                 <div className="relative z-10 max-w-sm md:max-w-md lg:max-w-xl">
                   <div className="flex items-center gap-3">
                     <div className="w-1.5 h-9 sm:h-10 bg-[#0284C7] rounded-full shrink-0" />
@@ -1981,11 +1981,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
 
                 {/* Right Stethoscope & Heart Graphic (Increased size, fully visible without cropping) */}
-                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-24 sm:h-28 md:h-32 lg:h-36 w-60 sm:w-72 md:w-84 lg:w-[380px] pointer-events-none">
+                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-28 sm:h-32 md:h-36 lg:h-40 xl:h-44 w-72 sm:w-88 md:w-[380px] lg:w-[460px] xl:w-[500px] pointer-events-none">
                   <img
                     src="/dashboard/stethoscope-heart.png"
                     alt="Stethoscope and Heart"
-                    className="w-full h-full object-contain object-right drop-shadow-sm select-none"
+                    className="w-full h-full object-contain object-right drop-shadow-md select-none"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/dashboard/welcome-banner.jpg';
@@ -3041,7 +3041,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {activeMenu === 'bookings' && (
             <div className="space-y-4 sm:space-y-5">
               {/* Header Hero Banner with Stethoscope & Heart 3D Artwork (Matching Reference Banner) */}
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[110px] sm:min-h-[125px]">
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#BCE4F2] bg-gradient-to-r from-[#DDF4FD] via-[#E8F7FC] to-[#D5EEF6] p-4 sm:p-5 lg:px-6 shadow-xs flex items-center justify-between min-h-[135px] sm:min-h-[150px] lg:min-h-[160px]">
                 {/* Left Text with Vertical Cyan Pill Accent */}
                 <div className="relative z-10 max-w-sm md:max-w-md lg:max-w-xl">
                   <div className="flex items-center gap-3">
@@ -3067,11 +3067,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 </div>
 
                 {/* Right Stethoscope & Heart 3D Graphic */}
-                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-24 sm:h-28 md:h-32 lg:h-36 w-60 sm:w-72 md:w-84 lg:w-[380px] pointer-events-none">
+                <div className="relative z-10 shrink-0 hidden sm:flex items-center justify-end h-28 sm:h-32 md:h-36 lg:h-40 xl:h-44 w-72 sm:w-88 md:w-[380px] lg:w-[460px] xl:w-[500px] pointer-events-none">
                   <img
                     src="/dashboard/stethoscope-heart.png"
                     alt="Stethoscope and Heart"
-                    className="w-full h-full object-contain object-right drop-shadow-sm select-none"
+                    className="w-full h-full object-contain object-right drop-shadow-md select-none"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/dashboard/welcome-banner.jpg';
