@@ -105,105 +105,206 @@ export class SimplePdfDocument {
 }
 
 // -----------------------------------------------------------------------------
-// 1. Clinical Diagnostic Lab Report PDF
+// 1. Clinical Diagnostic Lab Report PDF (Matching Official Reference Template)
 // -----------------------------------------------------------------------------
 export function createClinicalReportPdfBlob(report) {
   const doc = new SimplePdfDocument();
-  const testName = report.test || report.testName || 'Diagnostic Investigation';
-  const reportId = report.id || report.bookingId || 'ZM-REP-9041';
+  const testName = report.test || report.testName || 'Diagnostic Test Report';
+  const reportId = report.id || report.bookingId || 'ZM-REP-427464';
   const patientName = report.patientName || report.patient || 'Ajayendra Shekhar';
-  const uhid = report.uhid || 'ZM-PAT-1082';
-  const dateStr = report.collectionDate || report.date || 'Nov 13, 2026';
-  const specimen = report.specimen || 'EDTA Whole Blood / Serum';
-  const pathologist = report.reportingDoctor || report.pathologist || 'Dr. Pranabesh Sarma, MD Pathology';
-  const remark = report.pathologistRemark || 'All clinical parameters reviewed and confirmed within normal biological baseline.';
+  const patientAgeGender = report.patientAge 
+    ? `${report.patientAge} Years / ${report.patientGender || 'Male'}` 
+    : (report.ageGender || '32 Years / Male');
+  const patientPhone = report.phone || report.patientPhone || '+91 9279125091';
+  const patientId = report.patientId || report.uhid || 'ZM-PAT-427464';
+  const sampleCollected = report.sampleCollected || report.collectionDate || '23 Nov 2026, 10:00 AM';
+  const reportGenerated = report.reportGenerated || report.generatedDate || '23 Nov 2026, 03:45 PM';
+  const refDoctor = report.doctor || report.reportingDoctor || 'Dr. Amit Sharma';
+
+  const defaultParameters = [
+    { name: 'Hemoglobin (Hb)', value: '13.8', normalRange: '13.0 – 17.0', unit: 'g/dL', status: 'Normal' },
+    { name: 'Total WBC Count', value: '7.2', normalRange: '4.0 – 11.0', unit: 'x10³/µL', status: 'Normal' },
+    { name: 'RBC Count', value: '4.86', normalRange: '4.5 – 5.9', unit: 'x10⁶/µL', status: 'Normal' },
+    { name: 'Platelet Count', value: '2.45', normalRange: '1.50 – 4.50', unit: 'x10⁵/µL', status: 'Normal' },
+    { name: 'Fasting Blood Glucose', value: '96', normalRange: '70 – 100', unit: 'mg/dL', status: 'Normal' },
+    { name: 'Total Cholesterol', value: '182', normalRange: '< 200', unit: 'mg/dL', status: 'Normal' },
+    { name: 'HDL Cholesterol', value: '45', normalRange: '> 40', unit: 'mg/dL', status: 'Normal' },
+    { name: 'LDL Cholesterol', value: '112', normalRange: '< 130', unit: 'mg/dL', status: 'Normal' },
+    { name: 'Triglycerides', value: '148', normalRange: '< 150', unit: 'mg/dL', status: 'Normal' }
+  ];
+
   const parameters = (report.reportData && report.reportData.length > 0)
     ? report.reportData
-    : [
-        { name: 'Hemoglobin (Hb)', value: '14.2', normalRange: '13.0 - 17.0', unit: 'g/dL', status: 'Normal' },
-        { name: 'Total Leucocyte Count (WBC)', value: '6,800', normalRange: '4,000 - 11,000', unit: '/cumm', status: 'Normal' },
-        { name: 'Platelet Count', value: '245,000', normalRange: '150,000 - 450,000', unit: '/cumm', status: 'Normal' },
-        { name: 'Packed Cell Volume (PCV)', value: '42.8', normalRange: '40.0 - 50.0', unit: '%', status: 'Normal' },
-        { name: 'R.B.C. Count', value: '4.85', normalRange: '4.5 - 5.9', unit: 'mil/cumm', status: 'Normal' },
-        { name: 'Neutrophils', value: '64', normalRange: '40 - 75', unit: '%', status: 'Normal' },
-        { name: 'Lymphocytes', value: '28', normalRange: '20 - 45', unit: '%', status: 'Normal' },
-        { name: 'Eosinophils', value: '3', normalRange: '1 - 6', unit: '%', status: 'Normal' },
-        { name: 'Monocytes', value: '5', normalRange: '2 - 10', unit: '%', status: 'Normal' }
-      ];
+    : defaultParameters;
 
-  // Header Banner (Zestmed Brand Teal: #008F83 -> [0, 0.56, 0.51])
-  doc.rect(36, 742, 523, 62, [0, 0.56, 0.51], null);
-  doc.text('ZESTMED DIAGNOSTICS & POLYCLINIC', 50, 782, { bold: true, size: 16, color: [1, 1, 1] });
-  doc.text('Central Clinical Reference Laboratory - NABL Accredited (ISO 15189) - Guwahati, Assam', 50, 766, { size: 8.5, color: [0.92, 0.98, 0.98] });
-  doc.text('GS Road, Dispur, Guwahati - 781005 | Helpline: +91 92791 25091 | www.zestmed.in', 50, 752, { size: 8, color: [0.85, 0.95, 0.95] });
-  doc.text(`REPORT ID: ${reportId}`, 425, 782, { bold: true, size: 9.5, color: [1, 1, 1] });
-  doc.text(`BARCODE: AS-LAB-${reportId.replace(/\D/g, '') || '781001'}`, 425, 766, { size: 8, color: [0.9, 0.98, 0.98] });
+  // 1. Top Header (Logo + Contact Details)
+  // Logo Heart & Cross Mark
+  doc.rect(36, 786, 22, 22, [0.0, 0.43, 0.51], null);
+  doc.rect(45, 791, 4, 12, [1, 1, 1], null);
+  doc.rect(41, 795, 12, 4, [1, 1, 1], null);
 
-  // Patient Card
-  doc.rect(36, 666, 523, 66, [0.95, 0.99, 0.98], [0.8, 0.93, 0.91], 1);
-  doc.text('PATIENT NAME:', 48, 716, { size: 8, color: [0.4, 0.46, 0.55] });
-  doc.text(patientName, 48, 703, { bold: true, size: 10 });
-  doc.text(`UHID: ${uhid}`, 48, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
-  doc.text('Age / Gender: 34 Yrs / Male', 48, 676, { size: 8.5, color: [0.35, 0.4, 0.5] });
+  doc.text('ZESTMED', 64, 798, { bold: true, size: 16, color: [0.0, 0.43, 0.51] });
+  doc.text('Healthcare at Home', 65, 788, { bold: true, size: 7.5, color: [0.15, 0.45, 0.85] });
 
-  doc.text('INVESTIGATION:', 225, 716, { size: 8, color: [0.4, 0.46, 0.55] });
-  doc.text(testName, 225, 703, { bold: true, size: 10 });
-  doc.text(`Collection Date: ${dateStr}`, 225, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
-  doc.text(`Specimen: ${specimen}`, 225, 676, { size: 8.5, color: [0.35, 0.4, 0.5] });
+  // Vertical Separator
+  doc.line(175, 784, 175, 810, [0.82, 0.88, 0.92], 1);
 
-  doc.text('REPORT STATUS:', 420, 716, { size: 8, color: [0.4, 0.46, 0.55] });
-  doc.text('Verified / Released', 420, 703, { bold: true, size: 9.5, color: [0, 0.56, 0.51] });
-  doc.text('Hub: Guwahati Central Hub', 420, 689, { size: 8.5, color: [0.35, 0.4, 0.5] });
-  doc.text('Sample Type: Barcoded Vacuum Tube', 420, 676, { size: 8, color: [0.35, 0.4, 0.5] });
+  // Contact info
+  doc.text('Phone: +91 1800-123-4567', 186, 796, { size: 8, color: [0.18, 0.28, 0.38] });
+  doc.text('Email: support@zestmed.in', 320, 796, { size: 8, color: [0.18, 0.28, 0.38] });
+  doc.text('Web: www.zestmed.in', 455, 796, { bold: true, size: 8, color: [0.0, 0.56, 0.51] });
 
-  // Investigation Subheading
-  doc.text(`INVESTIGATION FINDINGS: ${testName.toUpperCase()}`, 38, 646, { bold: true, size: 9.5, color: [0.004, 0.20, 0.23] });
-  doc.text('Methodology: Fully Automated Clinical Analyzer & Laser Flow Cytometry', 280, 646, { italic: true, size: 8, color: [0.4, 0.45, 0.5] });
+  // 2. Title & Accreditation Header Bar
+  // Left: Title Icon Box & Text
+  doc.rect(36, 735, 30, 30, [0.91, 0.97, 0.96], [0.7, 0.92, 0.88], 1);
+  doc.text('REP', 42, 747, { bold: true, size: 8, color: [0.0, 0.56, 0.51] });
 
-  // Table Header (Zestmed Brand Teal)
-  doc.rect(36, 620, 523, 20, [0, 0.56, 0.51], null);
-  doc.text('Test Parameter', 46, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
-  doc.text('Observed Result', 220, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
-  doc.text('Biological Reference Range', 320, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
-  doc.text('Units', 445, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
-  doc.text('Status', 505, 627, { bold: true, size: 8.5, color: [1, 1, 1] });
+  doc.text('Diagnostic Test Report', 74, 752, { bold: true, size: 14, color: [0.06, 0.18, 0.22] });
+  doc.text('Certified Laboratory Report', 74, 740, { size: 8, color: [0.35, 0.48, 0.53] });
 
-  // Parameters Rows
-  let y = 602;
-  parameters.forEach((p, idx) => {
-    if (y < 160) return; // Prevent page overrun
-    const isEven = idx % 2 === 1;
-    if (isEven) {
-      doc.rect(36, y - 4, 523, 17, [0.97, 0.98, 1], null);
-    }
-    doc.line(36, y - 4, 559, y - 4, [0.9, 0.93, 0.96], 0.5);
+  // Right: NABL Accreditation Box
+  doc.rect(400, 735, 159, 30, [0.97, 0.99, 0.98], [0.75, 0.91, 0.83], 1);
+  doc.text('NABL Accredited Lab', 432, 752, { bold: true, size: 8.5, color: [0.06, 0.18, 0.22] });
+  doc.text('Certified & Reliable Results', 432, 740, { size: 7.2, color: [0.0, 0.56, 0.4] });
+  // Small shield check mark
+  doc.rect(410, 740, 16, 18, [0.85, 0.96, 0.9], [0.4, 0.8, 0.6], 1);
+  doc.text('OK', 413, 746, { bold: true, size: 6.5, color: [0.0, 0.5, 0.3] });
 
-    const isAbnormal = p.status === 'Deficient' || p.flag === 'LOW' || p.flag === 'HIGH';
-    doc.text(p.name, 46, y, { bold: true, size: 8 });
-    doc.text(String(p.value), 220, y, { bold: true, size: 8.5, color: isAbnormal ? [0.8, 0.1, 0.1] : [0.05, 0.1, 0.18] });
-    doc.text(p.normalRange || 'Normal', 320, y, { size: 8, color: [0.35, 0.4, 0.5] });
-    doc.text(p.unit || '-', 445, y, { size: 8, color: [0.35, 0.4, 0.5] });
-    doc.text(p.status || 'Normal', 505, y, { bold: true, size: 8, color: isAbnormal ? [0.8, 0.1, 0.1] : [0, 0.56, 0.51] });
+  // 3. Two Columns: Patient Information & Report Information
+  // Left Card: Patient Information
+  doc.rect(36, 638, 256, 84, [1, 1, 1], [0.86, 0.92, 0.96], 1);
+  doc.rect(36, 700, 256, 22, [0.92, 0.96, 0.99], null);
+  doc.text('Patient Information', 56, 707, { bold: true, size: 8.5, color: [0.1, 0.35, 0.65] });
+
+  doc.text('Name', 48, 686, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 102, 686, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(patientName, 114, 686, { bold: true, size: 8.5, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Age / Gender', 48, 671, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 102, 671, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(patientAgeGender, 114, 671, { size: 8, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Phone', 48, 656, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 102, 656, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(patientPhone, 114, 656, { size: 8, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Patient ID', 48, 642, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 102, 642, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(patientId, 114, 642, { bold: true, size: 8, color: [0.0, 0.43, 0.51] });
+
+  // Right Card: Report Information
+  doc.rect(303, 638, 256, 84, [1, 1, 1], [0.86, 0.94, 0.91], 1);
+  doc.rect(303, 700, 256, 22, [0.92, 0.98, 0.95], null);
+  doc.text('Report Information', 323, 707, { bold: true, size: 8.5, color: [0.0, 0.5, 0.4] });
+
+  doc.text('Report ID', 315, 686, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 388, 686, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(reportId, 400, 686, { bold: true, size: 8.5, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Sample Collected', 315, 671, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 388, 671, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(sampleCollected, 400, 671, { size: 8, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Report Generated', 315, 656, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 388, 656, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(reportGenerated, 400, 656, { size: 8, color: [0.06, 0.12, 0.2] });
+
+  doc.text('Ref. Doctor', 315, 642, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(':', 388, 642, { size: 8, color: [0.38, 0.46, 0.55] });
+  doc.text(refDoctor, 400, 642, { bold: true, size: 8, color: [0.0, 0.43, 0.51] });
+
+  // 4. Test Results Table
+  // Main Teal Table Title
+  doc.rect(36, 608, 523, 22, [0.0, 0.43, 0.51], null);
+  doc.text('Test Results', 52, 615, { bold: true, size: 9.5, color: [1, 1, 1] });
+
+  // Column Header Row
+  doc.rect(36, 590, 523, 18, [0.96, 0.97, 0.99], [0.88, 0.92, 0.96], 0.5);
+  doc.text('Test Name', 48, 595, { bold: true, size: 8, color: [0.12, 0.22, 0.3] });
+  doc.text('Result', 205, 595, { bold: true, size: 8, color: [0.12, 0.22, 0.3] });
+  doc.text('Reference Range', 290, 595, { bold: true, size: 8, color: [0.12, 0.22, 0.3] });
+  doc.text('Unit', 415, 595, { bold: true, size: 8, color: [0.12, 0.22, 0.3] });
+  doc.text('Remarks', 495, 595, { bold: true, size: 8, color: [0.12, 0.22, 0.3] });
+
+  // Table Data Rows
+  let y = 572;
+  parameters.forEach((param, idx) => {
+    if (y < 285) return; // Prevent page overrun
+    
+    // Light bottom divider line
+    doc.line(36, y - 4, 559, y - 4, [0.92, 0.94, 0.96], 0.5);
+
+    // Test name
+    doc.text(param.name, 48, y, { bold: true, size: 8, color: [0.06, 0.12, 0.2] });
+
+    // Result pill with soft mint background
+    const isAbnormal = param.status === 'Deficient' || param.flag === 'LOW' || param.flag === 'HIGH';
+    const pillFill = isAbnormal ? [0.99, 0.9, 0.9] : [0.85, 0.97, 0.92];
+    const pillText = isAbnormal ? [0.8, 0.1, 0.1] : [0.0, 0.41, 0.29];
+    doc.rect(200, y - 3, 38, 14, pillFill, null);
+    doc.text(String(param.value), 208, y, { bold: true, size: 8, color: pillText });
+
+    // Reference Range & Unit
+    doc.text(param.normalRange || '-', 290, y, { size: 8, color: [0.25, 0.32, 0.4] });
+    doc.text(param.unit || '-', 415, y, { size: 8, color: [0.25, 0.32, 0.4] });
+
+    // Remarks with checkmark
+    const remarkStatus = param.status || 'Normal';
+    doc.text(`[v] ${remarkStatus}`, 490, y, { bold: true, size: 7.5, color: isAbnormal ? [0.8, 0.1, 0.1] : [0.0, 0.55, 0.35] });
 
     y -= 18;
   });
 
-  // Pathologist Clinical Note
-  const noteBoxY = Math.max(y - 20, 160);
-  doc.rect(36, noteBoxY - 32, 523, 44, [0.98, 0.99, 1], [0.85, 0.9, 0.96], 0.8);
-  doc.text('Pathologist Note & Clinical Correlation:', 46, noteBoxY + 2, { bold: true, size: 8, color: [0.04, 0.12, 0.2] });
-  doc.text(`"${remark}"`, 46, noteBoxY - 12, { italic: true, size: 7.5, color: [0.3, 0.35, 0.45] });
-  doc.text('* Correlate clinically. Sample handled under cold-chain compliance (2-8 deg C).', 46, noteBoxY - 24, { size: 7, color: [0.5, 0.55, 0.6] });
+  // 5. Note Box
+  const noteBoxY = Math.max(y - 8, 235);
+  doc.rect(36, noteBoxY - 42, 523, 44, [0.94, 0.97, 1.0], [0.85, 0.91, 0.98], 1);
+  doc.text('Note:', 48, noteBoxY - 9, { bold: true, size: 8, color: [0.08, 0.2, 0.3] });
+  doc.text('•  The results are for the sample collected and tested as mentioned above.', 52, noteBoxY - 20, { size: 7.2, color: [0.25, 0.35, 0.45] });
+  doc.text('•  Kindly consult your physician for clinical interpretation of the results.', 52, noteBoxY - 30, { size: 7.2, color: [0.25, 0.35, 0.45] });
+  doc.text('•  This is a digitally generated report and does not require a physical signature.', 52, noteBoxY - 40, { size: 7.2, color: [0.25, 0.35, 0.45] });
 
-  // Doctor Signature & Accreditation Footer
-  doc.line(36, 125, 559, 125, [0.8, 0.85, 0.9], 1);
-  doc.text('* Electronically signed report under IT Act 2000. Valid for clinical consultations.', 46, 105, { size: 7.5, color: [0.45, 0.5, 0.58] });
-  doc.text('Guwahati Central Diagnostic Hub • GS Road, Dispur, Guwahati, Assam - 781005', 46, 92, { size: 7.5, color: [0.45, 0.5, 0.58] });
-  doc.text('ICMR Reg No: AS-LAB-2024-88 • NABL Certificate: MC-5921', 46, 79, { size: 7, color: [0.5, 0.55, 0.6] });
+  // 6. Verification QR & Doctor Signature Section
+  const signSectionY = noteBoxY - 56;
 
-  doc.text(pathologist, 370, 105, { bold: true, size: 8.5, color: [0.04, 0.12, 0.2] });
-  doc.text('Consultant Clinical Pathologist', 370, 92, { size: 7.5, color: [0.35, 0.4, 0.5] });
-  doc.text('Assam Medical Council Reg: AMC-29182-AS', 370, 79, { size: 7.5, color: [0.35, 0.4, 0.5] });
+  // Simulated QR Code Graphic Box
+  doc.rect(48, signSectionY - 45, 45, 45, [1, 1, 1], [0.1, 0.15, 0.2], 1.2);
+  doc.rect(52, signSectionY - 41, 12, 12, [0.1, 0.15, 0.2], null);
+  doc.rect(55, signSectionY - 38, 6, 6, [1, 1, 1], null);
+  doc.rect(77, signSectionY - 41, 12, 12, [0.1, 0.15, 0.2], null);
+  doc.rect(80, signSectionY - 38, 6, 6, [1, 1, 1], null);
+  doc.rect(52, signSectionY - 16, 12, 12, [0.1, 0.15, 0.2], null);
+  doc.rect(55, signSectionY - 13, 6, 6, [1, 1, 1], null);
+  doc.rect(68, signSectionY - 26, 8, 8, [0.1, 0.15, 0.2], null);
+
+  doc.text('Scan to Verify', 104, signSectionY - 15, { bold: true, size: 8.5, color: [0.06, 0.18, 0.22] });
+  doc.text('Verify this report on', 104, signSectionY - 26, { size: 7.5, color: [0.4, 0.5, 0.55] });
+  doc.text('www.zestmed.in', 104, signSectionY - 38, { bold: true, size: 8, color: [0.0, 0.43, 0.51] });
+
+  // Vertical Divider
+  doc.line(265, signSectionY - 45, 265, signSectionY - 2, [0.86, 0.9, 0.94], 1);
+
+  // Doctor Signature
+  // Artistic cursive doctor signature mark
+  doc.line(400, signSectionY - 10, 440, signSectionY - 6, [0.15, 0.2, 0.3], 1.2);
+  doc.line(420, signSectionY - 18, 470, signSectionY - 8, [0.15, 0.2, 0.3], 1.2);
+  doc.line(460, signSectionY - 12, 490, signSectionY - 16, [0.15, 0.2, 0.3], 1.2);
+
+  doc.text('Dr. Amit Sharma, MD (Pathology)', 360, signSectionY - 24, { bold: true, size: 9.5, color: [0.06, 0.18, 0.22] });
+  doc.text('Consultant Pathologist', 396, signSectionY - 35, { size: 7.8, color: [0.35, 0.45, 0.5] });
+  doc.text('Reg. No. DMC-45837', 400, signSectionY - 45, { size: 7.5, color: [0.35, 0.45, 0.5] });
+
+  // 7. Bottom Trust Badges
+  const trustY = signSectionY - 72;
+  doc.rect(36, trustY - 4, 523, 22, [0.98, 1.0, 0.99], [0.85, 0.94, 0.91], 1);
+  doc.text('[v] Accurate Reports', 48, trustY + 3, { bold: true, size: 7.5, color: [0.0, 0.45, 0.38] });
+  doc.text('[v] Home Sample Collection', 165, trustY + 3, { bold: true, size: 7.5, color: [0.0, 0.45, 0.38] });
+  doc.text('[v] Timely Results', 315, trustY + 3, { bold: true, size: 7.5, color: [0.0, 0.45, 0.38] });
+  doc.text('[v] 100% Secure & Confidential', 420, trustY + 3, { bold: true, size: 7.5, color: [0.0, 0.45, 0.38] });
+
+  // 8. Bottom Decorative Waves
+  doc.rect(0, 30, 595.28, 4, [0.75, 0.93, 0.92], null);
+  doc.rect(0, 24, 595.28, 6, [0.85, 0.96, 0.95], null);
+  doc.rect(0, 16, 595.28, 8, [0.93, 0.98, 0.98], null);
 
   return doc.buildBlob();
 }
