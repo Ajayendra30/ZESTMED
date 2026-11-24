@@ -79,6 +79,8 @@ export const enforceAuth = ({
       resolvedToastMessage = 'Please login to book a doctor appointment';
     } else if (path.includes('wellness') || actType.includes('wellness')) {
       resolvedToastMessage = 'Please login to book a wellness package';
+    } else if (path.includes('lab') || path.includes('diagnostic') || actType.includes('diagnostic') || actType.includes('test')) {
+      resolvedToastMessage = 'Please login to book a lab test';
     } else {
       resolvedToastMessage = 'Please login to continue with this service';
     }

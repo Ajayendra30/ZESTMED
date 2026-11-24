@@ -100,6 +100,31 @@ export default function DiagnosticPortalPage() {
 
   const handleAddToCart = (test, e) => {
     if (e) e.stopPropagation();
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to book a lab test',
+        pendingAction: {
+          type: 'add_to_cart',
+          item: {
+            id: test.id,
+            name: test.name,
+            price: test.price,
+            mrp: test.mrp,
+            image: test.image,
+            type: 'diagnostic',
+            category: 'Lab Test',
+            description: test.description
+          },
+          itemType: 'diagnostic'
+        },
+        addToast
+      });
+      return;
+    }
     addItem({
       id: test.id,
       name: test.name,

@@ -87,7 +87,7 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
         navigate,
         location,
         openAuth,
-        toastMessage: 'Please login to add lab tests to your cart',
+        toastMessage: 'Please login to book a lab test',
         pendingAction: { type: 'add_to_cart', item: itemData, itemType: 'diagnostic' },
         addToast
       });

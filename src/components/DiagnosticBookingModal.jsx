@@ -165,7 +165,7 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
         user,
         navigate,
         openAuth,
-        toastMessage: 'Please login to complete your lab test booking',
+        toastMessage: 'Please login to book a lab test',
         addToast
       });
       return;
