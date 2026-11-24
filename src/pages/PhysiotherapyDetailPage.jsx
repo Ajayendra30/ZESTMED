@@ -189,7 +189,7 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
         navigate,
         location,
         openAuth,
-        toastMessage: 'Please login to confirm your physiotherapy booking',
+        toastMessage: 'Please login to book a physiotherapy session',
         addToast
       });
       return;

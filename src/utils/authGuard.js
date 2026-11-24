@@ -65,8 +65,26 @@ export const enforceAuth = ({
     return true;
   }
 
+  // Resolve service-specific message matching reference design
+  let resolvedToastMessage = toastMessage;
+  if (!resolvedToastMessage || resolvedToastMessage === 'Please login to continue with this service') {
+    const path = (location?.pathname || (typeof window !== 'undefined' ? window.location?.pathname : '')) || '';
+    const actType = (pendingAction?.type || '').toLowerCase();
+    if (path.includes('surgery') || actType.includes('surgery')) {
+      resolvedToastMessage = 'Please login to book a surgery package';
+    } else if (path.includes('physio') || actType.includes('physio')) {
+      resolvedToastMessage = 'Please login to book a physiotherapy session';
+    } else if (path.includes('doctor') || actType.includes('doctor')) {
+      resolvedToastMessage = 'Please login to book a doctor appointment';
+    } else if (path.includes('wellness') || actType.includes('wellness')) {
+      resolvedToastMessage = 'Please login to book a wellness package';
+    } else {
+      resolvedToastMessage = 'Please login to continue with this service';
+    }
+  }
+
   // Ensure message only shows "login" and never "or register"
-  const cleanToastMessage = (toastMessage || 'Please login to continue with this service')
+  const cleanToastMessage = (resolvedToastMessage || 'Please login to continue with this service')
     .replace(/\s+or\s+register\s+/gi, ' ')
     .replace(/\s+or\s+register/gi, '')
     .replace(/\s+or\s+registration/gi, '');

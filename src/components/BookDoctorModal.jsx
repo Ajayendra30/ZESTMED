@@ -174,7 +174,7 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
         user,
         navigate,
         openAuth,
-        toastMessage: 'Please login to book a doctor consultation',
+        toastMessage: 'Please login to book a doctor appointment',
         addToast
       });
       return;

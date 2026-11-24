@@ -180,7 +180,7 @@ export default function SurgeryDetailPage() {
         navigate,
         location,
         openAuth,
-        toastMessage: 'Please login to confirm your surgery package booking',
+        toastMessage: 'Please login to book a surgery package',
         addToast
       });
       return;

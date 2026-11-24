@@ -268,7 +268,7 @@ export default function BookDoctorPage() {
         navigate,
         location,
         openAuth,
-        toastMessage: 'Please login to confirm your doctor appointment',
+        toastMessage: 'Please login to book a doctor appointment',
         pendingAction: {
           type: 'book_doctor',
           doctor: chosenDoctor,

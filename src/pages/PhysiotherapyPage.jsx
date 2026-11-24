@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import { enforceAuth } from '../utils/authGuard';
 
 // =========================================================================
 // Custom Medical Vector Icons matching Reference Design
@@ -248,7 +249,15 @@ export default function PhysiotherapyPage() {
 
   const handleServiceClick = (srvId) => {
     if (!user) {
-      openAuth('login');
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to book a physiotherapy session',
+        pendingAction: { type: 'view_physiotherapy', srvId },
+        addToast
+      });
       return;
     }
     navigate(`/physiotherapy/${srvId}`);
@@ -256,7 +265,15 @@ export default function PhysiotherapyPage() {
 
   const handleBookSession = (serviceTitle = '') => {
     if (!user) {
-      openAuth('login');
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to book a physiotherapy session',
+        pendingAction: { type: 'book_physiotherapy', serviceTitle },
+        addToast
+      });
       return;
     }
     navigate('/book-physiotherapy');
@@ -830,13 +847,7 @@ export default function PhysiotherapyPage() {
             
             <button
               type="button"
-              onClick={() => {
-                if (!user) {
-                  openAuth('login');
-                  return;
-                }
-                navigate('/book-physiotherapy');
-              }}
+              onClick={() => handleBookSession('Physiotherapy Session')}
               className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <Calendar className="w-5 h-5 text-[#007A64]" />

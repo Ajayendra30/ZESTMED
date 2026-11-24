@@ -443,7 +443,15 @@ export default function DoctorAppointmentPage() {
   // Open booking page (Matching user requirement)
   const handleOpenBooking = (doctor = null, mode = 'Clinic Visit') => {
     if (!user) {
-      openAuth('login');
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to book a doctor appointment',
+        pendingAction: { type: 'book_doctor', doctor, mode },
+        addToast
+      });
       return;
     }
 
@@ -580,7 +588,7 @@ export default function DoctorAppointmentPage() {
         navigate,
         location,
         openAuth,
-        toastMessage: 'Please login to confirm your doctor appointment',
+        toastMessage: 'Please login to book a doctor appointment',
         addToast
       });
       return;

@@ -1,8 +1,10 @@
 // src/pages/SurgeryPackagesPage.jsx
 // Pixel-accurate recreation of the exact reference design for ZESTMED Surgery Packages
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { enforceAuth } from '../utils/authGuard';
 import { 
   ShieldCheck, Calendar, ArrowRight, Award, Building2, 
   CircleDollarSign, Headphones, Stethoscope, ClipboardList, 
@@ -194,11 +196,21 @@ const SURGERY_CATEGORIES = [
 
 export default function SurgeryPackagesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, openAuth } = useAuth();
+  const { addToast } = useToast();
 
   const handlePackageClick = (pkg) => {
     if (!user) {
-      openAuth('login');
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to book a surgery package',
+        pendingAction: { type: 'view_surgery', pkg },
+        addToast
+      });
       return;
     }
     navigate(`/surgery-packages/${pkg.slug}`);
