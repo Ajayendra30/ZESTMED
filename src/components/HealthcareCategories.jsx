@@ -34,7 +34,7 @@ export default function HealthcareCategories({
       badge: 'OPD & Video',
       badgeColor: 'bg-blue-50 text-blue-700',
       iconBg: 'bg-blue-50 text-blue-600',
-      link: !user ? '/login?redirect=/doctor-appointment' : '/doctor-appointment',
+      link: '/doctor-appointment',
       onClick: onOpenDoctorModal,
       icon: <Stethoscope className="w-7 h-7 text-blue-600" />
     },
@@ -45,7 +45,7 @@ export default function HealthcareCategories({
       badge: 'Senior Mobility',
       badgeColor: 'bg-emerald-50 text-emerald-700',
       iconBg: 'bg-emerald-50 text-emerald-600',
-      link: !user ? '/login?redirect=/physiotherapy' : '/physiotherapy',
+      link: '/physiotherapy',
       onClick: onOpenPhysioModal,
       icon: <Activity className="w-7 h-7 text-emerald-600" />
     },
@@ -56,7 +56,7 @@ export default function HealthcareCategories({
       badge: 'Cashless TPA',
       badgeColor: 'bg-purple-50 text-purple-700',
       iconBg: 'bg-purple-50 text-purple-600',
-      link: !user ? '/login?redirect=/surgery-packages' : '/surgery-packages',
+      link: '/surgery-packages',
       onClick: onOpenSurgeryModal,
       icon: <Scissors className="w-7 h-7 text-purple-600" />
     },

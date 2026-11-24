@@ -442,6 +442,11 @@ export default function DoctorAppointmentPage() {
 
   // Open booking page (Matching user requirement)
   const handleOpenBooking = (doctor = null, mode = 'Clinic Visit') => {
+    if (!user) {
+      openAuth('login');
+      return;
+    }
+
     const docToBook = doctor || (displayedDoctors.length > 0 ? displayedDoctors[0] : (doctorsList[0] || MOCK_DOCTORS[0]));
 
     navigate('/book-doctor', {

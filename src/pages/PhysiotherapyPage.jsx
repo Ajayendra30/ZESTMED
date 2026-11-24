@@ -246,11 +246,20 @@ export default function PhysiotherapyPage() {
     }
   };
 
+  const handleServiceClick = (srvId) => {
+    if (!user) {
+      openAuth('login');
+      return;
+    }
+    navigate(`/physiotherapy/${srvId}`);
+  };
+
   const handleBookSession = (serviceTitle = '') => {
-    const text = encodeURIComponent(
-      `Hi Zestmed, I would like to book a Physiotherapy session${serviceTitle ? ` for ${serviceTitle}` : ''}. Please provide available slots and details.`
-    );
-    window.open(`https://wa.me/919279125091?text=${text}`, '_blank');
+    if (!user) {
+      openAuth('login');
+      return;
+    }
+    navigate('/book-physiotherapy');
   };
 
   return (
@@ -423,7 +432,7 @@ export default function PhysiotherapyPage() {
               return (
                 <div
                   key={srv.id}
-                  onClick={() => navigate(`/physiotherapy/${srv.id}`)}
+                  onClick={() => handleServiceClick(srv.id)}
                   className="bg-white rounded-2xl border border-slate-200/90 hover:border-teal-300 p-4 sm:p-5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer group select-none"
                 >
                   <div>
@@ -454,7 +463,7 @@ export default function PhysiotherapyPage() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/physiotherapy/${srv.id}`);
+                      handleServiceClick(srv.id);
                     }}
                     className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-black text-[#007A64] w-full text-left cursor-pointer group-hover:text-[#005c4b] transition-colors"
                   >
@@ -821,7 +830,13 @@ export default function PhysiotherapyPage() {
             
             <button
               type="button"
-              onClick={() => navigate('/book-physiotherapy')}
+              onClick={() => {
+                if (!user) {
+                  openAuth('login');
+                  return;
+                }
+                navigate('/book-physiotherapy');
+              }}
               className="bg-white hover:bg-slate-50 text-[#007A64] font-black text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 cursor-pointer active:scale-95 whitespace-nowrap"
             >
               <Calendar className="w-5 h-5 text-[#007A64]" />

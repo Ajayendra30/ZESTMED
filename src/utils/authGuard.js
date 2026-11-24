@@ -111,35 +111,7 @@ export const enforceAuth = ({
     }
   }
 
-  // For core protected services (Doctor Appointments, Physiotherapy, Surgery Packages),
-  // always redirect directly to the dedicated Login page with return target.
-  const isCoreProtectedService = 
-    returnUrl.includes('doctor') || 
-    returnUrl.includes('physio') || 
-    returnUrl.includes('surgery') || 
-    returnUrl.includes('packages') ||
-    actType.includes('doctor') ||
-    actType.includes('physio') ||
-    actType.includes('surgery') ||
-    msgLower.includes('doctor') ||
-    msgLower.includes('physio') ||
-    msgLower.includes('surgery');
-
-  if (isCoreProtectedService || !openInModal) {
-    try {
-      sessionStorage.setItem('zestmed_redirect_target', returnUrl);
-    } catch (_) {}
-
-    const loginTarget = `/login?redirect=${encodeURIComponent(returnUrl)}`;
-    if (navigate) {
-      navigate(loginTarget, { state: { returnUrl, pendingAction } });
-    } else if (typeof window !== 'undefined') {
-      window.location.href = loginTarget;
-    }
-    return false;
-  }
-
-  // Open the Login option right on the SAME page where the user clicked Book Now for other items.
+  // Open the Login modal popup directly on the same page (matches Medicines behavior)
   if (openInModal) {
     if (typeof openAuth === 'function') {
       openAuth('login');
@@ -150,6 +122,18 @@ export const enforceAuth = ({
     }
     return false;
   }
+
+  try {
+    sessionStorage.setItem('zestmed_redirect_target', returnUrl);
+  } catch (_) {}
+
+  const loginTarget = `/login?redirect=${encodeURIComponent(returnUrl)}`;
+  if (navigate) {
+    navigate(loginTarget, { state: { returnUrl, pendingAction } });
+  } else if (typeof window !== 'undefined') {
+    window.location.href = loginTarget;
+  }
+  return false;
 
   return false;
 };

@@ -100,18 +100,7 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link
-                  to={!user ? '/login?redirect=/surgery-packages' : '/surgery-packages'}
-                  onClick={() => {
-                    if (!user) {
-                      try {
-                        sessionStorage.setItem('zestmed_redirect_target', '/surgery-packages');
-                      } catch (_) {}
-                      addToast('Please login to access Surgery Packages', 'info');
-                    }
-                  }}
-                  className="hover:text-white transition"
-                >
+                <Link to="/surgery-packages" className="hover:text-white transition">
                   Surgery Packages
                 </Link>
               </li>
@@ -121,35 +110,13 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link
-                  to={!user ? '/login?redirect=/physiotherapy' : '/physiotherapy'}
-                  onClick={() => {
-                    if (!user) {
-                      try {
-                        sessionStorage.setItem('zestmed_redirect_target', '/physiotherapy');
-                      } catch (_) {}
-                      addToast('Please login to access Physiotherapy', 'info');
-                    }
-                  }}
-                  className="hover:text-white transition"
-                >
+                <Link to="/physiotherapy" className="hover:text-white transition">
                   Physiotherapy
                 </Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link
-                  to={!user ? '/login?redirect=/doctor-appointment' : '/doctor-appointment'}
-                  onClick={() => {
-                    if (!user) {
-                      try {
-                        sessionStorage.setItem('zestmed_redirect_target', '/doctor-appointment');
-                      } catch (_) {}
-                      addToast('Please login to access Doctor Appointments', 'info');
-                    }
-                  }}
-                  className="hover:text-white transition"
-                >
+                <Link to="/doctor-appointment" className="hover:text-white transition">
                   Doctor Appointment
                 </Link>
               </li>

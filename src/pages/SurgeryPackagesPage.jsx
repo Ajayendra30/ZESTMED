@@ -1,7 +1,8 @@
 // src/pages/SurgeryPackagesPage.jsx
 // Pixel-accurate recreation of the exact reference design for ZESTMED Surgery Packages
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   ShieldCheck, Calendar, ArrowRight, Award, Building2, 
   CircleDollarSign, Headphones, Stethoscope, ClipboardList, 
@@ -192,6 +193,17 @@ const SURGERY_CATEGORIES = [
 ];
 
 export default function SurgeryPackagesPage() {
+  const navigate = useNavigate();
+  const { user, openAuth } = useAuth();
+
+  const handlePackageClick = (pkg) => {
+    if (!user) {
+      openAuth('login');
+      return;
+    }
+    navigate(`/surgery-packages/${pkg.slug}`);
+  };
+
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -375,7 +387,10 @@ export default function SurgeryPackagesPage() {
                 key={pkg.id}
                 className="bg-white rounded-3xl border border-slate-200/90 p-3.5 sm:p-4.5 lg:p-4 xl:p-4.5 flex flex-col justify-between hover:shadow-xl hover:border-teal-300 transition duration-300 group shadow-xs"
               >
-                <Link to={`/surgery-packages/${pkg.slug}`} className="block group-hover:opacity-95 transition">
+                <div
+                  onClick={() => handlePackageClick(pkg)}
+                  className="block group-hover:opacity-95 transition cursor-pointer"
+                >
                   {/* Visual Illustration */}
                   <div className="h-28 sm:h-32 lg:h-32 xl:h-36 w-full flex items-center justify-center mb-3 overflow-hidden rounded-2xl bg-slate-50/70 p-1">
                     <img
@@ -392,11 +407,12 @@ export default function SurgeryPackagesPage() {
                   <p className="text-[11px] sm:text-xs text-slate-500 font-medium text-center mt-1">
                     {pkg.subtitle}
                   </p>
-                </Link>
+                </div>
 
                 {/* Starting Price & Action Button linking directly to dedicated detail page */}
-                <Link
-                  to={`/surgery-packages/${pkg.slug}`}
+                <button
+                  type="button"
+                  onClick={() => handlePackageClick(pkg)}
                   className="mt-3.5 sm:mt-4 w-full bg-[#007A64] hover:bg-[#006853] text-white rounded-xl sm:rounded-2xl py-2 px-2.5 sm:px-3 flex items-center justify-between shadow-xs hover:shadow-md transition active:scale-98 cursor-pointer select-none"
                   title={`View details for ${pkg.title}`}
                 >
@@ -407,7 +423,7 @@ export default function SurgeryPackagesPage() {
                   <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                     <ArrowRight className="w-3.5 h-3.5 text-white" />
                   </div>
-                </Link>
+                </button>
               </div>
             ))}
           </div>

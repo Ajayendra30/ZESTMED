@@ -50,15 +50,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
             {/* CTAs - 6 Service Boxes in 2x3 Grid on Mobile, 3x2 on Desktop */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5 pt-1 w-full">
               <Link
-                to={!user ? '/login?redirect=/doctor-appointment' : '/doctor-appointment'}
-                onClick={() => {
-                  if (!user) {
-                    try {
-                      sessionStorage.setItem('zestmed_redirect_target', '/doctor-appointment');
-                    } catch (_) {}
-                    addToast('Please login to access Doctor Appointments', 'info');
-                  }
-                }}
+                to="/doctor-appointment"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Stethoscope className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
@@ -82,15 +74,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               </Link>
 
               <Link
-                to={!user ? '/login?redirect=/physiotherapy' : '/physiotherapy'}
-                onClick={() => {
-                  if (!user) {
-                    try {
-                      sessionStorage.setItem('zestmed_redirect_target', '/physiotherapy');
-                    } catch (_) {}
-                    addToast('Please login to access Physiotherapy', 'info');
-                  }
-                }}
+                to="/physiotherapy"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Activity className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />
@@ -98,15 +82,7 @@ export default function Hero({ onOpenDoctorModal, onOpenPhysioModal, onOpenSurge
               </Link>
 
               <Link
-                to={!user ? '/login?redirect=/surgery-packages' : '/surgery-packages'}
-                onClick={() => {
-                  if (!user) {
-                    try {
-                      sessionStorage.setItem('zestmed_redirect_target', '/surgery-packages');
-                    } catch (_) {}
-                    addToast('Please login to access Surgery Packages', 'info');
-                  }
-                }}
+                to="/surgery-packages"
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-300/90 px-2 sm:px-3 py-2 sm:py-3 rounded-2xl font-bold text-[11.5px] xs:text-xs sm:text-[13.5px] leading-tight flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 shadow-xs transition hover:shadow-md hover:border-teal-300 text-center min-h-[48px] sm:min-h-[52px] cursor-pointer"
               >
                 <Scissors className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#008F83] shrink-0" />

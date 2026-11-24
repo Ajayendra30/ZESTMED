@@ -51,30 +51,15 @@ export default function Home({
   const setSeniorOpen = externalSetSeniorOpen || setLocalSeniorOpen;
 
   const handleOpenDoctor = () => {
-    if (!user) {
-      addToast('Please login to access Doctor Appointments', 'info');
-      navigate('/login?redirect=/doctor-appointment');
-    } else {
-      setDoctorOpen(true);
-    }
+    navigate('/doctor-appointment');
   };
 
   const handleOpenPhysio = () => {
-    if (!user) {
-      addToast('Please login to access Physiotherapy', 'info');
-      navigate('/login?redirect=/physiotherapy');
-    } else {
-      setPhysioOpen(true);
-    }
+    navigate('/physiotherapy');
   };
 
   const handleOpenSurgery = () => {
-    if (!user) {
-      addToast('Please login to access Surgery Packages', 'info');
-      navigate('/login?redirect=/surgery-packages');
-    } else {
-      navigate('/surgery-packages');
-    }
+    navigate('/surgery-packages');
   };
 
   return (
