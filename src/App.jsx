@@ -82,13 +82,15 @@ function AppContent() {
   if (location.pathname.startsWith('/admin') || activeSubdomain === 'admin') {
     return (
       <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
-        <Routes>
-          <Route path="/admin" element={<AdminDashboardPage />} />
-          <Route path="/admin/*" element={<AdminDashboardPage />} />
-          <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
-          <Route path="*" element={<AdminDashboardPage />} />
-        </Routes>
-        <ToastContainer />
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/*" element={<AdminDashboardPage />} />
+            <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+            <Route path="*" element={<AdminDashboardPage />} />
+          </Routes>
+          <ToastContainer />
+        </ErrorBoundary>
       </div>
     );
   }
@@ -116,13 +118,15 @@ function AppContent() {
   if (!isConsumerDiagnosticPath && (isLabExecutivePath || activeSubdomain === 'lab')) {
     return (
       <div className="h-screen w-full overflow-hidden bg-[#F4F7FB]">
-        <Routes>
-          <Route path="/lab" element={<LabDashboardPage />} />
-          <Route path="/lab/*" element={<LabDashboardPage />} />
-          <Route path="/lab-dashboard" element={<LabDashboardPage />} />
-          <Route path="*" element={<LabDashboardPage />} />
-        </Routes>
-        <ToastContainer />
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/lab" element={<LabDashboardPage />} />
+            <Route path="/lab/*" element={<LabDashboardPage />} />
+            <Route path="/lab-dashboard" element={<LabDashboardPage />} />
+            <Route path="*" element={<LabDashboardPage />} />
+          </Routes>
+          <ToastContainer />
+        </ErrorBoundary>
       </div>
     );
   }
