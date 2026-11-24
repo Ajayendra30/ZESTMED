@@ -134,14 +134,40 @@ export default function AuthPage() {
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const rawReturnParam = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || location.state?.returnUrl;
+  const rawReturnParam =
+    searchParams.get('returnUrl') ||
+    searchParams.get('redirect') ||
+    location.state?.from ||
+    location.state?.returnUrl ||
+    (typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : null);
+
+  // Synchronize target service URL in sessionStorage
+  useEffect(() => {
+    if (rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth') && !rawReturnParam.startsWith('/register')) {
+      try {
+        sessionStorage.setItem('zestmed_redirect_target', rawReturnParam);
+      } catch (_) {}
+    }
+  }, [rawReturnParam]);
+
+  // If already logged in and a target service URL exists, redirect immediately
+  useEffect(() => {
+    if (user && rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth') && !rawReturnParam.startsWith('/register')) {
+      try {
+        sessionStorage.removeItem('zestmed_redirect_target');
+      } catch (_) {}
+      navigate(rawReturnParam, { replace: true });
+    }
+  }, [user, rawReturnParam, navigate]);
+
+  const targetForPrompt = rawReturnParam || (typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : '') || '';
+  const servicePromptName = 
+    targetForPrompt.includes('doctor') ? 'Doctor Appointment' :
+    targetForPrompt.includes('physio') ? 'Physiotherapy' :
+    (targetForPrompt.includes('surger') || targetForPrompt.includes('package')) ? 'Surgery Packages' : null;
 
   const handleDismiss = () => {
-    if (rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth')) {
-      navigate(rawReturnParam, { replace: true });
-    } else {
-      navigate(-1);
-    }
+    navigate('/', { replace: true });
   };
 
   // If already logged in, show status
@@ -395,8 +421,21 @@ export default function AuthPage() {
       console.warn('Failed restoring pending cart item:', e);
     }
 
-    // 2. Regular users must be redirected to the Home page ('/')
-    navigate('/', { replace: true });
+    // 2. Redirect back to originally selected service page, or Home ('/') as fallback
+    let target = '/';
+    const savedTarget = typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : null;
+
+    if (rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth') && !rawReturnParam.startsWith('/register')) {
+      target = rawReturnParam;
+    } else if (savedTarget && !savedTarget.startsWith('/login') && !savedTarget.startsWith('/auth') && !savedTarget.startsWith('/register')) {
+      target = savedTarget;
+    }
+
+    try {
+      sessionStorage.removeItem('zestmed_redirect_target');
+    } catch (_) {}
+
+    navigate(target, { replace: true });
   };
 
   const handleChangeNumber = () => {
@@ -460,6 +499,14 @@ export default function AuthPage() {
                   Enter your 10-digit mobile number to receive a 6-digit OTP.
                 </p>
               </div>
+
+              {/* Service Login Requirement Notice */}
+              {servicePromptName && (
+                <div className="p-3 rounded-2xl bg-teal-50 border border-teal-200 text-[#007A64] text-xs font-semibold flex items-center gap-2.5 shadow-2xs text-left">
+                  <ShieldCheck className="w-4.5 h-4.5 text-[#007A64] shrink-0" />
+                  <span>Please login to access and use {servicePromptName}.</span>
+                </div>
+              )}
 
               {/* Lockout Warning */}
               {lockoutStatus.isLocked && (

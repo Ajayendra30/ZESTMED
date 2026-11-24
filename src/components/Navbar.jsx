@@ -536,10 +536,27 @@ export default function Navbar({
                   ? routerLocation.pathname === '/diagnostics' || routerLocation.pathname === '/lab-tests' || routerLocation.pathname === '/labtests' || routerLocation.pathname === '/lab-test'
                   : routerLocation.pathname === link.href;
 
+                const isProtectedService =
+                  link.href === '/surgery-packages' ||
+                  link.href === '/physiotherapy' ||
+                  link.href === '/doctor-appointment';
+
+                const targetHref = (!user && isProtectedService)
+                  ? `/login?redirect=${encodeURIComponent(link.href)}`
+                  : link.href;
+
                 return (
                   <Link
                     key={link.name}
-                    to={link.href}
+                    to={targetHref}
+                    onClick={() => {
+                      if (!user && isProtectedService) {
+                        try {
+                          sessionStorage.setItem('zestmed_redirect_target', link.href);
+                        } catch (_) {}
+                        addToast(`Please login to access and use ${link.name}`, 'info');
+                      }
+                    }}
                     className={`px-1.5 xl:px-2 2xl:px-3 py-2 text-xs 2xl:text-sm font-semibold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap relative ${
                       isCurrentActive
                         ? 'text-[#008F83] font-bold'
@@ -756,11 +773,28 @@ export default function Navbar({
                   ? routerLocation.pathname === '/diagnostics' || routerLocation.pathname === '/lab-tests' || routerLocation.pathname === '/labtests' || routerLocation.pathname === '/lab-test'
                   : routerLocation.pathname === link.href;
 
+                const isProtectedService =
+                  link.href === '/surgery-packages' ||
+                  link.href === '/physiotherapy' ||
+                  link.href === '/doctor-appointment';
+
+                const targetHref = (!user && isProtectedService)
+                  ? `/login?redirect=${encodeURIComponent(link.href)}`
+                  : link.href;
+
                 return (
                   <Link
                     key={link.name}
-                    to={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
+                    to={targetHref}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (!user && isProtectedService) {
+                        try {
+                          sessionStorage.setItem('zestmed_redirect_target', link.href);
+                        } catch (_) {}
+                        addToast(`Please login to access and use ${link.name}`, 'info');
+                      }
+                    }}
                     className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-between ${
                       isMobileActive
                         ? 'bg-teal-50 text-[#008F83] font-bold'

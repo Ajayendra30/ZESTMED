@@ -2,6 +2,8 @@
 // Complete combined ZESTMED homepage following the 11 major healthcare specifications
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import Hero from '../components/Hero';
 import SearchSection from '../components/SearchSection';
 import PopularMedicinesAndTests from '../components/PopularMedicinesAndTests';
@@ -36,6 +38,9 @@ export default function Home({
   const [localPhysioOpen, setLocalPhysioOpen] = useState(false);
   const [localSeniorOpen, setLocalSeniorOpen] = useState(false);
 
+  const { user } = useAuth();
+  const { addToast } = useToast();
+
   const isDoctorOpen = externalDoctorOpen !== undefined ? externalDoctorOpen : localDoctorOpen;
   const setDoctorOpen = externalSetDoctorOpen || setLocalDoctorOpen;
 
@@ -45,13 +50,40 @@ export default function Home({
   const isSeniorOpen = externalSeniorOpen !== undefined ? externalSeniorOpen : localSeniorOpen;
   const setSeniorOpen = externalSetSeniorOpen || setLocalSeniorOpen;
 
+  const handleOpenDoctor = () => {
+    if (!user) {
+      addToast('Please login to access Doctor Appointments', 'info');
+      navigate('/login?redirect=/doctor-appointment');
+    } else {
+      setDoctorOpen(true);
+    }
+  };
+
+  const handleOpenPhysio = () => {
+    if (!user) {
+      addToast('Please login to access Physiotherapy', 'info');
+      navigate('/login?redirect=/physiotherapy');
+    } else {
+      setPhysioOpen(true);
+    }
+  };
+
+  const handleOpenSurgery = () => {
+    if (!user) {
+      addToast('Please login to access Surgery Packages', 'info');
+      navigate('/login?redirect=/surgery-packages');
+    } else {
+      navigate('/surgery-packages');
+    }
+  };
+
   return (
     <main className="min-h-screen bg-white">
       {/* 1. Hero Section with Lab Tests in #1 Order & Single-Day Reports */}
       <Hero
-        onOpenDoctorModal={() => setDoctorOpen(true)}
-        onOpenPhysioModal={() => setPhysioOpen(true)}
-        onOpenSurgeryModal={() => navigate('/surgery-packages')}
+        onOpenDoctorModal={handleOpenDoctor}
+        onOpenPhysioModal={handleOpenPhysio}
+        onOpenSurgeryModal={handleOpenSurgery}
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 
@@ -61,9 +93,9 @@ export default function Home({
         onSelectProduct={(product) => setSelectedProduct(product)}
         onSelectTest={(test) => setSelectedTest(test)}
         onSelectPackage={(pkg) => setSelectedPackage(pkg)}
-        onOpenDoctorModal={() => setDoctorOpen(true)}
-        onOpenPhysioModal={() => setPhysioOpen(true)}
-        onOpenSurgeryModal={() => navigate('/surgery-packages')}
+        onOpenDoctorModal={handleOpenDoctor}
+        onOpenPhysioModal={handleOpenPhysio}
+        onOpenSurgeryModal={handleOpenSurgery}
         onOpenSeniorPickup={() => setSeniorOpen(true)}
       />
 

@@ -341,8 +341,19 @@ export default function AuthModal() {
 
     handleClose();
 
-    // 3. Regular users are always redirected to the Home page ('/')
-    navigate('/');
+    // 3. Redirect back to originally selected service page if present, otherwise Home ('/')
+    let target = '/';
+    const savedTarget = typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : null;
+
+    if (savedTarget && !savedTarget.startsWith('/login') && !savedTarget.startsWith('/auth') && !savedTarget.startsWith('/register')) {
+      target = savedTarget;
+    }
+
+    try {
+      sessionStorage.removeItem('zestmed_redirect_target');
+    } catch (_) {}
+
+    navigate(target, { replace: true });
   };
 
   const handleClose = () => {

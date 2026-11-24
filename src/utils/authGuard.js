@@ -100,8 +100,29 @@ export const enforceAuth = ({
     }
   }
 
-  // Open the Login option right on the SAME page where the user clicked Book Now.
-  // Never redirect the user to the homepage or away from the service page.
+  // For core protected services (Doctor Appointments, Physiotherapy, Surgery Packages),
+  // always redirect directly to the dedicated Login page with return target.
+  const isCoreProtectedService = 
+    returnUrl.includes('doctor') || 
+    returnUrl.includes('physio') || 
+    returnUrl.includes('surgery') || 
+    returnUrl.includes('packages');
+
+  if (isCoreProtectedService || !openInModal) {
+    try {
+      sessionStorage.setItem('zestmed_redirect_target', returnUrl);
+    } catch (_) {}
+
+    const loginTarget = `/login?redirect=${encodeURIComponent(returnUrl)}`;
+    if (navigate) {
+      navigate(loginTarget, { state: { returnUrl, pendingAction } });
+    } else if (typeof window !== 'undefined') {
+      window.location.href = loginTarget;
+    }
+    return false;
+  }
+
+  // Open the Login option right on the SAME page where the user clicked Book Now for other items.
   if (openInModal) {
     if (typeof openAuth === 'function') {
       openAuth('login');
@@ -111,14 +132,6 @@ export const enforceAuth = ({
       }));
     }
     return false;
-  }
-
-  // Fallback if modal is explicitly disabled
-  const loginTarget = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
-  if (navigate) {
-    navigate(loginTarget, { state: { returnUrl, pendingAction } });
-  } else if (typeof window !== 'undefined') {
-    window.location.href = loginTarget;
   }
 
   return false;

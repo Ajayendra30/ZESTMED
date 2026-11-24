@@ -28,6 +28,7 @@ import PhysiotherapyDetailPage from './pages/PhysiotherapyDetailPage';
 import PhysiotherapyBookingPage from './pages/PhysiotherapyBookingPage';
 import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import BookDoctorModal from './components/BookDoctorModal';
 import BookPhysioModal from './components/BookPhysioModal';
 import SeniorCitizenPickUpModal from './components/SeniorCitizenPickUpModal';
@@ -162,9 +163,30 @@ function AppContent() {
       <Navbar
         onOpenPrescriptionModal={handleOpenPrescriptionRequest}
         onSearchFocus={handleSearchFocus}
-        onOpenDoctorModal={() => setIsDoctorModalOpen(true)}
-        onOpenPhysioModal={() => setIsPhysioModalOpen(true)}
-        onOpenSurgeryModal={() => navigate('/surgery-packages')}
+        onOpenDoctorModal={() => {
+          if (!user) {
+            addToast('Please login to access Doctor Appointments', 'info');
+            navigate('/login?redirect=/doctor-appointment');
+          } else {
+            setIsDoctorModalOpen(true);
+          }
+        }}
+        onOpenPhysioModal={() => {
+          if (!user) {
+            addToast('Please login to access Physiotherapy', 'info');
+            navigate('/login?redirect=/physiotherapy');
+          } else {
+            setIsPhysioModalOpen(true);
+          }
+        }}
+        onOpenSurgeryModal={() => {
+          if (!user) {
+            addToast('Please login to access Surgery Packages', 'info');
+            navigate('/login?redirect=/surgery-packages');
+          } else {
+            navigate('/surgery-packages');
+          }
+        }}
         onOpenSeniorPickup={() => setIsSeniorPickupOpen(true)}
       />
 
@@ -199,30 +221,35 @@ function AppContent() {
           <Route path="/lab-tests" element={<DiagnosticPortalPage />} />
           <Route path="/labtests" element={<DiagnosticPortalPage />} />
           <Route path="/lab-test" element={<DiagnosticPortalPage />} />
-          <Route path="/surgery-packages" element={<SurgeryPackagesPage />} />
-          <Route path="/surgery-packages/:id" element={<SurgeryDetailPage />} />
-          <Route path="/surgeries" element={<SurgeryPackagesPage />} />
-          <Route path="/surgeries/:id" element={<SurgeryDetailPage />} />
-          <Route path="/surgery/:id" element={<SurgeryDetailPage />} />
-          <Route path="/packages" element={<SurgeryPackagesPage />} />
+          {/* 1. Surgery Packages (Protected: Login Required) */}
+          <Route path="/surgery-packages" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryPackagesPage /></ProtectedRoute>} />
+          <Route path="/surgery-packages/:id" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryDetailPage /></ProtectedRoute>} />
+          <Route path="/surgeries" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryPackagesPage /></ProtectedRoute>} />
+          <Route path="/surgeries/:id" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryDetailPage /></ProtectedRoute>} />
+          <Route path="/surgery/:id" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryDetailPage /></ProtectedRoute>} />
+          <Route path="/packages" element={<ProtectedRoute serviceName="Surgery Packages"><SurgeryPackagesPage /></ProtectedRoute>} />
           <Route path="/health-packages" element={<HealthPackagesPage />} />
           <Route path="/wellness-packages" element={<WellnessPackagesPage />} />
           <Route path="/wellness" element={<WellnessPackagesPage />} />
-          <Route path="/doctor-appointment" element={<DoctorAppointmentPage />} />
-          <Route path="/doctors" element={<DoctorAppointmentPage />} />
-          <Route path="/doctor" element={<DoctorAppointmentPage />} />
-          <Route path="/book-doctor" element={<BookDoctorPage />} />
-          <Route path="/book-doctor-appointment" element={<BookDoctorPage />} />
-          <Route path="/book-appointment" element={<BookDoctorPage />} />
-          <Route path="/physiotherapy" element={<PhysiotherapyPage />} />
-          <Route path="/physio" element={<PhysiotherapyPage />} />
-          <Route path="/physiotherapist" element={<PhysiotherapyPage />} />
-          <Route path="/physiotherapy/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physio/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physiotherapy-service/:id" element={<PhysiotherapyDetailPage />} />
-          <Route path="/physiotherapy/:id/book" element={<PhysiotherapyBookingPage />} />
-          <Route path="/book-physiotherapy" element={<PhysiotherapyBookingPage />} />
-          <Route path="/book-physiotherapy/:id" element={<PhysiotherapyBookingPage />} />
+
+          {/* 2. Doctor Appointment (Protected: Login Required) */}
+          <Route path="/doctor-appointment" element={<ProtectedRoute serviceName="Doctor Appointment"><DoctorAppointmentPage /></ProtectedRoute>} />
+          <Route path="/doctors" element={<ProtectedRoute serviceName="Doctor Appointment"><DoctorAppointmentPage /></ProtectedRoute>} />
+          <Route path="/doctor" element={<ProtectedRoute serviceName="Doctor Appointment"><DoctorAppointmentPage /></ProtectedRoute>} />
+          <Route path="/book-doctor" element={<ProtectedRoute serviceName="Doctor Appointment"><BookDoctorPage /></ProtectedRoute>} />
+          <Route path="/book-doctor-appointment" element={<ProtectedRoute serviceName="Doctor Appointment"><BookDoctorPage /></ProtectedRoute>} />
+          <Route path="/book-appointment" element={<ProtectedRoute serviceName="Doctor Appointment"><BookDoctorPage /></ProtectedRoute>} />
+
+          {/* 3. Physiotherapy (Protected: Login Required) */}
+          <Route path="/physiotherapy" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyPage /></ProtectedRoute>} />
+          <Route path="/physio" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyPage /></ProtectedRoute>} />
+          <Route path="/physiotherapist" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyPage /></ProtectedRoute>} />
+          <Route path="/physiotherapy/:id" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyDetailPage /></ProtectedRoute>} />
+          <Route path="/physio/:id" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyDetailPage /></ProtectedRoute>} />
+          <Route path="/physiotherapy-service/:id" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyDetailPage /></ProtectedRoute>} />
+          <Route path="/physiotherapy/:id/book" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyBookingPage /></ProtectedRoute>} />
+          <Route path="/book-physiotherapy" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyBookingPage /></ProtectedRoute>} />
+          <Route path="/book-physiotherapy/:id" element={<ProtectedRoute serviceName="Physiotherapy"><PhysiotherapyBookingPage /></ProtectedRoute>} />
           <Route path="/patient-dashboard" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
           <Route path="/patient-dashboard/*" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
           <Route path="/patient" element={<PatientDashboardPage onOpenPrescriptionModal={handleOpenPrescriptionRequest} />} />
