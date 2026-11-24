@@ -400,20 +400,6 @@ export default function NotificationPopover({
               </div>
             )}
           </div>
-
-          {/* Bottom Action Footer for 1-click Read */}
-          {unreadCount > 0 && (
-            <div className="p-2 border-t border-slate-100 bg-slate-50/60 text-center">
-              <button
-                type="button"
-                onClick={handleMarkAllAsRead}
-                className="w-full py-1.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#008F83] text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <CheckCheck className="w-4 h-4 stroke-[2.2]" />
-                <span>Mark all as read ({unreadCount})</span>
-              </button>
-            </div>
-          )}
         </div>
       )}
 
