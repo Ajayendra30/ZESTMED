@@ -160,6 +160,11 @@ export const AuthProvider = ({ children }) => {
       city: extraData.city || registered?.city || 'Guwahati, Assam'
     };
 
+    try {
+      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      createAuthSession(userObj);
+    } catch (_) {}
+
     setUser(userObj);
     setIsAuthModalOpen(false);
 
@@ -201,6 +206,11 @@ export const AuthProvider = ({ children }) => {
 
     // Save strictly to registry (enforcing 1 number -> 1 user)
     saveRegisteredPatient(clean, userObj.name, userObj);
+    try {
+      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      createAuthSession(userObj);
+    } catch (_) {}
+
     setUser(userObj);
     setIsAuthModalOpen(false);
 
@@ -214,7 +224,7 @@ export const AuthProvider = ({ children }) => {
       reason: 'New user profile completed'
     });
 
-    addToast(`Profile setup complete. Welcome, ${userObj.name}!`, 'success');
+    addToast(`Welcome to ZESTMED, ${userObj.name}!`, 'success');
     return userObj;
   };
 
@@ -232,6 +242,11 @@ export const AuthProvider = ({ children }) => {
       authMethod: 'google',
       memberSince: 'Nov 2026',
     };
+    try {
+      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      createAuthSession(userObj);
+    } catch (_) {}
+
     setUser(userObj);
     setIsAuthModalOpen(false);
 
@@ -245,7 +260,7 @@ export const AuthProvider = ({ children }) => {
       reason: 'Google Sign-In successful'
     });
 
-    addToast(`Signed in with Google as ${userObj.name}`, 'success');
+    addToast(`Welcome to ZESTMED, ${userObj.name}!`, 'success');
     return userObj;
   };
 

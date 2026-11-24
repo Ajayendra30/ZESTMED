@@ -310,14 +310,16 @@ export default function AuthModal() {
 
   // Post Login Redirection & Restoration
   const handlePostLoginFlow = (loggedInUser) => {
-    // 1. Restore pending cart item
+    let restoredCartItemId = null;
+    // 1. Restore pending cart item silently so ONLY the personalized welcome message is shown
     try {
       const pendingRaw = sessionStorage.getItem('zestmed_pending_cart_item');
       if (pendingRaw) {
         const parsed = JSON.parse(pendingRaw);
         sessionStorage.removeItem('zestmed_pending_cart_item');
         if (parsed?.item) {
-          addItem(parsed.item, parsed.itemType || 'medicine');
+          restoredCartItemId = parsed.item.id;
+          addItem(parsed.item, parsed.itemType || 'medicine', { silent: true, user: loggedInUser });
         }
       }
     } catch (e) {
@@ -329,9 +331,11 @@ export default function AuthModal() {
       const pendingActionRaw = sessionStorage.getItem('zestmed_pending_action');
       if (pendingActionRaw) {
         const parsed = JSON.parse(pendingActionRaw);
+        sessionStorage.removeItem('zestmed_pending_action');
         if (parsed?.type === 'add_to_cart' && parsed?.item) {
-          sessionStorage.removeItem('zestmed_pending_action');
-          addItem(parsed.item, parsed.itemType || 'medicine');
+          if (!restoredCartItemId || restoredCartItemId !== parsed.item.id) {
+            addItem(parsed.item, parsed.itemType || 'medicine', { silent: true, user: loggedInUser });
+          }
         }
         window.dispatchEvent(new CustomEvent('zestmed:resume-action', { detail: parsed }));
       }

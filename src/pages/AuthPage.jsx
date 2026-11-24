@@ -398,25 +398,44 @@ export default function AuthPage() {
 
   // Post login navigation
   const handlePostLoginRedirect = (loggedInUser) => {
-    // 1. Restore pending cart item
+    let restoredCartItemId = null;
+    // 1. Restore pending cart item silently so ONLY the personalized welcome message is shown
     try {
       const pendingRaw = sessionStorage.getItem('zestmed_pending_cart_item');
       if (pendingRaw) {
         const parsed = JSON.parse(pendingRaw);
         sessionStorage.removeItem('zestmed_pending_cart_item');
         if (parsed?.item) {
-          addItem(parsed.item, parsed.itemType || 'medicine');
+          restoredCartItemId = parsed.item.id;
+          addItem(parsed.item, parsed.itemType || 'medicine', { silent: true, user: loggedInUser });
         }
       }
     } catch (e) {
       console.warn('Failed restoring pending cart item:', e);
     }
 
+    // 2. Restore pending booking action
+    try {
+      const pendingActionRaw = sessionStorage.getItem('zestmed_pending_action');
+      if (pendingActionRaw) {
+        const parsed = JSON.parse(pendingActionRaw);
+        sessionStorage.removeItem('zestmed_pending_action');
+        if (parsed?.type === 'add_to_cart' && parsed?.item) {
+          if (!restoredCartItemId || restoredCartItemId !== parsed.item.id) {
+            addItem(parsed.item, parsed.itemType || 'medicine', { silent: true, user: loggedInUser });
+          }
+        }
+        window.dispatchEvent(new CustomEvent('zestmed:resume-action', { detail: parsed }));
+      }
+    } catch (e) {
+      console.warn('Failed restoring pending action:', e);
+    }
+
     try {
       sessionStorage.removeItem('zestmed_redirect_target');
     } catch (_) {}
 
-    // 2. Always redirect user to the Homepage upon successful login
+    // 3. Always redirect user to the Homepage upon successful login
     navigate('/', { replace: true });
   };
 

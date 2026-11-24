@@ -133,7 +133,7 @@ export const CartProvider = ({ children }) => {
 
   const addItem = (item, type = 'medicine', options = {}) => {
     // 1. Mandatory Login Check
-    const activeUser = user || getAuthenticatedUser();
+    const activeUser = options.user || user || getAuthenticatedUser();
     if (!activeUser) {
       // Save pending cart item to resume immediately after login
       try {
@@ -143,8 +143,6 @@ export const CartProvider = ({ children }) => {
           timestamp: Date.now()
         }));
       } catch (_) {}
-
-      addToast('Please login to add items to your cart', 'info');
 
       // Open Login Modal on the same page without navigating away
       if (typeof window !== 'undefined') {
@@ -162,10 +160,14 @@ export const CartProvider = ({ children }) => {
       updated = cartItems.map((i, idx) => 
         idx === existingIndex ? { ...i, quantity: (Number(i.quantity) || 1) + 1 } : i
       );
-      addToast(`Updated quantity for "${item.name}"`, 'info');
+      if (!options.silent) {
+        addToast(`Updated quantity for "${item.name}"`, 'info');
+      }
     } else {
       updated = [...cartItems, { ...item, itemType: type, quantity: 1 }];
-      addToast(`Added "${item.name}" to cart!`, 'success');
+      if (!options.silent) {
+        addToast(`Added "${item.name}" to cart!`, 'success');
+      }
     }
 
     setCartItems(updated);
