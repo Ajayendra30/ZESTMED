@@ -1759,9 +1759,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         </div>
 
         {/* Bottom Sidebar Help Card with Doctor Assistant */}
-        <div className="p-3.5 pt-12 sm:pt-14 shrink-0 relative z-10">
-          <div className="rounded-2xl p-4 sm:p-4.5 bg-gradient-to-br from-[#123053] via-[#0E2845] to-[#0A1C30] border border-blue-400/20 relative shadow-xl">
-            <div className="relative z-10 max-w-[120px] sm:max-w-[125px]">
+        <div className="px-3 pb-3 pt-3 sm:pt-4 shrink-0 relative z-10">
+          <div className="rounded-2xl p-4.5 sm:p-5 min-h-[168px] sm:min-h-[178px] flex flex-col justify-between bg-gradient-to-br from-[#123053] via-[#0E2845] to-[#0A1C30] border border-blue-400/20 relative shadow-xl">
+            <div className="relative z-10 max-w-[118px] sm:max-w-[124px]">
               <div className="text-white font-extrabold text-xs sm:text-sm tracking-tight">Need Help?</div>
               <p className="text-slate-300 text-[10.5px] sm:text-xs leading-tight mt-1 font-medium">
                 Talk to our Health Assistant
