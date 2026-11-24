@@ -264,11 +264,11 @@ export default function WellnessPackagesPage() {
             </div>
 
             {/* Center Column: Family Image with Glowing Shield (Single Image) - Matched to Surgery Packages dimensions */}
-            <div className="flex-1 w-full flex items-end justify-center relative select-none pointer-events-none self-end z-10 min-w-0 -mb-[1px]">
+            <div className="w-full lg:w-auto flex-1 flex items-end justify-center relative select-none pointer-events-none self-end z-10 min-w-0 -mb-[1px]">
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="h-auto max-h-[340px] xs:max-h-[380px] sm:max-h-[440px] md:max-h-[480px] lg:max-h-[520px] xl:max-h-[560px] 2xl:max-h-[620px] w-auto max-w-full object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
+                className="h-auto max-h-[340px] xs:max-h-[380px] sm:max-h-[440px] md:max-h-[480px] lg:h-[485px] xl:h-[525px] 2xl:h-[565px] lg:max-h-none w-auto max-w-full lg:max-w-none object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
               />
               {/* Soft bottom edge feathering on mobile view to eliminate any abrupt cutoffs */}
               <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[#EBF9F5] to-transparent pointer-events-none lg:hidden" />
