@@ -476,7 +476,9 @@ export const createAuthSession = (user) => {
   };
 
   try {
-    localStorage.setItem('zestmed_auth_session', JSON.stringify(sessionData));
+    sessionStorage.setItem('zestmed_auth_session', JSON.stringify(sessionData));
+    localStorage.removeItem('zestmed_auth_session');
+    localStorage.removeItem('zestmed_user');
   } catch {}
 
   return sessionData;
@@ -484,7 +486,7 @@ export const createAuthSession = (user) => {
 
 export const validateAuthSession = () => {
   try {
-    const raw = localStorage.getItem('zestmed_auth_session');
+    const raw = sessionStorage.getItem('zestmed_auth_session');
     if (!raw) return { isValid: false, reason: 'NO_SESSION' };
     const session = JSON.parse(raw);
     if (!session || !session.expiresAt) return { isValid: false, reason: 'INVALID_SESSION' };
@@ -503,6 +505,8 @@ export const validateAuthSession = () => {
 
 export const terminateAuthSession = () => {
   try {
+    sessionStorage.removeItem('zestmed_auth_session');
+    sessionStorage.removeItem('zestmed_user');
     localStorage.removeItem('zestmed_auth_session');
     localStorage.removeItem('zestmed_user');
   } catch {}

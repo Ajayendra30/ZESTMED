@@ -13,7 +13,8 @@
 
 export const getAuthenticatedUser = () => {
   try {
-    const raw = localStorage.getItem('zestmed_user');
+    // Tab-isolated session: read exclusively from sessionStorage
+    const raw = sessionStorage.getItem('zestmed_user');
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === 'object' && (parsed.id || parsed.phone || parsed.contact)) {

@@ -361,7 +361,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   useEffect(() => {
     if (!user) {
       try {
-        const storedUser = localStorage.getItem('zestmed_user');
+        const storedUser = sessionStorage.getItem('zestmed_user');
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
           if (parsed && updateUser) {
@@ -382,7 +382,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           age: 34,
           gender: 'Male'
         };
-        localStorage.setItem('zestmed_user', JSON.stringify(defaultPatient));
+        sessionStorage.setItem('zestmed_user', JSON.stringify(defaultPatient));
+        localStorage.removeItem('zestmed_user');
         if (updateUser) {
           updateUser(defaultPatient);
         }

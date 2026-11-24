@@ -26,7 +26,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       purgeRahulVermaFromStorage();
-      const saved = localStorage.getItem('zestmed_user');
+      // Ensure legacy localStorage sessions are purged so other tabs aren't contaminated
+      localStorage.removeItem('zestmed_user');
+      localStorage.removeItem('zestmed_auth_session');
+
+      // Tab-isolated session: read exclusively from sessionStorage
+      const saved = sessionStorage.getItem('zestmed_user');
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === 'object') {
@@ -88,14 +93,15 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  // Sync user state with localStorage and active session
+  // Sync user state with sessionStorage and active tab session
   useEffect(() => {
     try {
       if (user) {
-        localStorage.setItem('zestmed_user', JSON.stringify(user));
+        sessionStorage.setItem('zestmed_user', JSON.stringify(user));
         createAuthSession(user);
-      } else {
         localStorage.removeItem('zestmed_user');
+      } else {
+        sessionStorage.removeItem('zestmed_user');
         terminateAuthSession();
       }
     } catch (e) {
@@ -161,8 +167,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      sessionStorage.setItem('zestmed_user', JSON.stringify(userObj));
       createAuthSession(userObj);
+      localStorage.removeItem('zestmed_user');
+      localStorage.removeItem('zestmed_auth_session');
     } catch (_) {}
 
     setUser(userObj);
@@ -207,8 +215,10 @@ export const AuthProvider = ({ children }) => {
     // Save strictly to registry (enforcing 1 number -> 1 user)
     saveRegisteredPatient(clean, userObj.name, userObj);
     try {
-      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      sessionStorage.setItem('zestmed_user', JSON.stringify(userObj));
       createAuthSession(userObj);
+      localStorage.removeItem('zestmed_user');
+      localStorage.removeItem('zestmed_auth_session');
     } catch (_) {}
 
     setUser(userObj);
@@ -243,8 +253,10 @@ export const AuthProvider = ({ children }) => {
       memberSince: 'Nov 2026',
     };
     try {
-      localStorage.setItem('zestmed_user', JSON.stringify(userObj));
+      sessionStorage.setItem('zestmed_user', JSON.stringify(userObj));
       createAuthSession(userObj);
+      localStorage.removeItem('zestmed_user');
+      localStorage.removeItem('zestmed_auth_session');
     } catch (_) {}
 
     setUser(userObj);
@@ -285,10 +297,12 @@ export const AuthProvider = ({ children }) => {
 
     terminateAuthSession();
     setUser(null);
+    sessionStorage.removeItem('zestmed_user');
+    sessionStorage.removeItem('zestmed_auth_session');
     localStorage.removeItem('zestmed_user');
     localStorage.removeItem('zestmed_auth_session');
 
-    // Notify other components
+    // Notify other components in this tab
     window.dispatchEvent(new CustomEvent('zestmed:logout'));
 
     if (wasExpired) {
@@ -302,7 +316,8 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => {
       const updated = { ...(prev || {}), ...updatedFields };
       try {
-        localStorage.setItem('zestmed_user', JSON.stringify(updated));
+        sessionStorage.setItem('zestmed_user', JSON.stringify(updated));
+        localStorage.removeItem('zestmed_user');
       } catch (e) {
         console.error(e);
       }

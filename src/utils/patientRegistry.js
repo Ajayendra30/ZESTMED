@@ -79,14 +79,17 @@ export function normalizePhone(phone) {
 
 export function purgeRahulVermaFromStorage() {
   try {
-    // 1. Clean zestmed_user
-    const storedUser = localStorage.getItem('zestmed_user');
+    // 1. Clean zestmed_user in sessionStorage and purge from localStorage
+    localStorage.removeItem('zestmed_user');
+    localStorage.removeItem('zestmed_auth_session');
+
+    const storedUser = sessionStorage.getItem('zestmed_user');
     if (storedUser) {
       const u = JSON.parse(storedUser);
       if (u?.name === 'Rahul Verma' || (u?.email && u.email.includes('rahul.verma'))) {
         u.name = 'Ajayendra Shekhar';
         u.email = u.email ? u.email.replace(/rahul\.verma/gi, 'ajayendra.shekhar') : 'ajayendra.shekhar@zestmed.com';
-        localStorage.setItem('zestmed_user', JSON.stringify(u));
+        sessionStorage.setItem('zestmed_user', JSON.stringify(u));
       }
     }
 
@@ -140,7 +143,7 @@ export function purgeRahulVermaFromStorage() {
     // Resolve current active logged-in user name
     let activeName = '';
     try {
-      const u = JSON.parse(localStorage.getItem('zestmed_user') || '{}');
+      const u = JSON.parse(sessionStorage.getItem('zestmed_user') || '{}');
       if (u?.name && u.name !== 'Verified Patient' && u.name !== 'Rahul Verma') {
         activeName = u.name;
       }
