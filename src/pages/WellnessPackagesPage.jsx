@@ -164,6 +164,77 @@ const CATEGORIES_DATA = [
   }
 ];
 
+// =========================================================================
+// 4 Specific Feature Icons matching Reference Image 2
+// =========================================================================
+
+function HeartPulseIcon({ className = "w-5 h-5 text-[#00A67E]" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      <path d="M3.22 12H9.5l1.5-3 2 6.5 1.5-3.5h6.28" />
+    </svg>
+  );
+}
+
+function ClipboardCheckIcon({ className = "w-5 h-5 text-[#00A67E]" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="m9 14 2 2 4-4" />
+    </svg>
+  );
+}
+
+function DoctorExpertIcon({ className = "w-5 h-5 text-[#00A67E]" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5.5 9.5a6.5 6.5 0 0 1 13 0v1h-13v-1Z" />
+      <path d="M4.5 10.5h15" />
+      <path d="M12 4.5v3" />
+      <path d="M10.5 6h3" />
+      <path d="M7.5 11v1a4.5 4.5 0 0 0 9 0v-1" />
+      <path d="M3.5 21v-1a5 5 0 0 1 5-5h7a5 5 0 0 1 5 5v1" />
+      <path d="M9.5 15v1.5a2.5 2.5 0 0 0 5 0V15" />
+      <circle cx="14.5" cy="18" r="0.75" fill="currentColor" />
+    </svg>
+  );
+}
+
+function StackedCoinsIcon({ className = "w-5 h-5 text-[#00A67E]" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="7" cy="9" rx="4" ry="1.8" />
+      <path d="M3 9v3.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V9" />
+      <path d="M3 12.5v3.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8v-3.5" />
+      <ellipse cx="17" cy="7" rx="4" ry="1.8" />
+      <path d="M13 7v3.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V7" />
+      <path d="M13 10.5v3.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8v-3.5" />
+      <path d="M13 14v3.5c0 1 1.8 1.8 4 1.8s4-.8 4-1.8V14" />
+    </svg>
+  );
+}
+
+const HERO_FEATURES = [
+  {
+    title: 'Early Disease Detection',
+    icon: HeartPulseIcon
+  },
+  {
+    title: 'Comprehensive Health Screening',
+    icon: ClipboardCheckIcon
+  },
+  {
+    title: 'Expert Medical Guidance',
+    icon: DoctorExpertIcon
+  },
+  {
+    title: 'Value for Money',
+    icon: StackedCoinsIcon
+  }
+];
+
 export default function WellnessPackagesPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -202,19 +273,31 @@ export default function WellnessPackagesPage() {
     <div className="min-h-screen bg-[#F8FAFC] font-sans select-none">
       
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION matching exact Reference Image                            */}
+      {/* 1. HERO SECTION matching exact Reference Image 2                          */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#EBF9F5] min-h-[400px] sm:min-h-[450px] lg:min-h-[500px] xl:min-h-[540px] flex items-stretch">
+      <section className="relative overflow-hidden w-full border-b border-slate-200/80 bg-[#EBF9F5] min-h-[380px] sm:min-h-[420px] lg:min-h-[460px] xl:min-h-[490px] flex items-stretch">
         
-        {/* Hero Background Image - Grounded & smoothly blended to eliminate any horizontal seam lines */}
+        {/* Hero Background Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
           <img
             src="/wellness-hero-bg.jpg"
             alt=""
             className="w-full h-full object-cover object-bottom"
           />
-          {/* Subtle soft bottom gradient overlay to melt any background ledge/seam lines */}
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#EBF9F5] via-[#EBF9F5]/50 to-transparent" />
+        </div>
+
+        {/* Bottom Curved Wave Accent matching Reference Image 2 */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none select-none z-10 overflow-hidden leading-none">
+          <svg viewBox="0 0 1440 48" fill="none" className="w-full h-6 sm:h-8 lg:h-10" preserveAspectRatio="none">
+            <path d="M0 48H1440V30C1260 10 1100 0 940 12C760 26 600 40 420 24C260 10 120 32 0 44V48Z" fill="url(#hero-bottom-grad)" />
+            <defs>
+              <linearGradient id="hero-bottom-grad" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#007A64" />
+                <stop offset="45%" stopColor="#00A67E" />
+                <stop offset="100%" stopColor="#006852" />
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-9 lg:pt-8 pb-0 flex flex-col justify-between">
@@ -232,7 +315,23 @@ export default function WellnessPackagesPage() {
               {/* Headline */}
               <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[45px] font-black text-[#0B1B2B] leading-[1.15] tracking-tight">
                 Preventive Health<br />
-                Checkup <span className="text-[#007A64]">Packages</span>
+                Checkup{' '}
+                <span className="text-[#007A64] relative inline-block">
+                  Packages
+                  <svg 
+                    className="absolute -bottom-1.5 left-0 w-full h-2.5 text-[#00A67E] pointer-events-none" 
+                    viewBox="0 0 120 12" 
+                    fill="none" 
+                    preserveAspectRatio="none"
+                  >
+                    <path 
+                      d="M2 9C30 3 90 2 118 8" 
+                      stroke="currentColor" 
+                      strokeWidth="3.2" 
+                      strokeLinecap="round" 
+                    />
+                  </svg>
+                </span>
               </h1>
 
               {/* Subtitle */}
@@ -263,31 +362,28 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Center Column: Family Image with Glowing Shield (Single Image) - Matched to Surgery Packages dimensions */}
+            {/* Center Column: Family Image with Glowing Shield (Single Image) - Sized accurately to Reference Image 2 */}
             <div className="w-full lg:w-auto flex-1 flex items-end justify-center relative select-none pointer-events-none self-end z-10 min-w-0 -mb-[1px]">
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="h-auto max-h-[340px] xs:max-h-[380px] sm:max-h-[440px] md:max-h-[480px] lg:h-[485px] xl:h-[525px] 2xl:h-[565px] lg:max-h-none w-auto max-w-full lg:max-w-none object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
+                className="h-auto max-h-[290px] xs:max-h-[330px] sm:max-h-[360px] md:max-h-[385px] lg:h-[395px] xl:h-[415px] 2xl:h-[435px] lg:max-h-none w-auto max-w-full object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
               />
-              {/* Soft bottom edge feathering on mobile view to eliminate any abrupt cutoffs */}
-              <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[#EBF9F5] to-transparent pointer-events-none lg:hidden" />
             </div>
 
-            {/* Right Column: 4 Feature Checkmark Cards */}
-            <div className="w-full lg:w-[300px] xl:w-[330px] shrink-0 flex flex-col gap-3 sm:gap-3.5 z-20 self-center py-4 lg:py-6">
-              {[
-                'Early Disease Detection',
-                'Comprehensive Health Screening',
-                'Expert Medical Guidance',
-                'Value for Money'
-              ].map((feat) => (
+            {/* Right Column: 4 Feature Pills matching Reference Image 2 */}
+            <div className="w-full lg:w-[290px] xl:w-[315px] 2xl:w-[330px] shrink-0 flex flex-col gap-2.5 sm:gap-3 z-20 self-center py-4 lg:py-6">
+              {HERO_FEATURES.map((item) => (
                 <div
-                  key={feat}
-                  className="bg-white rounded-full px-4.5 sm:px-5 py-2.5 sm:py-3 shadow-md border border-slate-100 flex items-center gap-3 text-xs sm:text-sm font-black text-[#0B1B2B] hover:border-teal-200 transition"
+                  key={item.title}
+                  className="bg-white rounded-full sm:rounded-2xl lg:rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 shadow-sm hover:shadow-md border border-slate-100/90 flex items-center gap-3 hover:border-teal-200 transition-all duration-200 group"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-[#007A64] shrink-0 fill-[#E0F5EE]" />
-                  <span className="leading-tight">{feat}</span>
+                  <div className="w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-9.5 xl:h-9.5 rounded-xl bg-[#E8F8EE] flex items-center justify-center shrink-0 border border-[#C6F0D8]/70 group-hover:bg-[#DCF5E6] transition-colors">
+                    <item.icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#00A67E]" />
+                  </div>
+                  <span className="text-xs sm:text-[13px] font-bold text-[#0B1E3F] leading-tight">
+                    {item.title}
+                  </span>
                 </div>
               ))}
             </div>
