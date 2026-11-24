@@ -5,7 +5,14 @@ import App from './App.jsx'
 import './index.css'
 
 // Automatically redirect to Home page whenever the website is reloaded,
-// EXCEPT for Admin, Lab, and Patient dashboards which must stay on their respective pages on reload.
+// EXCEPT for key service pages and dashboards which must stay on their respective pages on reload:
+// 1. Medicines
+// 2. Lab Tests (and Diagnostics)
+// 3. Surgery Packages
+// 4. Wellness Packages
+// 5. Physiotherapy
+// 6. Doctor Appointment
+// As well as Admin, Lab, and Patient dashboards, and auth pages.
 try {
   const pathname = window.location.pathname.toLowerCase();
   const isAdminPath = pathname.startsWith('/admin') || pathname === '/admin-dashboard';
@@ -20,6 +27,84 @@ try {
     pathname === '/patient' ||
     pathname.startsWith('/patient/');
 
+  const isMedicinesPath =
+    pathname === '/medicines' ||
+    pathname.startsWith('/medicines/');
+
+  const isLabTestsPath =
+    pathname === '/lab-tests' ||
+    pathname.startsWith('/lab-tests/') ||
+    pathname === '/labtests' ||
+    pathname.startsWith('/labtests/') ||
+    pathname === '/lab-test' ||
+    pathname.startsWith('/lab-test/') ||
+    pathname === '/diagnostics' ||
+    pathname.startsWith('/diagnostics/');
+
+  const isSurgeryPath =
+    pathname === '/surgery-packages' ||
+    pathname.startsWith('/surgery-packages/') ||
+    pathname === '/surgeries' ||
+    pathname.startsWith('/surgeries/') ||
+    pathname === '/surgery' ||
+    pathname.startsWith('/surgery/') ||
+    pathname === '/packages' ||
+    pathname.startsWith('/packages/');
+
+  const isWellnessPath =
+    pathname === '/wellness-packages' ||
+    pathname.startsWith('/wellness-packages/') ||
+    pathname === '/wellness' ||
+    pathname.startsWith('/wellness/') ||
+    pathname === '/health-packages' ||
+    pathname.startsWith('/health-packages/');
+
+  const isPhysioPath =
+    pathname === '/physiotherapy' ||
+    pathname.startsWith('/physiotherapy/') ||
+    pathname === '/physio' ||
+    pathname.startsWith('/physio/') ||
+    pathname === '/physiotherapist' ||
+    pathname.startsWith('/physiotherapist/') ||
+    pathname === '/physiotherapy-service' ||
+    pathname.startsWith('/physiotherapy-service/') ||
+    pathname === '/book-physiotherapy' ||
+    pathname.startsWith('/book-physiotherapy/');
+
+  const isDoctorPath =
+    pathname === '/doctor-appointment' ||
+    pathname.startsWith('/doctor-appointment/') ||
+    pathname === '/doctors' ||
+    pathname.startsWith('/doctors/') ||
+    pathname === '/doctor' ||
+    pathname.startsWith('/doctor/') ||
+    pathname === '/book-doctor' ||
+    pathname.startsWith('/book-doctor/') ||
+    pathname === '/book-doctor-appointment' ||
+    pathname.startsWith('/book-doctor-appointment/') ||
+    pathname === '/book-appointment' ||
+    pathname.startsWith('/book-appointment/');
+
+  const isAuthPath =
+    pathname === '/login' ||
+    pathname.startsWith('/login/') ||
+    pathname === '/register' ||
+    pathname.startsWith('/register/') ||
+    pathname === '/auth' ||
+    pathname.startsWith('/auth/');
+
+  const shouldPreservePage =
+    isAdminPath ||
+    isLabPath ||
+    isPatientPath ||
+    isMedicinesPath ||
+    isLabTestsPath ||
+    isSurgeryPath ||
+    isWellnessPath ||
+    isPhysioPath ||
+    isDoctorPath ||
+    isAuthPath;
+
   const navEntries = window.performance?.getEntriesByType?.('navigation');
   const isReloadByEntries = navEntries && navEntries.length > 0 && navEntries[0].type === 'reload';
   const isReloadByLegacy = window.performance?.navigation?.type === 1;
@@ -27,7 +112,7 @@ try {
 
   sessionStorage.removeItem('zestmed_is_reloading');
 
-  if ((isReloadByEntries || isReloadByLegacy || isReloadBySession) && !isAdminPath && !isLabPath && !isPatientPath) {
+  if ((isReloadByEntries || isReloadByLegacy || isReloadBySession) && !shouldPreservePage) {
     if (window.location.pathname !== '/' || window.location.search || window.location.hash) {
       window.history.replaceState(null, '', '/');
     }
