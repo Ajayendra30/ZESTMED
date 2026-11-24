@@ -229,11 +229,11 @@ export default function WellnessPackagesPage() {
           </svg>
         </div>
 
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-7 sm:pt-9 lg:pt-8 pb-0 flex flex-col justify-between">
-          <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6 lg:gap-3 xl:gap-5 2xl:gap-6 w-full">
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-5 sm:pt-6 lg:pt-7 pb-4 sm:pb-5 lg:pb-0 min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] xl:min-h-[440px] 2xl:min-h-[470px] flex items-center lg:items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center lg:items-end w-full">
             
             {/* Left Column: Heading, Subtitle & Action CTAs */}
-            <div className="w-full lg:w-auto max-w-lg shrink-0 space-y-3.5 sm:space-y-4 text-left self-center py-4 lg:py-6 z-20">
+            <div className="lg:col-span-6 xl:col-span-6 z-20 space-y-3.5 sm:space-y-4 text-left self-center py-2 sm:py-3 lg:py-4 max-w-xl">
               
               {/* Wellness Packages Pill Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD] text-xs sm:text-sm font-extrabold shadow-2xs">
@@ -291,12 +291,12 @@ export default function WellnessPackagesPage() {
               </div>
             </div>
 
-            {/* Right Column: Family Image with Glowing Shield (Single Image) */}
-            <div className="w-full lg:w-auto flex-1 flex items-end justify-center lg:justify-end relative select-none pointer-events-none self-end z-10 min-w-0 -mb-[1px]">
+            {/* Right Column: Family Image - Positioned on the RIGHT side, matching Doctor Appointment section */}
+            <div className="lg:col-span-6 xl:col-span-6 w-full flex items-end justify-center lg:justify-end relative select-none pointer-events-none self-end z-10 min-w-0">
               <img
                 src="/wellness-hero-family.png"
                 alt="Preventive Health Checkup Packages Family Protection"
-                className="h-auto max-h-[340px] xs:max-h-[380px] sm:max-h-[440px] md:max-h-[480px] lg:h-[460px] xl:h-[490px] 2xl:h-[520px] lg:max-h-none w-auto max-w-full object-contain object-bottom block select-none drop-shadow-md transition-all duration-300"
+                className="h-auto max-h-[300px] xs:max-h-[340px] sm:max-h-[390px] md:max-h-[430px] lg:max-h-[460px] xl:max-h-[490px] 2xl:max-h-[530px] lg:h-[460px] xl:h-[490px] 2xl:h-[530px] w-auto max-w-full object-contain object-bottom drop-shadow-md transition-all duration-300"
               />
             </div>
 
