@@ -10,8 +10,12 @@ import {
   Facebook,
   Linkedin
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function Footer({ onOpenPrescriptionModal }) {
+  const { user } = useAuth();
+  const { addToast } = useToast();
   return (
     <footer id="contact" className="bg-[#01333A] text-[#C0D8DC] select-none font-sans print:hidden">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-12 sm:pt-16 pb-8 sm:pb-10">
@@ -96,7 +100,20 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/surgery-packages" className="hover:text-white transition">Surgery Packages</Link>
+                <Link
+                  to={!user ? '/login?redirect=/surgery-packages' : '/surgery-packages'}
+                  onClick={() => {
+                    if (!user) {
+                      try {
+                        sessionStorage.setItem('zestmed_redirect_target', '/surgery-packages');
+                      } catch (_) {}
+                      addToast('Please login to access Surgery Packages', 'info');
+                    }
+                  }}
+                  className="hover:text-white transition"
+                >
+                  Surgery Packages
+                </Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
@@ -104,11 +121,37 @@ export default function Footer({ onOpenPrescriptionModal }) {
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/physiotherapy" className="hover:text-white transition">Physiotherapy</Link>
+                <Link
+                  to={!user ? '/login?redirect=/physiotherapy' : '/physiotherapy'}
+                  onClick={() => {
+                    if (!user) {
+                      try {
+                        sessionStorage.setItem('zestmed_redirect_target', '/physiotherapy');
+                      } catch (_) {}
+                      addToast('Please login to access Physiotherapy', 'info');
+                    }
+                  }}
+                  className="hover:text-white transition"
+                >
+                  Physiotherapy
+                </Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>
-                <Link to="/doctor-appointment" className="hover:text-white transition">Doctor Appointment</Link>
+                <Link
+                  to={!user ? '/login?redirect=/doctor-appointment' : '/doctor-appointment'}
+                  onClick={() => {
+                    if (!user) {
+                      try {
+                        sessionStorage.setItem('zestmed_redirect_target', '/doctor-appointment');
+                      } catch (_) {}
+                      addToast('Please login to access Doctor Appointments', 'info');
+                    }
+                  }}
+                  className="hover:text-white transition"
+                >
+                  Doctor Appointment
+                </Link>
               </li>
               <li className="flex items-center gap-1.5">
                 <span className="text-[#C0D8DC]/70">•</span>

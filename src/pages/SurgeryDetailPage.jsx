@@ -11,6 +11,7 @@ import { useToast } from '../context/ToastContext';
 import { bookSurgery } from '../services/supabaseService';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
 import { recordAndPlayNotification } from '../utils/notificationSound';
+import { enforceAuth } from '../utils/authGuard';
 
 // Custom SVG Icons matching the Reference Design
 function ExpertSurgeonIcon({ className = "w-6 h-6 text-[#0B1E3F]" }) {
@@ -94,7 +95,7 @@ export default function SurgeryDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
 
   const surgery = getSurgeryPackageById(id) || getSurgeryPackageById('orthopedic-surgery-package');
@@ -173,6 +174,17 @@ export default function SurgeryDetailPage() {
 
   // Complete Payment & Confirm Booking
   const handleCompletePayment = async () => {
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to confirm your surgery package booking',
+        addToast
+      });
+      return;
+    }
     setIsSubmitting(true);
     const bookingId = `ZM${selectedYear}11${selectedDay}001`;
 

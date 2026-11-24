@@ -12,6 +12,7 @@ import { useToast } from '../context/ToastContext';
 import { bookPhysiotherapy } from '../services/supabaseService';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
 import { recordAndPlayNotification } from '../utils/notificationSound';
+import { enforceAuth } from '../utils/authGuard';
 
 // =========================================================================
 // Custom SVG Icons matching Reference Design & ZESTMED Branding
@@ -97,7 +98,7 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, openAuth } = useAuth();
   const { addToast } = useToast();
 
   const service = getPhysioServiceById(id) || getPhysioServiceById('back-neck');
@@ -182,6 +183,17 @@ export default function PhysiotherapyDetailPage({ initialStep = 1 }) {
 
   // Complete Payment & Confirm Booking
   const handleCompletePayment = async () => {
+    if (!user) {
+      enforceAuth({
+        user,
+        navigate,
+        location,
+        openAuth,
+        toastMessage: 'Please login to confirm your physiotherapy booking',
+        addToast
+      });
+      return;
+    }
     setIsSubmitting(true);
     const bookingId = `ZM-PHY-${selectedYear}${monthIndex + 1}${selectedDay}-${Math.floor(100 + Math.random() * 900)}`;
 

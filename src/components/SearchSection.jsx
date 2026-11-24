@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function SearchSection({ 
   searchInputRef, 
@@ -16,6 +17,7 @@ export default function SearchSection({
 }) {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchSubmit = (e) => {
@@ -28,9 +30,35 @@ export default function SearchSection({
 
     const lower = query.toLowerCase();
     if (lower.includes('doctor') || lower.includes('dr.') || lower.includes('cardiologist') || lower.includes('ortho') || lower.includes('physician')) {
+      if (!user) {
+        try {
+          sessionStorage.setItem('zestmed_redirect_target', '/doctor-appointment');
+        } catch (_) {}
+        addToast('Please login to access Doctor Appointments', 'info');
+        navigate('/login?redirect=/doctor-appointment');
+        return;
+      }
       navigate('/doctor-appointment');
     } else if (lower.includes('physio') || lower.includes('therapy') || lower.includes('rehab')) {
+      if (!user) {
+        try {
+          sessionStorage.setItem('zestmed_redirect_target', '/physiotherapy');
+        } catch (_) {}
+        addToast('Please login to access Physiotherapy', 'info');
+        navigate('/login?redirect=/physiotherapy');
+        return;
+      }
       navigate('/physiotherapy');
+    } else if (lower.includes('surgery') || lower.includes('operation')) {
+      if (!user) {
+        try {
+          sessionStorage.setItem('zestmed_redirect_target', '/surgery-packages');
+        } catch (_) {}
+        addToast('Please login to access Surgery Packages', 'info');
+        navigate('/login?redirect=/surgery-packages');
+        return;
+      }
+      navigate('/surgery-packages');
     } else if (lower.includes('medicine') || lower.includes('tablet') || lower.includes('syrup') || lower.includes('capsule')) {
       navigate(`/medicines?search=${encodeURIComponent(query)}`);
     } else if (lower.includes('package') || lower.includes('checkup') || lower.includes('wellness')) {

@@ -83,9 +83,20 @@ export const enforceAuth = ({
     returnUrl = `${window.location.pathname}${window.location.search || ''}`;
   }
 
-  // Avoid recursive return to login page
-  if (returnUrl.startsWith('/login') || returnUrl.startsWith('/auth') || returnUrl.startsWith('/register')) {
-    returnUrl = '/';
+  // If action is specific to doctor, physio, or surgery but initiated from home page or modal,
+  // target the dedicated service page directly
+  const msgLower = (cleanToastMessage || '').toLowerCase();
+  const actType = (pendingAction?.type || '').toLowerCase();
+  if (returnUrl === '/' || returnUrl.startsWith('/login') || returnUrl.startsWith('/auth') || returnUrl.startsWith('/register')) {
+    if (actType.includes('doctor') || msgLower.includes('doctor')) {
+      returnUrl = '/doctor-appointment';
+    } else if (actType.includes('physio') || msgLower.includes('physio')) {
+      returnUrl = '/physiotherapy';
+    } else if (actType.includes('surgery') || msgLower.includes('surgery') || actType.includes('package')) {
+      returnUrl = '/surgery-packages';
+    } else {
+      returnUrl = '/';
+    }
   }
 
   // Save pending action to resume post-login
@@ -106,7 +117,13 @@ export const enforceAuth = ({
     returnUrl.includes('doctor') || 
     returnUrl.includes('physio') || 
     returnUrl.includes('surgery') || 
-    returnUrl.includes('packages');
+    returnUrl.includes('packages') ||
+    actType.includes('doctor') ||
+    actType.includes('physio') ||
+    actType.includes('surgery') ||
+    msgLower.includes('doctor') ||
+    msgLower.includes('physio') ||
+    msgLower.includes('surgery');
 
   if (isCoreProtectedService || !openInModal) {
     try {

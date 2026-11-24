@@ -5,6 +5,8 @@ import {
   FlaskConical, Stethoscope, Activity, Scissors, 
   Layers, Pill, Car, ArrowRight, ShieldCheck, Clock 
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function HealthcareCategories({ 
   onOpenDoctorModal, 
@@ -12,6 +14,8 @@ export default function HealthcareCategories({
   onOpenSurgeryModal, 
   onOpenSeniorPickup 
 }) {
+  const { user } = useAuth();
+  const { addToast } = useToast();
   const serviceCategories = [
     {
       id: 'lab-tests',
@@ -30,6 +34,7 @@ export default function HealthcareCategories({
       badge: 'OPD & Video',
       badgeColor: 'bg-blue-50 text-blue-700',
       iconBg: 'bg-blue-50 text-blue-600',
+      link: !user ? '/login?redirect=/doctor-appointment' : '/doctor-appointment',
       onClick: onOpenDoctorModal,
       icon: <Stethoscope className="w-7 h-7 text-blue-600" />
     },
@@ -40,7 +45,8 @@ export default function HealthcareCategories({
       badge: 'Senior Mobility',
       badgeColor: 'bg-emerald-50 text-emerald-700',
       iconBg: 'bg-emerald-50 text-emerald-600',
-      link: '/physiotherapy',
+      link: !user ? '/login?redirect=/physiotherapy' : '/physiotherapy',
+      onClick: onOpenPhysioModal,
       icon: <Activity className="w-7 h-7 text-emerald-600" />
     },
     {
@@ -50,7 +56,8 @@ export default function HealthcareCategories({
       badge: 'Cashless TPA',
       badgeColor: 'bg-purple-50 text-purple-700',
       iconBg: 'bg-purple-50 text-purple-600',
-      link: '/surgery-packages',
+      link: !user ? '/login?redirect=/surgery-packages' : '/surgery-packages',
+      onClick: onOpenSurgeryModal,
       icon: <Scissors className="w-7 h-7 text-purple-600" />
     },
     {
