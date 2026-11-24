@@ -150,15 +150,15 @@ export default function AuthPage() {
     }
   }, [rawReturnParam]);
 
-  // If already logged in and a target service URL exists, redirect immediately
+  // If already logged in, redirect immediately to Homepage
   useEffect(() => {
-    if (user && rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth') && !rawReturnParam.startsWith('/register')) {
+    if (user) {
       try {
         sessionStorage.removeItem('zestmed_redirect_target');
       } catch (_) {}
-      navigate(rawReturnParam, { replace: true });
+      navigate('/', { replace: true });
     }
-  }, [user, rawReturnParam, navigate]);
+  }, [user, navigate]);
 
   const targetForPrompt = rawReturnParam || (typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : '') || '';
   const servicePromptName = 
@@ -204,18 +204,9 @@ export default function AuthPage() {
             </span>
           </div>
           <div className="space-y-3 pt-2">
-            {hasReturnUrl && (
-              <button
-                onClick={() => navigate(rawReturnParam, { replace: true, state: { autoOpenBooking: true } })}
-                className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition cursor-pointer flex items-center justify-center gap-2"
-              >
-                <span>Continue to Service</span>
-                <ArrowLeft className="w-4 h-4 rotate-180" />
-              </button>
-            )}
             <button
-              onClick={() => navigate('/')}
-              className={`w-full py-3 rounded-2xl ${hasReturnUrl ? 'bg-slate-100 hover:bg-slate-200 text-slate-800' : 'bg-[#007A64] hover:bg-[#006852] text-white'} font-bold text-sm shadow-md transition cursor-pointer`}
+              onClick={() => navigate('/', { replace: true })}
+              className="w-full py-3 rounded-2xl bg-[#007A64] hover:bg-[#006852] text-white font-bold text-sm shadow-md transition cursor-pointer"
             >
               Go to Home Page
             </button>
@@ -421,21 +412,12 @@ export default function AuthPage() {
       console.warn('Failed restoring pending cart item:', e);
     }
 
-    // 2. Redirect back to originally selected service page, or Home ('/') as fallback
-    let target = '/';
-    const savedTarget = typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : null;
-
-    if (rawReturnParam && !rawReturnParam.startsWith('/login') && !rawReturnParam.startsWith('/auth') && !rawReturnParam.startsWith('/register')) {
-      target = rawReturnParam;
-    } else if (savedTarget && !savedTarget.startsWith('/login') && !savedTarget.startsWith('/auth') && !savedTarget.startsWith('/register')) {
-      target = savedTarget;
-    }
-
     try {
       sessionStorage.removeItem('zestmed_redirect_target');
     } catch (_) {}
 
-    navigate(target, { replace: true });
+    // 2. Always redirect user to the Homepage upon successful login
+    navigate('/', { replace: true });
   };
 
   const handleChangeNumber = () => {

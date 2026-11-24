@@ -341,19 +341,13 @@ export default function AuthModal() {
 
     handleClose();
 
-    // 3. Redirect back to originally selected service page if present, otherwise Home ('/')
-    let target = '/';
-    const savedTarget = typeof window !== 'undefined' ? sessionStorage.getItem('zestmed_redirect_target') : null;
-
-    if (savedTarget && !savedTarget.startsWith('/login') && !savedTarget.startsWith('/auth') && !savedTarget.startsWith('/register')) {
-      target = savedTarget;
-    }
-
+    // Clear any saved redirect target
     try {
       sessionStorage.removeItem('zestmed_redirect_target');
     } catch (_) {}
 
-    navigate(target, { replace: true });
+    // Always redirect user to the Homepage upon successful login
+    navigate('/', { replace: true });
   };
 
   const handleClose = () => {
