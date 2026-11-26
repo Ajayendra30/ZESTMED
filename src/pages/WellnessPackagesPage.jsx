@@ -383,44 +383,44 @@ export default function WellnessPackagesPage() {
               return (
                 <div
                   key={pkg.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg transition-all duration-200 p-4 sm:p-5 flex flex-col justify-between group overflow-hidden relative"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-3 min-w-0">
                     
                     {/* Top Header: Icon + Package Name & Subtitle */}
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
                       <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${pkg.iconColor} flex items-center justify-center shrink-0`}>
                         <IconComp className="w-5 h-5 stroke-[2.2]" />
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm sm:text-base font-black text-[#0B1B2B] leading-tight group-hover:text-[#007A64] transition-colors truncate">
                           {pkg.name}
                         </h3>
-                        <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight mt-0.5">
+                        <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight mt-0.5 truncate">
                           {pkg.subtitle}
                         </p>
                       </div>
                     </div>
 
                     {/* Middle: Checklist & Right Illustration Graphic */}
-                    <div className="flex items-center justify-between gap-2.5 pt-1 min-h-[85px] sm:min-h-[92px]">
+                    <div className="flex items-center justify-between gap-2.5 pt-1 min-h-[85px] sm:min-h-[92px] w-full min-w-0">
                       
                       {/* Left Checklist */}
-                      <ul className="space-y-1.5 text-xs text-slate-700 font-semibold flex-1">
+                      <ul className="space-y-1.5 text-xs text-slate-700 font-semibold flex-1 min-w-0 pr-1">
                         {pkg.tests.map((test, idx) => (
-                          <li key={idx} className="flex items-center gap-1.5 leading-snug">
+                          <li key={idx} className="flex items-center gap-1.5 leading-snug min-w-0">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 fill-emerald-50" />
-                            <span className="truncate">{test}</span>
+                            <span className="truncate block flex-1 min-w-0">{test}</span>
                           </li>
                         ))}
                       </ul>
 
                       {/* Right Illustration Asset */}
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center select-none pointer-events-none">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 flex items-center justify-center select-none pointer-events-none relative overflow-hidden">
                         <img
                           src={pkg.image}
                           alt={pkg.name}
-                          className="max-w-full max-h-full object-contain drop-shadow-xs"
+                          className="w-full h-full max-w-full max-h-full object-contain drop-shadow-xs"
                         />
                       </div>
                     </div>
