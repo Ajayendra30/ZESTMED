@@ -1,6 +1,6 @@
 // src/pages/WellnessPackagesPage.jsx
 // Pixel-accurate recreation of the exact reference design for ZESTMED Wellness Packages
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShieldCheck, Calendar, ArrowRight, Info, CheckCircle2, 
@@ -12,111 +12,12 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
+import { getWellnessPackages } from '../services/supabaseService';
+import { WELLNESS_PACKAGES_DATA } from '../mock-data/wellnessPackagesData';
 import PackageDetailModal from '../components/PackageDetailModal';
 
-// 4 Core Wellness Packages matching reference Section 1
-const WELLNESS_PACKAGES = [
-  {
-    id: 'well-pkg-1',
-    name: 'Basic Wellness Package',
-    subtitle: 'Essential health checkup for overall wellness',
-    category: 'general',
-    categoryName: 'General Wellness',
-    iconColor: 'bg-blue-50 text-blue-600',
-    icon: User,
-    tests: [
-      'CBC (Complete Blood Count)',
-      'Blood Sugar (Fasting)',
-      'Lipid Profile',
-      'Liver Function Test (LFT)'
-    ],
-    testsCount: 45,
-    mrp: 1999,
-    price: 1299,
-    discount: '20% OFF',
-    discountPercent: 20,
-    image: '/wellness-pkg1-heart.png',
-    badge: 'Essential Checkup',
-    includes: '45+ Tests Included (CBC, Blood Sugar, Lipid, LFT & Urine Routine)',
-    reportsIn: 'Same Day (Within 12-24 Hours)',
-    fasting: '10-12 hrs Fasting Required'
-  },
-  {
-    id: 'well-pkg-2',
-    name: "Women's Wellness Package",
-    subtitle: 'Complete health screening for women',
-    category: 'women',
-    categoryName: "Women's Health",
-    iconColor: 'bg-pink-50 text-pink-600',
-    icon: User,
-    tests: [
-      'CBC (Complete Blood Count)',
-      'Thyroid Profile (T3, T4, TSH)',
-      'Lipid Profile',
-      'Vitamin D & B12'
-    ],
-    testsCount: 58,
-    mrp: 3499,
-    price: 2499,
-    discount: '20% OFF',
-    discountPercent: 20,
-    image: '/wellness-pkg2-woman.png',
-    badge: 'Women Health',
-    includes: '58+ Tests Included (CBC, Thyroid Profile, Lipid, Vitamin D3 & B12)',
-    reportsIn: 'Same Day (Within 12-24 Hours)',
-    fasting: '10-12 hrs Fasting Required'
-  },
-  {
-    id: 'well-pkg-3',
-    name: "Men's Wellness Package",
-    subtitle: 'Comprehensive health checkup for men',
-    category: 'men',
-    categoryName: "Men's Health",
-    iconColor: 'bg-teal-50 text-[#007A64]',
-    icon: User,
-    tests: [
-      'CBC (Complete Blood Count)',
-      'Lipid Profile',
-      'Liver Function Test (LFT)',
-      'Kidney Function Test (KFT)'
-    ],
-    testsCount: 55,
-    mrp: 3499,
-    price: 2499,
-    discount: '20% OFF',
-    discountPercent: 20,
-    image: '/wellness-pkg3-man.png',
-    badge: 'Men Health',
-    includes: '55+ Tests Included (CBC, Lipid, LFT, KFT & Cardiac Risk Assessment)',
-    reportsIn: 'Same Day (Within 12-24 Hours)',
-    fasting: '10-12 hrs Fasting Required'
-  },
-  {
-    id: 'well-pkg-4',
-    name: 'Senior Citizen Package',
-    subtitle: 'Complete health checkup for 60+ years',
-    category: 'senior',
-    categoryName: 'Senior Wellness',
-    iconColor: 'bg-amber-50 text-amber-600',
-    icon: Users,
-    tests: [
-      'CBC (Complete Blood Count)',
-      'Diabetes Profile (FBS, HbA1c)',
-      'Lipid Profile',
-      'Kidney & Liver Function Tests'
-    ],
-    testsCount: 75,
-    mrp: 4499,
-    price: 3299,
-    discount: '20% OFF',
-    discountPercent: 20,
-    image: '/wellness-pkg4-senior.png',
-    badge: 'Senior Care 60+',
-    includes: '75+ Tests Included + Senior Citizen Doorstep Phlebotomy Care',
-    reportsIn: 'Same Day (Within 12-24 Hours)',
-    fasting: '10-12 hrs Fasting Required'
-  }
-];
+// Initial Core Wellness Packages matching reference Section 1
+const WELLNESS_PACKAGES = WELLNESS_PACKAGES_DATA;
 
 // 6 Health Categories matching reference Section 4
 const CATEGORIES_DATA = [
@@ -172,6 +73,61 @@ export default function WellnessPackagesPage() {
   const { addToast } = useToast();
 
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [packages, setPackages] = useState(WELLNESS_PACKAGES);
+  const [loading, setLoading] = useState(true);
+  const [showAllPackages, setShowAllPackages] = useState(
+    location.pathname === '/packages' ||
+    Boolean(new URLSearchParams(location.search).get('all'))
+  );
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // Fetch actual wellness packages from backend API / Supabase database
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPackages = async () => {
+      try {
+        const data = await getWellnessPackages();
+        if (isMounted && data && Array.isArray(data) && data.length > 0) {
+          setPackages(data);
+        }
+      } catch (err) {
+        console.warn('Failed to load wellness packages from backend:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchPackages();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Sync route and query params
+  useEffect(() => {
+    if (location.pathname === '/packages' || location.search.includes('all')) {
+      setShowAllPackages(true);
+    }
+  }, [location.pathname, location.search]);
+
+  const handleToggleViewAll = () => {
+    setShowAllPackages((prev) => !prev);
+    setSelectedCategory(null);
+    scrollToSection('wellness-packages-grid');
+  };
+
+  const displayedPackages = useMemo(() => {
+    let list = packages;
+    if (selectedCategory) {
+      const catLower = selectedCategory.toLowerCase();
+      const filtered = list.filter(
+        (p) =>
+          String(p.category || '').toLowerCase() === catLower ||
+          String(p.categoryName || '').toLowerCase().includes(catLower)
+      );
+      if (filtered.length > 0) return filtered;
+    }
+    return showAllPackages ? list : list.slice(0, 4);
+  }, [packages, selectedCategory, showAllPackages]);
 
   const handleBookNow = (pkg) => {
     if (!user) {
@@ -377,23 +333,52 @@ export default function WellnessPackagesPage() {
         <section id="wellness-packages-grid" className="space-y-4 sm:space-y-4.5">
           
           {/* Header Row */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight">
-              Our Wellness Packages
-            </h2>
-            <Link
-              to="/packages"
-              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-xs sm:text-sm flex items-center gap-1 hover:underline cursor-pointer"
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-black text-[#0B1B2B] tracking-tight">
+                Our Wellness Packages
+              </h2>
+              {selectedCategory && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E0F5EE] text-[#007A64] border border-[#BCE8DD]">
+                  <span>{CATEGORIES_DATA.find((c) => c.filterKey === selectedCategory)?.name || selectedCategory}</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory(null)}
+                    className="hover:text-red-500 font-black cursor-pointer text-sm leading-none ml-0.5"
+                    title="Clear category filter"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleViewAll}
+              className="text-[#007A64] hover:text-[#005c4b] font-extrabold text-xs sm:text-sm flex items-center gap-1.5 hover:underline cursor-pointer bg-transparent border-0 p-0"
             >
-              <span>View All Packages</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+              <span>{showAllPackages ? 'Show Featured Packages' : `View All Packages (${packages.length})`}</span>
+              <ArrowRight className={`w-4 h-4 transition-transform duration-200 ${showAllPackages ? 'rotate-90' : ''}`} />
+            </button>
           </div>
 
-          {/* 4 Cards Grid with Increased Spacing & Decreased Sizing */}
+          {/* Packages Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 xl:gap-7">
-            {WELLNESS_PACKAGES.map((pkg) => {
-              const IconComp = pkg.icon;
+            {displayedPackages.map((pkg) => {
+              const IconComp =
+                pkg.icon ||
+                (pkg.category === 'senior'
+                  ? Users
+                  : pkg.category === 'family'
+                  ? Users
+                  : pkg.category === 'lifestyle'
+                  ? Activity
+                  : pkg.category === 'women'
+                  ? User
+                  : pkg.category === 'men'
+                  ? User
+                  : Heart);
 
               return (
                 <div
@@ -673,6 +658,8 @@ export default function WellnessPackagesPage() {
                   <button
                     type="button"
                     onClick={() => {
+                      setSelectedCategory(cat.filterKey);
+                      setShowAllPackages(true);
                       scrollToSection('wellness-packages-grid');
                       addToast(`Showing packages for ${cat.name}`, 'info');
                     }}

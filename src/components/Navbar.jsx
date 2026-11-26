@@ -521,9 +521,9 @@ export default function Navbar({
                 }
 
                 const isCurrentActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || routerLocation.pathname === '/packages'
                   : link.name === 'Surgery Packages'
-                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
+                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries'
                   : link.name === 'Physiotherapy'
                   ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
                   : link.name === 'Doctor Appointment'
@@ -741,9 +741,9 @@ export default function Navbar({
                 }
 
                 const isMobileActive = link.name === 'Wellness Packages'
-                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness'
+                  ? routerLocation.pathname === '/wellness-packages' || routerLocation.pathname === '/wellness' || routerLocation.pathname === '/packages'
                   : link.name === 'Surgery Packages'
-                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries' || routerLocation.pathname === '/packages'
+                  ? routerLocation.pathname === '/surgery-packages' || routerLocation.pathname === '/surgeries'
                   : link.name === 'Physiotherapy'
                   ? routerLocation.pathname === '/physiotherapy' || routerLocation.pathname === '/physio' || routerLocation.pathname === '/physiotherapist'
                   : link.name === 'Doctor Appointment'

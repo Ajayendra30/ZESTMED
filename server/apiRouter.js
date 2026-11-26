@@ -19,6 +19,7 @@
  * - /api/user/orders
  */
 import { createPaymentOrder, verifyPaymentSignature } from './razorpayService.js';
+import { WELLNESS_PACKAGES_DATA } from '../src/mock-data/wellnessPackagesData.js';
 
 // In-memory persistent user cart storage keyed by user identifier
 const userCartsMap = new Map();
@@ -119,6 +120,18 @@ export const handleApiRequest = async (req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ status: 'ok', service: 'ZESTMED Backend API', timestamp: new Date().toISOString() }));
+      return true;
+    }
+
+    // Public Wellness Packages Catalog endpoint
+    if ((pathname === '/api/packages/wellness' || pathname === '/api/wellness-packages' || pathname === '/packages/wellness') && method === 'GET') {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({
+        success: true,
+        packages: WELLNESS_PACKAGES_DATA,
+        count: WELLNESS_PACKAGES_DATA.length
+      }));
       return true;
     }
 

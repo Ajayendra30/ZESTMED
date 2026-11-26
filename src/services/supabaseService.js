@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { MOCK_DOCTORS, matchesSpecialty } from '../mock-data/doctorsData';
+import { WELLNESS_PACKAGES_DATA } from '../mock-data/wellnessPackagesData';
 import { getAuthenticatedUser, getAuthToken } from '../utils/authGuard';
 import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 
@@ -649,6 +650,102 @@ export const updateSurgeryStatus = async (id, status) => {
 // ------------------------------------------------------------------------------
 // 5. WELLNESS PACKAGES
 // ------------------------------------------------------------------------------
+
+export const getWellnessPackages = async (categoryFilter = null) => {
+  let packages = [];
+
+  // 1. Try fetching from Node.js backend API
+  try {
+    if (typeof fetch !== 'undefined') {
+      const resp = await fetch('/api/packages/wellness');
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json && json.success && Array.isArray(json.packages) && json.packages.length > 0) {
+          packages = json.packages;
+        }
+      }
+    }
+  } catch (apiErr) {
+    // API not directly available, proceed to Supabase
+  }
+
+  // 2. Try fetching from Supabase PostgreSQL database
+  if ((!packages || packages.length === 0) && isSupabaseConfigured()) {
+    try {
+      // First attempt query on wellness_packages
+      let { data, error } = await supabase.from('wellness_packages').select('*').order('created_at', { ascending: false });
+
+      // If table empty or does not exist, query health_packages
+      if (error || !data || data.length === 0) {
+        const alt = await supabase.from('health_packages').select('*').order('created_at', { ascending: false });
+        if (!alt.error && alt.data && alt.data.length > 0) {
+          data = alt.data;
+          error = null;
+        }
+      }
+
+      if (!error && data && data.length > 0) {
+        packages = data.map((pkg, idx) => {
+          let parsedTests = [];
+          if (Array.isArray(pkg.tests)) {
+            parsedTests = pkg.tests;
+          } else if (typeof pkg.parameters === 'string') {
+            parsedTests = pkg.parameters.split(',').map((s) => s.trim());
+          } else if (typeof pkg.description === 'string') {
+            parsedTests = pkg.description.split(',').map((s) => s.trim());
+          } else {
+            parsedTests = ['Complete Hemogram (CBC)', 'Lipid Profile', 'Blood Sugar Fasting', 'LFT & KFT'];
+          }
+
+          return {
+            id: pkg.id ? String(pkg.id) : (pkg.package_code || `well-pkg-${idx + 1}`),
+            name: pkg.name || pkg.package_name || 'Wellness Health Package',
+            subtitle: pkg.subtitle || pkg.description || 'Comprehensive health screening package',
+            category: pkg.category || 'general',
+            categoryName: pkg.category_name || (pkg.category ? (pkg.category.charAt(0).toUpperCase() + pkg.category.slice(1) + ' Wellness') : 'General Wellness'),
+            iconColor: pkg.icon_color || 'bg-blue-50 text-blue-600',
+            tests: parsedTests.slice(0, 4),
+            testsCount: pkg.total_tests_count || pkg.testsCount || (parsedTests.length > 4 ? parsedTests.length : 45),
+            mrp: Number(pkg.price || pkg.mrp || 1999),
+            price: Number(pkg.discounted_price || pkg.price || 1299),
+            discount: pkg.discount || '20% OFF',
+            discountPercent: Number(pkg.discount_percentage || pkg.discountPercent || 20),
+            image: pkg.image || pkg.image_url || '/wellness-pkg1-heart.png',
+            badge: pkg.badge || pkg.tags || 'Essential Checkup',
+            includes: pkg.includes || `${pkg.total_tests_count || 45}+ Tests Included (CBC, Lipid, LFT & Blood Sugar)`,
+            reportsIn: pkg.turnaround_time || pkg.reportsIn || 'Same Day (Within 12-24 Hours)',
+            fasting: pkg.fasting || (pkg.fasting_required !== false ? '10-12 hrs Fasting Required' : 'No Fasting Required')
+          };
+        });
+      }
+    } catch (err) {
+      console.warn('[SupabaseService] getWellnessPackages from Supabase error:', err);
+    }
+  }
+
+  // 3. Resilient persistent local storage cache / verified registry
+  if (!packages || packages.length === 0) {
+    const cached = getLocalData('zestmed_wellness_packages_cache', null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      packages = cached;
+    } else {
+      packages = WELLNESS_PACKAGES_DATA;
+      setLocalData('zestmed_wellness_packages_cache', WELLNESS_PACKAGES_DATA);
+    }
+  }
+
+  // 4. Filter by category if specified
+  if (categoryFilter && categoryFilter !== 'all' && categoryFilter !== 'All') {
+    const filterLower = categoryFilter.toLowerCase();
+    return packages.filter((pkg) => {
+      const cat = String(pkg.category || '').toLowerCase();
+      const catName = String(pkg.categoryName || '').toLowerCase();
+      return cat === filterLower || catName.includes(filterLower);
+    });
+  }
+
+  return packages;
+};
 
 export const getWellnessBookings = async (phone = null) => {
   if (isSupabaseConfigured()) {

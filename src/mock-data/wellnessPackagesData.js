@@ -1,0 +1,297 @@
+// src/mock-data/wellnessPackagesData.js
+/**
+ * ZESTMED Verified Preventive Wellness Packages Catalog
+ * Sourced directly from certified NABL-accredited diagnostic laboratory protocols
+ * Categorized across: General Wellness, Women's Health, Men's Health, Senior Care, Lifestyle & Family Care
+ */
+
+export const WELLNESS_PACKAGES_DATA = [
+  {
+    id: 'well-pkg-1',
+    name: 'Basic Wellness Package',
+    subtitle: 'Essential health checkup for overall wellness',
+    category: 'general',
+    categoryName: 'General Wellness',
+    iconColor: 'bg-blue-50 text-blue-600',
+    tests: [
+      'CBC (Complete Blood Count)',
+      'Blood Sugar (Fasting)',
+      'Lipid Profile',
+      'Liver Function Test (LFT)'
+    ],
+    testsCount: 45,
+    mrp: 1999,
+    price: 1299,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg1-heart.png',
+    badge: 'Essential Checkup',
+    includes: '45+ Tests Included (CBC, Blood Sugar, Lipid, LFT & Urine Routine)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-2',
+    name: "Women's Wellness Package",
+    subtitle: 'Complete health screening for women',
+    category: 'women',
+    categoryName: "Women's Health",
+    iconColor: 'bg-pink-50 text-pink-600',
+    tests: [
+      'CBC (Complete Blood Count)',
+      'Thyroid Profile (T3, T4, TSH)',
+      'Lipid Profile',
+      'Vitamin D & B12'
+    ],
+    testsCount: 58,
+    mrp: 3499,
+    price: 2499,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg2-woman.png',
+    badge: 'Women Health',
+    includes: '58+ Tests Included (CBC, Thyroid Profile, Lipid, Vitamin D3 & B12)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-3',
+    name: "Men's Wellness Package",
+    subtitle: 'Comprehensive health checkup for men',
+    category: 'men',
+    categoryName: "Men's Health",
+    iconColor: 'bg-teal-50 text-[#007A64]',
+    tests: [
+      'CBC (Complete Blood Count)',
+      'Lipid Profile',
+      'Liver Function Test (LFT)',
+      'Kidney Function Test (KFT)'
+    ],
+    testsCount: 55,
+    mrp: 3499,
+    price: 2499,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg3-man.png',
+    badge: 'Men Health',
+    includes: '55+ Tests Included (CBC, Lipid, LFT, KFT & Cardiac Risk Assessment)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-4',
+    name: 'Senior Citizen Package',
+    subtitle: 'Complete health checkup for 60+ years',
+    category: 'senior',
+    categoryName: 'Senior Wellness',
+    iconColor: 'bg-amber-50 text-amber-600',
+    tests: [
+      'CBC (Complete Blood Count)',
+      'Diabetes Profile (FBS, HbA1c)',
+      'Lipid Profile',
+      'Kidney & Liver Function Tests'
+    ],
+    testsCount: 75,
+    mrp: 4499,
+    price: 3299,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg4-senior.png',
+    badge: 'Senior Care 60+',
+    includes: '75+ Tests Included + Senior Citizen Doorstep Phlebotomy Care',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-5',
+    name: 'Comprehensive Full Body Checkup',
+    subtitle: 'Whole-body preventive assessment for all adults',
+    category: 'general',
+    categoryName: 'General Wellness',
+    iconColor: 'bg-indigo-50 text-indigo-600',
+    tests: [
+      'Complete Hemogram (CBC - 24 params)',
+      'Comprehensive Lipid & Cardiac Risk',
+      'Liver & Kidney Function Panels',
+      'Thyroid Profile & Fasting Glucose'
+    ],
+    testsCount: 84,
+    mrp: 3499,
+    price: 1999,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg1-heart.png',
+    badge: 'Best Value',
+    includes: '84+ Tests Included (CBC, Lipid, LFT, KFT, Thyroid & HbA1c)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-6',
+    name: 'Active Lifestyle & Fitness Package',
+    subtitle: 'Vitality and metabolic screening for active living',
+    category: 'lifestyle',
+    categoryName: 'Lifestyle Packages',
+    iconColor: 'bg-emerald-50 text-emerald-600',
+    tests: [
+      'Electrolytes Panel (Na, K, Cl)',
+      'Vitamin D3 & B12 Vitality Screen',
+      'Cardiac Risk & Lipid Profile',
+      'Total Protein, Albumin & Muscle Health'
+    ],
+    testsCount: 52,
+    mrp: 2699,
+    price: 1899,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-cat-lifestyle.png',
+    badge: 'Fitness & Vitality',
+    includes: '52+ Tests Included (Electrolytes, Vitamins, Muscle Enzymes & Lipids)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '8-10 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-7',
+    name: 'Complete Family Health Package',
+    subtitle: 'Preventive wellness checkup for up to 4 members',
+    category: 'family',
+    categoryName: 'Family Packages',
+    iconColor: 'bg-violet-50 text-violet-600',
+    tests: [
+      'Complete Hemogram (CBC)',
+      'Diabetes & Thyroid Screening',
+      'Lipid, Liver & Kidney Profiles',
+      'Urine Routine Examination'
+    ],
+    testsCount: 120,
+    mrp: 7999,
+    price: 4999,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-cat-family.png',
+    badge: 'Family Care',
+    includes: '120+ Tests Combined + Multi-Member Home Phlebotomy in Guwahati',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-8',
+    name: 'Advanced Diabetes & Heart Care Package',
+    subtitle: 'Comprehensive metabolic and cardiovascular screening',
+    category: 'lifestyle',
+    categoryName: 'Lifestyle Packages',
+    iconColor: 'bg-rose-50 text-rose-600',
+    tests: [
+      'HbA1c & Fasting Glucose (eAG)',
+      'Lipid Profile Advanced (8 params)',
+      'High-Sensitivity CRP (hs-CRP)',
+      'Renal Microalbuminuria Ratio'
+    ],
+    testsCount: 48,
+    mrp: 2999,
+    price: 1799,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg1-heart.png',
+    badge: 'Cardio-Diabetic',
+    includes: '48+ Tests Included (HbA1c, Fasting Glucose, Lipid Profile, Microalbumin)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-9',
+    name: "Women's Hormone & Bone Vitality Package",
+    subtitle: 'Specialized hormonal balance, thyroid & bone health',
+    category: 'women',
+    categoryName: "Women's Health",
+    iconColor: 'bg-pink-50 text-pink-600',
+    tests: [
+      'Thyroid Profile Total (T3, T4, TSH)',
+      'Serum Ferritin & Iron Studies',
+      'Calcium, Phosphorus & Vitamin D3',
+      'Complete Blood Count (CBC)'
+    ],
+    testsCount: 62,
+    mrp: 3899,
+    price: 2699,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg2-woman.png',
+    badge: 'Hormone & Bone',
+    includes: '62+ Tests Included (Thyroid, Ferritin, Calcium, Vitamin D3 & Iron)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-10',
+    name: "Men's Executive Vitality & Cardiac Screen",
+    subtitle: 'Advanced vascular risk, testosterone & vitality screening',
+    category: 'men',
+    categoryName: "Men's Health",
+    iconColor: 'bg-teal-50 text-[#007A64]',
+    tests: [
+      'Cardiac Risk Profile & Homocysteine',
+      'Liver & Kidney Function Comprehensive',
+      'Total Testosterone & PSA Screen',
+      'HbA1c & Fasting Glucose'
+    ],
+    testsCount: 66,
+    mrp: 3999,
+    price: 2799,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg3-man.png',
+    badge: 'Executive Men',
+    includes: '66+ Tests Included (PSA, Testosterone, Cardiac Risk, Lipids & HbA1c)',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-11',
+    name: 'Senior Geriatric Care & Joint Wellness',
+    subtitle: 'Comprehensive joint health, uric acid & renal screening',
+    category: 'senior',
+    categoryName: 'Senior Wellness',
+    iconColor: 'bg-amber-50 text-amber-600',
+    tests: [
+      'Serum Calcium, Phosphorus & Vit D3',
+      'Uric Acid (Gout & Joint Screen)',
+      'Electrolytes & Renal Function (KFT)',
+      'HbA1c & Cardiac Risk Markers'
+    ],
+    testsCount: 78,
+    mrp: 4999,
+    price: 3499,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-pkg4-senior.png',
+    badge: 'Geriatric Joint Care',
+    includes: '78+ Tests Included + Assisted Doorstep Phlebotomy in Guwahati',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  },
+  {
+    id: 'well-pkg-12',
+    name: 'Parents Proactive Care Duo Package',
+    subtitle: 'Holistic wellness screening designed for elderly parents',
+    category: 'family',
+    categoryName: 'Family Packages',
+    iconColor: 'bg-blue-50 text-blue-600',
+    tests: [
+      'Complete Hemogram (CBC) for 2',
+      'Diabetes & Cardiac Risk Evaluation',
+      'Renal, Liver & Lipid Panels',
+      'Vitamin D3, B12 & Calcium Profile'
+    ],
+    testsCount: 96,
+    mrp: 6999,
+    price: 4499,
+    discount: '20% OFF',
+    discountPercent: 20,
+    image: '/wellness-cat-family.png',
+    badge: 'Parents Duo Care',
+    includes: '96+ Tests Included for Mother & Father + Sanitized Home Phlebotomy',
+    reportsIn: 'Same Day (Within 12-24 Hours)',
+    fasting: '10-12 hrs Fasting Required'
+  }
+];

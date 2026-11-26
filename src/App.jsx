@@ -216,7 +216,7 @@ function AppContent() {
           <Route path="/surgeries" element={<SurgeryPackagesPage />} />
           <Route path="/surgeries/:id" element={<SurgeryDetailPage />} />
           <Route path="/surgery/:id" element={<SurgeryDetailPage />} />
-          <Route path="/packages" element={<SurgeryPackagesPage />} />
+          <Route path="/packages" element={<WellnessPackagesPage />} />
           <Route path="/health-packages" element={<HealthPackagesPage />} />
           <Route path="/wellness-packages" element={<WellnessPackagesPage />} />
           <Route path="/wellness" element={<WellnessPackagesPage />} />
