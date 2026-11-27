@@ -2,74 +2,7 @@
 // Central Registered Patients Directory for ZESTMED with Supabase PostgreSQL Sync
 import { savePatientProfile } from '../services/supabaseService';
 
-export const DEFAULT_REGISTERED_PATIENTS = [
-  {
-    id: 'ZM-PAT-101',
-    name: 'Ajayendra Shekhar',
-    phone: '9279125091',
-    email: 'ajayendra.shekhar@zestmed.com',
-    city: 'Guwahati (Dispur)',
-    age: 34,
-    gender: 'Male',
-    bloodGroup: 'B+',
-    registeredAt: 'Oct 2024'
-  },
-  {
-    id: 'ZM-PAT-102',
-    name: 'Rajesh Kumar',
-    phone: '9876543210',
-    email: 'rajesh.kumar@gmail.com',
-    city: 'Guwahati (Ulubari)',
-    age: 42,
-    gender: 'Male',
-    bloodGroup: 'O+',
-    registeredAt: 'Nov 2024'
-  },
-  {
-    id: 'ZM-PAT-103',
-    name: 'Priya Sharma',
-    phone: '9435012345',
-    email: 'priya.sharma@gmail.com',
-    city: 'Guwahati (Chandmari)',
-    age: 29,
-    gender: 'Female',
-    bloodGroup: 'A+',
-    registeredAt: 'Jan 2025'
-  },
-  {
-    id: 'ZM-PAT-104',
-    name: 'Amit Verma',
-    phone: '9706098765',
-    email: 'amit.verma@gmail.com',
-    city: 'Guwahati (Jalukbari)',
-    age: 38,
-    gender: 'Male',
-    bloodGroup: 'B+',
-    registeredAt: 'Feb 2025'
-  },
-  {
-    id: 'ZM-PAT-105',
-    name: 'Sneha Singh',
-    phone: '9127054321',
-    email: 'sneha.singh@gmail.com',
-    city: 'Guwahati (Khanapara)',
-    age: 31,
-    gender: 'Female',
-    bloodGroup: 'AB+',
-    registeredAt: 'Mar 2025'
-  },
-  {
-    id: 'ZM-PAT-106',
-    name: 'Deepjyoti Kalita',
-    phone: '9864012345',
-    email: 'deepjyoti.kalita@gmail.com',
-    city: 'Guwahati (Panbazar)',
-    age: 28,
-    gender: 'Male',
-    bloodGroup: 'O+',
-    registeredAt: 'May 2025'
-  }
-];
+export const DEFAULT_REGISTERED_PATIENTS = [];
 
 export function normalizePhone(phone) {
   if (!phone) return '';

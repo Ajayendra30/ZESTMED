@@ -151,6 +151,17 @@ export const checkRateLimit = (cleanPhone) => {
 export const checkUserRegistrationByPhone = async (cleanPhone) => {
   if (!cleanPhone) return { exists: false, user: null };
 
+  // Check if account has been deleted
+  try {
+    const rawDel = localStorage.getItem('zestmed_deleted_patients');
+    if (rawDel) {
+      const delList = JSON.parse(rawDel);
+      if (Array.isArray(delList) && delList.includes(cleanPhone)) {
+        return { exists: false, user: null };
+      }
+    }
+  } catch (_) {}
+
   // 1. Check local registry first
   const registry = getJson('zestmed_patient_registry', {});
   if (registry[cleanPhone] && registry[cleanPhone].name && registry[cleanPhone].name !== 'Verified Patient') {
@@ -220,7 +231,8 @@ export const requestOtp = async (phoneNumber) => {
   // Disallow login access for Admin and Lab Executive roles through website login
   const isAdminOrLab = ROLE_PHONE_DIRECTORY.admin.includes(clean) || ROLE_PHONE_DIRECTORY.lab.includes(clean);
   const regCheck = await checkUserRegistrationByPhone(clean);
-  const isExistingStaffOrAdmin = regCheck.exists && (regCheck.user?.role === 'Admin' || regCheck.user?.role === 'Lab Executive' || regCheck.user?.role === 'Lab Staff');
+  const roleUpper = String(regCheck.user?.role || '').toUpperCase();
+  const isExistingStaffOrAdmin = regCheck.exists && (roleUpper === 'ADMIN' || roleUpper === 'LAB_EXECUTIVE' || roleUpper === 'LAB STAFF' || roleUpper === 'LAB EXECUTIVE');
 
   if (isAdminOrLab || isExistingStaffOrAdmin) {
     return {
@@ -298,7 +310,8 @@ export const verifyOtpCode = async (phoneNumber, enteredOtp) => {
   // Disallow login access for Admin and Lab Executive roles through website login
   const isAdminOrLab = ROLE_PHONE_DIRECTORY.admin.includes(clean) || ROLE_PHONE_DIRECTORY.lab.includes(clean);
   const regCheck = await checkUserRegistrationByPhone(clean);
-  const isExistingStaffOrAdmin = regCheck.exists && (regCheck.user?.role === 'Admin' || regCheck.user?.role === 'Lab Executive' || regCheck.user?.role === 'Lab Staff');
+  const roleUpper = String(regCheck.user?.role || '').toUpperCase();
+  const isExistingStaffOrAdmin = regCheck.exists && (roleUpper === 'ADMIN' || roleUpper === 'LAB_EXECUTIVE' || roleUpper === 'LAB STAFF' || roleUpper === 'LAB EXECUTIVE');
 
   if (isAdminOrLab || isExistingStaffOrAdmin) {
     return {

@@ -88,7 +88,7 @@ import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adm
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders, initialPatientLabBookings, initialPatientAppointments } from '../mock-data/patientData';
-import { getRegisteredPatient, DEFAULT_REGISTERED_PATIENTS, normalizePhone, deleteRegisteredPatient } from '../utils/patientRegistry';
+import { getRegisteredPatient, normalizePhone, deleteRegisteredPatient } from '../utils/patientRegistry';
 import AddDiagnosticTestModal from '../components/AddDiagnosticTestModal';
 import RegisterPatientModal from '../components/RegisterPatientModal';
 import EditPatientModal from '../components/EditPatientModal';
@@ -360,36 +360,6 @@ export default function AdminDashboardPage() {
 
     const patientMap = new Map();
 
-    const basePatients = [
-      { id: 'ZM-PAT-101', name: 'Ajayendra Shekhar', phone: '+91 92791 25091', city: 'Guwahati (Dispur)', status: 'Active' },
-      { id: 'ZM-PAT-102', name: 'Rajesh Kumar', phone: '+91 98765 43210', city: 'Guwahati (Ulubari)', status: 'Active' },
-      { id: 'ZM-PAT-103', name: 'Priya Sharma', phone: '+91 94350 12345', city: 'Guwahati (Chandmari)', status: 'Active' },
-      { id: 'ZM-PAT-104', name: 'Amit Verma', phone: '+91 97060 98765', city: 'Guwahati (Jalukbari)', status: 'Active' },
-      { id: 'ZM-PAT-105', name: 'Sneha Singh', phone: '+91 91270 54321', city: 'Guwahati (Khanapara)', status: 'Active' },
-      { id: 'ZM-PAT-106', name: 'Deepjyoti Kalita', phone: '+91 98640 12345', city: 'Guwahati (Panbazar)', status: 'Active' }
-    ];
-
-    basePatients.forEach((p) => {
-      const clean = normalizePhone(p.phone);
-      if (!isExcluded(p.id, clean)) {
-        patientMap.set(clean || p.id, { ...p, cleanPhone: clean });
-      }
-    });
-
-    DEFAULT_REGISTERED_PATIENTS.forEach((p) => {
-      const clean = normalizePhone(p.phone);
-      if (clean && !patientMap.has(clean) && !isExcluded(p.id, clean)) {
-        patientMap.set(clean, {
-          id: p.id,
-          name: p.name,
-          phone: `+91 ${clean}`,
-          cleanPhone: clean,
-          city: p.city || 'Guwahati, Assam',
-          status: 'Active'
-        });
-      }
-    });
-
     try {
       const savedAdmin = localStorage.getItem('zestmed_admin_patients');
       if (savedAdmin) {
@@ -511,9 +481,9 @@ export default function AdminDashboardPage() {
   };
 
   const [patientsList, setPatientsList] = useState(() => {
-    const rawAppts = (() => { try { const s = localStorage.getItem('patient_appointments'); return s ? JSON.parse(s) : initialPatientAppointments; } catch { return initialPatientAppointments; } })();
-    const rawLabs = (() => { try { const s = localStorage.getItem('zestmed_patient_lab_bookings'); return s ? JSON.parse(s) : initialPatientLabBookings; } catch { return initialPatientLabBookings; } })();
-    const rawOrds = (() => { try { const s = localStorage.getItem('zestmed_patient_orders'); return s ? JSON.parse(s) : initialPatientOrders; } catch { return initialPatientOrders; } })();
+    const rawAppts = (() => { try { const s = localStorage.getItem('patient_appointments'); return s ? JSON.parse(s) : []; } catch { return []; } })();
+    const rawLabs = (() => { try { const s = localStorage.getItem('zestmed_patient_lab_bookings'); return s ? JSON.parse(s) : []; } catch { return []; } })();
+    const rawOrds = (() => { try { const s = localStorage.getItem('zestmed_patient_orders'); return s ? JSON.parse(s) : []; } catch { return []; } })();
     return computeMergedPatients(rawAppts, rawLabs, rawOrds);
   });
 
@@ -756,8 +726,8 @@ export default function AdminDashboardPage() {
           });
         }
 
-        // 5. Merge Patients
-        if (livePatients.status === 'fulfilled' && Array.isArray(livePatients.value) && livePatients.value.length > 0) {
+        // 5. Merge Patients from Supabase PostgreSQL
+        if (livePatients.status === 'fulfilled' && Array.isArray(livePatients.value)) {
           let delPats = new Set();
           try {
             const rawPatDel = localStorage.getItem('zestmed_deleted_patients');
@@ -774,9 +744,9 @@ export default function AdminDashboardPage() {
             .map((p) => ({
               id: p.uhid || p.id || `ZM-PAT-${(p.phone || '').slice(-4)}`,
               name: p.full_name || p.name || 'Patient',
-              phone: p.phone ? (p.phone.startsWith('+91') ? p.phone : `+91 ${p.phone}`) : '+91 92791 25091',
+              phone: p.phone ? (p.phone.startsWith('+91') ? p.phone : `+91 ${p.phone}`) : '',
               city: p.city ? `${p.city}, Assam` : 'Guwahati, Assam',
-              status: p.status || 'Active'
+              status: p.status || (p.is_active !== false ? 'Active' : 'Inactive')
             }));
 
           setPatientsList((prev) => {
@@ -785,12 +755,18 @@ export default function AdminDashboardPage() {
               const clean = normalizePhone(p.phone);
               return !delPats.has(pId) && (!clean || !delPats.has(clean));
             });
-            const existingIds = new Set(filteredPrev.map((p) => p.id));
-            const newOnes = mappedPatients.filter((f) => !existingIds.has(f.id));
-            if (newOnes.length > 0) {
-              return [...newOnes, ...filteredPrev];
-            }
-            return filteredPrev;
+            const patientMap = new Map();
+            mappedPatients.forEach((p) => {
+              const clean = normalizePhone(p.phone);
+              patientMap.set(clean || p.id, p);
+            });
+            filteredPrev.forEach((p) => {
+              const clean = normalizePhone(p.phone);
+              if (!patientMap.has(clean || p.id)) {
+                patientMap.set(clean || p.id, p);
+              }
+            });
+            return Array.from(patientMap.values());
           });
         }
       } catch (err) {
@@ -952,18 +928,35 @@ export default function AdminDashboardPage() {
 
   // Revenue calculation from all confirmed platform transactions
   const totalRevenueNumber = useMemo(() => {
-    const sumOrders = medicineOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount) || 0), 0);
-    const sumLabs = labBookingsList.reduce((acc, b) => acc + (Number(b.price) || 0), 0);
-    const sumAppts = appointmentsList.reduce((acc, a) => acc + (Number(a.fee || a.price) || 0), 0);
-    return 1248320 + sumOrders + sumLabs + sumAppts;
-  }, [medicineOrders, labBookingsList, appointmentsList]);
+    const sumOrders = medicineOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount || o.amount) || 0), 0);
+    const sumLabs = diagnosticLabBookings.reduce((acc, b) => acc + (Number(b.price || b.totalPrice || b.amount) || 0), 0);
+    const sumWell = wellnessBookings.reduce((acc, w) => acc + (Number(w.price || w.totalPrice || w.amount) || 0), 0);
+    const sumAppts = appointmentsList.reduce((acc, a) => acc + (Number(a.fee || a.price || a.amount) || 0), 0);
+    return sumOrders + sumLabs + sumWell + sumAppts;
+  }, [medicineOrders, diagnosticLabBookings, wellnessBookings, appointmentsList]);
+
+  // Order category distributions from live database bookings
+  const totalOrdersCount = useMemo(() => {
+    return medicineOrders.length + diagnosticLabBookings.length + wellnessBookings.length + surgeryBookings.length;
+  }, [medicineOrders, diagnosticLabBookings, wellnessBookings, surgeryBookings]);
+
+  const orderCategoryPercentages = useMemo(() => {
+    if (totalOrdersCount === 0) {
+      return { med: 0, lab: 0, well: 0, other: 0 };
+    }
+    const med = Math.round((medicineOrders.length / totalOrdersCount) * 100);
+    const lab = Math.round((diagnosticLabBookings.length / totalOrdersCount) * 100);
+    const well = Math.round((wellnessBookings.length / totalOrdersCount) * 100);
+    const other = Math.max(0, 100 - (med + lab + well));
+    return { med, lab, well, other };
+  }, [totalOrdersCount, medicineOrders, diagnosticLabBookings, wellnessBookings]);
 
   // Exact KPI Metrics with live counts
   const kpiMetrics = [
     {
       title: 'Total Patients',
-      value: `${patientsList.length > 6 ? (4907 + (patientsList.length - 6)).toLocaleString('en-IN') : '4,907'}`,
-      trend: '+12.4% vs last 30 days',
+      value: patientsList.length.toLocaleString('en-IN'),
+      trend: `${patientsList.filter(p => p.status === 'Active').length} Active Registered`,
       icon: Users,
       bgColor: 'bg-emerald-50',
       iconColor: 'text-emerald-600',
@@ -972,8 +965,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Clinical Appointments',
-      value: '850',
-      trend: '+16.2% vs last 30 days',
+      value: appointmentsList.length.toLocaleString('en-IN'),
+      trend: `${doctorAppointments.length} Doctor · ${physioAppointments.length} Physio`,
       icon: Stethoscope,
       bgColor: 'bg-rose-50',
       iconColor: 'text-rose-500',
@@ -982,8 +975,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Lab & Wellness',
-      value: '1,244',
-      trend: '+18.7% vs last 30 days',
+      value: (diagnosticLabBookings.length + wellnessBookings.length).toLocaleString('en-IN'),
+      trend: `${diagnosticLabBookings.length} Lab · ${wellnessBookings.length} Wellness`,
       icon: FlaskConical,
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
@@ -992,8 +985,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Medicine Orders',
-      value: '2,180',
-      trend: '+14.2% vs last 30 days',
+      value: medicineOrders.length.toLocaleString('en-IN'),
+      trend: `${medicineOrders.length} Orders Recorded`,
       icon: ShoppingCart,
       bgColor: 'bg-orange-50',
       iconColor: 'text-orange-500',
@@ -1002,8 +995,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Total Revenue',
-      value: '₹13,27,730',
-      trend: '+20.6% vs last 30 days',
+      value: `₹${totalRevenueNumber.toLocaleString('en-IN')}`,
+      trend: `From verified bookings & orders`,
       icon: Coins,
       bgColor: 'bg-emerald-50',
       iconColor: 'text-emerald-600',
@@ -2645,7 +2638,7 @@ export default function AdminDashboardPage() {
                   </h3>
                 </div>
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold font-mono text-xs px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-                  <span>↗ Revenue : ₹12,48,320</span>
+                  <span>↗ Revenue : ₹{totalRevenueNumber.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
@@ -2742,57 +2735,71 @@ export default function AdminDashboardPage() {
                 {/* SVG Donut Chart with center text */}
                 <div className="relative w-36 h-36 sm:w-40 sm:h-40 shrink-0 flex items-center justify-center">
                   <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
-                    {/* Circle 1: Medicines (58%) -> Stroke Dash: 58% of 377 = 218.66 */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="60"
-                      fill="transparent"
-                      stroke="#14B8A6"
-                      strokeWidth="22"
-                      strokeDasharray="218.66 377"
-                      strokeDashoffset="0"
-                    />
-                    {/* Circle 2: Lab Tests (28%) -> 28% of 377 = 105.56 */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="60"
-                      fill="transparent"
-                      stroke="#3B82F6"
-                      strokeWidth="22"
-                      strokeDasharray="105.56 377"
-                      strokeDashoffset="-218.66"
-                    />
-                    {/* Circle 3: Health Packages (10%) -> 10% of 377 = 37.7 */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="60"
-                      fill="transparent"
-                      stroke="#C084FC"
-                      strokeWidth="22"
-                      strokeDasharray="37.7 377"
-                      strokeDashoffset="-324.22"
-                    />
-                    {/* Circle 4: Others (4%) -> 4% of 377 = 15.08 */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="60"
-                      fill="transparent"
-                      stroke="#CBD5E1"
-                      strokeWidth="22"
-                      strokeDasharray="15.08 377"
-                      strokeDashoffset="-361.92"
-                    />
+                    {totalOrdersCount > 0 ? (
+                      <>
+                        {/* Circle 1: Medicines */}
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="60"
+                          fill="transparent"
+                          stroke="#14B8A6"
+                          strokeWidth="22"
+                          strokeDasharray={`${(orderCategoryPercentages.med / 100) * 377} 377`}
+                          strokeDashoffset="0"
+                        />
+                        {/* Circle 2: Lab Tests */}
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="60"
+                          fill="transparent"
+                          stroke="#3B82F6"
+                          strokeWidth="22"
+                          strokeDasharray={`${(orderCategoryPercentages.lab / 100) * 377} 377`}
+                          strokeDashoffset={`-${(orderCategoryPercentages.med / 100) * 377}`}
+                        />
+                        {/* Circle 3: Health Packages */}
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="60"
+                          fill="transparent"
+                          stroke="#C084FC"
+                          strokeWidth="22"
+                          strokeDasharray={`${(orderCategoryPercentages.well / 100) * 377} 377`}
+                          strokeDashoffset={`-${((orderCategoryPercentages.med + orderCategoryPercentages.lab) / 100) * 377}`}
+                        />
+                        {/* Circle 4: Others */}
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="60"
+                          fill="transparent"
+                          stroke="#CBD5E1"
+                          strokeWidth="22"
+                          strokeDasharray={`${(orderCategoryPercentages.other / 100) * 377} 377`}
+                          strokeDashoffset={`-${((orderCategoryPercentages.med + orderCategoryPercentages.lab + orderCategoryPercentages.well) / 100) * 377}`}
+                        />
+                      </>
+                    ) : (
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r="60"
+                        fill="transparent"
+                        stroke="#E2E8F0"
+                        strokeWidth="22"
+                        strokeDasharray="377 377"
+                      />
+                    )}
                   </svg>
 
                   {/* Center Text */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
                     <ShoppingCart className="w-5 h-5 text-emerald-600 mb-1" />
                     <span className="text-2xl font-black text-slate-900 leading-none">
-                      2,168
+                      {totalOrdersCount.toLocaleString('en-IN')}
                     </span>
                     <span className="text-[11px] text-slate-400 font-medium mt-1 leading-none">
                       Total Orders
@@ -2807,7 +2814,7 @@ export default function AdminDashboardPage() {
                       <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6]" />
                       <span className="text-slate-700 font-medium">Medicines</span>
                     </div>
-                    <span className="font-bold text-slate-900">58%</span>
+                    <span className="font-bold text-slate-900">{orderCategoryPercentages.med}%</span>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -2815,7 +2822,7 @@ export default function AdminDashboardPage() {
                       <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]" />
                       <span className="text-slate-700 font-medium">Lab Tests</span>
                     </div>
-                    <span className="font-bold text-slate-900">28%</span>
+                    <span className="font-bold text-slate-900">{orderCategoryPercentages.lab}%</span>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -2823,7 +2830,7 @@ export default function AdminDashboardPage() {
                       <span className="w-2.5 h-2.5 rounded-full bg-[#C084FC]" />
                       <span className="text-slate-700 font-medium">Health Packages</span>
                     </div>
-                    <span className="font-bold text-slate-900">10%</span>
+                    <span className="font-bold text-slate-900">{orderCategoryPercentages.well}%</span>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -2831,7 +2838,7 @@ export default function AdminDashboardPage() {
                       <span className="w-2.5 h-2.5 rounded-full bg-[#CBD5E1]" />
                       <span className="text-slate-700 font-medium">Others</span>
                     </div>
-                    <span className="font-bold text-slate-900">4%</span>
+                    <span className="font-bold text-slate-900">{orderCategoryPercentages.other}%</span>
                   </div>
                 </div>
               </div>
@@ -3133,7 +3140,7 @@ export default function AdminDashboardPage() {
                     <span>Registered Patients Directory (Assam)</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    4,892 patient accounts registered across Guwahati Hubs (Dispur, Panbazar, Ulubari, Jalukbari & Khanapara).
+                    {patientsList.length.toLocaleString('en-IN')} patient account{patientsList.length === 1 ? '' : 's'} registered across Guwahati Hubs (Dispur, Panbazar, Ulubari, Jalukbari & Khanapara).
                   </p>
                 </div>
                 <div className="flex items-center gap-2.5">

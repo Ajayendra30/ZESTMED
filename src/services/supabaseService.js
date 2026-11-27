@@ -198,17 +198,11 @@ export const deletePatientProfile = async (identifier, phone = null) => {
   // 2. Delete from Supabase profiles table
   if (isSupabaseConfigured()) {
     try {
-      let query = supabase.from('profiles').delete();
-      if (idStr && clean && clean.length === 10) {
-        query = query.or(`id.eq.${idStr},phone.eq.${clean},phone.eq.+91 ${clean},phone.eq.+91${clean}`);
-      } else if (clean && clean.length === 10) {
-        query = query.or(`phone.eq.${clean},phone.eq.+91 ${clean},phone.eq.+91${clean}`);
-      } else if (idStr) {
-        query = query.eq('id', idStr);
+      if (idStr) {
+        await supabase.from('profiles').delete().eq('id', idStr);
       }
-      const { error } = await query;
-      if (error) {
-        console.warn('[SupabaseService] delete patient from profiles table error:', error);
+      if (clean && clean.length === 10) {
+        await supabase.from('profiles').delete().eq('phone', clean);
       }
     } catch (err) {
       console.warn('[SupabaseService] delete patient from profiles exception:', err);
