@@ -102,13 +102,13 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 w-full max-w-[660px] max-h-[96vh] flex flex-col overflow-y-auto sm:overflow-hidden animate-scale-up"
+        className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 w-full max-w-[620px] max-h-[96vh] flex flex-col overflow-y-auto sm:overflow-hidden animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Banner - Complete visible banner without cropping, with blue uniform nurse */}
         <div className="relative w-full overflow-hidden border-b border-slate-100 bg-[#E8F5F8] select-none shrink-0">
           <img
-            src="/senior-pickup-header-banner.jpg?v=4"
+            src="/senior-pickup-header-banner.jpg?v=5"
             alt="Senior Citizen Pick-up & Drop Service"
             className="w-full h-auto block pointer-events-none"
             style={{ maxHeight: 'none', objectFit: 'contain' }}
@@ -125,7 +125,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
         </div>
 
         {/* Content Body - Compact, No scrolling, Fits properly within visible section */}
-        <div className="p-3.5 sm:p-4 sm:px-5">
+        <div className="p-3 sm:p-3.5 sm:px-4.5">
           {bookingConfirmed ? (
             /* Confirmed Confirmation Screen */
             <div className="space-y-3 text-center py-1">
@@ -195,9 +195,9 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
             </div>
           ) : (
             /* Booking Form matching Image 5 & ZESTMED Theme */
-            <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-2.5">
+            <form onSubmit={handleSubmit} className="space-y-1.5 sm:space-y-2">
               {/* Highlight Notice Banner */}
-              <div className="bg-[#E0F5EE] border border-[#BCE8DD] rounded-xl px-3 py-1.5 flex items-center gap-2.5">
+              <div className="bg-[#E0F5EE] border border-[#BCE8DD] rounded-xl px-2.5 py-1 sm:py-1.5 flex items-center gap-2">
                 <div className="w-6 h-6 rounded-lg bg-[#007A64] text-white flex items-center justify-center shrink-0 shadow-2xs">
                   <Heart className="w-3.5 h-3.5 fill-white" />
                 </div>
@@ -403,7 +403,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-extrabold py-2.5 sm:py-3 px-4 rounded-xl transition shadow-xs hover:shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-75 active:scale-98"
+                  className="w-full bg-[#007A64] hover:bg-[#006852] text-white font-extrabold py-2 sm:py-2.5 px-4 rounded-xl transition shadow-xs hover:shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-75 active:scale-98"
                 >
                   <Car className="w-4 h-4 text-white" />
                   <span>{isSubmitting ? 'Reserving Dedicated Vehicle...' : 'Book Pick-up & Drop Service'}</span>
