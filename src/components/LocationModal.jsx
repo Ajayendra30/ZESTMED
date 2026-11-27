@@ -75,7 +75,7 @@ export default function LocationModal() {
             <div>
               <h4 className="text-xs font-bold text-slate-900">Within 10km Radius Free Pick-up & Drop</h4>
               <p className="text-[11px] text-slate-600 leading-relaxed mt-0.5">
-                Special senior citizen (60+) mobility service available across all Guwahati zones for diagnostic tests, polyclinic visits & day surgeries.
+                Special senior citizen mobility service available across all Guwahati zones for diagnostic tests, polyclinic visits & day surgeries.
               </p>
             </div>
           </div>

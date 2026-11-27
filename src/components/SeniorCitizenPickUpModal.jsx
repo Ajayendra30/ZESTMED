@@ -19,7 +19,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
 
   const [formData, setFormData] = useState({
     patientName: '',
-    patientAge: '68',
+    patientAge: '',
     contactPhone: '',
     pickupAddress: `${currentLocation?.city || 'Guwahati - Dispur / Secretariat'}, Guwahati`,
     destination: 'Zestmed Central Diagnostics & Polyclinic',
@@ -58,8 +58,8 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
       addToast('Please enter a valid 10-digit mobile number', 'error');
       return;
     }
-    if (parseInt(formData.patientAge, 10) < 60) {
-      addToast('This dedicated free cab service is reserved for senior citizens aged 60 and above', 'error');
+    if (!formData.patientAge || parseInt(formData.patientAge, 10) <= 0) {
+      addToast('Please enter the patient\'s age', 'error');
       return;
     }
 
@@ -102,24 +102,24 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 w-full max-w-[720px] flex flex-col overflow-hidden animate-scale-up"
+        className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 w-full max-w-[660px] max-h-[96vh] flex flex-col overflow-y-auto sm:overflow-hidden animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Banner - Matches Reference Image 5 exactly */}
-        <div className="relative w-full overflow-hidden border-b border-slate-100 bg-[#E8F5F8] select-none">
+        {/* Header Banner - Complete visible banner without cropping, matching ZESTMED theme */}
+        <div className="relative w-full overflow-hidden border-b border-slate-100 bg-[#E8F5F8] select-none shrink-0">
           <img
             src="/senior-pickup-header-banner.jpg"
             alt="Senior Citizen Pick-up & Drop Service"
-            className="w-full h-auto max-h-[105px] sm:max-h-[120px] object-cover object-left sm:object-center pointer-events-none"
+            className="w-full h-auto block object-contain pointer-events-none"
           />
           {/* Close Button top-right */}
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 hover:bg-white text-slate-500 hover:text-slate-800 flex items-center justify-center shadow-xs border border-slate-200/70 transition cursor-pointer z-10"
+            className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-600 hover:text-slate-900 flex items-center justify-center shadow-xs border border-slate-200/80 transition cursor-pointer z-10"
           >
-            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+            <X className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
 
@@ -201,7 +201,7 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                   <Heart className="w-3.5 h-3.5 fill-white" />
                 </div>
                 <p className="text-[11px] sm:text-xs text-[#005B48] font-semibold leading-tight">
-                  Available for Senior Citizens (60+) traveling for diagnostic lab tests, doctor consults, or day surgeries in Guwahati.
+                  Available for Senior Citizens traveling for diagnostic lab tests, doctor consults, or day surgeries in Guwahati.
                 </p>
               </div>
 
@@ -225,15 +225,16 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
                 <div className="sm:col-span-5">
                   <label className="text-[11px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-[#007A64]" />
-                    <span>Patient Age (60+ Years) <span className="text-rose-500">*</span></span>
+                    <span>Patient Age <span className="text-rose-500">*</span></span>
                   </label>
                   <input
                     type="number"
-                    min={60}
-                    max={110}
+                    min={1}
+                    max={120}
                     required
                     value={formData.patientAge}
                     onChange={(e) => setFormData({ ...formData, patientAge: e.target.value })}
+                    placeholder="Enter age"
                     className="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 focus:border-[#007A64] focus:ring-1 focus:ring-[#007A64] outline-none transition bg-white font-medium"
                   />
                 </div>
