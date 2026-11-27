@@ -105,12 +105,13 @@ export default function SeniorCitizenPickUpModal({ isOpen, onClose, defaultServi
         className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 w-full max-w-[660px] max-h-[96vh] flex flex-col overflow-y-auto sm:overflow-hidden animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Banner - Complete visible banner without cropping, matching ZESTMED theme */}
+        {/* Header Banner - Complete visible banner without cropping, with blue uniform nurse */}
         <div className="relative w-full overflow-hidden border-b border-slate-100 bg-[#E8F5F8] select-none shrink-0">
           <img
-            src="/senior-pickup-header-banner.jpg"
+            src="/senior-pickup-header-banner.jpg?v=4"
             alt="Senior Citizen Pick-up & Drop Service"
-            className="w-full h-auto block object-contain pointer-events-none"
+            className="w-full h-auto block pointer-events-none"
+            style={{ maxHeight: 'none', objectFit: 'contain' }}
           />
           {/* Close Button top-right */}
           <button
