@@ -12,6 +12,7 @@ import {
   Calendar, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { ALL_LAB_TESTS_DATA } from '../mock-data/allLabTestsData';
+import { getSynchronizedLabTests } from '../services/labTestService';
 
 const SIDEBAR_CATEGORIES = [
   { id: 'all', name: 'All Tests' },
@@ -48,6 +49,21 @@ export default function DiagnosticPortalPage() {
   const [bookingTestItem, setBookingTestItem] = useState(null);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [testsList, setTestsList] = useState(() => getSynchronizedLabTests());
+
+  // Real-time synchronization across Admin Dashboard actions
+  useEffect(() => {
+    const handleSync = () => {
+      setTestsList(getSynchronizedLabTests());
+    };
+
+    window.addEventListener('zestmed_lab_tests_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('zestmed_lab_tests_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   const ITEMS_PER_PAGE = 12;
 
@@ -141,16 +157,17 @@ export default function DiagnosticPortalPage() {
     setSelectedTestDetail(test);
   };
 
-  // Deduplicate ALL_LAB_TESTS_DATA so each lab test name appears strictly once
+  // Deduplicate lab tests so each lab test name appears strictly once
   const uniqueLabTests = useMemo(() => {
     const seen = new Set();
-    return ALL_LAB_TESTS_DATA.filter((test) => {
+    return (testsList || []).filter((test) => {
+      if (!test || !test.name) return false;
       const key = test.name.toLowerCase().trim();
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
-  }, []);
+  }, [testsList]);
 
   const filteredTests = useMemo(() => {
     return uniqueLabTests.filter((test) => {

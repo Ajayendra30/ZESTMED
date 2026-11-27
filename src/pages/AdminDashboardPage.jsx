@@ -103,6 +103,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adminData';
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
+import { getSynchronizedLabTests, saveLabTest, deleteLabTest } from '../services/labTestService';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders, initialPatientLabBookings, initialPatientAppointments } from '../mock-data/patientData';
 import { getRegisteredPatient, normalizePhone, deleteRegisteredPatient } from '../utils/patientRegistry';
@@ -238,20 +239,21 @@ export default function AdminDashboardPage() {
   const [isHeaderQuickActionsOpen, setIsHeaderQuickActionsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookingModal, setSelectedBookingModal] = useState(null);
-  const [testsList, setTestsList] = useState(() => {
-    try {
-      const saved = localStorage.getItem('zestmed_diagnostic_tests');
-      return saved ? JSON.parse(saved) : MOCK_DIAGNOSTIC_TESTS;
-    } catch {
-      return MOCK_DIAGNOSTIC_TESTS;
-    }
-  });
+  const [testsList, setTestsList] = useState(() => getSynchronizedLabTests());
+  const [labTestSearchQuery, setLabTestSearchQuery] = useState('');
+  const [labTestFilterCategory, setLabTestFilterCategory] = useState('all');
 
   useEffect(() => {
-    try {
-      localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(testsList));
-    } catch (_) {}
-  }, [testsList]);
+    const handleSync = () => {
+      setTestsList(getSynchronizedLabTests());
+    };
+    window.addEventListener('zestmed_lab_tests_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('zestmed_lab_tests_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false);
   const [editingTest, setEditingTest] = useState(null);
@@ -4938,22 +4940,23 @@ export default function AdminDashboardPage() {
                     <span>Diagnostic Pathology Tests Catalog</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1">
-                    Manage 56+ diagnostic tests, home collection parameters, and NABL pricing across Assam.
+                    Manage {testsList.length}+ diagnostic tests, home collection parameters, and NABL pricing across Assam.
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
                     onClick={() => {
-                      const headers = ['Test ID', 'Test Name', 'Sample Type', 'Category', 'Turnaround', 'Fasting Required', 'Price (INR)'];
+                      const headers = ['Test ID', 'Test Name', 'Sample Type', 'Category', 'Turnaround', 'Fasting Required', 'Price (INR)', 'MRP (INR)'];
                       const rows = testsList.map((t) => [
                         t.id,
                         t.name,
                         t.sampleType,
                         t.categoryName || t.category || '',
-                        t.turnaroundTime || '24 Hours',
+                        t.turnaroundTime || t.reportTime || '24 Hours',
                         t.fastingRequired ? 'Yes' : 'No',
-                        t.price
+                        t.price,
+                        t.mrp || (t.price ? Math.round(t.price * 1.25) : '')
                       ]);
                       downloadCsv('ZESTMED_Diagnostic_Tests_Catalog.csv', headers, rows);
                       addToast('Exported diagnostic test catalog to CSV', 'success');
@@ -4982,29 +4985,105 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Lab Test Filter Controls */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={labTestSearchQuery}
+                    onChange={(e) => setLabTestSearchQuery(e.target.value)}
+                    placeholder="Search test name, sample or category..."
+                    className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#14B8A6]"
+                  />
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <span className="text-xs text-slate-500 font-semibold shrink-0">Category:</span>
+                  <select
+                    value={labTestFilterCategory}
+                    onChange={(e) => setLabTestFilterCategory(e.target.value)}
+                    className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+                  >
+                    <option value="all">All Categories ({testsList.length})</option>
+                    <option value="Blood Tests">Blood Tests</option>
+                    <option value="Diabetes Tests">Diabetes Tests</option>
+                    <option value="Heart Tests">Heart Tests</option>
+                    <option value="Liver Tests">Liver Tests</option>
+                    <option value="Kidney Tests">Kidney Tests</option>
+                    <option value="Thyroid Tests">Thyroid Tests</option>
+                    <option value="Hormone Tests">Hormone Tests</option>
+                    <option value="Vitamin Tests">Vitamin Tests</option>
+                    <option value="Allergy Tests">Allergy Tests</option>
+                    <option value="Popular Tests">Popular Tests</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
                       <tr>
-                        <th className="py-3 px-4 font-bold">Test Name</th>
+                        <th className="py-3 px-4 font-bold">Diagnostic Test</th>
                         <th className="py-3 px-4 font-bold">Sample</th>
                         <th className="py-3 px-4 font-bold">Category</th>
                         <th className="py-3 px-4 font-bold">Turnaround</th>
                         <th className="py-3 px-4 font-bold">Fasting</th>
-                        <th className="py-3 px-4 font-bold">Price</th>
+                        <th className="py-3 px-4 font-bold">Price (₹)</th>
                         <th className="py-3 px-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {testsList.map((t) => (
+                      {testsList
+                        .filter((t) => {
+                          if (labTestFilterCategory !== 'all') {
+                            const catName = (t.categoryName || t.category || '').toLowerCase();
+                            const filterLower = labTestFilterCategory.toLowerCase().replace(' tests', '');
+                            if (!catName.includes(filterLower)) {
+                              return false;
+                            }
+                          }
+                          const q = (labTestSearchQuery || '').trim().toLowerCase();
+                          if (!q) return true;
+                          return (
+                            (t.name || '').toLowerCase().includes(q) ||
+                            (t.sampleType || '').toLowerCase().includes(q) ||
+                            (t.description || '').toLowerCase().includes(q) ||
+                            (t.categoryName || t.category || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map((t) => (
                         <tr key={t.id} className="hover:bg-slate-50/50 transition">
-                          <td className="py-3 px-4 font-bold text-slate-900">{t.name}</td>
+                          <td className="py-3 px-4 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              {t.image ? (
+                                <img
+                                  src={t.image}
+                                  alt={t.name}
+                                  className="w-10 h-10 object-contain rounded-lg border border-slate-100 bg-white p-0.5 shrink-0"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    const nextEl = e.currentTarget.nextElementSibling;
+                                    if (nextEl) nextEl.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 text-[#14B8A6] ${t.image ? 'hidden' : ''}`}>
+                                <FlaskConical className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-bold text-slate-900 leading-tight truncate">{t.name}</div>
+                                <div className="text-[11px] text-slate-400 font-normal truncate">
+                                  {Array.isArray(t.parameters) ? `${t.parameters.length} clinical parameters` : (t.parametersCount ? `${t.parametersCount} parameters` : 'Clinical assay')}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
                           <td className="py-3 px-4 text-slate-600 font-mono">{t.sampleType}</td>
                           <td className="py-3 px-4 text-slate-700">
-                            <span className="bg-slate-100 px-2 py-0.5 rounded-md">{t.categoryName || t.category}</span>
+                            <span className="bg-slate-100 px-2 py-0.5 rounded-md font-medium">{t.categoryName || t.category}</span>
                           </td>
-                          <td className="py-3 px-4 text-slate-600">{t.turnaroundTime || '24 Hours'}</td>
+                          <td className="py-3 px-4 text-slate-600">{t.turnaroundTime || t.reportTime || '24 Hours'}</td>
                           <td className="py-3 px-4">
                             {t.fastingRequired ? (
                               <span className="text-amber-600 font-bold">Yes (8-10 hrs)</span>
@@ -5012,7 +5091,12 @@ export default function AdminDashboardPage() {
                               <span className="text-slate-400">Not required</span>
                             )}
                           </td>
-                          <td className="py-3 px-4 font-black text-slate-900">₹{t.price}</td>
+                          <td className="py-3 px-4">
+                            <span className="font-black text-slate-900">₹{t.price}</span>
+                            {t.mrp && t.mrp > t.price && (
+                              <span className="text-[10px] text-slate-400 line-through ml-1.5 font-normal">₹{t.mrp}</span>
+                            )}
+                          </td>
                           <td className="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
                             <button
                               type="button"
@@ -5024,8 +5108,11 @@ export default function AdminDashboardPage() {
                             <button
                               type="button"
                               onClick={() => {
-                                setTestsList((prev) => prev.filter((item) => item.id !== t.id));
-                                addToast(`Test "${t.name}" removed from catalog`, 'info');
+                                if (window.confirm(`Are you sure you want to remove "${t.name}" from active catalog? It will also be removed from the user-facing Lab Test portal.`)) {
+                                  deleteLabTest(t.id || t.name);
+                                  setTestsList(getSynchronizedLabTests());
+                                  addToast(`Test "${t.name}" removed from catalog`, 'info');
+                                }
                               }}
                               className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition inline-flex items-center cursor-pointer"
                               title="Delete Test"
@@ -6004,8 +6091,10 @@ export default function AdminDashboardPage() {
           isOpen={isAddTestModalOpen}
           onClose={() => setIsAddTestModalOpen(false)}
           onAddTest={(newTest) => {
-            setTestsList((prev) => [newTest, ...prev]);
+            const saved = saveLabTest(newTest);
+            setTestsList(getSynchronizedLabTests());
             setIsAddTestModalOpen(false);
+            addToast(`Diagnostic test "${saved.name}" added to catalog!`, 'success');
           }}
         />
       )}
@@ -6132,7 +6221,8 @@ export default function AdminDashboardPage() {
           isOpen={isUploadPackagesOpen}
           onClose={() => setIsUploadPackagesOpen(false)}
           onImportSuccess={(importedRows) => {
-            setTestsList((prev) => [...importedRows, ...prev]);
+            importedRows.forEach((row) => saveLabTest(row));
+            setTestsList(getSynchronizedLabTests());
             addToast(`${importedRows.length} diagnostic packages added to active catalog!`, 'success');
           }}
         />
@@ -6163,8 +6253,10 @@ export default function AdminDashboardPage() {
           onClose={() => setEditingTest(null)}
           test={editingTest}
           onSaveTest={(updated) => {
-            setTestsList((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+            const saved = saveLabTest(updated);
+            setTestsList(getSynchronizedLabTests());
             setEditingTest(null);
+            addToast(`Diagnostic test "${saved.name}" updated successfully!`, 'success');
           }}
         />
       )}
