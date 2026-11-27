@@ -1820,9 +1820,9 @@ export default function AdminDashboardPage() {
           image: uploadRes.publicUrl,
           images: [uploadRes.publicUrl]
         }));
-        addToast('Medicine product image uploaded to Supabase Storage!', 'success');
+        addToast('Medicine product image uploaded successfully!', 'success');
       } else {
-        addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "medicines" bucket exists with public access.`, 'error');
+        addToast(`Image upload notice: ${uploadRes.error || 'Storage notice'}`, 'error');
       }
     } catch (err) {
       addToast(`Image upload failed: ${err.message}`, 'error');

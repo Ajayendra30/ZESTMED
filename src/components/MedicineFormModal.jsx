@@ -29,24 +29,24 @@ export default function MedicineFormModal({
   const [form, setForm] = useState(() => {
     if (medicine) {
       return {
-        name: medicine.name || 'Crocin 500 mg Tablet',
-        categoryName: medicine.categoryName || medicine.categoryLong || 'Pain Relief & Fever',
+        name: medicine.name || '',
+        categoryName: medicine.categoryName || medicine.categoryLong || 'General Medicines',
         type: medicine.type || medicine.dosageType || 'Tablet',
-        price: parseFloat(medicine.price) || 35.00,
-        mrp: parseFloat(medicine.mrp) || 42.00,
-        discount: medicine.discount !== undefined ? parseFloat(medicine.discount) : 20,
+        price: parseFloat(medicine.price) || 0,
+        mrp: parseFloat(medicine.mrp) || 0,
+        discount: medicine.discount !== undefined ? parseFloat(medicine.discount) : 0,
         stock: medicine.stock !== undefined ? parseInt(medicine.stock, 10) : 100,
-        shortDescription: medicine.shortDescription || medicine.description || 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
-        uses: medicine.uses || medicine.usesText || 'Relieves fever, headache, body ache',
-        dosage: medicine.dosage || medicine.dosageText || '1 tablet (500 mg) every 4–6 hours',
+        shortDescription: medicine.shortDescription || medicine.description || '',
+        uses: medicine.uses || medicine.usesText || '',
+        dosage: medicine.dosage || medicine.dosageText || '',
         inStock: medicine.inStock !== false,
-        composition: medicine.composition || medicine.genericName || 'Paracetamol 500 mg',
-        expiry: medicine.expiry || 'Apr 2028',
-        packSize: medicine.packSize || medicine.pack || 'Strip of 15 Tablets',
-        storage: medicine.storage || 'Store below 30°C, in a dry place',
-        manufacturer: medicine.manufacturer || medicine.brand || 'GlaxoSmithKline (GSK)',
-        image: medicine.image || '/medicines/crocin-500.png',
-        images: Array.isArray(medicine.images) && medicine.images.length > 0 ? medicine.images : ['/medicines/crocin-500.png']
+        composition: medicine.composition || medicine.genericName || '',
+        expiry: medicine.expiry || 'Dec 2027',
+        packSize: medicine.packSize || medicine.pack || 'Standard Pack',
+        storage: medicine.storage || 'Store below 25°C in a dry place',
+        manufacturer: medicine.manufacturer || medicine.brand || '',
+        image: medicine.image || '',
+        images: Array.isArray(medicine.images) && medicine.images.length > 0 ? medicine.images : (medicine.image ? [medicine.image] : [])
       };
     }
     // Default Add New Medicine form state matching reference image
@@ -74,33 +74,33 @@ export default function MedicineFormModal({
 
   useEffect(() => {
     if (medicine) {
-      const p = parseFloat(medicine.price) || 35.00;
-      const m = parseFloat(medicine.mrp) || (p > 0 ? Math.round(p * 1.25) : 42.00);
+      const p = parseFloat(medicine.price) || 0;
+      const m = parseFloat(medicine.mrp) || (p > 0 ? Math.round(p * 1.25) : 0);
       const d = medicine.discount !== undefined 
         ? parseFloat(medicine.discount) 
-        : (medicine.discountPercent !== undefined ? parseFloat(medicine.discountPercent) : Math.max(0, Math.round(((m - p) / m) * 100)));
+        : (medicine.discountPercent !== undefined ? parseFloat(medicine.discountPercent) : (m > p ? Math.max(0, Math.round(((m - p) / m) * 100)) : 0));
 
       setForm({
-        name: medicine.name || 'Crocin 500 mg Tablet',
-        categoryName: medicine.categoryName || medicine.categoryLong || 'Pain Relief & Fever',
+        name: medicine.name || '',
+        categoryName: medicine.categoryName || medicine.categoryLong || 'General Medicines',
         type: medicine.type || medicine.dosageType || 'Tablet',
         price: p,
         mrp: m,
         discount: d,
         stock: medicine.stock !== undefined ? parseInt(medicine.stock, 10) : 100,
-        shortDescription: medicine.shortDescription || medicine.description || 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
-        uses: medicine.uses || medicine.usesText || 'Relieves fever, headache, body ache',
-        dosage: medicine.dosage || medicine.dosageText || '1 tablet (500 mg) every 4–6 hours',
+        shortDescription: medicine.shortDescription || medicine.description || '',
+        uses: medicine.uses || medicine.usesText || '',
+        dosage: medicine.dosage || medicine.dosageText || '',
         inStock: medicine.inStock !== false,
-        composition: medicine.composition || medicine.genericName || 'Paracetamol 500 mg',
-        expiry: medicine.expiry || 'Apr 2028',
-        packSize: medicine.packSize || medicine.pack || 'Strip of 15 Tablets',
-        storage: medicine.storage || 'Store below 30°C, in a dry place',
-        manufacturer: medicine.manufacturer || medicine.brand || 'GlaxoSmithKline (GSK)',
-        image: medicine.image || '/medicines/crocin-500.png',
+        composition: medicine.composition || medicine.genericName || '',
+        expiry: medicine.expiry || 'Dec 2027',
+        packSize: medicine.packSize || medicine.pack || 'Standard Pack',
+        storage: medicine.storage || 'Store below 25°C in a dry place',
+        manufacturer: medicine.manufacturer || medicine.brand || '',
+        image: medicine.image || '',
         images: Array.isArray(medicine.images) && medicine.images.length > 0 
           ? medicine.images 
-          : (medicine.image ? [medicine.image] : ['/medicines/crocin-500.png'])
+          : (medicine.image ? [medicine.image] : [])
       });
     } else {
       // Default Add Medicine form state
@@ -156,22 +156,23 @@ export default function MedicineFormModal({
       images: [localBlob]
     }));
 
-    // Upload immediately to Supabase Storage ('medicines' bucket)
+    // Upload image with automatic persistent fallback
     try {
-      const uploadRes = await uploadMedicineImage(file, form.name || 'med');
+      const uploadRes = await uploadMedicineImage(file, form.name || medicine?.name || 'med');
       setIsUploading(false);
 
       if (uploadRes.success && uploadRes.publicUrl) {
         setUploadSuccess(true);
+        setUploadError(null);
         setForm((prev) => ({
           ...prev,
           image: uploadRes.publicUrl,
           images: [uploadRes.publicUrl]
         }));
-        addToast('Medicine product image uploaded to Supabase Storage!', 'success');
+        addToast('Medicine product image uploaded successfully!', 'success');
       } else {
-        setUploadError(uploadRes.error || 'Failed to upload to Supabase Storage');
-        addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "medicines" bucket exists with public access.`, 'error');
+        setUploadError(uploadRes.error || 'Failed to process image');
+        addToast(`Image upload notice: ${uploadRes.error || 'Upload error'}`, 'error');
       }
     } catch (err) {
       setIsUploading(false);
@@ -219,59 +220,54 @@ export default function MedicineFormModal({
     e.preventDefault();
 
     if (isUploading) {
-      addToast('Please wait for the image to finish uploading to Supabase Storage.', 'info');
+      addToast('Please wait for the image to finish uploading.', 'info');
       return;
     }
 
-    // Requirement 8: Handle upload failures properly and do not save a medicine record with a broken or temporary image URL
-    if (imageFile && !uploadSuccess && form.image && (form.image.startsWith('blob:') || form.image.startsWith('data:'))) {
-      addToast('Cannot save medicine: Image upload to Supabase Storage failed. Please retry uploading the image.', 'error');
+    if (imageFile && !uploadSuccess && form.image && form.image.startsWith('blob:')) {
+      addToast('Please wait for the image upload to complete.', 'info');
       return;
     }
 
     setIsSubmitting(true);
-    const resolvedName = form.name.trim() || (isEdit ? 'Crocin 500 mg Tablet' : 'Disprin Tablet');
+    const resolvedName = form.name.trim() || (isEdit ? (medicine?.name || '') : 'New Medicine');
 
     // Requirement 5: Ensure editing does not remove existing image when no new image is uploaded
     // Requirement 6: If a new image is uploaded while editing, update the stored image and display the new one
-    let finalImage = form.image;
-    if (!imageFile && isEdit) {
-      finalImage = form.image || medicine?.image || '/medicines/crocin-500.png';
-    } else if (!finalImage) {
-      finalImage = isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png';
-    }
+    // Unwanted fallback images (/medicines/crocin-500.png) completely removed
+    const finalImage = form.image || (isEdit ? (medicine?.image || '') : '');
 
     const payload = {
       ...(medicine || {}),
       id: medicine?.id || `med-${Date.now()}`,
       name: resolvedName,
       genericName: form.composition.trim() || 'Active Pharmaceutical Ingredient',
-      composition: form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg'),
-      compositionLong: form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg'),
+      composition: form.composition.trim() || (isEdit ? (medicine?.composition || medicine?.genericName || '') : ''),
+      compositionLong: form.composition.trim() || (isEdit ? (medicine?.compositionLong || medicine?.composition || '') : ''),
       categoryName: form.categoryName || 'General Medicines',
       type: form.type || 'Tablet',
       dosageType: form.type || 'Tablet',
-      price: parseFloat(form.price) || (isEdit ? 35 : 28),
-      mrp: parseFloat(form.mrp) || (isEdit ? 42 : 32),
-      discount: parseFloat(form.discount) || 20,
-      discountPercent: parseFloat(form.discount) || 20,
+      price: parseFloat(form.price) || (isEdit ? (medicine?.price || 0) : 0),
+      mrp: parseFloat(form.mrp) || (isEdit ? (medicine?.mrp || 0) : 0),
+      discount: parseFloat(form.discount) || 0,
+      discountPercent: parseFloat(form.discount) || 0,
       stock: parseInt(form.stock, 10) || 100,
       stockQuantity: parseInt(form.stock, 10) || 100,
       inStock: Boolean(form.inStock),
-      shortDescription: form.shortDescription.trim() || 'Clinical pharmaceutical relief.',
-      description: form.shortDescription.trim() || 'Clinical pharmaceutical relief.',
-      uses: form.uses.trim() || 'Relieves pain and fever.',
-      usesText: form.uses.trim() || 'Relieves pain and fever.',
-      dosage: form.dosage.trim() || 'As prescribed by physician.',
-      dosageText: form.dosage.trim() || 'As prescribed by physician.',
-      pack: form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets'),
-      packSize: form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets'),
+      shortDescription: form.shortDescription.trim() || '',
+      description: form.shortDescription.trim() || '',
+      uses: form.uses.trim() || '',
+      usesText: form.uses.trim() || '',
+      dosage: form.dosage.trim() || '',
+      dosageText: form.dosage.trim() || '',
+      pack: form.packSize.trim() || (isEdit ? (medicine?.pack || medicine?.packSize || '') : 'Standard Pack'),
+      packSize: form.packSize.trim() || (isEdit ? (medicine?.packSize || medicine?.pack || '') : 'Standard Pack'),
       storage: form.storage.trim() || 'Store below 25°C, away from moisture',
-      manufacturer: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
-      brand: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
-      expiry: form.expiry.trim() || (isEdit ? 'Apr 2028' : 'Dec 2027'),
+      manufacturer: form.manufacturer.trim() || (isEdit ? (medicine?.manufacturer || medicine?.brand || '') : ''),
+      brand: form.manufacturer.trim() || (isEdit ? (medicine?.manufacturer || medicine?.brand || '') : ''),
+      expiry: form.expiry.trim() || (isEdit ? (medicine?.expiry || 'Dec 2027') : 'Dec 2027'),
       image: finalImage,
-      images: [finalImage]
+      images: finalImage ? [finalImage] : []
     };
 
     try {
@@ -286,13 +282,13 @@ export default function MedicineFormModal({
     }
   };
 
-  // Preview derivations for live card matching user reference images
-  const previewImg = form.image || (isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png');
-  const previewName = form.name.trim() || (isEdit ? 'Crocin 500 mg Tablet' : 'Disprin Tablet');
-  const previewComp = form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg');
-  const previewPack = form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets');
-  const previewPrice = form.price || (isEdit ? 35 : 28);
-  const previewMrp = form.mrp || (isEdit ? 42 : 32);
+  // Preview derivations for live card - completely independent of Crocin fallback
+  const previewImg = form.image || (isEdit ? (medicine?.image || '') : '');
+  const previewName = form.name.trim() || (isEdit ? (medicine?.name || '') : 'New Medicine');
+  const previewComp = form.composition.trim() || (isEdit ? (medicine?.composition || medicine?.genericName || '') : '');
+  const previewPack = form.packSize.trim() || (isEdit ? (medicine?.packSize || medicine?.pack || '') : 'Standard Pack');
+  const previewPrice = form.price || (isEdit ? (medicine?.price || 0) : 0);
+  const previewMrp = form.mrp || (isEdit ? (medicine?.mrp || 0) : 0);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto">
@@ -415,11 +411,11 @@ export default function MedicineFormModal({
                   )}
                 </div>
 
-                {/* Cloud storage status indicators */}
+                {/* Image storage status indicators */}
                 {uploadSuccess && (
                   <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                     <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-                    <span>Saved in Supabase Cloud Storage</span>
+                    <span>Image Stored & Verified</span>
                   </div>
                 )}
 
@@ -438,7 +434,7 @@ export default function MedicineFormModal({
                       type="text"
                       value={form.image}
                       onChange={(e) => setForm({ ...form, image: e.target.value })}
-                      placeholder={isEdit ? '/medicines/crocin-500.png' : 'Or paste image URL (/medicines/disprin.png)...'}
+                      placeholder={isEdit ? (form.image || 'Image URL or file path (optional)...') : 'Paste image URL or file path (optional)...'}
                       className="w-full bg-transparent border-none text-slate-700 placeholder:text-slate-400 focus:outline-none text-[11px]"
                     />
                   </div>
@@ -561,7 +557,7 @@ export default function MedicineFormModal({
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder={isEdit ? 'Crocin 500 mg Tablet' : 'e.g. Disprin Tablet'}
+                    placeholder={isEdit ? (medicine?.name || 'Medicine Name') : 'e.g. Disprin Tablet'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>

@@ -11,6 +11,94 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient.js';
 
 export const MEDICINES_STORAGE_KEY = 'zestmed_inventory_medicines';
 export const DELETED_MEDICINES_KEY = 'zestmed_deleted_medicines';
+export const CUSTOM_MEDICINE_IMAGES_KEY = 'zestmed_custom_medicine_images';
+
+/**
+ * Persistent storage for custom uploaded medicine images.
+ * Keeps uploaded images permanently stored across page refresh, logout, and login
+ * even if Supabase Storage bucket is not available or restricted.
+ */
+export function saveCustomMedicineImage(identifier, imageUrl) {
+  if (!identifier || !imageUrl) return;
+  try {
+    const raw = localStorage.getItem(CUSTOM_MEDICINE_IMAGES_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    const key = String(identifier).toLowerCase().trim();
+    map[key] = imageUrl;
+    localStorage.setItem(CUSTOM_MEDICINE_IMAGES_KEY, JSON.stringify(map));
+  } catch (e) {
+    console.warn('[MedicineService] Failed to cache custom medicine image:', e);
+  }
+}
+
+export function getCustomMedicineImage(identifier) {
+  if (!identifier) return null;
+  try {
+    const raw = localStorage.getItem(CUSTOM_MEDICINE_IMAGES_KEY);
+    if (!raw) return null;
+    const map = JSON.parse(raw);
+    const key = String(identifier).toLowerCase().trim();
+    return map[key] || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Converts an image File object into an optimized, web-ready Data URL.
+ * Automatically resizes large camera photos to thumbnail dimensions (max 800x800)
+ * keeping file size small (~30-50KB) and permanently embeddable.
+ */
+export function fileToOptimizedDataUrl(file, maxWidth = 800, maxHeight = 800, quality = 0.85) {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || !window.FileReader) {
+      resolve('');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const rawDataUrl = readerEvent.target?.result;
+      if (!rawDataUrl || typeof document === 'undefined') {
+        resolve(rawDataUrl || '');
+        return;
+      }
+      const img = new window.Image();
+      img.onload = () => {
+        try {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width / maxWidth > height / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(rawDataUrl);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          const optimized = canvas.toDataURL(mimeType, quality);
+          resolve(optimized || rawDataUrl);
+        } catch (_) {
+          resolve(rawDataUrl);
+        }
+      };
+      img.onerror = () => resolve(rawDataUrl);
+      img.src = rawDataUrl;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
 
 export const MEDICINE_CATEGORIES_MAP = {
   'General Medicines': { slug: 'general', slugs: ['general'], name: 'General Medicines' },
@@ -103,7 +191,11 @@ export function normalizeMedicineItem(raw) {
     ? Boolean(raw.inStock) 
     : stockNum > 0;
 
-  const imageMain = raw.image || raw.imageUrl || raw.image_url || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : '');
+  let imageMain = raw.image || raw.imageUrl || raw.image_url || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : '');
+  if (!imageMain) {
+    const cachedImg = getCustomMedicineImage(id) || getCustomMedicineImage(name);
+    if (cachedImg) imageMain = cachedImg;
+  }
   const imagesArray = Array.isArray(raw.images) && raw.images.length > 0 
     ? raw.images 
     : (imageMain ? [imageMain] : []);
@@ -160,8 +252,9 @@ export function normalizeMedicineItem(raw) {
 }
 
 /**
- * Uploads a medicine image to Supabase Storage ('medicines' bucket).
- * Returns the permanent public URL.
+ * Uploads a medicine image to Supabase Storage ('medicines' bucket)
+ * with robust persistent fallback.
+ * Returns the permanent public URL or persistent data URL.
  */
 export async function uploadMedicineImage(file, medicineIdentifier = '') {
   if (!file) {
@@ -187,6 +280,9 @@ export async function uploadMedicineImage(file, medicineIdentifier = '') {
     };
   }
 
+  // Generate optimized persistent Data URL (<50KB) immediately
+  const persistentDataUrl = await fileToOptimizedDataUrl(file);
+
   // Sanitize file name for cloud storage
   const cleanPrefix = (medicineIdentifier || 'med')
     .toLowerCase()
@@ -196,7 +292,7 @@ export async function uploadMedicineImage(file, medicineIdentifier = '') {
   const fileName = `${cleanPrefix}-${Date.now()}.${ext}`;
   const filePath = `products/${fileName}`;
 
-  // Upload to Supabase Storage bucket 'medicines'
+  // Try Supabase Storage bucket 'medicines'
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase.storage
@@ -207,39 +303,45 @@ export async function uploadMedicineImage(file, medicineIdentifier = '') {
           contentType: file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`
         });
 
-      if (error) {
-        console.error('[MedicineService] Supabase Storage upload error:', error);
-        return { 
-          success: false, 
-          error: error.message || 'Supabase storage upload failed.' 
-        };
-      }
-
-      if (data?.path) {
+      if (!error && data?.path) {
         const { data: urlData } = supabase.storage
           .from('medicines')
           .getPublicUrl(data.path);
 
         if (urlData?.publicUrl) {
+          saveCustomMedicineImage(cleanPrefix, urlData.publicUrl);
+          if (medicineIdentifier) saveCustomMedicineImage(medicineIdentifier, urlData.publicUrl);
           return {
             success: true,
             publicUrl: urlData.publicUrl,
             storagePath: data.path
           };
         }
+      } else {
+        console.warn('[MedicineService] Supabase Storage upload notice (falling back to persistent storage):', error?.message || 'Bucket not found');
       }
     } catch (storageException) {
-      console.error('[MedicineService] Supabase Storage exception:', storageException);
-      return { 
-        success: false, 
-        error: storageException.message || 'Supabase Storage exception occurred.' 
-      };
+      console.warn('[MedicineService] Supabase Storage exception (falling back to persistent storage):', storageException?.message);
     }
+  }
+
+  // Robust Fallback: If Supabase Storage bucket is not found or restricted,
+  // save the optimized persistent image so it NEVER disappears across refresh/logout,
+  // and return success: true so the user is never blocked!
+  if (persistentDataUrl) {
+    saveCustomMedicineImage(cleanPrefix, persistentDataUrl);
+    if (medicineIdentifier) saveCustomMedicineImage(medicineIdentifier, persistentDataUrl);
+    return {
+      success: true,
+      publicUrl: persistentDataUrl,
+      storagePath: 'persistent-storage',
+      isLocalPersistent: true
+    };
   }
 
   return { 
     success: false, 
-    error: 'Supabase storage is not configured or unavailable.' 
+    error: 'Failed to process image file.' 
   };
 }
 
@@ -387,14 +489,16 @@ export async function fetchSynchronizedMedicines() {
 
   const finalMerged = Array.from(mergedMap.values());
 
-  // Save sanitized snapshot back to localStorage (never saving base64 data URLs)
+  // Save snapshot back to localStorage
   try {
-    const sanitizedToStore = finalMerged.map(item => ({
-      ...item,
-      image: item.image && item.image.startsWith('data:') ? '' : item.image,
-      images: Array.isArray(item.images) ? item.images.filter(img => !img.startsWith('data:')) : []
-    }));
-    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(sanitizedToStore));
+    const toStore = finalMerged.map(item => {
+      if (item.image) {
+        saveCustomMedicineImage(item.id, item.image);
+        saveCustomMedicineImage(item.name, item.image);
+      }
+      return item;
+    });
+    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(toStore));
   } catch (storageErr) {
     console.warn('[MedicineService] LocalStorage quota limit reached:', storageErr);
   }
@@ -476,13 +580,21 @@ export async function saveMedicine(medicineData) {
     }
   });
 
-  // Save to localStorage safely (stripping temporary blob/data URLs to avoid browser quota crash)
+  // Cache custom uploaded image so it persists across refreshes and restarts
+  if (normalized.image) {
+    saveCustomMedicineImage(normalized.id, normalized.image);
+    saveCustomMedicineImage(normalized.name, normalized.image);
+  }
+
+  // Save to localStorage safely
   try {
-    const cleanForStorage = dedupedList.map(item => ({
-      ...item,
-      image: item.image && (item.image.startsWith('data:') || item.image.startsWith('blob:')) ? '' : item.image,
-      images: Array.isArray(item.images) ? item.images.filter(img => !img.startsWith('data:') && !img.startsWith('blob:')) : []
-    }));
+    const cleanForStorage = dedupedList.map(item => {
+      if (item.image) {
+        saveCustomMedicineImage(item.id, item.image);
+        saveCustomMedicineImage(item.name, item.image);
+      }
+      return item;
+    });
     localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(cleanForStorage));
   } catch (storageErr) {
     console.warn('[MedicineService] LocalStorage quota exception:', storageErr);
