@@ -1012,35 +1012,47 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       .filter(Boolean);
   }, [labBookings, user, isMatchingCurrentUser]);
 
-  // Combined real user bookings (Database/Synced + Local persistent medicine orders + Local lab bookings)
+  // Combined real user bookings (Database/Synced userBookings with strict deduplication)
   const allUserBookings = useMemo(() => {
     if (!user) return [];
     const map = new Map();
+    const seenSignatures = new Set();
+
     // 1. Unified database/synced userBookings
     (userBookings || [])
       .filter(Boolean)
       .filter(isMatchingCurrentUser)
       .forEach((b) => {
         if (!b) return;
-        const key = String(b.bookingId || b.id || Math.random());
-        map.set(key, b);
+        const key = String(b.bookingId || b.id || b.booking_number || b.order_number || b.appointment_number || '').trim();
+        const sig = `${b.itemType || ''}|${String(b.serviceName || b.title || '').toLowerCase().trim()}|${b.date || b.appointmentDate || ''}|${normalizePhone(b.phone || '')}`;
+        if (key && map.has(key)) return;
+        if (seenSignatures.has(sig)) return;
+        if (key) map.set(key, b);
+        seenSignatures.add(sig);
       });
-    // 2. Local medicine orders (ensuring pure medicines appear in Medicine Orders)
-    (formattedMedicineBookings || []).filter(Boolean).forEach((mb) => {
-      if (!mb) return;
-      const key = String(mb.bookingId || mb.id || Math.random());
-      if (!map.has(key)) {
-        map.set(key, mb);
-      }
-    });
-    // 3. Local lab test & wellness bookings
-    (formattedLabBookings || []).filter(Boolean).forEach((lb) => {
-      if (!lb) return;
-      const key = String(lb.bookingId || lb.id || Math.random());
-      if (!map.has(key)) {
-        map.set(key, lb);
-      }
-    });
+
+    // 2. Fallback to local caches only if userBookings is empty (e.g. offline fallback)
+    if (map.size === 0) {
+      (formattedMedicineBookings || []).filter(Boolean).forEach((mb) => {
+        if (!mb) return;
+        const key = String(mb.bookingId || mb.id || '').trim();
+        const sig = `${mb.itemType || ''}|${String(mb.serviceName || mb.title || '').toLowerCase().trim()}|${mb.date || ''}|${normalizePhone(mb.phone || '')}`;
+        if (key && !map.has(key) && !seenSignatures.has(sig)) {
+          map.set(key, mb);
+          seenSignatures.add(sig);
+        }
+      });
+      (formattedLabBookings || []).filter(Boolean).forEach((lb) => {
+        if (!lb) return;
+        const key = String(lb.bookingId || lb.id || '').trim();
+        const sig = `${lb.itemType || ''}|${String(lb.serviceName || lb.title || '').toLowerCase().trim()}|${lb.date || ''}|${normalizePhone(lb.phone || '')}`;
+        if (key && !map.has(key) && !seenSignatures.has(sig)) {
+          map.set(key, lb);
+          seenSignatures.add(sig);
+        }
+      });
+    }
 
     // CRITICAL: Strictly classify each booking into its dedicated category
     return Array.from(map.values())

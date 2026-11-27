@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { placeMedicineOrder, bookLabTest } from '../services/supabaseService';
+import { placeMedicineOrder, bookLabTest, bookWellness } from '../services/supabaseService';
 import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 import { enforceAuth } from '../utils/authGuard';
 import { recordAndPlayNotification } from '../utils/notificationSound';
@@ -58,9 +58,11 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     const medicineItems = cartItems.filter(i => !isLabTestOrPackage(i));
     if (medicineItems.length > 0) {
       const orderMedTotal = medicineItems.reduce((acc, curr) => acc + (curr.price * (curr.quantity || 1)), 0);
+      const orderRef = `ZM-ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
       const newOrder = {
-        id: `ZM-ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-        order_number: `ZM-ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        id: orderRef,
+        bookingId: orderRef,
+        order_number: orderRef,
         patientName: (user?.name && user.name !== 'Rahul Verma') ? user.name : 'Self',
         phone: user?.phone || user?.contact || '',
         patientPhone: user?.phone || user?.contact || '',
@@ -72,6 +74,7 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
         hub: 'Dispur Express Delivery Hub, Guwahati',
         deliveryAddress: user?.address || 'Guwahati Central Delivery Hub, Assam',
         paymentMethod: `Razorpay (${paymentData?.method || 'UPI'} - Verified)`,
+        paymentStatus: 'Paid (Online / Razorpay Verified)',
         paymentId: paymentData?.paymentId,
         orderId: paymentData?.orderId,
         totalAmount: orderMedTotal + (orderMedTotal > 499 ? 0 : 49),
@@ -98,7 +101,8 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
 
       try {
         const existingOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
-        localStorage.setItem('zestmed_patient_orders', JSON.stringify([newOrder, ...existingOrders]));
+        const filteredExisting = existingOrders.filter(o => o.id !== orderRef && o.order_number !== orderRef && o.bookingId !== orderRef);
+        localStorage.setItem('zestmed_patient_orders', JSON.stringify([newOrder, ...filteredExisting]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
@@ -124,17 +128,18 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
       }
     }
 
-    // 2. Process Diagnostic Tests or Wellness Packages (strictly isolated into Lab Bookings)
+    // 2. Process Diagnostic Tests or Wellness Packages (strictly isolated into Lab / Wellness Bookings)
     const diagnosticOrPackageItems = cartItems.filter(i => isLabTestOrPackage(i));
     if (diagnosticOrPackageItems.length > 0) {
       try {
         const existingBookings = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
         const newBookings = diagnosticOrPackageItems.map(item => {
           const isPkg = isWellnessPackage(item);
+          const bookingRef = `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
           return {
-            id: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
-            bookingId: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
-            booking_number: `ZM-${isPkg ? 'WEL' : 'LAB'}-${Math.floor(10000 + Math.random() * 90000)}`,
+            id: bookingRef,
+            bookingId: bookingRef,
+            booking_number: bookingRef,
             type: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
             itemType: isPkg ? 'wellness' : 'lab',
             serviceType: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
@@ -171,7 +176,10 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
             createdAt: new Date().toISOString()
           };
         });
-        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...existingBookings]));
+
+        const newIds = new Set(newBookings.map(b => b.id));
+        const filteredExistingBookings = existingBookings.filter(b => !newIds.has(b.id) && !newIds.has(b.bookingId));
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([...newBookings, ...filteredExistingBookings]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
@@ -183,18 +191,22 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
             actionText: `Booking #${b.bookingId} Confirmed`,
             desc: `Home collection confirmed for ${b.testName}.`,
             sender: b.labName || 'Dispur Central Pathology Lab',
-            category: 'Diagnostic Lab Test',
+            category: b.itemType === 'wellness' ? 'Wellness Package' : 'Diagnostic Lab Test',
             refId: b.bookingId,
-            linkType: 'lab',
+            linkType: b.itemType === 'wellness' ? 'wellness' : 'lab',
             phone: b.phone,
             patientPhone: b.phone,
             patientName: b.patientName
           });
         });
 
-        // Save bookings to Supabase PostgreSQL database
+        // Save bookings to Supabase PostgreSQL database (wellness_bookings vs test_bookings)
         newBookings.forEach((b) => {
-          bookLabTest(b).catch((err) => console.warn('Supabase lab booking error:', err));
+          if (b.itemType === 'wellness') {
+            bookWellness(b).catch((err) => console.warn('Supabase wellness booking error:', err));
+          } else {
+            bookLabTest(b).catch((err) => console.warn('Supabase lab booking error:', err));
+          }
         });
       } catch (err) {
         console.error('Failed to save lab booking to localStorage', err);

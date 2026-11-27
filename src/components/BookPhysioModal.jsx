@@ -107,24 +107,29 @@ export default function BookPhysioModal({ isOpen, onClose, onOpenSeniorPickup, i
 
     try {
       const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+      const filtered = existing.filter(a => a.id !== bookingRef && a.bookingId !== bookingRef);
+      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...filtered]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
       // Play audible notification chime & record Book notification
-      recordAndPlayNotification({
-        type: 'book',
-        title: 'Physiotherapy Session Confirmed',
-        actionText: `Session #${bookingRef} Confirmed`,
-        desc: `${serviceType} scheduled with ${selectedPhysio.name} for ${sessionDate} (${sessionSlot}).`,
-        sender: selectedPhysio.name,
-        category: 'Physiotherapy',
-        refId: bookingRef,
-        linkType: 'physio',
-        phone: patientData.phone,
-        patientPhone: patientData.phone,
-        patientName: patientData.name
-      });
+      try {
+        recordAndPlayNotification({
+          type: 'book',
+          title: 'Physiotherapy Session Confirmed',
+          actionText: `Session #${bookingRef} Confirmed`,
+          desc: `${serviceType} scheduled with ${selectedPhysio.name} for ${sessionDate} (${sessionSlot}).`,
+          sender: selectedPhysio.name,
+          category: 'Physiotherapy',
+          refId: bookingRef,
+          linkType: 'physio',
+          phone: patientDetails.phone,
+          patientPhone: patientDetails.phone,
+          patientName: patientDetails.name
+        });
+      } catch (notifyErr) {
+        console.warn('Audio/Notification record ignored:', notifyErr);
+      }
 
       // Save to Supabase PostgreSQL database
       await bookPhysiotherapy(newBooking);

@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useLocation, DEFAULT_LOCATIONS } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
-import { bookLabTest } from '../services/supabaseService';
+import { bookLabTest, bookWellness } from '../services/supabaseService';
 import { enforceAuth } from '../utils/authGuard';
 import { isWellnessPackage } from '../utils/itemClassification';
 import { launchRazorpayCheckout } from '../services/razorpayClient';
@@ -125,27 +125,36 @@ export default function DiagnosticBookingModal({ item, type = 'diagnostic', onCl
 
     try {
       const existing = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-      localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...existing]));
+      const filtered = existing.filter(b => b.id !== generatedRef && b.bookingId !== generatedRef);
+      localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([newLabBooking, ...filtered]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
       // Play audible notification chime & record Book notification
-      recordAndPlayNotification({
-        type: 'book',
-        title: isPkg ? 'Wellness Package Confirmed' : 'Diagnostic Test Confirmed',
-        actionText: `Booking #${generatedRef} Confirmed`,
-        desc: `Home collection confirmed for ${item.name}.`,
-        sender: isPkg ? 'Zestmed Preventive Health Team' : 'Dispur Central Pathology Lab',
-        category: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
-        refId: generatedRef,
-        linkType: isPkg ? 'wellness' : 'lab',
-        phone: patientData.phone,
-        patientPhone: patientData.phone,
-        patientName: patientData.name
-      });
+      try {
+        recordAndPlayNotification({
+          type: 'book',
+          title: isPkg ? 'Wellness Package Confirmed' : 'Diagnostic Test Confirmed',
+          actionText: `Booking #${generatedRef} Confirmed`,
+          desc: `Home collection confirmed for ${item.name}.`,
+          sender: isPkg ? 'Zestmed Preventive Health Team' : 'Dispur Central Pathology Lab',
+          category: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+          refId: generatedRef,
+          linkType: isPkg ? 'wellness' : 'lab',
+          phone: newLabBooking.phone,
+          patientPhone: newLabBooking.phone,
+          patientName: newLabBooking.patientName
+        });
+      } catch (notifyErr) {
+        console.warn('Audio/Notification record ignored:', notifyErr);
+      }
 
       // Save to Supabase PostgreSQL database
-      await bookLabTest(newLabBooking);
+      if (isPkg) {
+        await bookWellness(newLabBooking);
+      } else {
+        await bookLabTest(newLabBooking);
+      }
     } catch (err) {
       console.warn('Failed to sync lab booking with database:', err);
     }

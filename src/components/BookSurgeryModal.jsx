@@ -104,27 +104,32 @@ export default function BookSurgeryModal({ isOpen, onClose, onOpenSeniorPickup }
 
       try {
         const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+        const filtered = existing.filter(a => a.id !== bookingRef && a.bookingId !== bookingRef);
+        localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...filtered]));
         window.dispatchEvent(new Event('storage'));
         window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
         // Play audible notification chime & record Book notification
-        recordAndPlayNotification({
-          type: 'book',
-          title: 'Surgery Package Confirmed',
-          actionText: `Consultation #${bookingRef} Confirmed`,
-          desc: `Surgery consultation reserved for ${selectedPackage.title}. Lead surgeon & care manager assigned.`,
-          sender: 'ZESTMED Surgery Care Desk',
-          category: 'Surgery Consultation',
-          refId: bookingRef,
-          linkType: 'surgery',
-          phone: patientData.phone,
-          patientPhone: patientData.phone,
-          patientName: patientData.name
-        });
+        try {
+          recordAndPlayNotification({
+            type: 'book',
+            title: 'Surgery Package Confirmed',
+            actionText: `Consultation #${bookingRef} Confirmed`,
+            desc: `Surgery consultation reserved for ${selectedPackage.title}. Lead surgeon & care manager assigned.`,
+            sender: 'ZESTMED Surgery Care Desk',
+            category: 'Surgery Consultation',
+            refId: bookingRef,
+            linkType: 'surgery',
+            phone: patientForm.phone,
+            patientPhone: patientForm.phone,
+            patientName: patientForm.name
+          });
+        } catch (notifyErr) {
+          console.warn('Audio/Notification record ignored:', notifyErr);
+        }
 
         // Save to Supabase PostgreSQL database
-        bookSurgery(newBooking).catch((err) => console.warn('Supabase surgery booking error:', err));
+        await bookSurgery(newBooking);
       } catch (err) {
         console.error('Failed to save surgery booking', err);
       }

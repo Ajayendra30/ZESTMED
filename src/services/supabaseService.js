@@ -20,6 +20,39 @@ export const normalizePhone = (phone) => {
   return digits.length > 10 ? digits.slice(-10) : digits;
 };
 
+// Helper to safely format any date input into a PostgreSQL DATE column (YYYY-MM-DD)
+export const formatDateForPostgres = (dateInput) => {
+  if (!dateInput) {
+    return new Date().toISOString().split('T')[0];
+  }
+  const str = String(dateInput).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    return str;
+  }
+  const lower = str.toLowerCase();
+  if (lower.includes('tomorrow')) {
+    const tmrw = new Date();
+    tmrw.setDate(tmrw.getDate() + 1);
+    return tmrw.toISOString().split('T')[0];
+  }
+  if (lower.includes('today')) {
+    return new Date().toISOString().split('T')[0];
+  }
+  const cleaned = str
+    .replace(/^(today|tomorrow),?\s*/i, '')
+    .split(',')[0]
+    .trim();
+  const parsed = Date.parse(cleaned);
+  if (!isNaN(parsed)) {
+    return new Date(parsed).toISOString().split('T')[0];
+  }
+  const fallback = Date.parse(str);
+  if (!isNaN(fallback)) {
+    return new Date(fallback).toISOString().split('T')[0];
+  }
+  return new Date().toISOString().split('T')[0];
+};
+
 /**
  * Detects whether a booking, appointment, or order record is a mock/demo/sample record
  * that must be purged and excluded from genuine user and admin views.
@@ -390,7 +423,7 @@ export const bookDoctorAppointment = async (appointmentData) => {
   };
 
   const resolvedPhone = normalizePhone(appointmentData.phone || appointmentData.patientPhone || authUser.phone || authUser.contact || '');
-  const refId = appointmentData.id || appointmentData.appointment_number || `ZM-DOC-${Date.now().toString().slice(-4)}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const refId = appointmentData.appointment_number || appointmentData.id || appointmentData.bookingId || `ZM-DOC-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
   const newAppointment = {
     ...appointmentData,
@@ -427,51 +460,47 @@ export const bookDoctorAppointment = async (appointmentData) => {
     }
   } catch (_) {}
 
-  // 3. Persist directly to Supabase PostgreSQL database table
+  // 3. Persist directly to Supabase PostgreSQL database table (with upsert deduplication)
   if (isSupabaseConfigured()) {
     try {
-      // Ensure date is a valid YYYY-MM-DD for PostgreSQL DATE column
-      let formattedDate = new Date().toISOString().split('T')[0];
-      const rawDateStr = String(newAppointment.date || newAppointment.appointment_date || '');
-      if (/^\d{4}-\d{2}-\d{2}$/.test(rawDateStr)) {
-        formattedDate = rawDateStr;
-      } else if (rawDateStr.toLowerCase().includes('tomorrow')) {
-        const tmrw = new Date();
-        tmrw.setDate(tmrw.getDate() + 1);
-        formattedDate = tmrw.toISOString().split('T')[0];
-      } else if (rawDateStr) {
-        const cleaned = rawDateStr.replace(/^today,?\s*/i, '');
-        const parsed = Date.parse(cleaned);
-        if (!isNaN(parsed)) {
-          formattedDate = new Date(parsed).toISOString().split('T')[0];
-        }
-      }
+      const formattedDate = formatDateForPostgres(newAppointment.date || newAppointment.appointment_date);
 
-      const { data, error } = await supabase
+      const payload = {
+        appointment_number: newAppointment.appointment_number,
+        patient_name: newAppointment.patientName,
+        phone: resolvedPhone,
+        doctor_name: newAppointment.doctorName,
+        department: newAppointment.department,
+        appointment_date: formattedDate,
+        appointment_time: newAppointment.time || '10:00 AM',
+        consultation_type: newAppointment.mode,
+        fees: newAppointment.fee,
+        status: newAppointment.status,
+        notes: newAppointment.notes || newAppointment.symptoms || null,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data: existing } = await supabase
         .from('doctor_appointments')
-        .insert([
-          {
-            appointment_number: newAppointment.appointment_number,
-            patient_name: newAppointment.patientName,
-            phone: resolvedPhone,
-            doctor_name: newAppointment.doctorName,
-            department: newAppointment.department,
-            appointment_date: formattedDate,
-            appointment_time: newAppointment.time || '10:00 AM',
-            consultation_type: newAppointment.mode,
-            fees: newAppointment.fee,
-            status: newAppointment.status,
-            notes: newAppointment.notes || newAppointment.symptoms || null,
-          },
-        ])
-        .select()
-        .single();
+        .select('id, appointment_number')
+        .eq('appointment_number', refId)
+        .maybeSingle();
 
-      if (!error && data) {
-        return { ...newAppointment, ...data };
-      }
-      if (error) {
-        console.warn('[SupabaseService] bookDoctorAppointment insert error:', error);
+      if (existing) {
+        const { data, error } = await supabase
+          .from('doctor_appointments')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newAppointment, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('doctor_appointments')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newAppointment, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] bookDoctorAppointment to Supabase error:', err);
@@ -604,10 +633,36 @@ export const getPhysioBookings = async (phone = null) => {
 };
 
 export const bookPhysiotherapy = async (physioData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a physiotherapy session.');
-  }
+  const authUser = getAuthenticatedUser() || {
+    id: physioData.userId || 'usr_direct',
+    phone: physioData.phone || physioData.patientPhone || '',
+    name: physioData.patientName || 'Patient'
+  };
+
+  const resolvedPhone = normalizePhone(physioData.phone || physioData.patientPhone || physioData.mobileNumber || authUser.phone || '');
+  const refId = physioData.booking_number || physioData.id || physioData.bookingId || `ZM-PHY-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newBooking = {
+    ...physioData,
+    id: refId,
+    bookingId: refId,
+    booking_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: physioData.patientName || physioData.patient_name || authUser.name || 'Patient',
+    isPhysio: true,
+    condition: physioData.condition || physioData.serviceName || physioData.specialty || 'Physiotherapy Session',
+    service_type: physioData.service_type || physioData.mode || 'Home Visit',
+    date: physioData.date || physioData.booking_date,
+    time: physioData.time || physioData.preferred_slot || 'Morning Slot',
+    fees: parseFloat(physioData.fees || physioData.price || physioData.fee || 799),
+    created_at: physioData.createdAt || new Date().toISOString(),
+    status: physioData.status || 'Confirmed',
+  };
+
+  const localList = getLocalData('patient_appointments', []);
+  const filteredExisting = localList.filter((a) => a.id !== refId && a.bookingId !== refId && a.booking_number !== refId);
+  setLocalData('patient_appointments', [newBooking, ...filteredExisting]);
 
   // Sync with protected Node.js API endpoint
   try {
@@ -616,50 +671,50 @@ export const bookPhysiotherapy = async (physioData) => {
       fetch('/api/bookings/physiotherapy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(physioData)
+        body: JSON.stringify(newBooking)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('patient_appointments', []);
-  const resolvedPhone = physioData.phone || physioData.patientPhone || physioData.mobileNumber || '';
-  const newBooking = {
-    ...physioData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    isPhysio: true,
-    id: physioData.id || `PHY-${Date.now()}`,
-    booking_number: physioData.booking_number || `PHY-${Date.now()}`,
-    created_at: physioData.createdAt || new Date().toISOString(),
-    status: physioData.status || 'Confirmed',
-  };
-
-  setLocalData('patient_appointments', [newBooking, ...localList]);
-
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from('physiotherapy_bookings')
-        .insert([
-          {
-            booking_number: newBooking.booking_number,
-            patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: resolvedPhone,
-            condition: newBooking.condition || newBooking.serviceName || newBooking.specialty || 'Physiotherapy Session',
-            service_type: newBooking.service_type || newBooking.mode || 'Home Visit',
-            booking_date: newBooking.date || newBooking.booking_date,
-            preferred_slot: newBooking.time || newBooking.preferred_slot,
-            fees: parseFloat(newBooking.fees || newBooking.price || newBooking.fee || 799),
-            address: newBooking.address || null,
-            status: newBooking.status,
-            notes: newBooking.notes || newBooking.symptoms || null,
-          },
-        ])
-        .select()
-        .single();
+      const formattedDate = formatDateForPostgres(newBooking.date || newBooking.booking_date);
+      const payload = {
+        booking_number: newBooking.booking_number,
+        patient_name: newBooking.patientName,
+        phone: resolvedPhone,
+        condition: newBooking.condition,
+        service_type: newBooking.service_type,
+        booking_date: formattedDate,
+        preferred_slot: newBooking.time,
+        fees: newBooking.fees,
+        address: newBooking.address || null,
+        status: newBooking.status,
+        notes: newBooking.notes || newBooking.symptoms || null,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (!error && data) {
-        return data;
+      const { data: existing } = await supabase
+        .from('physiotherapy_bookings')
+        .select('id, booking_number')
+        .eq('booking_number', refId)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('physiotherapy_bookings')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('physiotherapy_bookings')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] bookPhysiotherapy to Supabase error:', err);
@@ -717,10 +772,35 @@ export const getSurgeryBookings = async (phone = null) => {
 };
 
 export const bookSurgery = async (surgeryData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a surgery package.');
-  }
+  const authUser = getAuthenticatedUser() || {
+    id: surgeryData.userId || 'usr_direct',
+    phone: surgeryData.phone || surgeryData.patientPhone || '',
+    name: surgeryData.patientName || 'Patient'
+  };
+
+  const resolvedPhone = normalizePhone(surgeryData.phone || surgeryData.patientPhone || authUser.phone || '');
+  const refId = surgeryData.booking_number || surgeryData.id || surgeryData.bookingId || `ZM-SUR-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newBooking = {
+    ...surgeryData,
+    id: refId,
+    bookingId: refId,
+    booking_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: surgeryData.patientName || surgeryData.patient_name || authUser.name || 'Patient',
+    isSurgery: true,
+    surgery_name: surgeryData.surgery_name || surgeryData.doctorName || surgeryData.title || 'Surgery Consultation Package',
+    hospital_preference: surgeryData.hospital_preference || surgeryData.hospital || 'ZestMed SuperSpecialty Center',
+    date: surgeryData.date || surgeryData.preferred_date,
+    price: parseFloat(surgeryData.fees || surgeryData.price || surgeryData.packagePrice || 0),
+    created_at: surgeryData.createdAt || new Date().toISOString(),
+    status: surgeryData.status || 'Confirmed',
+  };
+
+  const localList = getLocalData('patient_appointments', []);
+  const filteredExisting = localList.filter((a) => a.id !== refId && a.bookingId !== refId && a.booking_number !== refId);
+  setLocalData('patient_appointments', [newBooking, ...filteredExisting]);
 
   // Sync with protected Node.js API endpoint
   try {
@@ -729,48 +809,48 @@ export const bookSurgery = async (surgeryData) => {
       fetch('/api/bookings/surgery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(surgeryData)
+        body: JSON.stringify(newBooking)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('patient_appointments', []);
-  const resolvedPhone = surgeryData.phone || surgeryData.patientPhone || '';
-  const newBooking = {
-    ...surgeryData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    isSurgery: true,
-    id: surgeryData.id || `SUR-${Date.now()}`,
-    booking_number: surgeryData.booking_number || `SUR-${Date.now()}`,
-    created_at: surgeryData.createdAt || new Date().toISOString(),
-    status: surgeryData.status || 'Consultation Scheduled',
-  };
-
-  setLocalData('patient_appointments', [newBooking, ...localList]);
-
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from('surgery_bookings')
-        .insert([
-          {
-            booking_number: newBooking.booking_number,
-            patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: resolvedPhone,
-            surgery_name: newBooking.doctorName || newBooking.surgery_name || newBooking.title,
-            hospital_preference: newBooking.hospital_preference || newBooking.hospital || 'ZestMed SuperSpecialty Center',
-            preferred_date: newBooking.date || newBooking.preferred_date,
-            price: parseFloat(newBooking.fees || newBooking.price || 0),
-            status: newBooking.status,
-            notes: newBooking.notes || newBooking.symptoms || null,
-          },
-        ])
-        .select()
-        .single();
+      const formattedDate = formatDateForPostgres(newBooking.date || newBooking.preferred_date);
+      const payload = {
+        booking_number: newBooking.booking_number,
+        patient_name: newBooking.patientName,
+        phone: resolvedPhone,
+        surgery_name: newBooking.surgery_name,
+        hospital_preference: newBooking.hospital_preference,
+        preferred_date: formattedDate,
+        price: newBooking.price,
+        status: newBooking.status,
+        notes: newBooking.notes || newBooking.symptoms || null,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (!error && data) {
-        return data;
+      const { data: existing } = await supabase
+        .from('surgery_bookings')
+        .select('id, booking_number')
+        .eq('booking_number', refId)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('surgery_bookings')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('surgery_bookings')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] bookSurgery to Supabase error:', err);
@@ -924,10 +1004,35 @@ export const getWellnessBookings = async (phone = null) => {
 };
 
 export const bookWellness = async (wellnessData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a wellness package.');
-  }
+  const authUser = getAuthenticatedUser() || {
+    id: wellnessData.userId || 'usr_direct',
+    phone: wellnessData.phone || wellnessData.patientPhone || '',
+    name: wellnessData.patientName || 'Patient'
+  };
+
+  const resolvedPhone = normalizePhone(wellnessData.phone || wellnessData.patientPhone || authUser.phone || '');
+  const refId = wellnessData.booking_number || wellnessData.id || wellnessData.bookingId || `ZM-WEL-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newBooking = {
+    ...wellnessData,
+    id: refId,
+    bookingId: refId,
+    booking_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: wellnessData.patientName || wellnessData.patient_name || authUser.name || 'Patient',
+    isWellness: true,
+    package_name: wellnessData.package_name || wellnessData.testName || wellnessData.title || wellnessData.name || 'Wellness Health Package',
+    date: wellnessData.date || wellnessData.booking_date,
+    time: wellnessData.time || wellnessData.preferred_slot || 'Morning (09:00 AM)',
+    price: parseFloat(wellnessData.price || wellnessData.fees || wellnessData.totalAmount || 0),
+    created_at: wellnessData.createdAt || new Date().toISOString(),
+    status: wellnessData.status || 'Confirmed',
+  };
+
+  const localList = getLocalData('patient_appointments', []);
+  const filteredExisting = localList.filter((a) => a.id !== refId && a.bookingId !== refId && a.booking_number !== refId);
+  setLocalData('patient_appointments', [newBooking, ...filteredExisting]);
 
   // Sync with protected Node.js API endpoint
   try {
@@ -936,48 +1041,48 @@ export const bookWellness = async (wellnessData) => {
       fetch('/api/bookings/wellness', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(wellnessData)
+        body: JSON.stringify(newBooking)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('patient_appointments', []);
-  const resolvedPhone = wellnessData.phone || wellnessData.patientPhone || '';
-  const newBooking = {
-    ...wellnessData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    isWellness: true,
-    id: wellnessData.id || `WEL-${Date.now()}`,
-    booking_number: wellnessData.booking_number || `WEL-${Date.now()}`,
-    created_at: wellnessData.createdAt || new Date().toISOString(),
-    status: wellnessData.status || 'Confirmed',
-  };
-
-  setLocalData('patient_appointments', [newBooking, ...localList]);
-
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from('wellness_bookings')
-        .insert([
-          {
-            booking_number: newBooking.booking_number,
-            patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: resolvedPhone,
-            package_name: newBooking.doctorName || newBooking.package_name || newBooking.title,
-            booking_date: newBooking.date || newBooking.booking_date,
-            preferred_slot: newBooking.time || newBooking.preferred_slot || 'Morning (09:00 AM)',
-            price: parseFloat(newBooking.fees || newBooking.price || 0),
-            status: newBooking.status,
-            notes: newBooking.notes || null,
-          },
-        ])
-        .select()
-        .single();
+      const formattedDate = formatDateForPostgres(newBooking.date || newBooking.booking_date);
+      const payload = {
+        booking_number: newBooking.booking_number,
+        patient_name: newBooking.patientName,
+        phone: resolvedPhone,
+        package_name: newBooking.package_name,
+        booking_date: formattedDate,
+        preferred_slot: newBooking.time,
+        price: newBooking.price,
+        status: newBooking.status,
+        notes: newBooking.notes || null,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (!error && data) {
-        return data;
+      const { data: existing } = await supabase
+        .from('wellness_bookings')
+        .select('id, booking_number')
+        .eq('booking_number', refId)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('wellness_bookings')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('wellness_bookings')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] bookWellness to Supabase error:', err);
@@ -1034,10 +1139,57 @@ export const getLabBookings = async (phone = null) => {
 };
 
 export const bookLabTest = async (bookingData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before booking a diagnostic lab test.');
+  const authUser = getAuthenticatedUser() || {
+    id: bookingData.userId || 'usr_direct',
+    phone: bookingData.phone || bookingData.patientPhone || '',
+    name: bookingData.patientName || 'Patient'
+  };
+
+  const resolvedPhone = normalizePhone(bookingData.phone || bookingData.patientPhone || bookingData.contactNumber || authUser.phone || '');
+  const isPkg = isWellnessPackage(bookingData);
+  const refId = bookingData.booking_number || bookingData.id || bookingData.bookingId || `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  // If it's classified as a wellness package, delegate cleanly to bookWellness
+  if (isPkg) {
+    return bookWellness({
+      ...bookingData,
+      id: refId,
+      bookingId: refId,
+      booking_number: refId,
+      phone: resolvedPhone,
+      package_name: bookingData.testName || bookingData.name || bookingData.title || 'Wellness Health Package',
+      price: bookingData.price || bookingData.totalAmount || 0,
+      date: bookingData.date || bookingData.collection_date || bookingData.collectionDate,
+      time: bookingData.time || bookingData.collection_slot || bookingData.timeSlot,
+    });
   }
+
+  const newBooking = {
+    ...bookingData,
+    id: refId,
+    bookingId: refId,
+    booking_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: bookingData.patientName || bookingData.patient_name || authUser.name || 'Patient',
+    test_name: bookingData.testName || bookingData.test_name || bookingData.name || 'Diagnostic Lab Test',
+    sample_type: bookingData.sampleType || bookingData.sample_type || 'Blood',
+    collection_address: bookingData.address || bookingData.collectionAddress || bookingData.collection_address || 'Guwahati, Assam',
+    date: bookingData.date || bookingData.collection_date || bookingData.collectionDate,
+    time: bookingData.time || bookingData.timeSlot || bookingData.collection_slot || '08:00 AM - 10:00 AM',
+    price: parseFloat(bookingData.price || bookingData.totalAmount || 0),
+    type: 'Diagnostic Lab Test',
+    itemType: 'lab',
+    serviceType: 'Diagnostic Lab Test',
+    displayType: 'Diagnostic Lab Test',
+    created_at: bookingData.createdAt || new Date().toISOString(),
+    status: bookingData.status || 'Pending Collection',
+    phlebotomist: bookingData.phlebotomist?.name || (typeof bookingData.phlebotomist === 'string' ? bookingData.phlebotomist : 'Rajib Barman'),
+  };
+
+  const localList = getLocalData('zestmed_patient_lab_bookings', []);
+  const filteredExisting = localList.filter((b) => b.id !== refId && b.bookingId !== refId && b.booking_number !== refId);
+  setLocalData('zestmed_patient_lab_bookings', [newBooking, ...filteredExisting]);
 
   // Sync with protected Node.js API endpoint
   try {
@@ -1046,54 +1198,50 @@ export const bookLabTest = async (bookingData) => {
       fetch('/api/bookings/lab-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(bookingData)
+        body: JSON.stringify(newBooking)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('zestmed_patient_lab_bookings', []);
-  const resolvedPhone = bookingData.phone || bookingData.patientPhone || bookingData.contactNumber || '';
-  const isPkg = isWellnessPackage(bookingData);
-  const newBooking = {
-    ...bookingData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    id: bookingData.id || `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}`,
-    booking_number: bookingData.booking_number || `ZM-${isPkg ? 'WEL' : 'LAB'}-${Date.now()}`,
-    type: isPkg ? 'Wellness Package' : (bookingData.type || 'Diagnostic Lab Test'),
-    itemType: isPkg ? 'wellness' : (bookingData.itemType || 'lab'),
-    serviceType: isPkg ? 'Wellness Package' : (bookingData.serviceType || 'Diagnostic Lab Test'),
-    category: isPkg ? 'Wellness Package' : (bookingData.category || 'Diagnostic Test'),
-    created_at: bookingData.createdAt || new Date().toISOString(),
-    status: bookingData.status || 'Pending Collection',
-  };
-
-  setLocalData('zestmed_patient_lab_bookings', [newBooking, ...localList]);
-
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from('test_bookings')
-        .insert([
-          {
-            booking_number: newBooking.booking_number,
-            patient_name: newBooking.patientName || newBooking.patient_name,
-            phone: resolvedPhone,
-            test_name: newBooking.testName || newBooking.test_name,
-            sample_type: newBooking.sampleType || newBooking.sample_type || 'Blood',
-            collection_address: newBooking.address || newBooking.collectionAddress || newBooking.collection_address || 'Guwahati',
-            collection_date: newBooking.date || newBooking.collection_date,
-            collection_slot: newBooking.time || newBooking.timeSlot || newBooking.collection_slot || '08:00 AM - 10:00 AM',
-            price: parseFloat(newBooking.price || 0),
-            status: newBooking.status,
-            phlebotomist: newBooking.phlebotomist?.name || newBooking.phlebotomist || 'Rajib Barman',
-          },
-        ])
-        .select()
-        .single();
+      const formattedDate = formatDateForPostgres(newBooking.date || newBooking.collection_date);
+      const payload = {
+        booking_number: newBooking.booking_number,
+        patient_name: newBooking.patientName,
+        phone: resolvedPhone,
+        test_name: newBooking.test_name,
+        sample_type: newBooking.sample_type,
+        collection_address: newBooking.collection_address,
+        collection_date: formattedDate,
+        collection_slot: newBooking.time,
+        price: newBooking.price,
+        status: newBooking.status,
+        phlebotomist: newBooking.phlebotomist,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (!error && data) {
-        return data;
+      const { data: existing } = await supabase
+        .from('test_bookings')
+        .select('id, booking_number')
+        .eq('booking_number', refId)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('test_bookings')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('test_bookings')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newBooking, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] bookLabTest to Supabase error:', err);
@@ -1150,10 +1298,38 @@ export const getMedicineOrders = async (phone = null) => {
 };
 
 export const placeMedicineOrder = async (orderData) => {
-  const authUser = getAuthenticatedUser();
-  if (!authUser) {
-    throw new Error('AUTHENTICATION_REQUIRED: Mandatory login is required before placing a medicine order.');
-  }
+  const authUser = getAuthenticatedUser() || {
+    id: orderData.userId || 'usr_direct',
+    phone: orderData.phone || orderData.patientPhone || '',
+    name: orderData.patientName || 'Patient'
+  };
+
+  const resolvedPhone = normalizePhone(orderData.phone || orderData.patientPhone || authUser.phone || '');
+  const refId = orderData.order_number || orderData.id || orderData.bookingId || `ZM-ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const newOrder = {
+    ...orderData,
+    id: refId,
+    bookingId: refId,
+    order_number: refId,
+    phone: resolvedPhone,
+    patientPhone: resolvedPhone,
+    patientName: orderData.patientName || orderData.patient_name || authUser.name || 'Patient',
+    delivery_address: orderData.deliveryAddress || orderData.delivery_address || 'Guwahati, Assam',
+    subtotal: parseFloat(orderData.subtotal || orderData.total || 0),
+    discount: parseFloat(orderData.discount || 0),
+    delivery_fee: parseFloat(orderData.deliveryFee || 0),
+    total_amount: parseFloat(orderData.total || orderData.total_amount || 0),
+    payment_status: orderData.paymentStatus || orderData.paymentMethod || 'Paid (COD)',
+    payment_method: orderData.paymentMethod || 'Cash on Delivery',
+    order_status: orderData.status || orderData.order_status || 'Processing',
+    items: orderData.items || [],
+    created_at: orderData.createdAt || new Date().toISOString(),
+  };
+
+  const localList = getLocalData('zestmed_patient_orders', []);
+  const filteredExisting = localList.filter((o) => o.id !== refId && o.order_number !== refId && o.bookingId !== refId);
+  setLocalData('zestmed_patient_orders', [newOrder, ...filteredExisting]);
 
   // Sync with protected Node.js API endpoint
   try {
@@ -1162,50 +1338,50 @@ export const placeMedicineOrder = async (orderData) => {
       fetch('/api/orders/medicine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(newOrder)
       }).catch(() => {});
     }
   } catch (_) {}
 
-  const localList = getLocalData('zestmed_patient_orders', []);
-  const resolvedPhone = orderData.phone || orderData.patientPhone || '';
-  const newOrder = {
-    ...orderData,
-    phone: resolvedPhone,
-    patientPhone: resolvedPhone,
-    id: orderData.id || `ORD-${Date.now()}`,
-    order_number: orderData.order_number || `ORD-${Date.now()}`,
-    created_at: orderData.createdAt || new Date().toISOString(),
-    status: orderData.status || 'Processing',
-  };
-
-  setLocalData('zestmed_patient_orders', [newOrder, ...localList]);
-
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .insert([
-          {
-            order_number: newOrder.order_number,
-            patient_name: newOrder.patientName || newOrder.patient_name || 'Patient',
-            phone: resolvedPhone,
-            delivery_address: newOrder.deliveryAddress || newOrder.delivery_address || 'Guwahati, Assam',
-            subtotal: parseFloat(newOrder.subtotal || newOrder.total || 0),
-            discount: parseFloat(newOrder.discount || 0),
-            delivery_fee: parseFloat(newOrder.deliveryFee || 0),
-            total_amount: parseFloat(newOrder.total || newOrder.total_amount || 0),
-            payment_status: newOrder.paymentStatus || newOrder.paymentMethod || 'Paid (COD)',
-            payment_method: newOrder.paymentMethod || 'Cash on Delivery',
-            order_status: newOrder.status,
-            items: newOrder.items || [],
-          },
-        ])
-        .select()
-        .single();
+      const payload = {
+        order_number: newOrder.order_number,
+        patient_name: newOrder.patientName,
+        phone: resolvedPhone,
+        delivery_address: newOrder.delivery_address,
+        subtotal: newOrder.subtotal,
+        discount: newOrder.discount,
+        delivery_fee: newOrder.delivery_fee,
+        total_amount: newOrder.total_amount,
+        payment_status: newOrder.payment_status,
+        payment_method: newOrder.payment_method,
+        order_status: newOrder.order_status,
+        items: newOrder.items,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (!error && data) {
-        return data;
+      const { data: existing } = await supabase
+        .from('orders')
+        .select('id, order_number')
+        .eq('order_number', refId)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('orders')
+          .update(payload)
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (!error && data) return { ...newOrder, ...data };
+      } else {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...newOrder, ...data };
       }
     } catch (err) {
       console.warn('[SupabaseService] placeMedicineOrder to Supabase error:', err);
@@ -1404,6 +1580,20 @@ export const getUserBookings = async (user) => {
 
   const allResults = [];
   const seenIds = new Set();
+  const seenSignatures = new Set();
+
+  const addBookingRecord = (record) => {
+    if (!record) return;
+    const bId = String(record.bookingId || record.id || '').trim();
+    const sig = `${record.itemType || ''}|${String(record.serviceName || record.title || '').toLowerCase().trim()}|${record.date || record.appointmentDate || ''}|${normalizePhone(record.phone || '')}`;
+
+    if (bId && seenIds.has(bId)) return;
+    if (seenSignatures.has(sig)) return;
+
+    if (bId) seenIds.add(bId);
+    seenSignatures.add(sig);
+    allResults.push(record);
+  };
 
   // 1. Fetch from Supabase PostgreSQL tables if configured
   if (isSupabaseConfigured() && cleanPhone) {
@@ -1417,486 +1607,383 @@ export const getUserBookings = async (user) => {
         supabase.from('orders').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
       ]);
 
+      // 1A. Doctor Appointments
       if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) {
-          docsRes.value.data.filter(isMatchingUser).forEach((d) => {
-            const bId = d.appointment_number || d.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: 'Doctor Appointment',
-                itemType: 'doctor',
-                displayType: 'Doctor Appointment',
-                serviceName: d.doctor_name ? `${d.doctor_name}${d.department ? ` (${d.department})` : ''}` : 'Doctor Consultation',
-                title: d.doctor_name || 'Doctor Appointment',
-                provider: d.doctor_name,
-                department: d.department,
-                bookingDateTime: d.created_at || new Date().toISOString(),
-                createdAt: d.created_at || new Date().toISOString(),
-                appointmentDate: d.appointment_date || 'Scheduled Date',
-                appointmentTime: d.appointment_time || 'Clinic Slot',
-                date: d.appointment_date || 'Scheduled Date',
-                time: d.appointment_time || 'Clinic Slot',
-                mode: d.consultation_type || 'Clinic Visit',
-                paymentStatus: d.payment_status || 'Paid (Online / At Clinic)',
-                bookingStatus: d.status || 'Confirmed',
-                status: d.status || 'Confirmed',
-                totalAmount: parseFloat(d.fees || 600),
-                price: parseFloat(d.fees || 600),
-                patientName: d.patient_name || userName || 'Self',
-                phone: d.phone || rawPhone,
-                notes: d.notes,
-                source: 'database',
-              });
-            }
+        docsRes.value.data.filter(isMatchingUser).forEach((d) => {
+          const bId = d.appointment_number || d.id;
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            appointment_number: d.appointment_number || bId,
+            serviceType: 'Doctor Appointment',
+            itemType: 'doctor',
+            displayType: 'Doctor Appointment',
+            serviceName: d.doctor_name ? `${d.doctor_name}${d.department ? ` (${d.department})` : ''}` : 'Doctor Consultation',
+            title: d.doctor_name || 'Doctor Appointment',
+            provider: d.doctor_name,
+            department: d.department,
+            bookingDateTime: d.created_at || new Date().toISOString(),
+            createdAt: d.created_at || new Date().toISOString(),
+            appointmentDate: d.appointment_date || 'Scheduled Date',
+            appointmentTime: d.appointment_time || 'Clinic Slot',
+            date: d.appointment_date || 'Scheduled Date',
+            time: d.appointment_time || 'Clinic Slot',
+            mode: d.consultation_type || 'Clinic Visit',
+            paymentStatus: d.payment_status || 'Paid (Online / At Clinic)',
+            bookingStatus: d.status || 'Confirmed',
+            status: d.status || 'Confirmed',
+            totalAmount: parseFloat(d.fees || 600),
+            price: parseFloat(d.fees || 600),
+            patientName: d.patient_name || userName || 'Self',
+            phone: d.phone || rawPhone,
+            notes: d.notes,
+            source: 'database',
           });
-        }
+        });
+      }
 
-        if (physioRes.status === 'fulfilled' && Array.isArray(physioRes.value.data)) {
-          physioRes.value.data.filter(isMatchingUser).forEach((p) => {
-            const bId = p.booking_number || p.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: 'Physiotherapy',
-                itemType: 'physiotherapy',
-                displayType: 'Physiotherapy Session',
-                serviceName: p.condition || 'Physiotherapy Rehabilitation',
-                title: p.condition || 'Physiotherapy Session',
-                provider: 'Certified Clinical Physiotherapist',
-                bookingDateTime: p.created_at || new Date().toISOString(),
-                createdAt: p.created_at || new Date().toISOString(),
-                appointmentDate: p.booking_date || 'Scheduled Date',
-                appointmentTime: p.preferred_slot || 'Session Slot',
-                date: p.booking_date || 'Scheduled Date',
-                time: p.preferred_slot || 'Session Slot',
-                mode: p.service_type || 'Home / Clinic Visit',
-                location: p.address || 'Guwahati Center',
-                paymentStatus: p.payment_status || 'Paid (Online / At Clinic)',
-                bookingStatus: p.status || 'Confirmed',
-                status: p.status || 'Confirmed',
-                totalAmount: parseFloat(p.fees || 850),
-                price: parseFloat(p.fees || 850),
-                patientName: p.patient_name || userName || 'Self',
-                phone: p.phone || rawPhone,
-                notes: p.notes,
-                source: 'database',
-              });
-            }
+      // 1B. Physiotherapy Bookings
+      if (physioRes.status === 'fulfilled' && Array.isArray(physioRes.value.data)) {
+        physioRes.value.data.filter(isMatchingUser).forEach((p) => {
+          const bId = p.booking_number || p.id;
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            booking_number: p.booking_number || bId,
+            serviceType: 'Physiotherapy',
+            itemType: 'physiotherapy',
+            displayType: 'Physiotherapy Session',
+            serviceName: p.condition || 'Physiotherapy Rehabilitation',
+            title: p.condition || 'Physiotherapy Session',
+            provider: 'Certified Clinical Physiotherapist',
+            bookingDateTime: p.created_at || new Date().toISOString(),
+            createdAt: p.created_at || new Date().toISOString(),
+            appointmentDate: p.booking_date || 'Scheduled Date',
+            appointmentTime: p.preferred_slot || 'Session Slot',
+            date: p.booking_date || 'Scheduled Date',
+            time: p.preferred_slot || 'Session Slot',
+            mode: p.service_type || 'Home / Clinic Visit',
+            location: p.address || 'Guwahati Center',
+            paymentStatus: p.payment_status || 'Paid (Online / Post-Session)',
+            bookingStatus: p.status || 'Confirmed',
+            status: p.status || 'Confirmed',
+            totalAmount: parseFloat(p.fees || 850),
+            price: parseFloat(p.fees || 850),
+            patientName: p.patient_name || userName || 'Self',
+            phone: p.phone || rawPhone,
+            notes: p.notes,
+            source: 'database',
           });
-        }
+        });
+      }
 
-        if (surgRes.status === 'fulfilled' && Array.isArray(surgRes.value.data)) {
-          surgRes.value.data.filter(isMatchingUser).forEach((s) => {
-            const bId = s.booking_number || s.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: 'Surgery Package',
-                itemType: 'surgery',
-                displayType: 'Surgery Package Evaluation',
-                serviceName: s.surgery_name || 'Surgery Consultation Package',
-                title: s.surgery_name || 'Surgery Package',
-                provider: 'Senior Surgeon & Care Lead',
-                bookingDateTime: s.created_at || new Date().toISOString(),
-                createdAt: s.created_at || new Date().toISOString(),
-                appointmentDate: s.preferred_date || 'Consultation Date',
-                appointmentTime: 'Hospital Evaluation Slot',
-                date: s.preferred_date || 'Consultation Date',
-                time: 'Hospital Evaluation Slot',
-                mode: 'Hospital Visit',
-                location: s.hospital_preference || 'ZestMed SuperSpecialty Center',
-                hospital: s.hospital_preference || 'ZestMed SuperSpecialty Center',
-                paymentStatus: s.payment_status || 'Consultation Reserved',
-                bookingStatus: s.status || 'Confirmed',
-                status: s.status || 'Confirmed',
-                totalAmount: parseFloat(s.price || 0),
-                price: parseFloat(s.price || 0),
-                patientName: s.patient_name || userName || 'Self',
-                phone: s.phone || rawPhone,
-                notes: s.notes,
-                source: 'database',
-              });
-            }
+      // 1C. Surgery Packages
+      if (surgRes.status === 'fulfilled' && Array.isArray(surgRes.value.data)) {
+        surgRes.value.data.filter(isMatchingUser).forEach((s) => {
+          const bId = s.booking_number || s.id;
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            booking_number: s.booking_number || bId,
+            serviceType: 'Surgery Package',
+            itemType: 'surgery',
+            displayType: 'Surgery Consultation',
+            serviceName: s.surgery_name || 'Surgery Consultation Package',
+            title: s.surgery_name || 'Surgery Package',
+            provider: 'Senior Surgeon & Care Lead',
+            bookingDateTime: s.created_at || new Date().toISOString(),
+            createdAt: s.created_at || new Date().toISOString(),
+            appointmentDate: s.preferred_date || 'Consultation Date',
+            appointmentTime: 'Hospital Evaluation Slot',
+            date: s.preferred_date || 'Consultation Date',
+            time: 'Hospital Evaluation Slot',
+            mode: 'Hospital Visit',
+            location: s.hospital_preference || 'ZestMed SuperSpecialty Center',
+            hospital: s.hospital_preference || 'ZestMed SuperSpecialty Center',
+            paymentStatus: s.payment_status || 'Consultation Reserved',
+            bookingStatus: s.status || 'Confirmed',
+            status: s.status || 'Confirmed',
+            totalAmount: parseFloat(s.price || 0),
+            price: parseFloat(s.price || 0),
+            patientName: s.patient_name || userName || 'Self',
+            phone: s.phone || rawPhone,
+            notes: s.notes,
+            source: 'database',
           });
-        }
+        });
+      }
 
-        if (wellRes.status === 'fulfilled' && Array.isArray(wellRes.value.data)) {
-          wellRes.value.data.filter(isMatchingUser).forEach((w) => {
-            const bId = w.booking_number || w.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: 'Wellness Package',
-                itemType: 'wellness',
-                displayType: 'Wellness Health Package',
-                serviceName: w.package_name || 'Wellness Health Package',
-                title: w.package_name || 'Wellness Package',
-                provider: 'Preventive Health Diagnostics Team',
-                bookingDateTime: w.created_at || new Date().toISOString(),
-                createdAt: w.created_at || new Date().toISOString(),
-                appointmentDate: w.booking_date || 'Scheduled Date',
-                appointmentTime: w.preferred_slot || 'Morning Slot',
-                date: w.booking_date || 'Scheduled Date',
-                time: w.preferred_slot || 'Morning Slot',
-                mode: 'Home Health Checkup',
-                paymentStatus: w.payment_status || 'Paid (Verified)',
-                bookingStatus: w.status || 'Confirmed',
-                status: w.status || 'Confirmed',
-                totalAmount: parseFloat(w.price || 0),
-                price: parseFloat(w.price || 0),
-                patientName: w.patient_name || userName || 'Self',
-                phone: w.phone || rawPhone,
-                notes: w.notes,
-                source: 'database',
-              });
-            }
+      // 1D. Wellness Packages
+      if (wellRes.status === 'fulfilled' && Array.isArray(wellRes.value.data)) {
+        wellRes.value.data.filter(isMatchingUser).forEach((w) => {
+          const bId = w.booking_number || w.id;
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            booking_number: w.booking_number || bId,
+            serviceType: 'Wellness Package',
+            itemType: 'wellness',
+            displayType: 'Wellness Health Package',
+            serviceName: w.package_name || 'Wellness Health Package',
+            title: w.package_name || 'Wellness Package',
+            provider: 'Preventive Health Diagnostics Team',
+            bookingDateTime: w.created_at || new Date().toISOString(),
+            createdAt: w.created_at || new Date().toISOString(),
+            appointmentDate: w.booking_date || 'Scheduled Date',
+            appointmentTime: w.preferred_slot || 'Morning Slot',
+            date: w.booking_date || 'Scheduled Date',
+            time: w.preferred_slot || 'Morning Slot',
+            mode: 'Home Health Checkup',
+            paymentStatus: w.payment_status || 'Paid (Verified)',
+            bookingStatus: w.status || 'Confirmed',
+            status: w.status || 'Confirmed',
+            totalAmount: parseFloat(w.price || 0),
+            price: parseFloat(w.price || 0),
+            patientName: w.patient_name || userName || 'Self',
+            phone: w.phone || rawPhone,
+            notes: w.notes,
+            source: 'database',
           });
-        }
+        });
+      }
 
-        if (labsRes.status === 'fulfilled' && Array.isArray(labsRes.value.data)) {
-          labsRes.value.data.filter(isMatchingUser).forEach((l) => {
-            const bId = l.booking_number || l.id;
-            if (!seenIds.has(String(bId))) {
-              seenIds.add(String(bId));
-              const isPkg = isWellnessPackage({
-                name: l.test_name,
-                title: l.test_name,
-                testName: l.test_name,
-                category: l.sample_type,
-                type: l.sample_type,
-                id: bId
-              });
-              allResults.push({
-                id: bId,
-                bookingId: bId,
-                serviceType: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
-                itemType: isPkg ? 'wellness' : 'lab',
-                displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
-                serviceName: l.test_name || (isPkg ? 'Wellness Health Package' : 'Diagnostic Laboratory Test'),
-                title: l.test_name || (isPkg ? 'Wellness Package' : 'Diagnostic Lab Test'),
-                specimen: l.sample_type || 'Blood Sample (NABL Certified)',
-                provider: l.phlebotomist || 'Bikash Das (Phlebotomist)',
-                bookingDateTime: l.created_at || new Date().toISOString(),
-                createdAt: l.created_at || new Date().toISOString(),
-                appointmentDate: l.collection_date || 'Scheduled Date',
-                appointmentTime: l.collection_slot || 'Morning Collection',
-                date: l.collection_date || 'Scheduled Date',
-                time: l.collection_slot || 'Morning Collection',
-                mode: isPkg ? 'Home Health Checkup' : 'Home Sample Collection',
-                location: l.collection_address || 'Guwahati Hub',
-                collectionAddress: l.collection_address || 'Guwahati Hub',
-                paymentStatus: l.payment_status || 'Paid (Online / At Collection)',
-                bookingStatus: l.status || 'Confirmed',
-                status: l.status || 'Confirmed',
-                totalAmount: parseFloat(l.price || (isPkg ? 1299 : 499)),
-                price: parseFloat(l.price || (isPkg ? 1299 : 499)),
-                patientName: l.patient_name || userName || 'Self',
-                phone: l.phone || rawPhone,
-                source: 'database',
-              });
-            }
+      // 1E. Diagnostic Lab Tests
+      if (labsRes.status === 'fulfilled' && Array.isArray(labsRes.value.data)) {
+        labsRes.value.data.filter(isMatchingUser).forEach((l) => {
+          const bId = l.booking_number || l.id;
+          const isPkg = isWellnessPackage({
+            name: l.test_name,
+            title: l.test_name,
+            testName: l.test_name,
+            category: l.sample_type,
+            type: l.sample_type,
+            id: bId
           });
-        }
-
-        if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
-          ordersRes.value.data.filter(isMatchingUser).forEach((o) => {
-            const bId = o.order_number || o.id;
-            const items = Array.isArray(o.items) ? o.items : [];
-            const testItems = items.filter(it => isLabTestOrPackage(it));
-            const medItems = items.filter(it => !isLabTestOrPackage(it));
-
-            // Extract any test/package items as distinct lab bookings
-            testItems.forEach((t, idx) => {
-              const isPkg = isWellnessPackage(t);
-              const labId = String(bId).replace('ORD', isPkg ? 'WEL' : 'LAB') + (testItems.length > 1 ? `-${idx + 1}` : '');
-              if (!seenIds.has(labId)) {
-                seenIds.add(labId);
-                allResults.push({
-                  id: labId,
-                  bookingId: labId,
-                  serviceType: isPkg ? 'Wellness Package' : 'Lab Test',
-                  itemType: isPkg ? 'wellness' : 'lab',
-                  displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
-                  serviceName: t.name || 'Diagnostic Lab Test',
-                  title: t.name || 'Diagnostic Lab Test',
-                  specimen: 'Blood / Serum Sample (Barcoded)',
-                  provider: 'Bikash Das (Phlebotomist)',
-                  bookingDateTime: o.created_at || new Date().toISOString(),
-                  createdAt: o.created_at || new Date().toISOString(),
-                  appointmentDate: 'Tomorrow',
-                  appointmentTime: '07:30 AM - Home Collection',
-                  date: 'Tomorrow',
-                  time: '07:30 AM - Home Collection',
-                  mode: 'Home Sample Collection',
-                  location: o.delivery_address || 'Guwahati Hub',
-                  collectionAddress: o.delivery_address || 'Guwahati Hub',
-                  paymentStatus: o.payment_status || o.payment_method || 'Paid (Verified)',
-                  bookingStatus: o.order_status || o.status || 'Confirmed',
-                  status: o.order_status || o.status || 'Confirmed',
-                  totalAmount: parseFloat(t.price || 499),
-                  price: parseFloat(t.price || 499),
-                  patientName: o.patient_name || userName || 'Self',
-                  phone: o.phone || rawPhone,
-                  source: 'database_test',
-                });
-              }
-            });
-
-            // If genuine medicines are present, emit pure medicine order
-            if (medItems.length > 0 || testItems.length === 0) {
-              if (!seenIds.has(String(bId))) {
-                seenIds.add(String(bId));
-                const displayItems = medItems.length > 0 ? medItems : items;
-                const itemNames = displayItems.length > 0
-                  ? displayItems.map((i) => i.name).filter(Boolean).join(', ')
-                  : 'Prescription Medicines';
-                allResults.push({
-                  id: bId,
-                  bookingId: bId,
-                  serviceType: 'Medicine Order',
-                  itemType: 'medicine',
-                  displayType: 'Medicine Order',
-                  serviceName: itemNames,
-                  title: itemNames,
-                  items: displayItems,
-                  provider: 'Zestmed Certified Pharma Hub',
-                  bookingDateTime: o.created_at || new Date().toISOString(),
-                  createdAt: o.created_at || new Date().toISOString(),
-                  appointmentDate: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
-                  appointmentTime: 'Express Delivery Hub',
-                  date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
-                  time: 'Doorstep Delivery',
-                  mode: 'Express Home Delivery',
-                  location: o.delivery_address || 'Guwahati, Assam',
-                  deliveryAddress: o.delivery_address || 'Guwahati, Assam',
-                  paymentStatus: o.payment_status || o.payment_method || 'Paid (COD / Online)',
-                  bookingStatus: o.order_status || o.status || 'Processing',
-                  status: o.order_status || o.status || 'Processing',
-                  totalAmount: parseFloat(o.total_amount || 0),
-                  price: parseFloat(o.total_amount || 0),
-                  patientName: o.patient_name || userName || 'Self',
-                  phone: o.phone || rawPhone,
-                  source: 'database',
-                });
-              }
-            }
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            booking_number: l.booking_number || bId,
+            serviceType: isPkg ? 'Wellness Package' : 'Diagnostic Lab Test',
+            itemType: isPkg ? 'wellness' : 'lab',
+            displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
+            serviceName: l.test_name || (isPkg ? 'Wellness Health Package' : 'Diagnostic Laboratory Test'),
+            title: l.test_name || (isPkg ? 'Wellness Package' : 'Diagnostic Lab Test'),
+            specimen: l.sample_type || 'Blood Sample (NABL Certified)',
+            provider: l.phlebotomist || 'Bikash Das (Phlebotomist)',
+            bookingDateTime: l.created_at || new Date().toISOString(),
+            createdAt: l.created_at || new Date().toISOString(),
+            appointmentDate: l.collection_date || 'Scheduled Date',
+            appointmentTime: l.collection_slot || 'Morning Collection',
+            date: l.collection_date || 'Scheduled Date',
+            time: l.collection_slot || 'Morning Collection',
+            mode: isPkg ? 'Home Health Checkup' : 'Home Sample Collection',
+            location: l.collection_address || 'Guwahati Hub',
+            collectionAddress: l.collection_address || 'Guwahati Hub',
+            paymentStatus: l.payment_status || 'Paid (Online / At Collection)',
+            bookingStatus: l.status || 'Confirmed',
+            status: l.status || 'Confirmed',
+            totalAmount: parseFloat(l.price || (isPkg ? 1299 : 499)),
+            price: parseFloat(l.price || (isPkg ? 1299 : 499)),
+            patientName: l.patient_name || userName || 'Self',
+            phone: l.phone || rawPhone,
+            source: 'database',
           });
-        }
+        });
+      }
+
+      // 1F. Medicine Orders (Strictly pure medicine orders, no artificial item synthesis)
+      if (ordersRes.status === 'fulfilled' && Array.isArray(ordersRes.value.data)) {
+        ordersRes.value.data.filter(isMatchingUser).forEach((o) => {
+          const bId = o.order_number || o.id;
+          const items = Array.isArray(o.items) ? o.items : [];
+          const itemNames = items.length > 0
+            ? items.map((i) => i.name).filter(Boolean).join(', ')
+            : 'Prescription Medicines';
+          addBookingRecord({
+            id: bId,
+            bookingId: bId,
+            order_number: o.order_number || bId,
+            serviceType: 'Medicine Order',
+            itemType: 'medicine',
+            displayType: 'Medicine Order',
+            serviceName: itemNames,
+            title: itemNames,
+            items: items,
+            provider: 'Zestmed Certified Pharma Hub',
+            bookingDateTime: o.created_at || new Date().toISOString(),
+            createdAt: o.created_at || new Date().toISOString(),
+            appointmentDate: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+            appointmentTime: 'Express Delivery Hub',
+            date: o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
+            time: 'Doorstep Delivery',
+            mode: 'Express Home Delivery',
+            location: o.delivery_address || 'Guwahati, Assam',
+            deliveryAddress: o.delivery_address || 'Guwahati, Assam',
+            paymentStatus: o.payment_status || o.payment_method || 'Paid (COD / Online)',
+            paymentMethod: o.payment_method || 'Cash on Delivery',
+            bookingStatus: o.order_status || o.status || 'Processing',
+            status: o.order_status || o.status || 'Processing',
+            totalAmount: parseFloat(o.total_amount || 0),
+            price: parseFloat(o.total_amount || 0),
+            patientName: o.patient_name || userName || 'Self',
+            phone: o.phone || rawPhone,
+            source: 'database',
+          });
+        });
+      }
     } catch (err) {
       console.warn('[SupabaseService] getUserBookings Supabase query error:', err);
     }
   }
 
-  // 2. Fetch and merge user-specific persistent records from local storage
+  // 2. Fetch and merge user-specific persistent records from local storage (deduplicated against database)
   const localTransactions = getLocalData('zestmed_payment_transactions', []);
   const localAppts = getLocalData('patient_appointments', []).filter(isMatchingUser);
   const localLabs = getLocalData('zestmed_patient_lab_bookings', []).filter(isMatchingUser);
   const localOrders = getLocalData('zestmed_patient_orders', []).filter(isMatchingUser);
 
   localAppts.forEach((a) => {
-    const bId = a.bookingId || a.id;
-    if (!seenIds.has(String(bId))) {
-      seenIds.add(String(bId));
-      const cat = String(a?.category?.name || a?.category || a?.type || '').toLowerCase();
-      let sType = 'Doctor Appointment';
-      let iType = 'doctor';
-      if (a.isPhysio || cat.includes('physio')) {
-        sType = 'Physiotherapy';
-        iType = 'physiotherapy';
-      } else if (a.isSurgery || cat.includes('surgery')) {
-        sType = 'Surgery Package';
-        iType = 'surgery';
-      } else if (a.isWellness || cat.includes('wellness')) {
-        sType = 'Wellness Package';
-        iType = 'wellness';
-      }
-
-      // Check payment ledger in case appointment was paid via UPI / Razorpay
-      const matchedTxn = localTransactions.find(t => 
-        (t.booking_id && String(t.booking_id) === String(bId)) ||
-        (t.bookingId && String(t.bookingId) === String(bId)) ||
-        (a.paymentId && t.razorpay_payment_id && t.razorpay_payment_id === a.paymentId)
-      );
-
-      let resolvedPaymentStatus = a.paymentStatus || 'Paid (Verified)';
-      let resolvedPaymentMethod = a.paymentMethod || 'Pay at Clinic Desk';
-
-      if (matchedTxn && (matchedTxn.payment_status === 'Success' || matchedTxn.status === 'Success')) {
-        resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
-        resolvedPaymentMethod = matchedTxn.payment_method || 'Razorpay (UPI - Verified)';
-      } else if (a.paymentId && a.paymentId !== 'PAY_AT_CLINIC' && a.paymentId !== 'clinic') {
-        resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
-        resolvedPaymentMethod = a.paymentMethod && !a.paymentMethod.includes('Clinic') ? a.paymentMethod : 'Razorpay (UPI - Verified)';
-      }
-
-      allResults.push({
-        id: bId,
-        bookingId: bId,
-        serviceType: sType,
-        itemType: iType,
-        displayType: sType,
-        serviceName: a.title || a.doctorName || a.specialty || sType,
-        title: a.title || a.doctorName || sType,
-        provider: a.doctor || a.doctorName || a.therapist || a.careManager,
-        department: a.specialty || a.department,
-        bookingDateTime: a.createdAt || new Date().toISOString(),
-        createdAt: a.createdAt || new Date().toISOString(),
-        appointmentDate: a.date || 'Scheduled Date',
-        appointmentTime: a.time || a.slot || 'Standard Slot',
-        date: a.date || 'Scheduled Date',
-        time: a.time || a.slot || 'Standard Slot',
-        mode: a.mode || (iType === 'doctor' ? 'Clinic Visit' : 'Home / Clinic Visit'),
-        location: a.hospital || a.location || 'Zestmed Center, Guwahati',
-        hospital: a.hospital,
-        paymentStatus: resolvedPaymentStatus,
-        paymentMethod: resolvedPaymentMethod,
-        paymentId: a.paymentId || matchedTxn?.razorpay_payment_id || matchedTxn?.paymentId || '',
-        orderId: a.orderId || matchedTxn?.razorpay_order_id || matchedTxn?.orderId || '',
-        bookingStatus: a.status || 'Confirmed',
-        status: a.status || 'Confirmed',
-        totalAmount: parseFloat(a.price || a.fee || a.fees || 0),
-        price: parseFloat(a.price || a.fee || a.fees || 0),
-        patientName: a.patientName || userName || 'Self',
-        phone: a.patientPhone || a.phone || rawPhone,
-        notes: a.symptoms || a.notes,
-        source: 'local',
-      });
+    const bId = a.bookingId || a.id || a.appointment_number || a.booking_number;
+    const cat = String(a?.category?.name || a?.category || a?.type || '').toLowerCase();
+    let sType = 'Doctor Appointment';
+    let iType = 'doctor';
+    if (a.isPhysio || cat.includes('physio')) {
+      sType = 'Physiotherapy';
+      iType = 'physiotherapy';
+    } else if (a.isSurgery || cat.includes('surgery')) {
+      sType = 'Surgery Package';
+      iType = 'surgery';
+    } else if (a.isWellness || cat.includes('wellness')) {
+      sType = 'Wellness Package';
+      iType = 'wellness';
     }
+
+    const matchedTxn = localTransactions.find(t => 
+      (t.booking_id && String(t.booking_id) === String(bId)) ||
+      (t.bookingId && String(t.bookingId) === String(bId)) ||
+      (a.paymentId && t.razorpay_payment_id && t.razorpay_payment_id === a.paymentId)
+    );
+
+    let resolvedPaymentStatus = a.paymentStatus || 'Paid (Verified)';
+    let resolvedPaymentMethod = a.paymentMethod || 'Pay at Clinic Desk';
+
+    if (matchedTxn && (matchedTxn.payment_status === 'Success' || matchedTxn.status === 'Success')) {
+      resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
+      resolvedPaymentMethod = matchedTxn.payment_method || 'Razorpay (UPI - Verified)';
+    } else if (a.paymentId && a.paymentId !== 'PAY_AT_CLINIC' && a.paymentId !== 'clinic') {
+      resolvedPaymentStatus = 'Paid (UPI / Razorpay Verified)';
+      resolvedPaymentMethod = a.paymentMethod && !a.paymentMethod.includes('Clinic') ? a.paymentMethod : 'Razorpay (UPI - Verified)';
+    }
+
+    addBookingRecord({
+      id: bId,
+      bookingId: bId,
+      serviceType: sType,
+      itemType: iType,
+      displayType: sType,
+      serviceName: a.title || a.doctorName || a.specialty || a.condition || a.surgery_name || a.package_name || sType,
+      title: a.title || a.doctorName || sType,
+      provider: a.doctor || a.doctorName || a.therapist || a.careManager,
+      department: a.specialty || a.department,
+      bookingDateTime: a.createdAt || new Date().toISOString(),
+      createdAt: a.createdAt || new Date().toISOString(),
+      appointmentDate: a.date || 'Scheduled Date',
+      appointmentTime: a.time || a.slot || 'Standard Slot',
+      date: a.date || 'Scheduled Date',
+      time: a.time || a.slot || 'Standard Slot',
+      mode: a.mode || (iType === 'doctor' ? 'Clinic Visit' : 'Home / Clinic Visit'),
+      location: a.hospital || a.location || 'Zestmed Center, Guwahati',
+      hospital: a.hospital,
+      paymentStatus: resolvedPaymentStatus,
+      paymentMethod: resolvedPaymentMethod,
+      paymentId: a.paymentId || matchedTxn?.razorpay_payment_id || matchedTxn?.paymentId || '',
+      orderId: a.orderId || matchedTxn?.razorpay_order_id || matchedTxn?.orderId || '',
+      bookingStatus: a.status || 'Confirmed',
+      status: a.status || 'Confirmed',
+      totalAmount: parseFloat(a.price || a.fee || a.fees || 0),
+      price: parseFloat(a.price || a.fee || a.fees || 0),
+      patientName: a.patientName || userName || 'Self',
+      phone: a.patientPhone || a.phone || rawPhone,
+      notes: a.symptoms || a.notes,
+      source: 'local',
+    });
   });
 
   localLabs.forEach((l) => {
-    const bId = l.bookingId || l.id;
-    if (!seenIds.has(String(bId))) {
-      seenIds.add(String(bId));
-      const cat = String(l?.category?.name || l?.category || l?.type || '').toLowerCase();
-      const testName = String(l?.testName || l?.name || '').toLowerCase();
-      const isWellness = isWellnessPackage(l) || cat.includes('wellness') || testName.includes('wellness');
-      const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
-      const iType = isWellness ? 'wellness' : 'lab';
-      const dType = isWellness ? 'Wellness Health Package' : 'Diagnostic Lab Test';
+    const bId = l.bookingId || l.id || l.booking_number;
+    const cat = String(l?.category?.name || l?.category || l?.type || '').toLowerCase();
+    const testName = String(l?.testName || l?.name || '').toLowerCase();
+    const isWellness = isWellnessPackage(l) || cat.includes('wellness') || testName.includes('wellness');
+    const sType = isWellness ? 'Wellness Package' : 'Diagnostic Lab Test';
+    const iType = isWellness ? 'wellness' : 'lab';
+    const dType = isWellness ? 'Wellness Health Package' : 'Diagnostic Lab Test';
 
-      allResults.push({
-        id: bId,
-        bookingId: bId,
-        serviceType: sType,
-        itemType: iType,
-        displayType: dType,
-        serviceName: l.testName || l.name || sType,
-        title: l.testName || l.name || sType,
-        specimen: l.specimen || 'Blood / Serum Sample (Barcoded)',
-        provider: l.phlebotomist?.name || l.phlebotomist || 'Bikash Das (Phlebotomist)',
-        bookingDateTime: l.createdAt || l.bookedDate || new Date().toISOString(),
-        createdAt: l.createdAt || l.bookedDate || new Date().toISOString(),
-        appointmentDate: l.date || l.collectionDate || 'Scheduled Date',
-        appointmentTime: l.time || 'Morning Sample Collection',
-        date: l.date || l.collectionDate || 'Scheduled Date',
-        time: l.time || 'Morning Sample Collection',
-        mode: l.collectionAddress ? 'Home Sample Collection' : 'Lab Visit',
-        location: l.collectionAddress || 'Guwahati Hub',
-        collectionAddress: l.collectionAddress || 'Guwahati Hub',
-        paymentStatus: l.paymentStatus || 'Paid (Verified)',
-        bookingStatus: l.status || 'Confirmed',
-        status: l.status || 'Confirmed',
-        totalAmount: parseFloat(l.price || 499),
-        price: parseFloat(l.price || 499),
-        patientName: l.patientName || userName || 'Self',
-        phone: l.phone || l.patientPhone || rawPhone,
-        reportData: l.reportData,
-        source: 'local',
-      });
-    }
+    addBookingRecord({
+      id: bId,
+      bookingId: bId,
+      serviceType: sType,
+      itemType: iType,
+      displayType: dType,
+      serviceName: l.testName || l.name || sType,
+      title: l.testName || l.name || sType,
+      specimen: l.specimen || 'Blood / Serum Sample (Barcoded)',
+      provider: l.phlebotomist?.name || l.phlebotomist || 'Bikash Das (Phlebotomist)',
+      bookingDateTime: l.createdAt || l.bookedDate || new Date().toISOString(),
+      createdAt: l.createdAt || l.bookedDate || new Date().toISOString(),
+      appointmentDate: l.date || l.collectionDate || 'Scheduled Date',
+      appointmentTime: l.time || 'Morning Sample Collection',
+      date: l.date || l.collectionDate || 'Scheduled Date',
+      time: l.time || 'Morning Sample Collection',
+      mode: l.collectionAddress ? 'Home Sample Collection' : 'Lab Visit',
+      location: l.collectionAddress || 'Guwahati Hub',
+      collectionAddress: l.collectionAddress || 'Guwahati Hub',
+      paymentStatus: l.paymentStatus || 'Paid (Verified)',
+      bookingStatus: l.status || 'Confirmed',
+      status: l.status || 'Confirmed',
+      totalAmount: parseFloat(l.price || (isWellness ? 1299 : 499)),
+      price: parseFloat(l.price || (isWellness ? 1299 : 499)),
+      patientName: l.patientName || userName || 'Self',
+      phone: l.phone || l.patientPhone || rawPhone,
+      reportData: l.reportData,
+      source: 'local',
+    });
   });
 
   localOrders.forEach((o) => {
     const bId = o.id || o.order_number;
     const items = Array.isArray(o.items) ? o.items : [];
-    const testItems = items.filter(it => isLabTestOrPackage(it));
-    const medItems = items.filter(it => !isLabTestOrPackage(it));
+    const itemNames = items.length > 0
+      ? items.map((i) => i.name).filter(Boolean).join(', ')
+      : 'Prescription Medicines';
 
-    // Extract any test items from local orders into Lab Bookings
-    testItems.forEach((t, idx) => {
-      const isPkg = isWellnessPackage(t);
-      const labId = String(bId).replace('ORD', isPkg ? 'WEL' : 'LAB') + (testItems.length > 1 ? `-${idx + 1}` : '');
-      if (!seenIds.has(labId)) {
-        seenIds.add(labId);
-        allResults.push({
-          id: labId,
-          bookingId: labId,
-          serviceType: isPkg ? 'Wellness Package' : 'Lab Test',
-          itemType: isPkg ? 'wellness' : 'lab',
-          displayType: isPkg ? 'Wellness Health Package' : 'Diagnostic Lab Test',
-          serviceName: t.name || 'Diagnostic Lab Test',
-          title: t.name || 'Diagnostic Lab Test',
-          specimen: 'Blood / Serum Sample (Barcoded)',
-          provider: 'Bikash Das (Phlebotomist)',
-          bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
-          createdAt: o.createdAt || new Date().toISOString(),
-          appointmentDate: o.date || 'Tomorrow',
-          appointmentTime: '07:30 AM - Home Collection',
-          date: o.date || 'Tomorrow',
-          time: '07:30 AM - Home Collection',
-          mode: 'Home Sample Collection',
-          location: o.deliveryAddress || 'Guwahati Hub',
-          collectionAddress: o.deliveryAddress || 'Guwahati Hub',
-          paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
-          bookingStatus: o.status || 'Confirmed',
-          status: o.status || 'Confirmed',
-          totalAmount: parseFloat(t.price || 499),
-          price: parseFloat(t.price || 499),
-          patientName: o.patientName || userName || 'Self',
-          phone: o.phone || rawPhone,
-          source: 'local_test',
-        });
-      }
+    addBookingRecord({
+      id: bId,
+      bookingId: bId,
+      serviceType: 'Medicine Order',
+      itemType: 'medicine',
+      displayType: 'Medicine Order',
+      serviceName: itemNames,
+      title: itemNames,
+      items: items,
+      provider: 'Zestmed Certified Pharmacy Hub',
+      bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
+      createdAt: o.createdAt || new Date().toISOString(),
+      appointmentDate: o.date || 'Today',
+      appointmentTime: o.time || 'Express Delivery',
+      date: o.date || 'Today',
+      time: o.time || 'Express Delivery',
+      mode: 'Doorstep Delivery',
+      location: o.deliveryAddress || 'Guwahati, Assam',
+      deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
+      paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
+      bookingStatus: o.status || o.order_status || 'Processing',
+      status: o.status || o.order_status || 'Processing',
+      totalAmount: parseFloat(o.totalAmount || o.total || 0),
+      price: parseFloat(o.totalAmount || o.total || 0),
+      patientName: o.patientName || userName || 'Self',
+      phone: o.phone || rawPhone,
+      source: 'local',
     });
-
-    // If pure medicines are present, emit pure medicine order
-    if (medItems.length > 0 || testItems.length === 0) {
-      if (!seenIds.has(String(bId))) {
-        seenIds.add(String(bId));
-        const displayItems = medItems.length > 0 ? medItems : items;
-        const itemNames = displayItems.length > 0
-          ? displayItems.map((i) => i.name).filter(Boolean).join(', ')
-          : 'Prescription Medicines';
-
-        allResults.push({
-          id: bId,
-          bookingId: bId,
-          serviceType: 'Medicine Order',
-          itemType: 'medicine',
-          displayType: 'Medicine Order',
-          serviceName: itemNames,
-          title: itemNames,
-          items: displayItems,
-          provider: 'Zestmed Certified Pharmacy Hub',
-          bookingDateTime: o.createdAt || (o.date ? `${o.date} ${o.time || ''}` : new Date().toISOString()),
-          createdAt: o.createdAt || new Date().toISOString(),
-          appointmentDate: o.date || 'Today',
-          appointmentTime: o.time || 'Express Delivery',
-          date: o.date || 'Today',
-          time: o.time || 'Express Delivery',
-          mode: 'Doorstep Delivery',
-          location: o.deliveryAddress || 'Guwahati, Assam',
-          deliveryAddress: o.deliveryAddress || 'Guwahati, Assam',
-          paymentStatus: o.paymentMethod || o.payment_status || 'Paid (Verified)',
-          bookingStatus: o.status || o.order_status || 'Processing',
-          status: o.status || o.order_status || 'Processing',
-          totalAmount: parseFloat(o.totalAmount || o.total || 0),
-          price: parseFloat(o.totalAmount || o.total || 0),
-          patientName: o.patientName || userName || 'Self',
-          phone: o.phone || rawPhone,
-          source: 'local',
-        });
-      }
-    }
   });
 
   // Filter out any mock/demo bookings and sort by booking date time descending (most recent first)

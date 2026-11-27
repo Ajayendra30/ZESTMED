@@ -124,7 +124,8 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
 
     try {
       const existing = JSON.parse(localStorage.getItem('patient_appointments') || '[]');
-      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...existing]));
+      const filtered = existing.filter(a => a.id !== apptId && a.bookingId !== apptId);
+      localStorage.setItem('patient_appointments', JSON.stringify([newBooking, ...filtered]));
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
 
@@ -139,9 +140,9 @@ export default function BookDoctorModal({ isOpen, onClose, onOpenSeniorPickup })
           category: 'doctor',
           refId: apptId,
           linkType: 'doctor',
-          phone: patientData.phone,
-          patientPhone: patientData.phone,
-          patientName: patientData.name
+          phone: patientDetails.phone,
+          patientPhone: patientDetails.phone,
+          patientName: patientDetails.name
         });
       } catch (notifyErr) {
         console.warn('Audio/Notification record ignored:', notifyErr);
