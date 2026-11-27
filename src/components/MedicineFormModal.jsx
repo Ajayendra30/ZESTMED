@@ -1,9 +1,11 @@
 // src/components/MedicineFormModal.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  X, SquarePlus, Pill, Droplet, Syringe, Upload, 
-  Trash2, Eye, Calendar, Sparkles, Check, ChevronDown, 
-  Layers, Package, Thermometer, Building2, Tag, ShieldCheck
+  X, Pill, Droplet, Syringe, Upload, Trash2, Eye, Calendar, 
+  Sparkles, Check, ChevronDown, Layers, Package, Thermometer, 
+  Building2, Tag, Image, Link2, Copy, ExternalLink, 
+  LayoutGrid, IndianRupee, Percent, FileText, PackageCheck, 
+  FlaskConical 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -19,37 +21,37 @@ export default function MedicineFormModal({
   const isEdit = Boolean(medicine && medicine.id);
 
   const [form, setForm] = useState({
-    name: '',
-    categoryName: 'General Medicines',
+    name: 'Crocin 500 mg Tablet',
+    categoryName: 'Pain Relief & Fever',
     type: 'Tablet',
-    price: 28.00,
-    mrp: 32.00,
+    price: 35.00,
+    mrp: 42.00,
     discount: 20,
     stock: 100,
-    shortDescription: 'Fast relief from headache, toothache, and muscular pain.',
-    uses: 'Used for headache, toothache and inflammation.',
-    dosage: '1 to 2 tablets every 4–6 hours as needed.',
+    shortDescription: 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
+    uses: 'Relieves fever, headache, body ache',
+    dosage: '1 tablet (500 mg) every 4–6 hours',
     inStock: true,
-    composition: 'Acetylsalicylic Acid 350 mg',
-    expiry: 'Dec 2027',
-    packSize: 'Strip of 10 Tablets',
-    storage: 'Store below 25°C, away from moisture',
-    manufacturer: 'Reckitt Benckiser',
-    image: '',
-    images: []
+    composition: 'Paracetamol 500 mg',
+    expiry: 'Apr 2028',
+    packSize: 'Strip of 15 Tablets',
+    storage: 'Store below 30°C, in a dry place',
+    manufacturer: 'GlaxoSmithKline (GSK)',
+    image: '/medicines/crocin-500.png',
+    images: ['/medicines/crocin-500.png']
   });
 
   useEffect(() => {
     if (medicine) {
-      const p = parseFloat(medicine.price) || 28;
-      const m = parseFloat(medicine.mrp) || (p > 0 ? Math.round(p * 1.25) : 32);
+      const p = parseFloat(medicine.price) || 35.00;
+      const m = parseFloat(medicine.mrp) || (p > 0 ? Math.round(p * 1.25) : 42.00);
       const d = medicine.discount !== undefined 
         ? parseFloat(medicine.discount) 
         : (medicine.discountPercent !== undefined ? parseFloat(medicine.discountPercent) : Math.max(0, Math.round(((m - p) / m) * 100)));
 
       setForm({
         name: medicine.name || '',
-        categoryName: medicine.categoryName || medicine.categoryLong || 'General Medicines',
+        categoryName: medicine.categoryName || medicine.categoryLong || 'Pain Relief & Fever',
         type: medicine.type || medicine.dosageType || 'Tablet',
         price: p,
         mrp: m,
@@ -60,14 +62,14 @@ export default function MedicineFormModal({
         dosage: medicine.dosage || medicine.dosageText || '',
         inStock: medicine.inStock !== false,
         composition: medicine.composition || medicine.genericName || '',
-        expiry: medicine.expiry || 'Dec 2027',
-        packSize: medicine.packSize || medicine.pack || 'Strip of 10 Tablets',
-        storage: medicine.storage || 'Store below 25°C, away from moisture',
-        manufacturer: medicine.manufacturer || medicine.brand || 'Reckitt Benckiser',
-        image: medicine.image || '',
+        expiry: medicine.expiry || 'Apr 2028',
+        packSize: medicine.packSize || medicine.pack || 'Strip of 15 Tablets',
+        storage: medicine.storage || 'Store below 30°C, in a dry place',
+        manufacturer: medicine.manufacturer || medicine.brand || 'GlaxoSmithKline (GSK)',
+        image: medicine.image || '/medicines/crocin-500.png',
         images: Array.isArray(medicine.images) && medicine.images.length > 0 
           ? medicine.images 
-          : (medicine.image ? [medicine.image] : [])
+          : (medicine.image ? [medicine.image] : ['/medicines/crocin-500.png'])
       });
     } else {
       // Default Add Medicine form state
@@ -204,22 +206,30 @@ export default function MedicineFormModal({
 
       {/* Modal Card */}
       <div className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 my-6 animate-scale-up max-h-[92vh] flex flex-col">
-        {/* Top Header Bar */}
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#14B8A6]/20 border border-[#14B8A6]/40 flex items-center justify-center text-[#14B8A6] font-bold">
-              {isEdit ? <Pill className="w-5 h-5" /> : <SquarePlus className="w-5 h-5" />}
+        {/* Top Header Bar with Organic Curved Emerald Wave */}
+        <div className="relative flex items-center justify-between px-6 py-4.5 bg-gradient-to-r from-[#07131F] via-[#0B1E2E] to-[#0A2E28] text-white border-b border-slate-800 shrink-0 overflow-hidden">
+          {/* Organic Emerald Wave Backdrop Accent */}
+          <div className="absolute top-0 right-0 w-80 h-full pointer-events-none opacity-40">
+            <svg viewBox="0 0 320 80" className="w-full h-full fill-current text-emerald-400">
+              <path d="M60,0 C120,40 180,80 320,80 L320,0 Z" />
+            </svg>
+          </div>
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-gradient-to-bl from-emerald-500/30 to-teal-400/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#00A76F] flex items-center justify-center text-white shadow-md shadow-emerald-900/30">
+              <Pill className="w-5 h-5 -rotate-45 stroke-[2.5]" />
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
                 <span>{isEdit ? 'Edit Medicine Details' : 'Add New Medicine'}</span>
                 {isEdit && medicine?.id && (
-                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-800 text-teal-400 border border-slate-700">
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-800/80 text-teal-300 border border-slate-700">
                     {medicine.id}
                   </span>
                 )}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-300/80 mt-0.5">
                 {isEdit 
                   ? 'Update pharmaceutical product details, stock and pricing.' 
                   : 'Register a new pharmaceutical product with NABL drug approval codes.'}
@@ -229,14 +239,14 @@ export default function MedicineFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+            className="relative z-10 p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 stroke-[2.2]" />
           </button>
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="overflow-y-auto p-5 sm:p-6 lg:p-7 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             {/* LEFT COLUMN: Main Image Upload, Additional Slots & Live Medicine Preview (Span 4) */}
@@ -244,10 +254,11 @@ export default function MedicineFormModal({
               
               {/* Main Image Upload Box */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Medicine Image
+                <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                  <Image className="w-4 h-4 text-emerald-600 mr-1.5" />
+                  <span>Medicine Image</span>
                 </label>
-                <div className="relative border-2 border-dashed border-emerald-300/80 rounded-2xl bg-emerald-50/20 p-4 text-center hover:bg-emerald-50/40 transition group">
+                <div className="relative border-2 border-dashed border-emerald-400/80 rounded-2xl bg-[#F8FCF9] p-4 text-center hover:bg-emerald-50/40 transition group">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -257,25 +268,25 @@ export default function MedicineFormModal({
                   />
 
                   {form.image ? (
-                    <div className="relative w-full aspect-square bg-white rounded-xl overflow-hidden p-2 flex items-center justify-center border border-slate-200 shadow-2xs">
+                    <div className="relative w-full aspect-square bg-transparent rounded-xl flex items-center justify-center p-2">
                       <img
                         src={form.image}
                         alt="Product Preview"
-                        className="max-h-full max-w-full object-contain"
+                        className="max-h-full max-w-full object-contain drop-shadow-md"
                       />
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="absolute top-2 right-2 p-1.5 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition shadow-xs cursor-pointer"
+                        className="absolute top-1 right-1 p-1.5 bg-[#EF4444] text-white rounded-lg hover:bg-red-600 transition shadow-sm cursor-pointer"
                         title="Remove image"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
-                    <div className="py-6 flex flex-col items-center justify-center">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center mb-2.5">
-                        <Upload className="w-6 h-6" />
+                    <div className="py-7 flex flex-col items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2.5">
+                        <Upload className="w-6 h-6 stroke-[2.2]" />
                       </div>
                       <h4 className="text-xs font-bold text-slate-800">Add Medicine Image</h4>
                       <p className="text-[11px] text-slate-400 mt-0.5 mb-3">
@@ -284,68 +295,89 @@ export default function MedicineFormModal({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-700 transition shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-[#00A76F] hover:bg-[#009360] text-white text-xs font-bold transition shadow-sm flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Upload className="w-3.5 h-3.5" />
+                        <Upload className="w-3.5 h-3.5 stroke-[2.2]" />
                         <span>Upload Image</span>
                       </button>
                     </div>
                   )}
                 </div>
 
-                {/* Optional Image URL Input */}
+                {/* Image URL path pill bar */}
                 <div className="mt-2.5">
-                  <input
-                    type="text"
-                    value={form.image.startsWith('data:') ? '' : form.image}
-                    onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    placeholder="Or paste image URL (/medicines/disprin.png)..."
-                    className="w-full px-3 py-1.5 text-[11px] bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 font-mono"
-                  />
+                  <div className="flex items-center gap-2 bg-[#F1F5F9] border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-600 font-mono">
+                    <Link2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <input
+                      type="text"
+                      value={form.image}
+                      onChange={(e) => setForm({ ...form, image: e.target.value })}
+                      placeholder="/medicines/crocin-500.png"
+                      className="w-full bg-transparent border-none text-slate-700 placeholder:text-slate-400 focus:outline-none text-[11px]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Medicine Images (0/4) Gallery Slots */}
+              {/* Medicine Images (1/4) Gallery Slots */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-slate-800">Medicine Images ({form.images?.length || (form.image ? 1 : 0)}/4)</span>
-                  <span className="text-[10px] text-slate-400">Recommended: 800×800 px</span>
+                  <span className="flex items-center text-xs font-bold text-slate-800">
+                    <Copy className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Medicine Images ({form.image ? '1/4' : '0/4'})</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">Recommended: 800×800 px</span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square rounded-xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50/50 hover:bg-emerald-50/30 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition cursor-pointer p-1"
+                    className="aspect-square rounded-xl border border-dashed border-slate-300 hover:border-emerald-500 bg-white hover:bg-emerald-50/30 flex flex-col items-center justify-center text-slate-700 transition cursor-pointer p-1"
                   >
-                    <Upload className="w-3.5 h-3.5 mb-0.5" />
-                    <span className="text-[9px] font-bold leading-tight">Add</span>
+                    <Upload className="w-4 h-4 text-slate-800 mb-0.5 stroke-[2.5]" />
+                    <span className="text-[10px] font-bold">Add</span>
                   </button>
-                  {[2, 3, 4].map((slot) => (
-                    <div
-                      key={slot}
-                      className="aspect-square rounded-xl border border-dashed border-slate-200 bg-slate-50/40 flex items-center justify-center text-[10px] text-slate-300"
-                    >
-                      {slot}
-                    </div>
-                  ))}
+                  <div className="aspect-square rounded-xl border border-dashed border-slate-200 bg-slate-50/30 flex items-center justify-center text-xs text-slate-400 font-medium">
+                    2
+                  </div>
+                  <div className="aspect-square rounded-xl border border-dashed border-slate-200 bg-slate-50/30 flex items-center justify-center text-xs text-slate-400 font-medium">
+                    3
+                  </div>
+                  <div className="aspect-square rounded-xl border border-dashed border-slate-200 bg-slate-50/30 flex items-center justify-center text-xs text-slate-400 font-medium">
+                    4
+                  </div>
                 </div>
               </div>
 
               {/* LIVE MEDICINE PREVIEW CARD */}
-              <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80 space-y-3">
-                <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5">
-                    <Eye className="w-4 h-4 text-[#008F83]" />
+                    <Eye className="w-4 h-4 text-emerald-600" />
                     <span className="font-bold text-xs text-slate-800">Medicine Preview</span>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
-                    Live Store View
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#E6F7F3] text-[#00A76F] border border-[#A7F3D0] flex items-center gap-1">
+                    <ExternalLink className="w-3 h-3" />
+                    <span>Live Store View</span>
                   </span>
                 </div>
 
                 {/* Store Card Preview */}
-                <div className="bg-white rounded-xl border border-slate-200/90 p-3 shadow-2xs space-y-2.5">
-                  <div className="w-full h-28 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 relative overflow-hidden">
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-2xs space-y-2.5">
+                  {/* Top Badges Row */}
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 rounded-md bg-[#DCFCE7] text-[#16A34A] text-[10px] font-bold">
+                      {form.discount || 20}% OFF
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                      form.inStock ? 'bg-[#DCFCE7] text-[#16A34A]' : 'bg-rose-50 text-rose-600'
+                    }`}>
+                      {form.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </div>
+
+                  {/* Centered Image */}
+                  <div className="w-full h-24 flex items-center justify-center p-1 overflow-hidden">
                     {form.image ? (
                       <img
                         src={form.image}
@@ -353,40 +385,33 @@ export default function MedicineFormModal({
                         className="max-h-full max-w-full object-contain"
                       />
                     ) : (
-                      <Pill className="w-10 h-10 text-teal-400/50" />
+                      <Pill className="w-10 h-10 text-teal-400/40" />
                     )}
-                    <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[9px] font-bold">
-                      {form.discount || 20}% OFF
-                    </span>
-                    <span className={`absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      form.inStock ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                    }`}>
-                      {form.inStock ? 'In Stock' : 'Out of Stock'}
-                    </span>
                   </div>
 
+                  {/* Bottom Meta */}
                   <div>
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded">
+                      <span className="text-[9.5px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
                         {form.type || 'Tablet'}
                       </span>
                       <span className="text-[10px] text-slate-400">
-                        {form.packSize || 'Strip of 10 Tablets'}
+                        {form.packSize || 'Strip of 15 Tablets'}
                       </span>
                     </div>
                     <h4 className="text-xs font-bold text-[#0B1E3F] line-clamp-1 mt-1">
-                      {form.name || 'Disprin Tablet'}
+                      {form.name || 'Crocin 500 mg Tablet'}
                     </h4>
                     <p className="text-[10.5px] text-slate-500 font-medium line-clamp-1">
-                      {form.composition || 'Active Pharmaceutical Ingredient'}
+                      {form.composition || 'Paracetamol 500 mg'}
                     </p>
 
                     <div className="flex items-center gap-1.5 pt-1.5">
                       <span className="text-sm font-bold text-[#0B1E3F]">
-                        ₹{Number(form.price || 28).toFixed(2)}
+                        ₹{Number(form.price || 35).toFixed(2)}
                       </span>
                       <span className="text-[11px] text-slate-400 line-through">
-                        ₹{Number(form.mrp || 32).toFixed(2)}
+                        ₹{Number(form.mrp || 42).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -397,34 +422,38 @@ export default function MedicineFormModal({
 
             {/* RIGHT COLUMN: Form Fields (Span 8) */}
             <div className="lg:col-span-8 space-y-4">
-
+              
               {/* Row 1: Medicine Name + Category */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Medicine Name <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Tag className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Medicine Name</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Disprin Tablet"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="e.g. Crocin 500 mg Tablet"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Category <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Layers className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Category</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={form.categoryName}
                       onChange={(e) => setForm({ ...form, categoryName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white appearance-none pr-8 cursor-pointer"
+                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white appearance-none pr-8 cursor-pointer"
                     >
-                      <option value="General Medicines">General Medicines</option>
                       <option value="Pain Relief & Fever">Pain Relief & Fever</option>
+                      <option value="General Medicines">General Medicines</option>
                       <option value="Diabetes Care">Diabetes Care</option>
                       <option value="Cardiac & BP">Cardiac & BP</option>
                       <option value="Vitamins & Supplements">Vitamins & Supplements</option>
@@ -440,10 +469,12 @@ export default function MedicineFormModal({
 
               {/* Row 2: Type (Tablet, Capsule, Syrup, Injection, Other) */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Type <span className="text-rose-500">*</span>
+                <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                  <LayoutGrid className="w-4 h-4 text-emerald-600 mr-1.5" />
+                  <span>Type</span>
+                  <span className="text-rose-500 ml-0.5">*</span>
                 </label>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2.5">
                   {[
                     { id: 'Tablet', label: 'Tablet', icon: Pill },
                     { id: 'Capsule', label: 'Capsule', icon: Pill, rotate: true },
@@ -460,11 +491,15 @@ export default function MedicineFormModal({
                         onClick={() => setForm({ ...form, type: t.id })}
                         className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                           isSelected
-                            ? 'bg-[#059669] text-white shadow-xs'
+                            ? 'bg-[#00A76F] text-white shadow-xs'
                             : 'bg-white border border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-700'
                         }`}
                       >
-                        {IconComp && <IconComp className={`w-3.5 h-3.5 ${t.rotate ? 'rotate-45' : ''}`} />}
+                        {isSelected ? (
+                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                        ) : (
+                          IconComp && <IconComp className={`w-3.5 h-3.5 ${t.rotate ? 'rotate-45' : ''}`} />
+                        )}
                         <span>{t.label}</span>
                       </button>
                     );
@@ -475,8 +510,10 @@ export default function MedicineFormModal({
               {/* Row 3: Price, MRP, Discount, Stock Quantity */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Price (₹) <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <IndianRupee className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>Price (₹)</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="number"
@@ -484,13 +521,15 @@ export default function MedicineFormModal({
                     required
                     value={form.price}
                     onChange={(e) => handlePriceChange(e.target.value)}
-                    placeholder="e.g. 28.00"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="e.g. 35.00"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    MRP (₹) <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Tag className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>MRP (₹)</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="number"
@@ -498,25 +537,28 @@ export default function MedicineFormModal({
                     required
                     value={form.mrp}
                     onChange={(e) => handleMrpChange(e.target.value)}
-                    placeholder="e.g. 32.00"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="e.g. 42.00"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Discount (%)
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Percent className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>Discount (%)</span>
                   </label>
                   <input
                     type="number"
                     value={form.discount}
                     onChange={(e) => setForm({ ...form, discount: e.target.value })}
                     placeholder="e.g. 20"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Stock Quantity <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Package className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>Stock Quantity</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="number"
@@ -524,65 +566,70 @@ export default function MedicineFormModal({
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     placeholder="e.g. 100"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
               </div>
 
               {/* Row 4: Short Description */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Short Description <span className="text-rose-500">*</span>
+                <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                  <FileText className="w-4 h-4 text-emerald-600 mr-1.5" />
+                  <span>Short Description</span>
+                  <span className="text-rose-500 ml-0.5">*</span>
                 </label>
                 <textarea
                   required
                   rows={2}
                   value={form.shortDescription}
                   onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
-                  placeholder="e.g. Fast relief from headache, toothache, and muscular pain."
-                  className="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                  placeholder="e.g. Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever."
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white resize-none"
                 />
               </div>
 
               {/* Row 5: Uses, Dosage, Availability */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                <div className="bg-slate-50/70 p-3 rounded-2xl border border-slate-200/60">
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                    <Sparkles className="w-3 h-3 text-emerald-600 inline mr-1" />
-                    Uses
+                <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-slate-200/80">
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>Uses</span>
                   </label>
                   <input
                     type="text"
                     value={form.uses}
                     onChange={(e) => setForm({ ...form, uses: e.target.value })}
-                    placeholder="e.g. Headache, toothache..."
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#059669]"
+                    placeholder="Relieves fever, headache,"
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#00A76F]"
                   />
                 </div>
-                <div className="bg-slate-50/70 p-3 rounded-2xl border border-slate-200/60">
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                    <Pill className="w-3 h-3 text-emerald-600 inline mr-1" />
-                    Dosage
+                <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-slate-200/80">
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Pill className="w-3.5 h-3.5 text-emerald-600 mr-1 rotate-45" />
+                    <span>Dosage</span>
                   </label>
                   <input
                     type="text"
                     value={form.dosage}
                     onChange={(e) => setForm({ ...form, dosage: e.target.value })}
-                    placeholder="e.g. 1 to 2 tablets..."
-                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#059669]"
+                    placeholder="1 tablet (500 mg) every 4"
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#00A76F]"
                   />
                 </div>
-                <div className="bg-slate-50/70 p-3 rounded-2xl border border-slate-200/60 flex flex-col justify-between">
-                  <span className="text-[11px] font-bold text-slate-700">Availability</span>
+                <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-slate-200/80 flex flex-col justify-between">
+                  <span className="flex items-center text-xs font-bold text-slate-800">
+                    <PackageCheck className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <span>Availability</span>
+                  </span>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs font-semibold text-slate-600">
+                    <span className="text-xs font-semibold text-slate-700">
                       {form.inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, inStock: !form.inStock })}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        form.inStock ? 'bg-[#059669]' : 'bg-slate-300'
+                        form.inStock ? 'bg-[#00A76F]' : 'bg-slate-300'
                       }`}
                     >
                       <span
@@ -598,78 +645,88 @@ export default function MedicineFormModal({
               {/* Row 6: Composition + Expiry Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Composition <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <FlaskConical className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Composition</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={form.composition}
                     onChange={(e) => setForm({ ...form, composition: e.target.value })}
-                    placeholder="e.g. Acetylsalicylic Acid 350 mg"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="Paracetamol 500 mg"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    Expiry Date <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Calendar className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Expiry Date</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={form.expiry}
-                    onChange={(e) => setForm({ ...form, expiry: e.target.value })}
-                    placeholder="e.g. Dec 2027"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      required
+                      value={form.expiry}
+                      onChange={(e) => setForm({ ...form, expiry: e.target.value })}
+                      placeholder="Apr 2028"
+                      className="w-full px-3.5 py-2.5 pr-9 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
+                    />
+                    <Calendar className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
               </div>
 
               {/* Row 7: Pack Size + Storage */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    <Package className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
-                    Pack Size <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Package className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Pack Size</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={form.packSize}
                     onChange={(e) => setForm({ ...form, packSize: e.target.value })}
-                    placeholder="e.g. Strip of 10 Tablets"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="Strip of 15 Tablets"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                    <Thermometer className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
-                    Storage <span className="text-rose-500">*</span>
+                  <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                    <Thermometer className="w-4 h-4 text-emerald-600 mr-1.5" />
+                    <span>Storage</span>
+                    <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={form.storage}
                     onChange={(e) => setForm({ ...form, storage: e.target.value })}
-                    placeholder="e.g. Store below 25°C, away from moisture"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                    placeholder="Store below 30°C, in a dry place"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
               </div>
 
               {/* Row 8: Manufacturer */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
-                  Manufacturer <span className="text-rose-500">*</span>
+                <label className="flex items-center text-xs font-bold text-slate-800 mb-1.5">
+                  <Building2 className="w-4 h-4 text-emerald-600 mr-1.5" />
+                  <span>Manufacturer</span>
+                  <span className="text-rose-500 ml-0.5">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={form.manufacturer}
                   onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
-                  placeholder="e.g. Reckitt Benckiser"
-                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                  placeholder="GlaxoSmithKline (GSK)"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                 />
               </div>
 
@@ -677,20 +734,21 @@ export default function MedicineFormModal({
 
           </div>
 
-          {/* Footer Buttons */}
+          {/* Footer Buttons matching reference image */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition cursor-pointer"
+              className="px-6 py-2.5 rounded-2xl border border-slate-300 text-slate-800 font-bold text-xs hover:bg-slate-50 transition cursor-pointer flex items-center gap-1.5"
             >
-              Cancel
+              <X className="w-4 h-4 text-slate-700" />
+              <span>Cancel</span>
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#008F83] hover:bg-[#007A70] text-white font-bold text-xs shadow-md shadow-[#008F83]/20 transition cursor-pointer flex items-center gap-2"
+              className="px-7 py-2.5 rounded-2xl bg-[#00A76F] hover:bg-[#009360] text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer flex items-center gap-2"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 text-white stroke-[2.5]" />
               <span>{isEdit ? 'Save Changes' : 'Save to Inventory'}</span>
             </button>
           </div>
