@@ -459,7 +459,7 @@ export async function fetchAdminNotifications() {
       category: 'Doctor Appointment',
       status: apt.status || 'Confirmed',
       statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-      linkType: 'appointments-doctor',
+      linkType: 'doctor-management',
       refId,
       timestamp: new Date(apt.createdAt || Date.now()).getTime()
     });

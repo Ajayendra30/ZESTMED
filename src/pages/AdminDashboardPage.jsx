@@ -1103,7 +1103,7 @@ export default function AdminDashboardPage() {
       bgColor: 'bg-[#FFF1F2]',
       iconColor: 'text-[#F43F5E]',
       waveColor: 'text-[#F43F5E]',
-      targetMenu: 'appointments-doctor'
+      targetMenu: 'doctor-management'
     },
     {
       title: 'Lab & Wellness',
@@ -1947,7 +1947,7 @@ export default function AdminDashboardPage() {
       category: 'Doctor Appointment',
       status: 'Updated',
       statusBadge: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-      linkType: 'appointments-doctor'
+      linkType: 'doctor-management'
     },
     {
       id: 5,
@@ -2548,7 +2548,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setActiveMenu('appointments-doctor'); setIsHeaderQuickActionsOpen(false); }}
+                    onClick={() => { handleNavigateMenu('doctor-management'); setIsHeaderQuickActionsOpen(false); }}
                     className="w-full text-left px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                   >
                     <CalendarPlus className="w-4 h-4 text-emerald-600" />
@@ -2949,7 +2949,7 @@ export default function AdminDashboardPage() {
 
                   {/* Tile 6: Manage Doctor Appointments */}
                   <div
-                    onClick={() => setActiveMenu('appointments-doctor')}
+                    onClick={() => handleNavigateMenu('doctor-management')}
                     className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
@@ -3133,7 +3133,7 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => {
                     addToast('Senior Citizen transport dispatch desk ready for booking', 'info');
-                    setActiveMenu('appointments-doctor');
+                    handleNavigateMenu('doctor-management');
                   }}
                   className="w-full py-2.5 px-4 bg-[#00A68A] hover:bg-[#008f77] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
                 >
@@ -3557,7 +3557,7 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {/* CLINICAL SERVICES: DOCTOR APPOINTMENTS                   */}
           {/* ======================================================== */}
-          {activeMenu === 'appointments-doctor' && (
+          {(activeMenu === 'doctor-management' || activeMenu === 'appointments-doctor') && (
             <div className="space-y-4 sm:space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                 <div>
@@ -3606,92 +3606,102 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {doctorAppointments
-                        .filter((a) => {
-                          if (!searchQuery.trim()) return true;
-                          const q = searchQuery.toLowerCase();
-                          return (
-                            (a.id || '').toLowerCase().includes(q) ||
-                            (a.bookingId || '').toLowerCase().includes(q) ||
-                            (a.patientName || '').toLowerCase().includes(q) ||
-                            (a.doctor || a.doctorName || '').toLowerCase().includes(q) ||
-                            (a.specialty || '').toLowerCase().includes(q)
-                          );
-                        })
-                        .map((a) => (
-                          <tr key={a.id || a.bookingId} className="hover:bg-slate-50/50 transition">
-                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{a.id || a.bookingId}</td>
-                            <td className="py-3.5 px-4 font-semibold text-slate-800">
-                              <div>{a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
-                              {a.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{a.patientPhone}</span>}
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <div className="font-bold text-slate-900">{a.doctor || a.doctorName || 'Dr. Amit Sharma, MD'}</div>
-                              <div className="text-[10px] text-teal-700 font-medium">{a.specialty || a.doctorSpecialty || 'General Physician'}</div>
-                            </td>
-                            <td className="py-3.5 px-4 text-slate-700">{a.hospital || a.doctorHospital || 'Zestmed Polyclinic Hub, Dispur'}</td>
-                            <td className="py-3.5 px-4 font-mono text-slate-600">
-                              <div>{a.date}</div>
-                              <div className="text-[10px] text-slate-400">{a.time || a.slot}</div>
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <span className="inline-block px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">
-                                {a.mode || 'Clinic Visit'}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{a.fee || a.price || 600}</td>
-                            <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">{a.symptoms || 'General Consultation'}</td>
-                            <td className="py-3.5 px-4 text-center">
-                              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                                a.status === 'Confirmed' || a.status === 'Completed'
-                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                  : a.status === 'Cancelled'
-                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                  : 'bg-blue-50 text-blue-700 border border-blue-200'
-                              }`}>
-                                {a.status || 'Confirmed'}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <button
-                                  type="button"
-                                  onClick={() => handleAdvanceStatus({ ...a, id: a.id || a.bookingId, type: 'doctor' })}
-                                  className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
-                                  title="Advance Status"
-                                >
-                                  Advance
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleViewDetails({ ...a, id: a.id || a.bookingId, type: 'doctor', serviceType: 'Doctor Consultation', raw: a })}
-                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
-                                  title="View Details"
-                                >
-                                  <Eye className="w-4 h-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDownloadSlip({ ...a, type: 'Doctor Consultation' })}
-                                  className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
-                                  title="Print Slip"
-                                >
-                                  <Download className="w-4 h-4" />
-                                </button>
-                                {a.status !== 'Cancelled' && (
+                      {doctorAppointments.length === 0 ? (
+                        <tr>
+                          <td colSpan={10} className="py-12 text-center text-slate-400">
+                            <Stethoscope className="w-8 h-8 mx-auto mb-2 opacity-40 text-slate-400" />
+                            <p className="font-semibold text-slate-600">No doctor appointments found</p>
+                            <p className="text-[11px] text-slate-400 mt-0.5">Real clinical appointments will appear here as patients book consultations.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        doctorAppointments
+                          .filter((a) => {
+                            if (!searchQuery.trim()) return true;
+                            const q = searchQuery.toLowerCase();
+                            return (
+                              (a.id || '').toLowerCase().includes(q) ||
+                              (a.bookingId || '').toLowerCase().includes(q) ||
+                              (a.patientName || '').toLowerCase().includes(q) ||
+                              (a.doctor || a.doctorName || '').toLowerCase().includes(q) ||
+                              (a.specialty || '').toLowerCase().includes(q)
+                            );
+                          })
+                          .map((a) => (
+                            <tr key={a.id || a.bookingId} className="hover:bg-slate-50/50 transition">
+                              <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{a.id || a.bookingId}</td>
+                              <td className="py-3.5 px-4 font-semibold text-slate-800">
+                                <div>{a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '') : 'Patient'}</div>
+                                {a.patientPhone && <span className="text-[10px] text-slate-400 font-mono">{a.patientPhone}</span>}
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <div className="font-bold text-slate-900">{a.doctor || a.doctorName || 'Dr. Amit Sharma, MD'}</div>
+                                <div className="text-[10px] text-teal-700 font-medium">{a.specialty || a.doctorSpecialty || 'General Physician'}</div>
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-700">{a.hospital || a.doctorHospital || 'Zestmed Polyclinic Hub, Dispur'}</td>
+                              <td className="py-3.5 px-4 font-mono text-slate-600">
+                                <div>{a.date}</div>
+                                <div className="text-[10px] text-slate-400">{a.time || a.slot}</div>
+                              </td>
+                              <td className="py-3.5 px-4">
+                                <span className="inline-block px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">
+                                  {a.mode || 'Clinic Visit'}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-4 font-black text-slate-900 font-mono">₹{a.fee || a.price || 600}</td>
+                              <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">{a.symptoms || 'General Consultation'}</td>
+                              <td className="py-3.5 px-4 text-center">
+                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+                                  a.status === 'Confirmed' || a.status === 'Completed'
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : a.status === 'Cancelled'
+                                    ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                    : 'bg-blue-50 text-blue-700 border border-blue-200'
+                                }`}>
+                                  {a.status || 'Confirmed'}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-4 text-right">
+                                <div className="flex items-center justify-end gap-1.5">
                                   <button
                                     type="button"
-                                    onClick={() => handleCancelBookingOrOrder({ id: a.id || a.bookingId, type: 'doctor' })}
-                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
-                                    title="Cancel"
+                                    onClick={() => handleAdvanceStatus({ ...a, id: a.id || a.bookingId, type: 'doctor' })}
+                                    className="px-2.5 py-1 bg-[#14B8A6] hover:bg-[#0d9488] text-white rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer"
+                                    title="Advance Status"
                                   >
-                                    <X className="w-4 h-4" />
+                                    Advance
                                   </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleViewDetails({ ...a, id: a.id || a.bookingId, type: 'doctor', serviceType: 'Doctor Consultation', raw: a })}
+                                    className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                    title="View Details"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDownloadSlip({ ...a, type: 'Doctor Consultation' })}
+                                    className="p-1.5 text-teal-600 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition cursor-pointer"
+                                    title="Print Slip"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </button>
+                                  {a.status !== 'Cancelled' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCancelBookingOrOrder({ id: a.id || a.bookingId, type: 'doctor' })}
+                                      className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                      title="Cancel"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                   </table>
                 </div>
