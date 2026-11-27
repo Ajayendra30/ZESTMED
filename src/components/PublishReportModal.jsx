@@ -1,10 +1,13 @@
 // src/components/PublishReportModal.jsx
 import React, { useState } from 'react';
-import { X, FileText, CheckCircle2, AlertTriangle, ShieldCheck, Check } from 'lucide-react';
+import { X, FileText, CheckCircle2, AlertTriangle, ShieldCheck, Check, UploadCloud, Paperclip } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 export default function PublishReportModal({ isOpen = true, onClose, job, onPublishReport, onPublish }) {
   const { addToast } = useToast();
+
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [fileDataUrl, setFileDataUrl] = useState('');
 
   // Initial parameters based on test type
   const getInitialParameters = () => {
@@ -49,6 +52,22 @@ export default function PublishReportModal({ isOpen = true, onClose, job, onPubl
 
   if (!isOpen || !job) return null;
 
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      addToast('Report file size must be less than 15MB', 'error');
+      return;
+    }
+    setUploadedFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFileDataUrl(reader.result);
+      addToast(`Attached diagnostic report file: ${file.name}`, 'success');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleParamChange = (index, newValue) => {
     setParameters(prev => prev.map((p, idx) => {
       if (idx === index) {
@@ -71,7 +90,9 @@ export default function PublishReportModal({ isOpen = true, onClose, job, onPubl
         findings: parameters,
         pathologistNote,
         reportingDoctor: 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
-        publishedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        publishedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        reportUrl: fileDataUrl || job.reportUrl || '',
+        reportFileName: uploadedFile?.name || ''
       });
     }
 
@@ -123,6 +144,48 @@ export default function PublishReportModal({ isOpen = true, onClose, job, onPubl
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Specimen Barcode</span>
               <span className="font-mono font-bold text-primary text-xs">{job.barcode || 'AS-BC-781001-9041'}</span>
             </div>
+          </div>
+
+          {/* Upload Diagnostic Report Document (PDF / Scan) */}
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                <UploadCloud className="w-4 h-4 text-teal-600" />
+                <span>Upload Signed Diagnostic Report File (PDF, Scanned Lab Copy)</span>
+              </label>
+              <span className="text-[10px] text-slate-400 font-medium">Optional (Auto-signed PDF generated if omitted)</span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <label className="flex-1 border-2 border-dashed border-slate-300 hover:border-teal-500 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer bg-white transition hover:bg-teal-50/20">
+                <input
+                  type="file"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <Paperclip className="w-4 h-4 text-slate-500" />
+                <span className="text-xs font-semibold text-slate-700">
+                  {uploadedFile ? uploadedFile.name : 'Click to browse official laboratory PDF / Scan (Max 15MB)'}
+                </span>
+              </label>
+              {uploadedFile && (
+                <button
+                  type="button"
+                  onClick={() => { setUploadedFile(null); setFileDataUrl(''); }}
+                  className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                  title="Remove file"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            {uploadedFile && (
+              <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>File attached successfully ({(uploadedFile.size / 1024).toFixed(1)} KB). This document will be accessible to the patient upon publishing.</span>
+              </p>
+            )}
           </div>
 
           {/* Clinical Findings Inputs */}

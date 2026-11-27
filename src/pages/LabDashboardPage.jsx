@@ -46,7 +46,9 @@ import {
 import { initialPatientLabBookings } from '../mock-data/patientData';
 import {
   getLabBookings,
+  getWellnessBookings,
   updateLabBookingStatus,
+  publishDiagnosticReport,
   bookLabTest,
   isDemoBooking
 } from '../services/supabaseService';
@@ -277,13 +279,38 @@ export default function LabDashboardPage() {
     let isMounted = true;
     const fetchBookings = async () => {
       try {
-        const bookings = await getLabBookings();
-        if (!isMounted || !bookings || bookings.length === 0) return;
+        const [bookings, wellnessBookings] = await Promise.all([
+          getLabBookings(),
+          getWellnessBookings()
+        ]);
+        if (!isMounted) return;
 
-        const liveItems = bookings.map((b, idx) => {
+        const combined = [...(bookings || [])];
+        (wellnessBookings || []).forEach((w) => {
+          const wId = w.booking_number || w.id;
+          if (!combined.some((b) => (b.booking_number || b.id) === wId)) {
+            combined.push({
+              ...w,
+              booking_number: wId,
+              id: wId,
+              test_name: w.package_name || w.name || 'Wellness Health Package',
+              sample_type: 'Blood & Serum Sample (Fasting)',
+              collection_address: w.address || w.collection_address || 'Dispur, Guwahati',
+              collection_date: w.booking_date || w.date,
+              collection_slot: w.preferred_slot || w.time || '08:00 AM',
+              price: w.price || 1299,
+              isWellness: true
+            });
+          }
+        });
+
+        if (combined.length === 0) return;
+
+        const liveItems = combined.map((b, idx) => {
           const bId = b.booking_number || b.id || `#LB102${45 + idx}`;
-          const isHome = !b.sample_type?.toLowerCase().includes('visit');
-          const isCollected = ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Report Published', 'Report Ready', 'Collected'].includes(b.status);
+          const isHome = !String(b.sample_type || '').toLowerCase().includes('visit');
+          const isPublished = ['Signed & Published', 'Report Published', 'Report Ready', 'Published'].includes(b.status);
+          const isCollected = isPublished || ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Processing', 'Centrifugation', 'Collected'].includes(b.status);
           const isCheckedIn = b.status === 'Checked In';
 
           return {
@@ -293,10 +320,10 @@ export default function LabDashboardPage() {
             patientName: b.patient_name || b.patientName || 'Patient',
             age: b.age || 35,
             gender: b.gender || 'Not Specified',
-            phone: b.phone || b.patientPhone || '+91 92791 25091',
-            contact: b.phone || b.patientPhone || '+91 92791 25091',
-            test: b.test_name || b.testName || 'Diagnostic Investigation',
-            testName: b.test_name || b.testName || 'Diagnostic Investigation',
+            phone: b.phone || b.patientPhone || '',
+            contact: b.phone || b.patientPhone || '',
+            test: b.test_name || b.testName || (b.isWellness ? 'Wellness Health Package' : 'Diagnostic Investigation'),
+            testName: b.test_name || b.testName || (b.isWellness ? 'Wellness Health Package' : 'Diagnostic Investigation'),
             type: isHome ? 'Home Collection' : 'Lab Visit',
             time: b.collection_slot || b.time || '09:00 AM',
             slot: b.collection_slot || b.time || '09:00 AM',
@@ -308,19 +335,34 @@ export default function LabDashboardPage() {
             fastingRequired: b.fastingRequired || false,
             fastingVerified: isCollected,
             status: b.status || 'Pending Collection',
-            action: isCollected ? 'Sample Collected' : isCheckedIn ? 'Checked In' : isHome ? 'Collect Sample' : 'Check In',
-            barcode: b.barcode || `AS-BC-781005-09${idx + 1}`
+            action: isPublished ? 'Report Published' : isCollected ? 'Sample Collected' : isCheckedIn ? 'Checked In' : isHome ? 'Collect Sample' : 'Check In',
+            barcode: b.barcode || `AS-BC-781005-09${idx + 1}`,
+            reportData: b.reportData,
+            reportUrl: b.reportUrl || b.report_url,
+            isWellness: b.isWellness
           };
         });
 
         setTodaySchedule(liveItems);
         setJobs(liveItems);
 
-        const completed = liveItems.filter(b => ['Signed & Published', 'Report Published', 'Report Ready'].includes(b.status));
-        const pendingUpload = liveItems.filter(b => ['Sample Collected', 'Cold-Chain Transit'].includes(b.status));
-        const processing = liveItems.filter(b => ['Testing in Central Lab', 'Processing', 'Centrifugation'].includes(b.status));
-        if (completed.length > 0) setCompletedList(completed);
-        if (pendingUpload.length > 0) setPendingUploadList(pendingUpload);
+        const completed = liveItems.filter((b) => ['Signed & Published', 'Report Published', 'Report Ready', 'Published'].includes(b.status));
+        const pendingUpload = liveItems.filter((b) => ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Processing', 'Centrifugation', 'Ready for Report'].includes(b.status));
+        const processing = liveItems.filter((b) => ['Testing in Central Lab', 'Processing', 'Centrifugation', 'Sample Collected'].includes(b.status)).map((item) => ({
+          id: item.barcode || item.id,
+          bookingId: item.bookingId || item.id,
+          patient: item.patient,
+          test: item.test,
+          analyzer: String(item.test || '').toLowerCase().includes('blood') || String(item.test || '').toLowerCase().includes('cbc')
+            ? 'Mindray BC-5150 Hematology'
+            : 'Roche Cobas c311 Biochemistry',
+          status: 'Centrifugation & Assay',
+          progress: item.status === 'Testing in Central Lab' ? 85 : 45,
+          eta: '15m'
+        }));
+
+        setCompletedList(completed);
+        setPendingUploadList(pendingUpload);
         if (processing.length > 0) setProcessingList(processing);
       } catch (err) {
         console.warn('[LabDashboard] Error loading live bookings:', err);
@@ -330,14 +372,23 @@ export default function LabDashboardPage() {
     fetchBookings();
 
     const handleStorageChange = (e) => {
-      if (e.key === 'zestmed_patient_lab_bookings' || e.key === 'zestmed_lab_jobs') {
+      if (
+        !e ||
+        e.key === 'zestmed_patient_lab_bookings' ||
+        e.key === 'zestmed_wellness_bookings' ||
+        e.key === 'zestmed_lab_jobs' ||
+        e.key === 'zestmed_patient_reports' ||
+        e.type === 'zestmed_booking_updated'
+      ) {
         fetchBookings();
       }
     };
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('zestmed_booking_updated', handleStorageChange);
     return () => {
       isMounted = false;
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('zestmed_booking_updated', handleStorageChange);
     };
   }, []);
 
@@ -495,9 +546,12 @@ export default function LabDashboardPage() {
     addToast(`Specimen ${proc.id} authorized! Added to Upload Reports desk.`, 'success');
   };
 
-  const handlePublishReport = (id, reportData) => {
+  const handlePublishReport = async (id, reportData) => {
     setSelectedJobForPublish(null);
-    const target = pendingUploadList.find((p) => p.id === id || p.bookingId === id) || selectedJobForPublish;
+    const target = pendingUploadList.find((p) => p.id === id || p.bookingId === id) ||
+      todaySchedule.find((p) => p.id === id || p.bookingId === id) ||
+      jobs.find((p) => p.id === id || p.bookingId === id) ||
+      selectedJobForPublish;
     const patientName = target?.patient || target?.patientName || 'Patient';
     const testName = target?.test || target?.testName || 'Diagnostic Investigation';
 
@@ -515,28 +569,27 @@ export default function LabDashboardPage() {
       status: 'Signed & Published',
       reportData: reportData?.findings || [],
       findings: reportData?.findings || [],
-      pathologistNote: reportData?.pathologistNote
+      pathologistNote: reportData?.pathologistNote,
+      reportUrl: reportData?.reportUrl || ''
     };
 
-    setCompletedList((prev) => [newCompleted, ...prev]);
+    setCompletedList((prev) => [newCompleted, ...prev.filter((c) => c.bookingId !== id && c.id !== id)]);
 
-    updateLabBookingStatus(id, 'Report Published').catch(() => {});
+    setTodaySchedule((prev) =>
+      prev.map((j) => (j.id === id || j.bookingId === id ? { ...j, status: 'Report Published', action: 'Report Published' } : j))
+    );
+    setJobs((prev) =>
+      prev.map((j) => (j.id === id || j.bookingId === id ? { ...j, status: 'Report Published', action: 'Report Published' } : j))
+    );
 
-    try {
-      const storedLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
-      const updated = storedLabs.map((b) =>
-        b.id === id || b.booking_number === id
-          ? {
-              ...b,
-              status: 'Report Ready',
-              reportData: reportData?.findings,
-              reportUrl: `/reports/${id}.pdf`,
-              pathologist: reportData?.reportingDoctor
-            }
-          : b
-      );
-      localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(updated));
-    } catch (_) {}
+    await publishDiagnosticReport(id, {
+      ...reportData,
+      testName,
+      patientName,
+      phone: target?.phone || target?.contact,
+      reportUrl: reportData?.reportUrl || '',
+      reportFileName: reportData?.reportFileName || ''
+    });
 
     setRecentActivities((prev) => [
       {
@@ -548,7 +601,7 @@ export default function LabDashboardPage() {
       ...prev
     ]);
 
-    addToast(`Diagnostic report for ${patientName} (${id}) signed & published!`, 'success');
+    addToast(`Diagnostic report for ${patientName} (${id}) signed & published to patient portal!`, 'success');
   };
 
   const handleCreateJob = async (newJob) => {
@@ -783,7 +836,30 @@ export default function LabDashboardPage() {
     return (p.id + ' ' + p.patient + ' ' + p.test + ' ' + p.analyzer).toLowerCase().includes(q);
   });
 
-  const displayedUploads = pendingUploadList.filter((u) => {
+  const combinedUploads = useMemo(() => {
+    const list = [...pendingUploadList];
+    jobs.forEach((j) => {
+      const isCollected = ['Sample Collected', 'Cold-Chain Transit', 'Testing in Central Lab', 'Processing', 'Centrifugation', 'Ready for Report'].includes(j.status);
+      const isPublished = ['Signed & Published', 'Report Published', 'Report Ready', 'Published'].includes(j.status);
+      if (isCollected && !isPublished) {
+        if (!list.some((u) => u.id === j.id || u.bookingId === j.id)) {
+          list.push({
+            id: j.id,
+            bookingId: j.bookingId || j.id,
+            patient: j.patient || j.patientName,
+            patientName: j.patient || j.patientName,
+            test: j.test || j.testName,
+            testName: j.test || j.testName,
+            time: j.time || '10:15 AM',
+            box: 'CCB-01'
+          });
+        }
+      }
+    });
+    return list;
+  }, [pendingUploadList, jobs]);
+
+  const displayedUploads = combinedUploads.filter((u) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (u.id + ' ' + (u.patient || u.patientName) + ' ' + (u.test || u.testName)).toLowerCase().includes(q);
@@ -1816,6 +1892,29 @@ export default function LabDashboardPage() {
                           <Syringe className="w-3.5 h-3.5" />
                           <span>{j.action || (j.status === 'Sample Collected' ? 'Collected' : 'Collect Sample')}</span>
                         </button>
+                        {j.status === 'Report Published' || j.status === 'Signed & Published' ? (
+                          <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold">
+                            Published
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedJobForPublish({
+                                id: j.id,
+                                bookingId: j.bookingId || j.id,
+                                patientName: j.patient || j.patientName,
+                                testName: j.test || j.testName,
+                                barcode: j.barcode
+                              });
+                            }}
+                            className="px-3 py-1.5 bg-[#008F83] hover:bg-[#007A64] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                            title="Upload and publish diagnostic report"
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Report</span>
+                          </button>
+                        )}
                         <a
                           href={`tel:${j.phone || j.contact || '+919279125091'}`}
                           onClick={() => addToast(`Dialing patient ${j.patient || j.patientName}...`, 'info')}

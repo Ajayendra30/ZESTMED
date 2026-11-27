@@ -1170,16 +1170,26 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       });
   }, [userBookings, formattedMedicineBookings, formattedLabBookings, user, isMatchingCurrentUser]);
 
-  // Real or Historical Diagnostic Reports (strictly isolated to verified user)
+  // Real or Historical Diagnostic Reports (strictly isolated to verified user and ONLY PUBLISHED reports)
   const userReports = useMemo(() => {
     if (!user) return [];
-    
+
     // 1. All real lab test bookings of the current user
-    const labBookings = (allUserBookings || []).filter(b => b?.itemType === 'lab' || isLabTestOrPackage(b));
-    
-    const mappedLabReports = labBookings.map((l, idx) => {
+    const labBookings = (allUserBookings || []).filter((b) => b?.itemType === 'lab' || isLabTestOrPackage(b));
+
+    // Strict gating: Only bookings where the report has been successfully PUBLISHED appear under My Reports
+    const publishedLabBookings = labBookings.filter((l) => {
       const st = String(l?.status || l?.bookingStatus || '').toLowerCase();
-      const isReady = st.includes('report') || st.includes('publish') || st.includes('ready') || st.includes('complete');
+      return Boolean(
+        l?.isPublished ||
+        st.includes('publish') ||
+        st.includes('report ready') ||
+        st.includes('signed & published') ||
+        (st.includes('complete') && (l?.reportData || l?.reportUrl))
+      );
+    });
+
+    const mappedLabReports = publishedLabBookings.map((l, idx) => {
       const hasAbnormal = Boolean(l?.hasAbnormal);
       const testName = typeof (l?.serviceName || l?.title) === 'object'
         ? (l?.serviceName?.name || l?.title?.name || 'Diagnostic Test')
@@ -1199,22 +1209,32 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
       return {
         test: testName,
+        testName,
         subtitle,
         date: l?.appointmentDate || l?.date || 'Recent',
         id: l?.bookingId || l?.id || `ZM-LAB-${Date.now().toString().slice(-5)}`,
-        status: hasAbnormal ? 'Action Required' : isReady ? 'Ready' : 'Pending',
-        pathologist: l?.reportingDoctor || 'Dr. Pranabesh Sarma, MD Pathology',
+        bookingId: l?.bookingId || l?.id,
+        status: hasAbnormal ? 'Action Required' : 'Ready',
+        pathologist: l?.reportingDoctor || l?.pathologist || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
+        reportData: l?.reportData || l?.findings,
+        reportUrl: l?.reportUrl,
         raw: l,
-        hasAbnormal
+        hasAbnormal,
+        isPublished: true
       };
     });
 
-    // 2. Any stored patient reports in localStorage
+    // 2. Any stored patient reports in localStorage (must belong to current user and be published)
     try {
       const stored = JSON.parse(localStorage.getItem('zestmed_patient_reports') || '[]');
-      const userStored = Array.isArray(stored) ? stored.filter(Boolean).filter(isMatchingCurrentUser) : [];
+      const userStored = Array.isArray(stored)
+        ? stored.filter(Boolean).filter(isMatchingCurrentUser).filter((r) => {
+            const st = String(r?.status || r?.bookingStatus || '').toLowerCase();
+            return r?.isPublished || st.includes('publish') || st.includes('ready') || st.includes('complete');
+          })
+        : [];
       const map = new Map();
-      [...userStored, ...mappedLabReports].forEach(item => {
+      [...userStored, ...mappedLabReports].forEach((item) => {
         if (item && item.id) {
           map.set(item.id, item);
         }
@@ -1548,26 +1568,31 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     setHealthTipIndex((prev) => (prev - 1 + healthTips.length) % healthTips.length);
   };
 
-  const handleOpenReportModal = (testName, dateStr, reportId, pathologist) => {
-    // Find matching booking or create demo mock object with full diagnostic parameters
-    const existing = (labBookings || []).find((b) => b && String(b.testName || b.name || '').toLowerCase().includes(String(testName || '').toLowerCase().slice(0, 5)));
-    const detailed = getMockReportDetails(testName, dateStr, reportId || existing?.id, pathologist, {
+  const handleOpenReportModal = (testName, dateStr, reportId, pathologist, repObj = null) => {
+    // Find matching report object or booking
+    const reportMatch = repObj || (userReports || []).find((r) => r && (r.id === reportId || r.bookingId === reportId));
+    const existing = reportMatch?.raw || (labBookings || []).find((b) => b && (b.id === reportId || b.booking_number === reportId || b.bookingId === reportId));
+    const publishedFindings = reportMatch?.reportData || existing?.reportData || existing?.findings;
+
+    const detailed = getMockReportDetails(testName || reportMatch?.test, dateStr || reportMatch?.date, reportId || reportMatch?.id, pathologist || reportMatch?.pathologist, {
       name: patientFullName,
       uhid: patientUHID,
-      ...(existing || {})
+      ...(existing || {}),
+      ...(reportMatch || {})
     });
     setSelectedReportBooking({
       ...detailed,
       ...(existing || {}),
-      reportData: detailed.reportData,
-      testName: testName || existing?.testName,
+      ...(reportMatch || {}),
+      reportData: (publishedFindings && publishedFindings.length > 0) ? publishedFindings : detailed.reportData,
+      testName: testName || reportMatch?.test || existing?.testName,
       patientName: patientFullName,
       uhid: patientUHID,
-      collectionDate: dateStr || existing?.date || 'Nov 07, 2026',
-      date: dateStr || existing?.date || 'Nov 07, 2026',
-      id: reportId || existing?.id || 'ZM-REP-9041',
-      bookingId: reportId || existing?.id || 'ZM-REP-9041',
-      reportingDoctor: pathologist || 'Dr. N. Bora, MD (Pathology)'
+      collectionDate: dateStr || reportMatch?.date || existing?.date || 'Recent',
+      date: dateStr || reportMatch?.date || existing?.date || 'Recent',
+      id: reportId || reportMatch?.id || existing?.id || 'ZM-REP-9041',
+      bookingId: reportId || reportMatch?.id || existing?.id || 'ZM-REP-9041',
+      reportingDoctor: pathologist || reportMatch?.pathologist || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)'
     });
   };
 
@@ -4439,14 +4464,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           {/* ======================================================== */}
           {activeMenu === 'reports' && (() => {
             const totalReportsCount = userReports.length;
-            const completedReportsCount = userReports.filter(r => String(r.status || '').toLowerCase().includes('ready') || String(r.status || '').toLowerCase().includes('complete') || String(r.status || '').toLowerCase().includes('publish')).length;
-            const pendingReportsCount = userReports.filter(r => String(r.status || '').toLowerCase().includes('pending') || String(r.status || '').toLowerCase().includes('assign') || String(r.status || '').toLowerCase().includes('process')).length;
-            const actionRequiredCount = userReports.filter(r => Boolean(r.hasAbnormal) || String(r.status || '').toLowerCase().includes('action')).length;
+            const completedReportsCount = userReports.filter((r) => String(r.status || '').toLowerCase().includes('ready') || String(r.status || '').toLowerCase().includes('complete') || String(r.status || '').toLowerCase().includes('publish')).length;
+            const pendingReportsCount = (allUserBookings || []).filter((b) =>
+              (b?.itemType === 'lab' || isLabTestOrPackage(b)) &&
+              !String(b?.status || b?.bookingStatus || '').toLowerCase().includes('publish') &&
+              !String(b?.status || b?.bookingStatus || '').toLowerCase().includes('ready')
+            ).length;
+            const actionRequiredCount = userReports.filter((r) => Boolean(r.hasAbnormal) || String(r.status || '').toLowerCase().includes('action')).length;
 
-            const filteredReports = (userReports || []).filter(r => {
+            const filteredReports = (userReports || []).filter((r) => {
               const st = String(r.status || '').toLowerCase();
               if (reportFilter === 'completed' && !st.includes('ready') && !st.includes('complete') && !st.includes('publish')) return false;
-              if (reportFilter === 'pending' && !st.includes('pending') && !st.includes('assign') && !st.includes('process')) return false;
+              if (reportFilter === 'pending') return false; // In My Reports, only published reports are shown. Active/pending bookings are under My Bookings.
               if (reportFilter === 'action_required' && !r.hasAbnormal && !st.includes('action')) return false;
 
               if (reportSearchQuery.trim()) {
@@ -4838,7 +4867,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     <div className="flex items-center justify-end gap-2">
                                       <button
                                         type="button"
-                                        onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
+                                        onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology', rep)}
                                         className="border border-slate-200 hover:bg-slate-50 text-slate-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
                                       >
                                         <Eye className="w-3.5 h-3.5 text-slate-600" />
@@ -4874,8 +4903,30 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <tr>
                               <td colSpan={5} className="py-12 text-center text-slate-400">
                                 <FlaskConical className="w-10 h-10 mx-auto mb-2 text-slate-300" />
-                                <p className="font-semibold text-slate-700 text-sm">No Diagnostic Reports Found</p>
-                                <p className="text-xs text-slate-400 mt-0.5">No reports match your current filter or search criteria.</p>
+                                <p className="font-semibold text-slate-700 text-sm">
+                                  {reportFilter === 'pending'
+                                    ? 'No Pending Reports Ready for Download'
+                                    : reportFilter === 'completed'
+                                    ? 'No Completed Diagnostic Reports'
+                                    : reportFilter === 'action_required'
+                                    ? 'No Reports Requiring Action'
+                                    : 'No Diagnostic Reports Published Yet'}
+                                </p>
+                                <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                                  {pendingReportsCount > 0
+                                    ? `You have ${pendingReportsCount} active lab test booking(s) undergoing specimen collection & pathology testing. Track live progress in My Bookings.`
+                                    : 'When your laboratory tests are processed and verified by our certified pathologists, official signed reports will appear here for viewing and download.'}
+                                </p>
+                                {pendingReportsCount > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveMenu('bookings')}
+                                    className="mt-3 px-4 py-1.5 bg-[#008F83] hover:bg-[#007A64] text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                  >
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    <span>View My Bookings ({pendingReportsCount} Active)</span>
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           )}
@@ -4933,7 +4984,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                               <div className="flex items-center justify-between pt-1 gap-2">
                                 <button
                                   type="button"
-                                  onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology')}
+                                  onClick={() => handleOpenReportModal(rep.test, rep.date, rep.id, rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology', rep)}
                                   className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 py-1.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-1 shadow-2xs"
                                 >
                                   <Eye className="w-3.5 h-3.5 text-slate-600" />

@@ -5962,6 +5962,23 @@ export default function AdminDashboardPage() {
           )}
 
           {/* ======================================================== */}
+          {/* 13. REPORTS MANAGEMENT VIEW                             */}
+          {/* ======================================================== */}
+          {(activeMenu === 'reports' || activeMenu === 'reports-management') && (
+            <ReportsManagementView
+              diagnosticLabBookings={diagnosticLabBookings}
+              onOpenDigitalReport={(booking) => setViewingReportBooking(booking)}
+              onUpdateReportStatus={async (id, status, reportUrl) => {
+                await updateLabBookingStatus(id, status, { reportUrl });
+                setLabBookingsList((prev) =>
+                  prev.map((b) => (b.id === id || b.booking_number === id ? { ...b, status, reportUrl } : b))
+                );
+                addToast(`Report status updated for #${id}`, 'success');
+              }}
+            />
+          )}
+
+          {/* ======================================================== */}
           {/* REPORTS & ANALYTICS                                      */}
           {/* ======================================================== */}
           {activeMenu === 'analytics' && (

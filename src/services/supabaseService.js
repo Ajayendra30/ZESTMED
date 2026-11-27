@@ -1251,23 +1251,104 @@ export const bookLabTest = async (bookingData) => {
   return newBooking;
 };
 
-export const updateLabBookingStatus = async (id, status) => {
-  const all = getLocalData('zestmed_patient_lab_bookings', []);
-  const updated = all.map((b) => (b.id === id || b.booking_number === id ? { ...b, status } : b));
-  setLocalData('zestmed_patient_lab_bookings', updated);
+export const updateLabBookingStatus = async (id, status, extraFields = {}) => {
+  const registries = ['zestmed_patient_lab_bookings', 'zestmed_wellness_bookings', 'zestmed_lab_jobs', 'patient_appointments'];
+  registries.forEach((reg) => {
+    const list = getLocalData(reg, []);
+    let modified = false;
+    const updated = list.map((b) => {
+      const bId = b.id || b.bookingId || b.booking_number;
+      if (bId === id || b.id === id || b.booking_number === id) {
+        modified = true;
+        return {
+          ...b,
+          status,
+          bookingStatus: status,
+          ...extraFields,
+          updated_at: new Date().toISOString()
+        };
+      }
+      return b;
+    });
+    if (modified) {
+      setLocalData(reg, updated);
+    }
+  });
 
   if (isSupabaseConfigured()) {
     try {
+      const updatePayload = {
+        status,
+        updated_at: new Date().toISOString()
+      };
+      if (extraFields.reportUrl) {
+        updatePayload.report_url = extraFields.reportUrl;
+      }
+      const isWellness = String(id).toUpperCase().includes('WEL');
+      const table = isWellness ? 'wellness_bookings' : 'test_bookings';
+
       await supabase
-        .from('test_bookings')
-        .update({ status, updated_at: new Date().toISOString() })
+        .from(table)
+        .update(updatePayload)
         .or(`id.eq.${id},booking_number.eq.${id}`);
     } catch (err) {
       console.warn('[SupabaseService] updateLabBookingStatus error:', err);
     }
   }
 
+  try {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+  } catch (_) {}
+
   return true;
+};
+
+export const publishDiagnosticReport = async (bookingId, reportPayload = {}) => {
+  const status = 'Report Published';
+  await updateLabBookingStatus(bookingId, status, {
+    isPublished: true,
+    reportData: reportPayload.findings || reportPayload.reportData || [],
+    findings: reportPayload.findings || reportPayload.reportData || [],
+    reportUrl: reportPayload.reportUrl || '',
+    reportFileName: reportPayload.reportFileName || '',
+    pathologist: reportPayload.reportingDoctor || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
+    pathologistNote: reportPayload.pathologistNote || '',
+    publishedAt: reportPayload.publishedAt || new Date().toISOString()
+  });
+
+  // Also persist in official patient reports collection
+  const existingReports = getLocalData('zestmed_patient_reports', []);
+  const newReport = {
+    id: bookingId,
+    bookingId: bookingId,
+    test: reportPayload.testName || reportPayload.test || 'Diagnostic Investigation',
+    testName: reportPayload.testName || reportPayload.test || 'Diagnostic Investigation',
+    patientName: reportPayload.patientName || 'Patient',
+    phone: reportPayload.phone || reportPayload.patientPhone || '',
+    patientPhone: reportPayload.phone || reportPayload.patientPhone || '',
+    date: reportPayload.date || new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+    status: reportPayload.hasAbnormal ? 'Action Required' : 'Ready',
+    bookingStatus: 'Report Published',
+    reportData: reportPayload.findings || reportPayload.reportData || [],
+    findings: reportPayload.findings || reportPayload.reportData || [],
+    pathologist: reportPayload.reportingDoctor || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
+    pathologistNote: reportPayload.pathologistNote || '',
+    reportUrl: reportPayload.reportUrl || '',
+    reportFileName: reportPayload.reportFileName || '',
+    isPublished: true,
+    publishedAt: new Date().toISOString()
+  };
+
+  const filtered = existingReports.filter((r) => r.id !== bookingId && r.bookingId !== bookingId);
+  setLocalData('zestmed_patient_reports', [newReport, ...filtered]);
+
+  try {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+  } catch (_) {}
+
+  return newReport;
 };
 
 // ------------------------------------------------------------------------------
