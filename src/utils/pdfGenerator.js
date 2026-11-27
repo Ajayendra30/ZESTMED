@@ -479,7 +479,7 @@ export function createDoctorTicketPdfBlob(ticket) {
   const date = ticket.date || new Date().toISOString().split('T')[0];
   const time = ticket.time || ticket.slot || 'Morning Slot (10:00 AM)';
   const patientName = ticket.patientName || 'Verified Patient';
-  const patientPhone = ticket.patientPhone || ticket.phone || '9279125091';
+  const patientPhone = ticket.patientPhone || ticket.phone || '';
   const fee = ticket.fee || 600;
 
   // Header Banner (Navy/Teal)

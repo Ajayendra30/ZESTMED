@@ -704,9 +704,9 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     const cleanSavedPhone = normalizePhone(saved?.phone || saved?.contact || '');
     const isSavedPhoneMatch = cleanUserPhone && cleanSavedPhone && cleanUserPhone === cleanSavedPhone;
 
-    const currentName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') 
+    const currentName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma' && user.name !== 'Ajayendra Shekhar') 
       ? user.name 
-      : (isSavedPhoneMatch && saved?.name && saved.name !== 'Verified Patient' && saved.name !== 'Rahul Verma') 
+      : (isSavedPhoneMatch && saved?.name && saved.name !== 'Verified Patient' && saved.name !== 'Rahul Verma' && saved.name !== 'Ajayendra Shekhar') 
       ? saved.name 
       : (user?.name || 'Patient');
     return {
@@ -728,7 +728,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     const reg = cleanUserPhone ? getRegisteredPatient(cleanUserPhone) : null;
 
     setProfileForm((prev) => {
-      const resolvedName = (user.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma' && user.name !== 'Patient') 
+      const resolvedName = (user.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma' && user.name !== 'Ajayendra Shekhar' && user.name !== 'Patient') 
         ? user.name 
         : (reg?.name || prev.name);
 
@@ -5313,7 +5313,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             />
                           ) : (
                             <p className="text-xs font-bold text-slate-800 truncate" title={profileForm.email}>
-                              {profileForm.email || 'ajayendra.shekhar@patient.zestmed.com'}
+                              {profileForm.email || user?.email || 'patient@zestmed.com'}
                             </p>
                           )}
                         </div>
@@ -5333,7 +5333,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             />
                           ) : (
                             <p className="text-xs font-bold text-slate-800">
-                              {profileForm.phone || '+91 9279125091'}
+                              {profileForm.phone || user?.phone || 'Not provided'}
                             </p>
                           )}
                         </div>
@@ -5373,7 +5373,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             />
                           ) : (
                             <p className="text-xs font-bold text-slate-800">
-                              {profileForm.emergencyContact || '+91 92791 25091'}
+                              {profileForm.emergencyContact || 'Not configured'}
                             </p>
                           )}
                         </div>
@@ -5767,7 +5767,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <tr className="hover:bg-slate-50/60 transition">
                             <td className="py-3 px-3 font-medium whitespace-nowrap">23 Nov 2026, 9:33 pm</td>
                             <td className="py-3 px-3 font-semibold">Phone OTP</td>
-                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || '+91 9279125091'}</td>
+                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || user?.phone || 'Phone OTP'}</td>
                             <td className="py-3 px-3 whitespace-nowrap">
                               <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
                                 SUCCESS
@@ -5780,7 +5780,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           <tr className="hover:bg-slate-50/60 transition">
                             <td className="py-3 px-3 font-medium whitespace-nowrap">20 Nov 2026, 6:12 pm</td>
                             <td className="py-3 px-3 font-semibold">Password</td>
-                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || '+91 9279125091'}</td>
+                            <td className="py-3 px-3 font-mono text-[11px]">{profileForm.phone || user?.phone || 'Phone OTP'}</td>
                             <td className="py-3 px-3 whitespace-nowrap">
                               <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
                                 SUCCESS
@@ -7228,7 +7228,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-900">One Number, One User Policy</h4>
                               <p className="text-[10.5px] text-slate-500 truncate">
-                                Your phone number {profileForm.phone || '+91 9279125091'} is uniquely linked.
+                                Your phone number {profileForm.phone || user?.phone || 'on file'} is uniquely linked.
                               </p>
                             </div>
                           </div>
@@ -7616,7 +7616,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                         {/* 4. Linked Accounts */}
                         <div
-                          onClick={() => addToast('Google OAuth identity linked to +91 9279125091', 'info')}
+                          onClick={() => addToast('Google OAuth identity linked to ' + (profileForm.phone || user?.phone || 'account'), 'info')}
                           className="flex items-center justify-between py-2.5 hover:bg-slate-50/60 -mx-1 px-1 rounded-xl transition cursor-pointer group"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">

@@ -326,6 +326,9 @@ ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to catalog data (medicines, tests, packages)
 CREATE POLICY "Public can view medicines" ON public.medicines FOR SELECT USING (true);
+CREATE POLICY "Users can create medicines" ON public.medicines FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can update medicines" ON public.medicines FOR UPDATE USING (true);
+CREATE POLICY "Users can delete medicines" ON public.medicines FOR DELETE USING (true);
 CREATE POLICY "Public can view tests" ON public.diagnostic_tests FOR SELECT USING (true);
 CREATE POLICY "Public can view packages" ON public.health_packages FOR SELECT USING (true);
 CREATE POLICY "Public can view categories" ON public.medicine_categories FOR SELECT USING (true);

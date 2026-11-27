@@ -2,7 +2,7 @@
 /**
  * ZESTMED CENTRALIZED MEDICINE CATALOG SERVICE
  * Synchronizes medicines between Admin Dashboard (Medicine Management),
- * User-facing Medicine Store (/medicines), and Supabase PostgreSQL.
+ * User-facing Medicine Store (/medicines), and Supabase Storage / PostgreSQL.
  * Provides real-time cross-tab & in-page updates on Add, Edit, and Delete.
  */
 
@@ -103,7 +103,7 @@ export function normalizeMedicineItem(raw) {
     ? Boolean(raw.inStock) 
     : stockNum > 0;
 
-  const imageMain = raw.image || raw.imageUrl || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : '');
+  const imageMain = raw.image || raw.imageUrl || raw.image_url || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : '');
   const imagesArray = Array.isArray(raw.images) && raw.images.length > 0 
     ? raw.images 
     : (imageMain ? [imageMain] : []);
@@ -149,7 +149,7 @@ export function normalizeMedicineItem(raw) {
     usesText: raw.usesText || raw.uses || 'Relieves symptoms as directed by a healthcare professional.',
     dosage: raw.dosage || raw.dosageText || 'As prescribed by the physician.',
     dosageText: raw.dosageText || raw.dosage || 'As prescribed by the physician.',
-    prescriptionRequired: Boolean(raw.prescriptionRequired),
+    prescriptionRequired: Boolean(raw.prescriptionRequired || raw.prescription_required),
     rating: parseFloat(raw.rating) || 4.5,
     reviewsCount: String(raw.reviewsCount || '120'),
     image: imageMain,
@@ -160,8 +160,92 @@ export function normalizeMedicineItem(raw) {
 }
 
 /**
- * Returns the unified, deduplicated list of all medicines.
- * Integrates base catalog (37 medicines) with dynamic local storage additions and edits.
+ * Uploads a medicine image to Supabase Storage ('medicines' bucket).
+ * Returns the permanent public URL.
+ */
+export async function uploadMedicineImage(file, medicineIdentifier = '') {
+  if (!file) {
+    return { success: false, error: 'No file provided for upload' };
+  }
+
+  // File type validation
+  const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+  const ext = (file.name ? file.name.split('.').pop() : 'png').toLowerCase();
+  
+  if (!validExtensions.includes(ext) && file.type && !file.type.startsWith('image/')) {
+    return { 
+      success: false, 
+      error: 'Invalid file format. Please upload a JPG, PNG, or WebP image.' 
+    };
+  }
+
+  // File size validation (10MB limit)
+  if (file.size > 10 * 1024 * 1024) {
+    return { 
+      success: false, 
+      error: `Image size (${(file.size / (1024 * 1024)).toFixed(1)}MB) exceeds the 10MB limit.` 
+    };
+  }
+
+  // Sanitize file name for cloud storage
+  const cleanPrefix = (medicineIdentifier || 'med')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 30);
+  const fileName = `${cleanPrefix}-${Date.now()}.${ext}`;
+  const filePath = `products/${fileName}`;
+
+  // Upload to Supabase Storage bucket 'medicines'
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase.storage
+        .from('medicines')
+        .upload(filePath, file, {
+          cacheControl: '31536000', // 1 year cache
+          upsert: true,
+          contentType: file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`
+        });
+
+      if (error) {
+        console.error('[MedicineService] Supabase Storage upload error:', error);
+        return { 
+          success: false, 
+          error: error.message || 'Supabase storage upload failed.' 
+        };
+      }
+
+      if (data?.path) {
+        const { data: urlData } = supabase.storage
+          .from('medicines')
+          .getPublicUrl(data.path);
+
+        if (urlData?.publicUrl) {
+          return {
+            success: true,
+            publicUrl: urlData.publicUrl,
+            storagePath: data.path
+          };
+        }
+      }
+    } catch (storageException) {
+      console.error('[MedicineService] Supabase Storage exception:', storageException);
+      return { 
+        success: false, 
+        error: storageException.message || 'Supabase Storage exception occurred.' 
+      };
+    }
+  }
+
+  return { 
+    success: false, 
+    error: 'Supabase storage is not configured or unavailable.' 
+  };
+}
+
+/**
+ * Returns the unified list of all medicines synchronously from memory/localStorage.
+ * Never stores large base64 strings in localStorage to avoid quota errors.
  */
 export function getSynchronizedMedicines() {
   let deletedSet = new Set();
@@ -202,32 +286,135 @@ export function getSynchronizedMedicines() {
     }
   });
 
-  // 2. Overlay / prepend dynamic stored items (allows additions, edits, and custom stock changes)
+  // 2. Overlay dynamic stored items (additions, edits, custom stock)
   storedItems.forEach((norm) => {
     if (!norm) return;
     const nameKey = norm.name.toLowerCase().trim();
     const idKey = norm.id.toLowerCase().trim();
     if (!deletedSet.has(nameKey) && !deletedSet.has(idKey)) {
-      // Overwrite or add
       medicineMap.set(nameKey, norm);
     }
   });
 
-  const merged = Array.from(medicineMap.values());
+  return Array.from(medicineMap.values());
+}
 
-  // Save back normalized snapshot so other components read the same data
+/**
+ * Asynchronously fetches all medicine records from Supabase PostgreSQL,
+ * merges them with the local catalog, persists clean permanent URLs to localStorage,
+ * and broadcasts update events so all pages re-render with the saved images.
+ */
+export async function fetchSynchronizedMedicines() {
+  const currentList = getSynchronizedMedicines();
+  let dbMedicines = [];
+
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('medicines')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        dbMedicines = data.map((row) => normalizeMedicineItem({
+          id: row.id,
+          name: row.name,
+          genericName: row.generic_name || row.composition,
+          composition: row.composition || row.generic_name,
+          compositionLong: row.composition || row.generic_name,
+          type: row.dosage_form || 'Tablet',
+          dosageType: row.dosage_form || 'Tablet',
+          packSize: row.pack_size || `Strip of 10 ${row.dosage_form || 'Tablet'}s`,
+          pack: row.pack_size || `Strip of 10 ${row.dosage_form || 'Tablet'}s`,
+          brand: row.manufacturer || 'Apex Healthcare Labs',
+          manufacturer: row.manufacturer || 'Apex Healthcare Labs',
+          price: parseFloat(row.price) || 0,
+          mrp: parseFloat(row.discounted_price ? (row.price * (1 + (row.discount_percentage || 0) / 100)) : row.price * 1.25) || 0,
+          discount: parseFloat(row.discount_percentage) || 0,
+          stock: parseInt(row.stock_quantity, 10) || 100,
+          stockQuantity: parseInt(row.stock_quantity, 10) || 100,
+          inStock: row.in_stock !== false,
+          stockText: row.in_stock !== false ? 'In Stock' : 'Out of Stock',
+          shortDescription: row.description || `${row.name} for clinical therapeutic care.`,
+          description: row.description || `${row.name} is formulated for effective therapeutic care.`,
+          uses: row.uses || 'Relieves symptoms as directed by a healthcare professional.',
+          prescriptionRequired: Boolean(row.prescription_required),
+          image: row.image_url || '',
+          images: row.image_url ? [row.image_url] : [],
+          createdAt: row.created_at || new Date().toISOString(),
+          updatedAt: row.updated_at || new Date().toISOString()
+        })).filter(Boolean);
+      }
+    } catch (err) {
+      console.warn('[MedicineService] Failed to query medicines from Supabase:', err);
+    }
+  }
+
+  // Merge: Supabase records take top priority
+  let deletedSet = new Set();
   try {
-    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(merged));
+    const rawDel = localStorage.getItem(DELETED_MEDICINES_KEY);
+    if (rawDel) {
+      const arr = JSON.parse(rawDel);
+      if (Array.isArray(arr)) {
+        arr.forEach(k => k && deletedSet.add(String(k).toLowerCase().trim()));
+      }
+    }
   } catch (_) {}
 
-  return merged;
+  const mergedMap = new Map();
+
+  // 1. Base list
+  currentList.forEach((m) => {
+    const k = m.name.toLowerCase().trim();
+    if (!deletedSet.has(k)) mergedMap.set(k, m);
+  });
+
+  // 2. Overlay live Supabase database records
+  dbMedicines.forEach((dbMed) => {
+    const k = dbMed.name.toLowerCase().trim();
+    if (!deletedSet.has(k)) {
+      const existing = mergedMap.get(k);
+      mergedMap.set(k, {
+        ...(existing || {}),
+        ...dbMed,
+        // Ensure image URL is preserved from Supabase if present
+        image: dbMed.image || existing?.image || '',
+        images: dbMed.images?.length > 0 ? dbMed.images : (existing?.images || [])
+      });
+    }
+  });
+
+  const finalMerged = Array.from(mergedMap.values());
+
+  // Save sanitized snapshot back to localStorage (never saving base64 data URLs)
+  try {
+    const sanitizedToStore = finalMerged.map(item => ({
+      ...item,
+      image: item.image && item.image.startsWith('data:') ? '' : item.image,
+      images: Array.isArray(item.images) ? item.images.filter(img => !img.startsWith('data:')) : []
+    }));
+    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(sanitizedToStore));
+  } catch (storageErr) {
+    console.warn('[MedicineService] LocalStorage quota limit reached:', storageErr);
+  }
+
+  // Broadcast real-time update
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('zestmed_medicines_updated', {
+      detail: { action: 'fetch', count: finalMerged.length }
+    }));
+  }
+
+  return finalMerged;
 }
 
 /**
  * Save (create or update) a medicine record.
- * Broadcasts real-time events to all active views.
+ * Permanently stores the image URL in Supabase PostgreSQL and local catalog,
+ * and broadcasts real-time events to all active views.
  */
-export function saveMedicine(medicineData) {
+export async function saveMedicine(medicineData) {
   if (!medicineData || !medicineData.name) {
     throw new Error('Medicine name is required');
   }
@@ -260,7 +447,20 @@ export function saveMedicine(medicineData) {
   let updatedList = [];
   if (existingIndex >= 0) {
     updatedList = [...currentList];
-    updatedList[existingIndex] = { ...updatedList[existingIndex], ...normalized };
+    // If no new image provided on edit, preserve the existing image
+    const existingImage = updatedList[existingIndex].image;
+    const existingImages = updatedList[existingIndex].images;
+    const finalImage = normalized.image || existingImage || '';
+    const finalImages = (normalized.images && normalized.images.length > 0) ? normalized.images : (existingImages || [finalImage]);
+
+    updatedList[existingIndex] = {
+      ...updatedList[existingIndex],
+      ...normalized,
+      image: finalImage,
+      images: finalImages
+    };
+    normalized.image = finalImage;
+    normalized.images = finalImages;
   } else {
     updatedList = [normalized, ...currentList];
   }
@@ -276,11 +476,19 @@ export function saveMedicine(medicineData) {
     }
   });
 
+  // Save to localStorage safely (stripping temporary blob/data URLs to avoid browser quota crash)
   try {
-    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(dedupedList));
-  } catch (_) {}
+    const cleanForStorage = dedupedList.map(item => ({
+      ...item,
+      image: item.image && (item.image.startsWith('data:') || item.image.startsWith('blob:')) ? '' : item.image,
+      images: Array.isArray(item.images) ? item.images.filter(img => !img.startsWith('data:') && !img.startsWith('blob:')) : []
+    }));
+    localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(cleanForStorage));
+  } catch (storageErr) {
+    console.warn('[MedicineService] LocalStorage quota exception:', storageErr);
+  }
 
-  // Broadcast real-time update events
+  // Broadcast real-time update events immediately
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('zestmed_medicines_updated', {
       detail: { action: existingIndex >= 0 ? 'update' : 'create', medicine: normalized }
@@ -288,32 +496,67 @@ export function saveMedicine(medicineData) {
     window.dispatchEvent(new Event('storage'));
   }
 
-  // Background Supabase PostgreSQL sync if configured
+  // Save / Sync to Supabase PostgreSQL database
   if (isSupabaseConfigured()) {
     try {
-      supabase
+      const permanentImageUrl = normalized.image && !normalized.image.startsWith('data:') && !normalized.image.startsWith('blob:')
+        ? normalized.image
+        : null;
+
+      const dbPayload = {
+        name: normalized.name.trim(),
+        generic_name: normalized.genericName || normalized.composition,
+        manufacturer: normalized.manufacturer || normalized.brand,
+        prescription_required: Boolean(normalized.prescriptionRequired),
+        dosage_form: normalized.type || 'Tablet',
+        pack_size: normalized.packSize || normalized.pack,
+        price: parseFloat(normalized.price) || 0,
+        discount_percentage: parseFloat(normalized.discount) || 0,
+        discounted_price: parseFloat(normalized.price) || 0,
+        in_stock: Boolean(normalized.inStock),
+        stock_quantity: parseInt(normalized.stock, 10) || 100,
+        description: normalized.shortDescription || normalized.description,
+        composition: normalized.composition,
+        uses: normalized.uses,
+        image_url: permanentImageUrl,
+        updated_at: new Date().toISOString()
+      };
+
+      // Check if medicine with this name already exists in Supabase
+      const { data: existingRows } = await supabase
         .from('medicines')
-        .upsert({
-          name: normalized.name,
-          generic_name: normalized.genericName,
-          manufacturer: normalized.manufacturer,
-          prescription_required: normalized.prescriptionRequired,
-          dosage_form: normalized.type,
-          pack_size: normalized.packSize,
-          price: normalized.price,
-          discount_percentage: normalized.discount,
-          discounted_price: normalized.price,
-          in_stock: normalized.inStock,
-          stock_quantity: normalized.stock,
-          description: normalized.shortDescription || normalized.description,
-          composition: normalized.composition,
-          uses: normalized.uses,
-          image_url: normalized.image && !normalized.image.startsWith('data:') ? normalized.image : null,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'name' })
-        .then(() => {})
-        .catch(() => {});
-    } catch (_) {}
+        .select('id, name')
+        .ilike('name', normalized.name.trim())
+        .limit(1);
+
+      if (existingRows && existingRows.length > 0) {
+        // Update existing record
+        const targetId = existingRows[0].id;
+        const { error: updErr } = await supabase
+          .from('medicines')
+          .update(dbPayload)
+          .eq('id', targetId);
+
+        if (updErr) {
+          console.warn('[MedicineService] Supabase PostgreSQL update warning:', updErr.message);
+        } else {
+          console.log(`[MedicineService] Updated "${normalized.name}" in Supabase PostgreSQL`);
+        }
+      } else {
+        // Insert new record
+        const { error: insErr } = await supabase
+          .from('medicines')
+          .insert([dbPayload]);
+
+        if (insErr) {
+          console.warn('[MedicineService] Supabase PostgreSQL insert warning:', insErr.message);
+        } else {
+          console.log(`[MedicineService] Inserted "${normalized.name}" into Supabase PostgreSQL`);
+        }
+      }
+    } catch (pgErr) {
+      console.warn('[MedicineService] Supabase PostgreSQL error:', pgErr);
+    }
   }
 
   return normalized;
@@ -321,9 +564,9 @@ export function saveMedicine(medicineData) {
 
 /**
  * Delete a medicine by ID or Name.
- * Broadcasts real-time events to all active views.
+ * Broadcasts real-time events to all active views and deletes from Supabase PostgreSQL.
  */
-export function deleteMedicine(idOrName) {
+export async function deleteMedicine(idOrName) {
   if (!idOrName) return false;
 
   const targetStr = String(idOrName).toLowerCase().trim();
@@ -340,7 +583,7 @@ export function deleteMedicine(idOrName) {
   try {
     localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(updatedList));
 
-    // Record into deleted blacklist so base mock catalogue doesn't recreate it on refresh
+    // Record into deleted blacklist so base catalogue doesn't recreate it on refresh
     const rawDel = localStorage.getItem(DELETED_MEDICINES_KEY);
     const delList = rawDel ? JSON.parse(rawDel) : [];
     const keysToAdd = [idOrName, targetStr];
@@ -358,16 +601,16 @@ export function deleteMedicine(idOrName) {
     window.dispatchEvent(new Event('storage'));
   }
 
-  // Background Supabase deletion attempt
+  // Supabase PostgreSQL deletion
   if (isSupabaseConfigured() && toDelete) {
     try {
-      supabase
+      await supabase
         .from('medicines')
         .delete()
-        .ilike('name', toDelete.name)
-        .then(() => {})
-        .catch(() => {});
-    } catch (_) {}
+        .ilike('name', toDelete.name);
+    } catch (dbErr) {
+      console.warn('[MedicineService] Supabase delete warning:', dbErr);
+    }
   }
 
   return true;

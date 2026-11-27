@@ -29,6 +29,18 @@ export const isDemoBooking = (item) => {
   const name = String(item.patientName || item.patient_name || item.customer || item.customer_name || item.name || '').trim().toLowerCase();
   const id = String(item.id || item.bookingId || item.booking_number || item.orderId || item.order_number || item.appointment_number || '').trim();
   const status = String(item.status || item.bookingStatus || item.order_status || '').trim().toLowerCase();
+  const phone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.customer_phone || item.contact || '');
+
+  // Completely purge and exclude data associated with deleted user 9279125091 / Ajayendra Shekhar
+  if (
+    phone === '9279125091' ||
+    name === 'ajayendra shekhar' ||
+    name.includes('ajayendra') ||
+    status === 'purged' ||
+    status === '[purged]'
+  ) {
+    return true;
+  }
 
   if (
     name.includes('[demo') ||

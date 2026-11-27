@@ -1,4 +1,4 @@
-// src/pages/AdminDashboardPage.jsx
+﻿// src/pages/AdminDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Admin Dashboard specification pixel-for-pixel
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -125,7 +125,7 @@ import EditAdminModal from '../components/EditAdminModal';
 import AddMedicineModal from '../components/AddMedicineModal';
 import EditMedicineModal from '../components/EditMedicineModal';
 import AddCategoryModal from '../components/AddCategoryModal';
-import { getSynchronizedMedicines, saveMedicine, deleteMedicine } from '../services/medicineService';
+import { getSynchronizedMedicines, fetchSynchronizedMedicines, saveMedicine, deleteMedicine, uploadMedicineImage } from '../services/medicineService';
 import AuditPrescriptionModal from '../components/AuditPrescriptionModal';
 import NotificationPopover from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
@@ -397,6 +397,13 @@ export default function AdminDashboardPage() {
   const [adminMedicines, setAdminMedicines] = useState(() => getSynchronizedMedicines());
 
   useEffect(() => {
+    // Initial fetch from live Supabase PostgreSQL
+    fetchSynchronizedMedicines().then((liveMeds) => {
+      if (Array.isArray(liveMeds) && liveMeds.length > 0) {
+        setAdminMedicines(liveMeds);
+      }
+    });
+
     const handleSync = () => {
       setAdminMedicines(getSynchronizedMedicines());
     };
@@ -1783,19 +1790,36 @@ export default function AdminDashboardPage() {
   });
   const medImageInputRef = useRef(null);
 
-  const handleMedImageUpload = (e) => {
+  const handleMedImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      addToast('Image size should be under 10MB', 'error');
+      return;
+    }
+
+    const localPreview = URL.createObjectURL(file);
+    setNewMedForm((prev) => ({
+      ...prev,
+      image: localPreview,
+      images: [localPreview]
+    }));
+
+    try {
+      const uploadRes = await uploadMedicineImage(file, newMedForm.name || 'med');
+      if (uploadRes.success && uploadRes.publicUrl) {
         setNewMedForm((prev) => ({
           ...prev,
-          image: reader.result,
-          images: [reader.result]
+          image: uploadRes.publicUrl,
+          images: [uploadRes.publicUrl]
         }));
-        addToast('Medicine product image uploaded successfully!', 'success');
-      };
-      reader.readAsDataURL(file);
+        addToast('Medicine product image uploaded to Supabase Storage!', 'success');
+      } else {
+        addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "medicines" bucket exists with public access.`, 'error');
+      }
+    } catch (err) {
+      addToast(`Image upload failed: ${err.message}`, 'error');
     }
   };
 
@@ -2744,10 +2768,8 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* LEFT COLUMN: ~68% WIDTH (lg:col-span-8) */}
             <div className="lg:col-span-8 flex flex-col gap-6">
-              {/* UPPER ROW: REVENUE OVERVIEW & ORDERS BY CATEGORY */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {/* Revenue Overview Card (~60% of left column = md:col-span-7) */}
-                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
+              {/* UPPER ROW: REVENUE OVERVIEW (Full Width) */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <BarChart2 className="w-5 h-5 text-[#00A68A]" />
@@ -2760,8 +2782,8 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  {/* SVG Chart Canvas */}
-                  <div className="relative w-full h-48 sm:h-56 pt-2">
+                  {/* SVG Chart Canvas - expanded */}
+                  <div className="relative w-full h-64 sm:h-80 pt-2">
                     <svg viewBox="0 0 680 230" className="w-full h-full overflow-visible">
                       <defs>
                         <linearGradient id="revenueTealGradient" x1="0" y1="0" x2="0" y2="1">
@@ -2831,7 +2853,109 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Orders by Category Card (~40% of left column = md:col-span-5) */}
+{/* LOWER ROW: QUICK ACCESS + ORDERS BY CATEGORY */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                {/* Quick Access: Left column */}
+                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#00A68A]" />
+                    <h3 className="text-sm font-bold text-slate-900">
+                      Quick Access
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveMenu('medicines')}
+                    className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-2xs transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>View All</span>
+                    <span>→</span>
+                  </button>
+                </div>
+
+                {/* 6 Quick Access Tiles with exact icons, styling, colors */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                  {/* Tile 1: Manage Medicines */}
+                  <div
+                    onClick={() => setActiveMenu('medicines')}
+                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Pill className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Medicines
+                    </span>
+                  </div>
+
+                  {/* Tile 2: Manage Lab Tests */}
+                  <div
+                    onClick={() => setActiveMenu('lab-tests')}
+                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <FlaskConical className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Lab Tests
+                    </span>
+                  </div>
+
+                  {/* Tile 3: Manage Health Packages */}
+                  <div
+                    onClick={() => setActiveMenu('wellness-packages')}
+                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <HeartPulse className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Health Packages
+                    </span>
+                  </div>
+
+                  {/* Tile 4: Manage Wellness Packages */}
+                  <div
+                    onClick={() => setActiveMenu('wellness-packages')}
+                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Gift className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Wellness Packages
+                    </span>
+                  </div>
+
+                  {/* Tile 5: Manage Physiotherapy */}
+                  <div
+                    onClick={() => setActiveMenu('physiotherapy')}
+                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Physiotherapy
+                    </span>
+                  </div>
+
+                  {/* Tile 6: Manage Doctor Appointments */}
+                  <div
+                    onClick={() => setActiveMenu('appointments-doctor')}
+                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Doctor Appointments
+                    </span>
+                  </div>
+                </div>
+                </div>
+                {/* Orders by Category: Right column */}
                 <div className="md:col-span-5 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col justify-between space-y-3">
                   <div className="flex items-center gap-2">
                     <PieChart className="w-5 h-5 text-[#00A68A]" />
@@ -2939,109 +3063,8 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* LOWER ROW: QUICK ACCESS SECTION (Matching Reference Image) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[#00A68A]" />
-                    <h3 className="text-sm font-bold text-slate-900">
-                      Quick Access
-                    </h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveMenu('medicines')}
-                    className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-2xs transition flex items-center gap-1 cursor-pointer"
-                  >
-                    <span>View All</span>
-                    <span>→</span>
-                  </button>
-                </div>
-
-                {/* 6 Quick Access Tiles with exact icons, styling, colors */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                  {/* Tile 1: Manage Medicines */}
-                  <div
-                    onClick={() => setActiveMenu('medicines')}
-                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Pill className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Medicines
-                    </span>
-                  </div>
-
-                  {/* Tile 2: Manage Lab Tests */}
-                  <div
-                    onClick={() => setActiveMenu('lab-tests')}
-                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <FlaskConical className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Lab Tests
-                    </span>
-                  </div>
-
-                  {/* Tile 3: Manage Health Packages */}
-                  <div
-                    onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <HeartPulse className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Health Packages
-                    </span>
-                  </div>
-
-                  {/* Tile 4: Manage Wellness Packages */}
-                  <div
-                    onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Gift className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Wellness Packages
-                    </span>
-                  </div>
-
-                  {/* Tile 5: Manage Physiotherapy */}
-                  <div
-                    onClick={() => setActiveMenu('physiotherapy')}
-                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Physiotherapy
-                    </span>
-                  </div>
-
-                  {/* Tile 6: Manage Doctor Appointments */}
-                  <div
-                    onClick={() => setActiveMenu('appointments-doctor')}
-                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Doctor Appointments
-                    </span>
-                  </div>
                 </div>
               </div>
-            </div>
 
             {/* RIGHT COLUMN: ~32% WIDTH (lg:col-span-4) */}
             <div className="lg:col-span-4 flex flex-col gap-5">
@@ -4368,7 +4391,7 @@ export default function AdminDashboardPage() {
           {activeMenu === 'medicines-add' && (
             <div className="bg-white rounded-3xl p-5 sm:p-7 lg:p-8 border border-slate-100 shadow-sm max-w-7xl mx-auto">
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   if (!newMedForm.name || !newMedForm.name.trim()) {
                     addToast('Please enter a medicine name', 'error');
@@ -4400,10 +4423,14 @@ export default function AdminDashboardPage() {
                     expiry: newMedForm.expiry || 'Dec 2027',
                     batchNo: `B-${Math.floor(100 + Math.random() * 900)}`
                   };
-                  const saved = saveMedicine(newMed);
-                  setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
-                  addToast(`Medicine ${saved.name} added to central inventory!`, 'success');
-                  setActiveMenu('medicines');
+                  try {
+                    const saved = await saveMedicine(newMed);
+                    setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
+                    addToast(`Medicine ${saved.name} added to central inventory!`, 'success');
+                    setActiveMenu('medicines');
+                  } catch (saveErr) {
+                    addToast(`Failed to save medicine: ${saveErr.message}`, 'error');
+                  }
                 }}
                 className="space-y-6"
               >
@@ -6290,11 +6317,15 @@ export default function AdminDashboardPage() {
       <AddMedicineModal
         isOpen={isAddMedicineModalOpen}
         onClose={() => setIsAddMedicineModalOpen(false)}
-        onAddMedicine={(newMed) => {
-          const saved = saveMedicine(newMed);
-          setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
-          setIsAddMedicineModalOpen(false);
-          addToast(`Medicine ${saved.name} added to inventory!`, 'success');
+        onAddMedicine={async (newMed) => {
+          try {
+            const saved = await saveMedicine(newMed);
+            setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
+            setIsAddMedicineModalOpen(false);
+            addToast(`Medicine ${saved.name} added to inventory!`, 'success');
+          } catch (err) {
+            addToast(`Failed to add medicine: ${err.message}`, 'error');
+          }
         }}
       />
 
@@ -6304,11 +6335,15 @@ export default function AdminDashboardPage() {
           isOpen={!!editingMedicine}
           onClose={() => setEditingMedicine(null)}
           medicine={editingMedicine}
-          onSaveMedicine={(updated) => {
-            const saved = saveMedicine(updated);
-            setAdminMedicines((prev) => prev.map((m) => (m.id === saved.id ? saved : m)));
-            setEditingMedicine(null);
-            addToast(`Medicine ${saved.name} updated successfully!`, 'success');
+          onSaveMedicine={async (updated) => {
+            try {
+              const saved = await saveMedicine(updated);
+              setAdminMedicines((prev) => prev.map((m) => (m.id === saved.id ? saved : m)));
+              setEditingMedicine(null);
+              addToast(`Medicine ${saved.name} updated successfully!`, 'success');
+            } catch (err) {
+              addToast(`Failed to update medicine: ${err.message}`, 'error');
+            }
           }}
         />
       )}

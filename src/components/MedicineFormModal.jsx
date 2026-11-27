@@ -5,9 +5,10 @@ import {
   Sparkles, Check, ChevronDown, Layers, Package, Thermometer, 
   Building2, Tag, Image, Link2, Copy, ExternalLink, 
   LayoutGrid, IndianRupee, Percent, FileText, PackageCheck, 
-  FlaskConical, SquarePlus 
+  FlaskConical, SquarePlus, Loader2 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { uploadMedicineImage } from '../services/medicineService';
 
 export default function MedicineFormModal({
   isOpen = true,
@@ -19,6 +20,11 @@ export default function MedicineFormModal({
   const fileInputRef = useRef(null);
 
   const isEdit = Boolean(medicine && medicine.id);
+  const [imageFile, setImageFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState(() => {
     if (medicine) {
@@ -123,28 +129,62 @@ export default function MedicineFormModal({
 
   if (!isOpen) return null;
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 8 * 1024 * 1024) {
-        addToast('Image size should be under 8MB', 'error');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result;
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      addToast('Image size should be under 10MB', 'error');
+      return;
+    }
+
+    if (!file.type.startsWith('image/') && !['jpg', 'jpeg', 'png', 'webp'].some(ext => file.name.toLowerCase().endsWith(ext))) {
+      addToast('Please upload a valid image (JPG, PNG, WebP)', 'error');
+      return;
+    }
+
+    // Set immediate temporary preview so user sees card update instantly
+    const localBlob = URL.createObjectURL(file);
+    setImageFile(file);
+    setUploadError(null);
+    setUploadSuccess(false);
+    setIsUploading(true);
+
+    setForm((prev) => ({
+      ...prev,
+      image: localBlob,
+      images: [localBlob]
+    }));
+
+    // Upload immediately to Supabase Storage ('medicines' bucket)
+    try {
+      const uploadRes = await uploadMedicineImage(file, form.name || 'med');
+      setIsUploading(false);
+
+      if (uploadRes.success && uploadRes.publicUrl) {
+        setUploadSuccess(true);
         setForm((prev) => ({
           ...prev,
-          image: result,
-          images: prev.images?.length > 0 ? [result, ...prev.images.slice(1)] : [result]
+          image: uploadRes.publicUrl,
+          images: [uploadRes.publicUrl]
         }));
-        addToast('Medicine product image uploaded successfully!', 'success');
-      };
-      reader.readAsDataURL(file);
+        addToast('Medicine product image uploaded to Supabase Storage!', 'success');
+      } else {
+        setUploadError(uploadRes.error || 'Failed to upload to Supabase Storage');
+        addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "medicines" bucket exists with public access.`, 'error');
+      }
+    } catch (err) {
+      setIsUploading(false);
+      setUploadError(err.message || 'Upload exception');
+      addToast(`Image upload failed: ${err.message}`, 'error');
     }
   };
 
   const handleRemoveImage = () => {
+    setImageFile(null);
+    setUploadError(null);
+    setUploadSuccess(false);
+    setIsUploading(false);
     setForm((prev) => ({
       ...prev,
       image: '',
@@ -175,9 +215,31 @@ export default function MedicineFormModal({
     setForm((prev) => ({ ...prev, mrp: newMrp, discount: disc }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isUploading) {
+      addToast('Please wait for the image to finish uploading to Supabase Storage.', 'info');
+      return;
+    }
+
+    // Requirement 8: Handle upload failures properly and do not save a medicine record with a broken or temporary image URL
+    if (imageFile && !uploadSuccess && form.image && (form.image.startsWith('blob:') || form.image.startsWith('data:'))) {
+      addToast('Cannot save medicine: Image upload to Supabase Storage failed. Please retry uploading the image.', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
     const resolvedName = form.name.trim() || (isEdit ? 'Crocin 500 mg Tablet' : 'Disprin Tablet');
+
+    // Requirement 5: Ensure editing does not remove existing image when no new image is uploaded
+    // Requirement 6: If a new image is uploaded while editing, update the stored image and display the new one
+    let finalImage = form.image;
+    if (!imageFile && isEdit) {
+      finalImage = form.image || medicine?.image || '/medicines/crocin-500.png';
+    } else if (!finalImage) {
+      finalImage = isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png';
+    }
 
     const payload = {
       ...(medicine || {}),
@@ -208,16 +270,20 @@ export default function MedicineFormModal({
       manufacturer: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
       brand: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
       expiry: form.expiry.trim() || (isEdit ? 'Apr 2028' : 'Dec 2027'),
-      image: form.image || (isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png'),
-      images: form.images?.length > 0 
-        ? form.images 
-        : (form.image ? [form.image] : [isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png'])
+      image: finalImage,
+      images: [finalImage]
     };
 
-    if (onSave) {
-      onSave(payload);
+    try {
+      if (onSave) {
+        await onSave(payload);
+      }
+      setIsSubmitting(false);
+      onClose();
+    } catch (saveErr) {
+      setIsSubmitting(false);
+      addToast(`Error saving medicine: ${saveErr.message}`, 'error');
     }
-    onClose();
   };
 
   // Preview derivations for live card matching user reference images
@@ -294,7 +360,7 @@ export default function MedicineFormModal({
                   <Image className="w-4 h-4 text-emerald-600 mr-1.5" />
                   <span>Medicine Image</span>
                 </label>
-                <div className="relative border-2 border-dashed border-emerald-400/80 rounded-2xl bg-[#F8FCF9] p-4 text-center hover:bg-emerald-50/40 transition group">
+                <div className="relative border-2 border-dashed border-emerald-400/80 rounded-2xl bg-[#F8FCF9] p-4 text-center hover:bg-emerald-50/40 transition group overflow-hidden">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -302,6 +368,15 @@ export default function MedicineFormModal({
                     onChange={handleImageUpload}
                     className="hidden"
                   />
+
+                  {/* Uploading Spinner Overlay */}
+                  {isUploading && (
+                    <div className="absolute inset-0 z-20 bg-white/95 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4">
+                      <Loader2 className="w-8 h-8 text-[#00A76F] animate-spin mb-2" />
+                      <p className="text-xs font-bold text-slate-800">Uploading to Supabase Storage...</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Storing permanent image asset</p>
+                    </div>
+                  )}
 
                   {form.image ? (
                     <div className="relative w-full aspect-square bg-transparent rounded-xl flex items-center justify-center p-2">
@@ -313,7 +388,7 @@ export default function MedicineFormModal({
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="absolute top-1 right-1 p-1.5 bg-[#EF4444] text-white rounded-lg hover:bg-red-600 transition shadow-sm cursor-pointer"
+                        className="absolute top-1 right-1 p-1.5 bg-[#EF4444] text-white rounded-lg hover:bg-red-600 transition shadow-sm cursor-pointer z-10"
                         title="Remove image"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -339,6 +414,21 @@ export default function MedicineFormModal({
                     </div>
                   )}
                 </div>
+
+                {/* Cloud storage status indicators */}
+                {uploadSuccess && (
+                  <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                    <span>Saved in Supabase Cloud Storage</span>
+                  </div>
+                )}
+
+                {uploadError && (
+                  <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                    <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                    <span className="truncate">{uploadError}</span>
+                  </div>
+                )}
 
                 {/* Image URL path pill bar */}
                 <div className="mt-2.5">
@@ -781,10 +871,17 @@ export default function MedicineFormModal({
             </button>
             <button
               type="submit"
-              className="px-7 py-2.5 rounded-2xl bg-[#00A76F] hover:bg-[#009360] text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer flex items-center gap-2"
+              disabled={isSubmitting || isUploading}
+              className={`px-7 py-2.5 rounded-2xl bg-[#00A76F] hover:bg-[#009360] text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer flex items-center gap-2 ${
+                isSubmitting || isUploading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              <Check className="w-4 h-4 text-white stroke-[2.5]" />
-              <span>{isEdit ? 'Save Changes' : 'Save to Inventory'}</span>
+              {isSubmitting || isUploading ? (
+                <Loader2 className="w-4 h-4 text-white animate-spin stroke-[2.5]" />
+              ) : (
+                <Check className="w-4 h-4 text-white stroke-[2.5]" />
+              )}
+              <span>{isSubmitting ? 'Saving...' : (isEdit ? 'Save Changes' : 'Save to Inventory')}</span>
             </button>
           </div>
         </form>

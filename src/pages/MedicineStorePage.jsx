@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { ALL_MEDICINES_DATA } from '../mock-data/allMedicinesData';
-import { getSynchronizedMedicines } from '../services/medicineService';
+import { getSynchronizedMedicines, fetchSynchronizedMedicines } from '../services/medicineService';
 import { 
   Search, ShieldCheck, Truck, RotateCcw, Tag,
   ShoppingCart, SlidersHorizontal, ArrowLeft, ArrowRight, Check
@@ -38,8 +38,15 @@ export default function MedicineStorePage() {
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Real-time synchronization across Admin Dashboard actions
+  // Real-time synchronization across Admin Dashboard actions and Supabase PostgreSQL
   useEffect(() => {
+    // Initial fetch from live Supabase database
+    fetchSynchronizedMedicines().then((liveMeds) => {
+      if (Array.isArray(liveMeds) && liveMeds.length > 0) {
+        setMedicinesList(liveMeds);
+      }
+    });
+
     const handleSync = () => {
       setMedicinesList(getSynchronizedMedicines());
     };
