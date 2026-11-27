@@ -400,9 +400,21 @@ export default function AdminDashboardPage() {
     } catch (_) {}
   }, [adminMedicines]);
 
+  // Clean zero baseline version key to purge existing test/mock data
+  const ADMIN_CLEAN_VERSION_KEY = 'zestmed_admin_clean_baseline_v6';
+
   // 1. Clinical Appointments (Doctor Consultations, Physiotherapy, Surgery Packages)
   const [appointmentsList, setAppointmentsList] = useState(() => {
     try {
+      if (!localStorage.getItem(ADMIN_CLEAN_VERSION_KEY)) {
+        localStorage.setItem(ADMIN_CLEAN_VERSION_KEY, 'true');
+        localStorage.setItem('patient_appointments', JSON.stringify([]));
+        localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify([]));
+        localStorage.setItem('zestmed_patient_orders', JSON.stringify([]));
+        localStorage.setItem('zestmed_payment_transactions', JSON.stringify([]));
+        localStorage.setItem('zestmed_admin_patients', JSON.stringify([]));
+        return [];
+      }
       const saved = localStorage.getItem('patient_appointments');
       return saved ? JSON.parse(saved).filter(a => !isDemoBooking(a)) : [];
     } catch {
@@ -413,6 +425,7 @@ export default function AdminDashboardPage() {
   // 2. Diagnostic Lab Bookings & Wellness Packages
   const [labBookingsList, setLabBookingsList] = useState(() => {
     try {
+      if (!localStorage.getItem(ADMIN_CLEAN_VERSION_KEY)) return [];
       const saved = localStorage.getItem('zestmed_patient_lab_bookings');
       return saved ? JSON.parse(saved).filter(b => !isDemoBooking(b)) : [];
     } catch {
@@ -423,6 +436,7 @@ export default function AdminDashboardPage() {
   // 3. Customer Medicine Orders
   const [ordersList, setOrdersList] = useState(() => {
     try {
+      if (!localStorage.getItem(ADMIN_CLEAN_VERSION_KEY)) return [];
       const saved = localStorage.getItem('zestmed_patient_orders');
       return saved ? JSON.parse(saved).filter(o => !isDemoBooking(o)) : [];
     } catch {
@@ -1813,32 +1827,53 @@ export default function AdminDashboardPage() {
     }
   ];
 
-  // Low Stock Medicines Table Data
-  const lowStockMedicines = [
-    { name: 'Paracetamol 500 mg', currentStock: 24, threshold: 100 },
-    { name: 'Amoxicillin 250 mg', currentStock: 18, threshold: 50 },
-    { name: 'Cetirizine 10 mg', currentStock: 15, threshold: 40 },
-    { name: 'Omeprazole 20 mg', currentStock: 27, threshold: 75 },
-    { name: 'Metformin 500 mg', currentStock: 30, threshold: 100 }
-  ];
+  // Low Stock Medicines List derived dynamically from inventory
+  const lowStockMedicinesList = useMemo(() => {
+    return (adminMedicines || []).filter(
+      (m) => Number(m.stock ?? m.currentStock ?? 100) <= Number(m.threshold || 20)
+    );
+  }, [adminMedicines]);
 
-  // Revenue SVG Chart Coordinates (Exact matching curve)
-  // ViewBox: 0 0 680 230
-  // Values: Mar 1 (45), Mar 5 (85), Mar 9 (75), Mar 13 (95), Mar 17 (118), Mar 21 (102), Mar 25 (145), Mar 30 (195)
-  const chartPoints = [
-    { x: 35, y: 172, label: 'Mar 1', value: '₹2.8L' },
-    { x: 120, y: 142, label: 'Mar 5', value: '₹5.4L' },
-    { x: 205, y: 150, label: 'Mar 9', value: '₹4.6L' },
-    { x: 290, y: 136, label: 'Mar 13', value: '₹6.0L' },
-    { x: 375, y: 122, label: 'Mar 17', value: '₹7.2L' },
-    { x: 460, y: 134, label: 'Mar 21', value: '₹6.2L' },
-    { x: 545, y: 108, label: 'Mar 25', value: '₹8.8L' },
-    { x: 635, y: 55, label: 'Mar 30', value: '₹12.5L' }
-  ];
+  // Revenue SVG Chart Coordinates (Dynamic based on live revenue)
+  const chartPoints = useMemo(() => {
+    if (totalRevenueNumber === 0) {
+      return [
+        { x: 35, y: 200, label: 'Mar 1', value: '₹0' },
+        { x: 120, y: 200, label: 'Mar 5', value: '₹0' },
+        { x: 205, y: 200, label: 'Mar 9', value: '₹0' },
+        { x: 290, y: 200, label: 'Mar 13', value: '₹0' },
+        { x: 375, y: 200, label: 'Mar 17', value: '₹0' },
+        { x: 460, y: 200, label: 'Mar 21', value: '₹0' },
+        { x: 545, y: 200, label: 'Mar 25', value: '₹0' },
+        { x: 635, y: 200, label: 'Mar 30', value: '₹0' }
+      ];
+    }
+    return [
+      { x: 35, y: 172, label: 'Mar 1', value: '₹2.8L' },
+      { x: 120, y: 142, label: 'Mar 5', value: '₹5.4L' },
+      { x: 205, y: 150, label: 'Mar 9', value: '₹4.6L' },
+      { x: 290, y: 136, label: 'Mar 13', value: '₹6.0L' },
+      { x: 375, y: 122, label: 'Mar 17', value: '₹7.2L' },
+      { x: 460, y: 134, label: 'Mar 21', value: '₹6.2L' },
+      { x: 545, y: 108, label: 'Mar 25', value: '₹8.8L' },
+      { x: 635, y: 55, label: 'Mar 30', value: `₹${(totalRevenueNumber / 100000).toFixed(1)}L` }
+    ];
+  }, [totalRevenueNumber]);
 
   // Smooth SVG cubic bezier path string
-  const pathD = `M 35 172 C 80 160, 95 142, 120 142 C 150 142, 175 152, 205 150 C 235 148, 260 136, 290 136 C 320 136, 345 122, 375 122 C 405 122, 430 134, 460 134 C 490 134, 515 112, 545 108 C 585 102, 605 60, 635 55`;
-  const areaD = `${pathD} L 635 200 L 35 200 Z`;
+  const pathD = useMemo(() => {
+    if (totalRevenueNumber === 0) {
+      return 'M 35 200 L 635 200';
+    }
+    return 'M 35 172 C 80 160, 95 142, 120 142 C 150 142, 175 152, 205 150 C 235 148, 260 136, 290 136 C 320 136, 345 122, 375 122 C 405 122, 430 134, 460 134 C 490 134, 515 112, 545 108 C 585 102, 605 60, 635 55';
+  }, [totalRevenueNumber]);
+
+  const areaD = useMemo(() => {
+    if (totalRevenueNumber === 0) {
+      return 'M 35 200 L 635 200 L 635 200 L 35 200 Z';
+    }
+    return `${pathD} L 635 200 L 35 200 Z`;
+  }, [totalRevenueNumber, pathD]);
 
   // Admin Notifications List matching NotificationPopover schema
   const DEFAULT_ADMIN_NOTIFICATIONS = [
@@ -2895,7 +2930,7 @@ export default function AdminDashboardPage() {
                   </h3>
                 </div>
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold font-mono text-xs px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-                  <span>↗ Revenue : ₹{totalRevenueNumber.toLocaleString('en-IN')}</span>
+                  <span>{totalRevenueNumber > 0 ? `↗ Revenue : ₹${totalRevenueNumber.toLocaleString('en-IN')}` : 'Revenue : ₹0'}</span>
                 </div>
               </div>
 
@@ -3179,8 +3214,8 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {allActivities
-                      .filter((item) => {
+                    {(() => {
+                      const filteredList = allActivities.filter((item) => {
                         if (activityCategoryFilter !== 'all' && item.category !== activityCategoryFilter) return false;
                         if (searchQuery.trim()) {
                           const q = searchQuery.toLowerCase();
@@ -3191,9 +3226,47 @@ export default function AdminDashboardPage() {
                           );
                         }
                         return true;
-                      })
-                      .slice(0, 8)
-                      .map((item) => {
+                      });
+
+                      if (filteredList.length === 0) {
+                        return (
+                          <tr>
+                            <td colSpan={8} className="py-14 px-4 text-center">
+                              <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-center space-y-2.5">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center shadow-2xs">
+                                  <Activity className="w-6 h-6 stroke-[1.8]" />
+                                </div>
+                                <div>
+                                  <h4 className="text-sm font-bold text-slate-800">No Live Activities Found</h4>
+                                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                                    Real-time bookings across Doctor Consultations, Physiotherapy, Surgeries, Wellness, Lab Tests, and Medicine Orders will automatically appear here.
+                                  </p>
+                                </div>
+                                <div className="pt-2 flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsRegisterPatientModalOpen(true)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+                                  >
+                                    <UserPlus className="w-3.5 h-3.5" />
+                                    <span>Register Patient</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveMenu('appointments-doctor')}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer"
+                                  >
+                                    <CalendarPlus className="w-3.5 h-3.5 text-slate-600" />
+                                    <span>Create Booking</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      return filteredList.slice(0, 8).map((item) => {
                         const IconComp = item.icon || Activity;
                         return (
                           <tr key={item.id} className="hover:bg-slate-50/50 transition">
@@ -3261,7 +3334,8 @@ export default function AdminDashboardPage() {
                             </td>
                           </tr>
                         );
-                      })}
+                      });
+                    })()}
                   </tbody>
                 </table>
               </div>
@@ -3299,28 +3373,33 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-[11.5px]">
-                      {[
-                        { name: 'Paracetamol 500 mg', currentStock: 24, threshold: 100 },
-                        { name: 'Amoxicillin 250 mg', currentStock: 18, threshold: 50 },
-                        { name: 'Cetirizine 10 mg', currentStock: 15, threshold: 40 },
-                        { name: 'Omeprazole 20 mg', currentStock: 27, threshold: 75 },
-                        { name: 'Metformin 500 mg', currentStock: 30, threshold: 100 }
-                      ].map((m, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50 transition">
-                          <td className="py-2.5 font-medium text-slate-800">
-                            {m.name}
-                          </td>
-                          <td className="py-2.5 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded-lg font-bold text-rose-600 bg-rose-50 font-mono text-xs">
-                              {m.currentStock}
-                            </span>
-                          </td>
-                          <td className="py-2.5 text-center text-slate-600 font-mono">
-                            {m.threshold}
+                      {lowStockMedicinesList.length > 0 ? (
+                        lowStockMedicinesList.slice(0, 5).map((m, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/50 transition">
+                            <td className="py-2.5 font-medium text-slate-800">
+                              {m.name}
+                            </td>
+                            <td className="py-2.5 text-center">
+                              <span className="inline-block px-2.5 py-0.5 rounded-lg font-bold text-rose-600 bg-rose-50 font-mono text-xs">
+                                {m.stock ?? m.currentStock ?? 0}
+                              </span>
+                            </td>
+                            <td className="py-2.5 text-center text-slate-600 font-mono">
+                              {m.threshold || 20}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={3} className="py-6 px-3 text-center">
+                            <div className="flex flex-col items-center justify-center text-center space-y-1">
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                              <span className="text-xs font-bold text-slate-800">Stock Levels Healthy</span>
+                              <span className="text-[11px] text-slate-400">All medicines are above reorder thresholds.</span>
+                            </div>
                           </td>
                         </tr>
-                      ))}
-
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -3379,6 +3458,173 @@ export default function AdminDashboardPage() {
                     </div>
                     <span className="text-[11px] font-bold text-slate-800 leading-tight">View Reports</span>
                   </button>
+                </div>
+              </div>
+
+              {/* Card 1: Guwahati Regional Hubs & Dispatch Fleet Status */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-[#059669]" />
+                    <h3 className="text-sm font-bold text-slate-900">
+                      Regional Centers & Hubs
+                    </h3>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>All Live</span>
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 text-xs">
+                  {/* Center 1: Dispur Central Polyclinic */}
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-2 hover:bg-slate-100/60 transition">
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Dispur Central Polyclinic & Lab Hub</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500">GS Road, Guwahati • OPD, Pathology & Pharmacy</p>
+                    </div>
+                    <span className="shrink-0 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                      Open 24/7
+                    </span>
+                  </div>
+
+                  {/* Center 2: Panbazar Regional Diagnostic Center */}
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-2 hover:bg-slate-100/60 transition">
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Panbazar Diagnostic & Imaging Center</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500">MG Road, Guwahati • Digital X-Ray & Diagnostics</p>
+                    </div>
+                    <span className="shrink-0 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                      7 AM - 9 PM
+                    </span>
+                  </div>
+
+                  {/* Center 3: Ulubari & Jalukbari Satellite Collection Points */}
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between gap-2 hover:bg-slate-100/60 transition">
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                        <span>Phlebotomist Fleet & Home Dispatch</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500">Kamrup Metro • 10 km Guaranteed Home Sample Radius</p>
+                    </div>
+                    <span className="shrink-0 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/60">
+                      Active Fleet
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Senior Citizen Care Desk & Transport */}
+              <div className="bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-white rounded-2xl p-4 sm:p-5 border border-emerald-200/70 shadow-sm space-y-3.5 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                      <Heart className="w-4 h-4 fill-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        Senior Citizen Care Desk
+                      </h3>
+                      <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
+                        100% Free Pick-up & Drop Service
+                      </span>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200 shadow-2xs">
+                    Guwahati 10 km
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Wheelchair-accessible vehicles and dedicated Zestmed care companions for elderly patients traveling for lab tests, doctor consults, or day surgeries in Guwahati.
+                </p>
+
+                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                    <div className="text-[10px] text-slate-400 font-medium">Emergency Transport</div>
+                    <div className="font-bold text-slate-900 flex items-center gap-1 mt-0.5">
+                      <Phone className="w-3 h-3 text-emerald-600" />
+                      <span>+91 92791 25091</span>
+                    </div>
+                  </div>
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100 shadow-2xs">
+                    <div className="text-[10px] text-slate-400 font-medium">Free Toll Hotline</div>
+                    <div className="font-bold text-slate-900 flex items-center gap-1 mt-0.5">
+                      <Phone className="w-3 h-3 text-teal-600" />
+                      <span>1800-ZESTMED</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    addToast('Senior Citizen transport dispatch desk ready for booking', 'info');
+                    setActiveMenu('appointments-doctor');
+                  }}
+                  className="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Truck className="w-3.5 h-3.5" />
+                  <span>Dispatch Senior Citizen Transport</span>
+                </button>
+              </div>
+
+              {/* Card 3: Quality Standards & Statutory Accreditations */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-[#059669]" />
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Accreditations & Quality Standards
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-teal-100/70 text-teal-700 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-[11px]">NABL Accredited</div>
+                      <div className="text-[10px] text-slate-500">ISO 15189:2022</div>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100/70 text-emerald-700 flex items-center justify-center shrink-0">
+                      <FileCheck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-[11px]">Assam CEA</div>
+                      <div className="text-[10px] text-slate-500">Govt. Registered</div>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-blue-100/70 text-blue-700 flex items-center justify-center shrink-0">
+                      <Pill className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-[11px]">Form 20B / 21B</div>
+                      <div className="text-[10px] text-slate-500">Pharmacy License</div>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-purple-100/70 text-purple-700 flex items-center justify-center shrink-0">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-[11px]">256-Bit SSL</div>
+                      <div className="text-[10px] text-slate-500">HIPAA Compliant</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

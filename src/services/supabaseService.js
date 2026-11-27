@@ -35,22 +35,53 @@ export const isDemoBooking = (item) => {
     name.includes('demo') ||
     name.includes('dummy') ||
     name.includes('sample') ||
-    name === 'rahul verma'
+    name === 'rahul verma' ||
+    name === 'priya sharma' ||
+    name === 'amit verma' ||
+    name === 'sneha singh' ||
+    name === 'rajesh kumar'
   ) {
     return true;
   }
   if (status.includes('[demo') || (status === 'cancelled' && name.includes('[demo'))) {
     return true;
   }
-  if (
-    id === 'ASM-DX-781005-8961' ||
-    id === 'ZM-PHY-20261124-169' ||
-    id === 'ZM-DOC-50124' ||
-    id === 'ZM-PHY-78901'
-  ) {
+
+  // Pre-existing test IDs created during testing/demo phases
+  const knownDemoIds = new Set([
+    'ASM-DX-781005-8961',
+    'ZM-PHY-20261124-169',
+    'ZM-DOC-50124',
+    'ZM-PHY-78901',
+    'ZM-DOC-9732-7390',
+    'ZM-DOC-1194-1169',
+    'ZM-DOC-2134-5162',
+    'ZM-DOC-2338-2708',
+    'ZM-PHY-76119',
+    'ZM-PHY-20261124-201',
+    'ZM-PHY-20261124-445',
+    'ZM-PHY-20261124-377',
+    'ZM20261124001',
+    'bfbc70f5-3324-4d6d-a53a-38a41dd3a1e2',
+    'dec8fbf8-715e-418c-930f-117e0e2c6380',
+    'b7c8a82c-8aba-4da3-b8e4-384d3a52975e',
+    '94d39daa-6ad5-4541-8396-7258ff7131e3',
+    'adfffc0f-cddc-4eaf-8064-479e1424ca9a',
+    '866a4687-75de-4be2-bc6c-6732d36f4610',
+    '68a6dfc5-a53b-4db8-bcb4-8e648ece924e',
+    '8ad8ab39-145d-4f1f-a022-71ab8d6bcbcd',
+    'd0b67f83-21ff-4cd2-9aac-4ef02aab08d6'
+  ]);
+  if (knownDemoIds.has(id)) {
     return true;
   }
-  if (/^ZM-(ORD|LAB|JOB)-781001-/.test(id) || /^ZM-ORD-2026-(9045|8812)/.test(id)) {
+
+  if (
+    /^ZM-(ORD|LAB|JOB)-781001-/.test(id) ||
+    /^ZM-ORD-2026-(9045|8812)/.test(id) ||
+    /^#?LB1023[1-4]/.test(id) ||
+    /^#?ORD1023[1-4]/.test(id)
+  ) {
     return true;
   }
   return false;
