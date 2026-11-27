@@ -2055,578 +2055,410 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        {/* Navigation Items - 22 Menu Options under 7 Headings */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 custom-scrollbar">
-          {/* =================================================== */}
-          {/* 1. MAIN MENU                                        */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('mainMenu')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>MAIN MENU</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.mainMenu ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
+        {/* Navigation Items - 22 Menu Options */}
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
+          {/* 1. Dashboard Overview */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('dashboard')}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('dashboard')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <LayoutDashboardIcon className="w-4 h-4 shrink-0" />
+            <span>1. Dashboard Overview</span>
+          </button>
 
-            {!collapsedSections.mainMenu && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 1. Dashboard Overview */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('dashboard')}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('dashboard')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <LayoutDashboardIcon className="w-4 h-4 shrink-0" />
-                  <span>1. Dashboard Overview</span>
-                </button>
+          {/* 2. User Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('users')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('users', ['users-patients', 'users-executives', 'users-admins'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Users className="w-4 h-4 shrink-0" />
+              <span>2. User Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {patientsList.length}
+            </span>
+          </button>
 
-                {/* 2. User Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('users')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('users', ['users-patients', 'users-executives', 'users-admins'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Users className="w-4 h-4 shrink-0" />
-                    <span>2. User Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {patientsList.length}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 3. Medicine Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('medicines')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('medicines', ['medicines-all', 'medicines-categories', 'medicines-add', 'inventory'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Pill className="w-4 h-4 shrink-0" />
+              <span>3. Medicine Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {adminMedicines.length}
+            </span>
+          </button>
 
-          {/* =================================================== */}
-          {/* 2. SERVICE MANAGEMENT                               */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('serviceManagement')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>SERVICE MANAGEMENT</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.serviceManagement ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
+          {/* 4. Lab Test Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('lab-tests')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('lab-tests', ['diagnostic-tests', 'lab-bookings'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <FlaskConical className="w-4 h-4 shrink-0" />
+              <span>4. Lab Test Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {testsList.length}
+            </span>
+          </button>
 
-            {!collapsedSections.serviceManagement && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 3. Medicine Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('medicines')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('medicines', ['medicines-all', 'medicines-categories', 'medicines-add', 'inventory'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Pill className="w-4 h-4 shrink-0" />
-                    <span>3. Medicine Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {adminMedicines.length}
-                  </span>
-                </button>
+          {/* 5. Surgery Packages */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('surgery-packages')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('surgery-packages', ['bookings-surgery'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Scissors className="w-4 h-4 shrink-0" />
+              <span>5. Surgery Packages</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {surgeryBookings.length}
+            </span>
+          </button>
 
-                {/* 4. Lab Test Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('lab-tests')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('lab-tests', ['diagnostic-tests', 'lab-bookings'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <FlaskConical className="w-4 h-4 shrink-0" />
-                    <span>4. Lab Test Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {testsList.length}
-                  </span>
-                </button>
+          {/* 6. Wellness Packages */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('wellness-packages')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('wellness-packages', ['bookings-wellness'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Heart className="w-4 h-4 shrink-0" />
+              <span>6. Wellness Packages</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {wellnessBookings.length}
+            </span>
+          </button>
 
-                {/* 5. Surgery Packages */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('surgery-packages')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('surgery-packages', ['bookings-surgery'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Scissors className="w-4 h-4 shrink-0" />
-                    <span>5. Surgery Packages</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {surgeryBookings.length}
-                  </span>
-                </button>
+          {/* 7. Physiotherapy */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('physiotherapy')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('physiotherapy', ['appointments-physio'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Activity className="w-4 h-4 shrink-0" />
+              <span>7. Physiotherapy</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {physioAppointments.length}
+            </span>
+          </button>
 
-                {/* 6. Wellness Packages */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('wellness-packages')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('wellness-packages', ['bookings-wellness'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Heart className="w-4 h-4 shrink-0" />
-                    <span>6. Wellness Packages</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {wellnessBookings.length}
-                  </span>
-                </button>
+          {/* 8. Doctor Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('doctor-management')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('doctor-management', ['appointments-doctor'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Stethoscope className="w-4 h-4 shrink-0" />
+              <span>8. Doctor Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {doctorAppointments.length}
+            </span>
+          </button>
 
-                {/* 7. Physiotherapy */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('physiotherapy')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('physiotherapy', ['appointments-physio'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Activity className="w-4 h-4 shrink-0" />
-                    <span>7. Physiotherapy</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {physioAppointments.length}
-                  </span>
-                </button>
+          {/* 9. Bookings Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('bookings-management')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('bookings-management')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Calendar className="w-4 h-4 shrink-0" />
+              <span>9. Bookings Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {doctorAppointments.length + physioAppointments.length + surgeryBookings.length + diagnosticLabBookings.length + wellnessBookings.length}
+            </span>
+          </button>
 
-                {/* 8. Doctor Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('doctor-management')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('doctor-management', ['appointments-doctor'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Stethoscope className="w-4 h-4 shrink-0" />
-                    <span>8. Doctor Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {doctorAppointments.length}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 10. Orders Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('orders')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('orders')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <ShoppingCart className="w-4 h-4 shrink-0" />
+              <span>10. Orders Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {medicineOrders.length}
+            </span>
+          </button>
 
-          {/* =================================================== */}
-          {/* 3. OPERATIONS                                       */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('operations')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>OPERATIONS</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.operations ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
+          {/* 11. Payments & Refunds */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('payments')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('payments')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <CreditCard className="w-4 h-4 shrink-0" />
+              <span>11. Payments & Refunds</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {paymentsList.length}
+            </span>
+          </button>
 
-            {!collapsedSections.operations && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 9. Bookings Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('bookings-management')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('bookings-management')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Calendar className="w-4 h-4 shrink-0" />
-                    <span>9. Bookings Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {doctorAppointments.length + physioAppointments.length + surgeryBookings.length + diagnosticLabBookings.length + wellnessBookings.length}
-                  </span>
-                </button>
+          {/* 12. Lab Executive Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('lab-executives')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('lab-executives', ['users-executives'])
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Truck className="w-4 h-4 shrink-0" />
+              <span>12. Lab Executive Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {executivesList.length}
+            </span>
+          </button>
 
-                {/* 10. Orders Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('orders')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('orders')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ShoppingCart className="w-4 h-4 shrink-0" />
-                    <span>10. Orders Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {medicineOrders.length}
-                  </span>
-                </button>
+          {/* 13. Reports Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('reports')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('reports')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <FileCheck className="w-4 h-4 shrink-0" />
+              <span>13. Reports Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {diagnosticLabBookings.length}
+            </span>
+          </button>
 
-                {/* 11. Payments & Refunds */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('payments')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('payments')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <CreditCard className="w-4 h-4 shrink-0" />
-                    <span>11. Payments & Refunds</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {paymentsList.length}
-                  </span>
-                </button>
+          {/* 14. Prescription Management */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('prescriptions')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('prescriptions')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <FileText className="w-4 h-4 shrink-0" />
+              <span>14. Prescription Management</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {prescriptionsList.length}
+            </span>
+          </button>
 
-                {/* 12. Lab Executive Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('lab-executives')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('lab-executives', ['users-executives'])
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Truck className="w-4 h-4 shrink-0" />
-                    <span>12. Lab Executive Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {executivesList.length}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 15. Notifications */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('notifications')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('notifications')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Bell className="w-4 h-4 shrink-0" />
+              <span>15. Notifications</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              {adminNotifications.length}
+            </span>
+          </button>
 
-          {/* =================================================== */}
-          {/* 4. HEALTHCARE RECORDS                               */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('healthcareRecords')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>HEALTHCARE RECORDS</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.healthcareRecords ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
+          {/* 16. Reviews & Feedback */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('reviews')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('reviews')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Star className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>16. Reviews & Feedback</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              6
+            </span>
+          </button>
 
-            {!collapsedSections.healthcareRecords && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 13. Reports Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('reports')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('reports')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <FileCheck className="w-4 h-4 shrink-0" />
-                    <span>13. Reports Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {diagnosticLabBookings.length}
-                  </span>
-                </button>
+          {/* 17. Support & Complaints */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('support')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('support')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <LifeBuoy className="w-4 h-4 shrink-0" />
+              <span>17. Support & Complaints</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              4
+            </span>
+          </button>
 
-                {/* 14. Prescription Management */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('prescriptions')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('prescriptions')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span>14. Prescription Management</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {prescriptionsList.length}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 18. Coupons & Discounts */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('coupons')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('coupons')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Tag className="w-4 h-4 shrink-0" />
+              <span>18. Coupons & Discounts</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              5
+            </span>
+          </button>
 
-          {/* =================================================== */}
-          {/* 5. COMMUNICATION                                    */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('communication')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>COMMUNICATION</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.communication ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
+          {/* 19. Banner & Website Content */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('banners')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('banners')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-4 h-4 shrink-0" />
+              <span>19. Banner & Website Content</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              4
+            </span>
+          </button>
 
-            {!collapsedSections.communication && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 15. Notifications */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('notifications')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('notifications')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Bell className="w-4 h-4 shrink-0" />
-                    <span>15. Notifications</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    {adminNotifications.length}
-                  </span>
-                </button>
+          {/* 20. Analytics & Reports */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('analytics')}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('analytics')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <BarChart2 className="w-4 h-4 shrink-0" />
+            <span>20. Analytics & Reports</span>
+          </button>
 
-                {/* 16. Reviews & Feedback */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('reviews')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('reviews')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Star className="w-4 h-4 shrink-0 text-amber-400" />
-                    <span>16. Reviews & Feedback</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    6
-                  </span>
-                </button>
+          {/* 21. Settings */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('settings')}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('settings')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <Settings className="w-4 h-4 shrink-0" />
+            <span>21. Settings</span>
+          </button>
 
-                {/* 17. Support & Complaints */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('support')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('support')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LifeBuoy className="w-4 h-4 shrink-0" />
-                    <span>17. Support & Complaints</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    4
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* =================================================== */}
-          {/* 6. MARKETING                                        */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('marketing')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>MARKETING</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.marketing ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
-
-            {!collapsedSections.marketing && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 18. Coupons & Discounts */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('coupons')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('coupons')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Tag className="w-4 h-4 shrink-0" />
-                    <span>18. Coupons & Discounts</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    5
-                  </span>
-                </button>
-
-                {/* 19. Banner & Website Content */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('banners')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('banners')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Sliders className="w-4 h-4 shrink-0" />
-                    <span>19. Banner & Website Content</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    4
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* =================================================== */}
-          {/* 7. REPORTS & CONFIGURATION                          */}
-          {/* =================================================== */}
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => toggleSidebarSection('reportsConfig')}
-              className="w-full flex items-center justify-between px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-400 hover:text-slate-200 uppercase transition select-none group"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>REPORTS & CONFIGURATION</span>
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-200 ${
-                  collapsedSections.reportsConfig ? '-rotate-90' : ''
-                }`}
-              />
-            </button>
-
-            {!collapsedSections.reportsConfig && (
-              <div className="space-y-0.5 pt-0.5">
-                {/* 20. Analytics & Reports */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('analytics')}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('analytics')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <BarChart2 className="w-4 h-4 shrink-0" />
-                  <span>20. Analytics & Reports</span>
-                </button>
-
-                {/* 21. Settings */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('settings')}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('settings')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <Settings className="w-4 h-4 shrink-0" />
-                  <span>21. Settings</span>
-                </button>
-
-                {/* 22. Security & Audit Logs */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigateMenu('audit-logs')}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-                    isMenuActive('audit-logs')
-                      ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                      : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="w-4 h-4 shrink-0" />
-                    <span>22. Security & Audit Logs</span>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-                    6
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 22. Security & Audit Logs */}
+          <button
+            type="button"
+            onClick={() => handleNavigateMenu('audit-logs')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
+              isMenuActive('audit-logs')
+                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
+                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              <span>22. Security & Audit Logs</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
+              6
+            </span>
+          </button>
         </div>
 
         {/* Sidebar Footer Link back to Website */}
