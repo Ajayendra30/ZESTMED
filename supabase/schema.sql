@@ -149,6 +149,8 @@ CREATE TABLE IF NOT EXISTS public.diagnostic_tests (
     price NUMERIC(10, 2) NOT NULL DEFAULT 0,
     discount_percentage NUMERIC(5, 2) DEFAULT 0,
     discounted_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    mrp NUMERIC(10, 2) DEFAULT 0,
+    image_url TEXT,
     is_popular BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
     parameters TEXT,
@@ -168,6 +170,8 @@ CREATE TABLE IF NOT EXISTS public.health_packages (
     price NUMERIC(10, 2) NOT NULL DEFAULT 0,
     discount_percentage NUMERIC(5, 2) DEFAULT 0,
     discounted_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    mrp NUMERIC(10, 2) DEFAULT 0,
+    image_url TEXT,
     is_popular BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
     tags TEXT,
@@ -353,6 +357,9 @@ CREATE POLICY "Users can create medicines" ON public.medicines FOR INSERT WITH C
 CREATE POLICY "Users can update medicines" ON public.medicines FOR UPDATE USING (true);
 CREATE POLICY "Users can delete medicines" ON public.medicines FOR DELETE USING (true);
 CREATE POLICY "Public can view tests" ON public.diagnostic_tests FOR SELECT USING (true);
+CREATE POLICY "Users can create tests" ON public.diagnostic_tests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can update tests" ON public.diagnostic_tests FOR UPDATE USING (true);
+CREATE POLICY "Users can delete tests" ON public.diagnostic_tests FOR DELETE USING (true);
 CREATE POLICY "Public can view packages" ON public.health_packages FOR SELECT USING (true);
 CREATE POLICY "Public can view categories" ON public.medicine_categories FOR SELECT USING (true);
 

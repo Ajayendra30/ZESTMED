@@ -103,7 +103,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adminData';
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
-import { getSynchronizedLabTests, saveLabTest, deleteLabTest } from '../services/labTestService';
+import { getSynchronizedLabTests, fetchSynchronizedLabTests, saveLabTest, deleteLabTest } from '../services/labTestService';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders, initialPatientLabBookings, initialPatientAppointments } from '../mock-data/patientData';
 import { getRegisteredPatient, normalizePhone, deleteRegisteredPatient } from '../utils/patientRegistry';
@@ -244,6 +244,12 @@ export default function AdminDashboardPage() {
   const [labTestFilterCategory, setLabTestFilterCategory] = useState('all');
 
   useEffect(() => {
+    fetchSynchronizedLabTests().then((synced) => {
+      if (Array.isArray(synced) && synced.length > 0) {
+        setTestsList(synced);
+      }
+    });
+
     const handleSync = () => {
       setTestsList(getSynchronizedLabTests());
     };
@@ -5095,9 +5101,7 @@ export default function AdminDashboardPage() {
                                   }}
                                 />
                               ) : null}
-                              <div className={`w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 text-[#14B8A6] ${t.image ? 'hidden' : ''}`}>
-                                <FlaskConical className="w-5 h-5" />
-                              </div>
+                              <div className={`w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 shrink-0 ${t.image ? 'hidden' : ''}`} />
                               <div className="min-w-0">
                                 <div className="font-bold text-slate-900 leading-tight truncate">{t.name}</div>
                                 <div className="text-[11px] text-slate-400 font-normal truncate">
@@ -5134,9 +5138,9 @@ export default function AdminDashboardPage() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
+                              onClick={async () => {
                                 if (window.confirm(`Are you sure you want to remove "${t.name}" from active catalog? It will also be removed from the user-facing Lab Test portal.`)) {
-                                  deleteLabTest(t.id || t.name);
+                                  await deleteLabTest(t.id || t.name);
                                   setTestsList(getSynchronizedLabTests());
                                   addToast(`Test "${t.name}" removed from catalog`, 'info');
                                 }
@@ -6117,8 +6121,8 @@ export default function AdminDashboardPage() {
         <AddDiagnosticTestModal
           isOpen={isAddTestModalOpen}
           onClose={() => setIsAddTestModalOpen(false)}
-          onAddTest={(newTest) => {
-            const saved = saveLabTest(newTest);
+          onAddTest={async (newTest) => {
+            const saved = await saveLabTest(newTest);
             setTestsList(getSynchronizedLabTests());
             setIsAddTestModalOpen(false);
             addToast(`Diagnostic test "${saved.name}" added to catalog!`, 'success');
@@ -6279,8 +6283,8 @@ export default function AdminDashboardPage() {
           isOpen={!!editingTest}
           onClose={() => setEditingTest(null)}
           test={editingTest}
-          onSaveTest={(updated) => {
-            const saved = saveLabTest(updated);
+          onSaveTest={async (updated) => {
+            const saved = await saveLabTest(updated);
             setTestsList(getSynchronizedLabTests());
             setEditingTest(null);
             addToast(`Diagnostic test "${saved.name}" updated successfully!`, 'success');

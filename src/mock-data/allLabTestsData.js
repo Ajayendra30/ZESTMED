@@ -14,9 +14,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "A Complete Blood Count (CBC) is a common blood test that provides important information about your overall health by measuring different components of your blood.",
     "image": "/lab-tests/cbc.png",
     "images": [
-      "/lab-tests/cbc-modal-main.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/cbc.png"
     ],
     "popularRank": 1,
     "rating": 4.8,
@@ -60,9 +58,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Evaluates thyroid function and hormone levels to diagnose and manage hyperthyroidism, hypothyroidism, and metabolic imbalances.",
     "image": "/lab-tests/thyroid.png",
     "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/thyroid.png"
     ],
     "popularRank": 2,
     "rating": 4.7,
@@ -106,9 +102,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Assesses liver health, enzymes, and proteins to detect early liver disorders, fatty liver, hepatitis, or alcoholic liver disease.",
     "image": "/lab-tests/liver.png",
     "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/liver.png"
     ],
     "popularRank": 3,
     "rating": 4.8,
@@ -152,9 +146,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Checks kidney health, filtration efficiency, and electrolyte balance to catch renal disorders and impairment early.",
     "image": "/lab-tests/kidney.png",
     "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/kidney.png"
     ],
     "popularRank": 4,
     "rating": 4.7,
@@ -198,9 +190,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Measures cholesterol and fat levels in the blood to assess cardiovascular risk, heart attack probability, and arterial plaque buildup.",
     "image": "/lab-tests/lipid.png",
     "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/lipid.png"
     ],
     "popularRank": 5,
     "rating": 4.8,
@@ -244,9 +234,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Comprehensive diabetes screening panel measuring Fasting Blood Sugar, Post-Prandial Glucose, and HbA1c 3-month average.",
     "image": "/lab-tests/diabetes.png",
     "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/diabetes.png"
     ],
     "popularRank": 6,
     "rating": 4.9,
@@ -289,9 +277,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Measures 25-Hydroxy Vitamin D levels to evaluate bone health, calcium absorption, immune strength, and detect deficiency.",
     "image": "/lab-tests/vitamin-d.png",
     "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/vitamin-d.png"
     ],
     "popularRank": 7,
     "rating": 4.8,
@@ -334,9 +320,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Checks Vitamin B12 levels essential for healthy nerve cells, brain function, energy metabolism, and red blood cell formation.",
     "image": "/lab-tests/vitamin-b12.png",
     "images": [
-      "/lab-tests/vitamin-b12.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/vitamin-b12.png"
     ],
     "popularRank": 8,
     "rating": 4.7,
@@ -376,9 +360,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Evaluates total iron reserves, transferrin, and iron-binding capacity to detect iron deficiency anemia or iron overload.",
     "image": "/lab-tests/iron.png",
     "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/iron.png"
     ],
     "popularRank": 9,
     "rating": 4.7,
@@ -421,9 +403,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Assesses heart health, vascular inflammation, and risk of heart disease, coronary artery blockage, and stroke.",
     "image": "/lab-tests/cardiac.png",
     "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/cardiac.png"
     ],
     "popularRank": 10,
     "rating": 4.9,
@@ -466,9 +446,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Gold-standard blood test that provides an accurate average of blood sugar levels over the past 2 to 3 months.",
     "image": "/lab-tests/hba1c.png",
     "images": [
-      "/lab-tests/hba1c.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/hba1c.png"
     ],
     "popularRank": 11,
     "rating": 4.8,
@@ -509,9 +487,7 @@ export const ALL_LAB_TESTS_DATA = [
     "description": "Checks for urinary infections, kidney filtration issues, crystal formation, and other metabolic abnormalities.",
     "image": "/lab-tests/urine.png",
     "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
+      "/lab-tests/urine.png"
     ],
     "popularRank": 12,
     "rating": 4.6,
@@ -549,12 +525,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 149,
     "mrp": 200,
     "description": "Measures blood glucose level after an 8-hour overnight fast to screen for prediabetes and diabetes.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 13,
     "rating": 4.5,
     "reviewsCount": "800",
@@ -590,12 +562,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 149,
     "mrp": 200,
     "description": "Evaluates blood sugar level 2 hours after a meal to observe body glucose processing and insulin response.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 14,
     "rating": 4.6,
     "reviewsCount": "817",
@@ -631,12 +599,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 120,
     "mrp": 160,
     "description": "Instant measurement of blood glucose taken at any time regardless of food intake.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 15,
     "rating": 4.7,
     "reviewsCount": "834",
@@ -672,12 +636,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Two-hour diagnostic test evaluating blood glucose response after drinking a standardized 75g glucose solution.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 16,
     "rating": 4.8,
     "reviewsCount": "851",
@@ -713,12 +673,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 699,
     "mrp": 950,
     "description": "Measures fasting insulin levels produced by beta cells to evaluate insulin resistance and hyperinsulinemia.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 17,
     "rating": 4.9,
     "reviewsCount": "868",
@@ -754,12 +710,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Differentiates between Type 1 and Type 2 diabetes by measuring endogenous insulin production.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 18,
     "rating": 4.5,
     "reviewsCount": "885",
@@ -795,12 +747,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 599,
     "mrp": 800,
     "description": "Detects microscopic amounts of albumin in urine to screen for early diabetic nephropathy.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 19,
     "rating": 4.6,
     "reviewsCount": "902",
@@ -836,12 +784,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 999,
     "mrp": 1400,
     "description": "Calculated mathematical model assessing insulin resistance and pancreatic beta-cell function.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 20,
     "rating": 4.7,
     "reviewsCount": "919",
@@ -877,12 +821,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 850,
     "description": "Reflects average blood sugar control over the intermediate timeframe of the past 2 to 3 weeks.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 21,
     "rating": 4.8,
     "reviewsCount": "936",
@@ -918,12 +858,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1850,
     "mrp": 2400,
     "description": "Autoantibody marker confirming autoimmune Type 1 diabetes and Latent Autoimmune Diabetes in Adults (LADA).",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 22,
     "rating": 4.9,
     "reviewsCount": "953",
@@ -959,12 +895,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2100,
     "mrp": 2800,
     "description": "Diagnostic autoantibody marker for early autoimmune pancreatic damage.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 23,
     "rating": 4.5,
     "reviewsCount": "970",
@@ -1000,12 +932,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 150,
     "mrp": 200,
     "description": "Screens for ketone accumulation in urine to detect diabetic ketoacidosis (DKA).",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 24,
     "rating": 4.6,
     "reviewsCount": "987",
@@ -1041,12 +969,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 750,
     "mrp": 1000,
     "description": "Quantitative blood measurement of the predominant circulating ketone body.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 25,
     "rating": 4.7,
     "reviewsCount": "1,004",
@@ -1082,12 +1006,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Screening test for gestational diabetes during pregnancy following 50g glucose oral dose.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 26,
     "rating": 4.8,
     "reviewsCount": "1,021",
@@ -1123,12 +1043,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 720,
     "mrp": 960,
     "description": "Evaluates pancreatic insulin secretion spike following meals.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 27,
     "rating": 4.9,
     "reviewsCount": "1,038",
@@ -1164,12 +1080,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1599,
     "mrp": 2200,
     "description": "Includes FBS, PPBS, HbA1c, Lipid Profile, Serum Creatinine and Urine Microalbumin.",
-    "image": "/lab-tests/diabetes.png",
-    "images": [
-      "/lab-tests/diabetes.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 28,
     "rating": 4.5,
     "reviewsCount": "1,055",
@@ -1205,12 +1117,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 399,
     "mrp": 550,
     "description": "Measures active unbound Triiodothyronine hormone in blood unaffected by protein binding.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 29,
     "rating": 4.6,
     "reviewsCount": "1,072",
@@ -1247,12 +1155,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 399,
     "mrp": 550,
     "description": "Measures active unbound Thyroxine hormone to evaluate primary thyroid disease.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 30,
     "rating": 4.7,
     "reviewsCount": "1,089",
@@ -1289,12 +1193,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 299,
     "mrp": 400,
     "description": "High-precision chemiluminescence assay for Thyroid Stimulating Hormone.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 31,
     "rating": 4.8,
     "reviewsCount": "1,106",
@@ -1330,12 +1230,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 999,
     "mrp": 1400,
     "description": "Key autoimmune marker confirming Hashimoto’s thyroiditis and Graves’ disease.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 32,
     "rating": 4.9,
     "reviewsCount": "1,123",
@@ -1371,12 +1267,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Assesses autoimmune response against thyroid storage protein thyroglobulin.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 33,
     "rating": 4.5,
     "reviewsCount": "1,140",
@@ -1412,12 +1304,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1200,
     "mrp": 1600,
     "description": "Post-operative tumor marker for monitoring differentiated thyroid cancer recurrence.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 34,
     "rating": 4.6,
     "reviewsCount": "1,157",
@@ -1453,12 +1341,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2400,
     "mrp": 3200,
     "description": "Distinguishes Graves’ disease from other causes of thyrotoxicosis.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 35,
     "rating": 4.7,
     "reviewsCount": "1,174",
@@ -1494,12 +1378,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2200,
     "description": "Diagnostic tumor marker for Medullary Thyroid Carcinoma (MTC).",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 36,
     "rating": 4.8,
     "reviewsCount": "1,191",
@@ -1535,12 +1415,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2800,
     "mrp": 3600,
     "description": "Evaluates inactive thyroid metabolite in chronic illness and euthyroid sick syndrome.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 37,
     "rating": 4.9,
     "reviewsCount": "1,208",
@@ -1576,12 +1452,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1400,
     "mrp": 1850,
     "description": "Measures primary carrier protein for thyroid hormones in plasma.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 38,
     "rating": 4.5,
     "reviewsCount": "1,225",
@@ -1617,12 +1489,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1899,
     "mrp": 2600,
     "description": "Combines T3, T4, TSH, Anti-TPO, and Anti-TG for complete thyroid assessment.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 39,
     "rating": 4.6,
     "reviewsCount": "1,242",
@@ -1658,12 +1526,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Evaluates liver cell integrity and detects tissue necrosis.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 40,
     "rating": 4.7,
     "reviewsCount": "1,259",
@@ -1700,12 +1564,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Primary specific biomarker for acute and chronic hepatocellular damage.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 41,
     "rating": 4.8,
     "reviewsCount": "1,276",
@@ -1741,12 +1601,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 350,
     "description": "Diagnostic panel for jaundice, hemolytic conditions, and biliary obstruction.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 42,
     "rating": 4.9,
     "reviewsCount": "1,293",
@@ -1782,12 +1638,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 200,
     "mrp": 270,
     "description": "Screens for biliary duct obstruction and metabolic bone diseases.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 43,
     "rating": 4.5,
     "reviewsCount": "1,310",
@@ -1824,12 +1676,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Sensitive enzyme marker for alcoholic liver disease and bile duct injury.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 44,
     "rating": 4.6,
     "reviewsCount": "1,327",
@@ -1865,12 +1713,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 340,
     "description": "Evaluates hepatic protein synthesis capability and nutritional state.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 45,
     "rating": 4.7,
     "reviewsCount": "1,344",
@@ -1906,12 +1750,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 190,
     "mrp": 250,
     "description": "Primary plasma oncotic pressure protein synthesized exclusively by liver.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 46,
     "rating": 4.8,
     "reviewsCount": "1,361",
@@ -1947,12 +1787,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Oncology screening marker for hepatocellular carcinoma (HCC) and cirrhosis.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 47,
     "rating": 4.9,
     "reviewsCount": "1,378",
@@ -1988,12 +1824,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Gold standard screening marker for active Hepatitis B viral infection.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 48,
     "rating": 4.5,
     "reviewsCount": "1,395",
@@ -2029,12 +1861,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Screens for exposure and antibodies against Hepatitis C viral hepatitis.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 49,
     "rating": 4.6,
     "reviewsCount": "1,412",
@@ -2070,12 +1898,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Confirms acute Hepatitis A viral infection in food/water-borne jaundice.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 50,
     "rating": 4.7,
     "reviewsCount": "1,429",
@@ -2111,12 +1935,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Diagnostic test for acute waterborne Hepatitis E infection.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 51,
     "rating": 4.8,
     "reviewsCount": "1,446",
@@ -2152,12 +1972,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Screens for Wilson’s disease and hereditary copper metabolism defects.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 52,
     "rating": 4.9,
     "reviewsCount": "1,463",
@@ -2193,12 +2009,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 799,
     "mrp": 1100,
     "description": "Evaluates hepatic encephalopathy and urea cycle enzymatic disorders.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 53,
     "rating": 4.5,
     "reviewsCount": "1,480",
@@ -2271,12 +2083,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1200,
     "description": "Screens for autoimmune hepatitis and systemic autoimmune disorders.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 55,
     "rating": 4.7,
     "reviewsCount": "1,514",
@@ -2312,12 +2120,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1250,
     "mrp": 1700,
     "description": "Confirmatory autoantibody marker for Type 1 Autoimmune Hepatitis.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 56,
     "rating": 4.8,
     "reviewsCount": "1,531",
@@ -2353,12 +2157,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1350,
     "mrp": 1800,
     "description": "Diagnostic hallmark for Primary Biliary Cholangitis (PBC).",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 57,
     "rating": 4.9,
     "reviewsCount": "1,548",
@@ -2394,12 +2194,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1450,
     "mrp": 2000,
     "description": "Non-invasive scoring index assessing degree of liver fibrosis in fatty liver.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 58,
     "rating": 4.5,
     "reviewsCount": "1,565",
@@ -2436,12 +2232,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Standard clinical indicator of renal filtration efficiency and muscular breakdown.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 59,
     "rating": 4.6,
     "reviewsCount": "1,582",
@@ -2477,12 +2269,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Measures urea nitrogen in blood to detect acute or chronic kidney dysfunction.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 60,
     "rating": 4.7,
     "reviewsCount": "1,599",
@@ -2519,12 +2307,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 220,
     "mrp": 300,
     "description": "Detects hyperuricemia to diagnose gouty arthritis and kidney stone risks.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 61,
     "rating": 4.8,
     "reviewsCount": "1,616",
@@ -2560,12 +2344,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 350,
     "description": "Accurately calculates renal filtration stage based on age, sex, and creatinine.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 62,
     "rating": 4.9,
     "reviewsCount": "1,633",
@@ -2601,12 +2381,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Measures Sodium, Potassium, and Chloride essential for renal fluid homeostasis.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 63,
     "rating": 4.5,
     "reviewsCount": "1,650",
@@ -2642,12 +2418,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 340,
     "description": "Assesses bone-renal mineral metabolism, parathyroid function, and deficiency.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 64,
     "rating": 4.6,
     "reviewsCount": "1,667",
@@ -2683,12 +2455,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 340,
     "description": "Evaluates mineral bone disorder associated with chronic kidney disease.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 65,
     "rating": 4.7,
     "reviewsCount": "1,684",
@@ -2724,12 +2492,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Early sensitive kidney marker unaffected by muscle mass, age, or protein diet.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 66,
     "rating": 4.8,
     "reviewsCount": "1,701",
@@ -2765,12 +2529,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Quantifies daily urinary protein loss in nephrotic syndrome and glomerulonephritis.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 67,
     "rating": 4.9,
     "reviewsCount": "1,718",
@@ -2806,12 +2566,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Gold standard laboratory clearance measurement of functional nephron filtration.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 68,
     "rating": 4.5,
     "reviewsCount": "1,735",
@@ -2847,12 +2603,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Identifies bacterial urinary pathogens and provides antibiotic sensitivity report.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 69,
     "rating": 4.6,
     "reviewsCount": "1,752",
@@ -2888,12 +2640,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Screens for free light chains indicating multiple myeloma kidney involvement.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 70,
     "rating": 4.7,
     "reviewsCount": "1,769",
@@ -2929,12 +2677,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1200,
     "mrp": 1650,
     "description": "Analyzes oxalate, citrate, uric acid, and calcium saturation for kidney stones.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 71,
     "rating": 4.8,
     "reviewsCount": "1,786",
@@ -2970,12 +2714,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1399,
     "mrp": 1900,
     "description": "Includes KFT, Electrolytes, Calcium, Phosphorus, Urine Routine & Microalbumin.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 72,
     "rating": 4.9,
     "reviewsCount": "1,803",
@@ -3012,12 +2752,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 999,
     "mrp": 1400,
     "description": "Ultrasensitive gold standard myocardial biomarker for acute myocardial infarction.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 73,
     "rating": 4.5,
     "reviewsCount": "1,820",
@@ -3053,12 +2789,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Cardiospecific marker evaluating ischemic cardiac muscle injury.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 74,
     "rating": 4.6,
     "reviewsCount": "1,837",
@@ -3094,12 +2826,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 620,
     "description": "Enzyme marker confirming myocardial tissue damage and re-infarction.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 75,
     "rating": 4.7,
     "reviewsCount": "1,854",
@@ -3136,12 +2864,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2200,
     "mrp": 2900,
     "description": "Gold standard diagnostic neurohormone biomarker for congestive heart failure.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 76,
     "rating": 4.8,
     "reviewsCount": "1,871",
@@ -3177,12 +2901,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Evaluates amino acid levels linked to early vascular thrombosis and stroke.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 77,
     "rating": 4.9,
     "reviewsCount": "1,888",
@@ -3218,12 +2938,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Measures the protective anti-atherogenic protein in HDL cholesterol particles.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 78,
     "rating": 4.5,
     "reviewsCount": "1,905",
@@ -3259,12 +2975,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Accurately quantifies total atherogenic particles causing arterial plaque.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 79,
     "rating": 4.6,
     "reviewsCount": "1,922",
@@ -3300,12 +3012,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1200,
     "description": "Genetically determined independent risk factor for premature coronary heart disease.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 80,
     "rating": 4.7,
     "reviewsCount": "1,939",
@@ -3341,12 +3049,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Detects microscopic vascular inflammation predicting cardiac events.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 81,
     "rating": 4.8,
     "reviewsCount": "1,956",
@@ -3382,12 +3086,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Foundational baseline measurement of circulating blood cholesterol.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 82,
     "rating": 4.9,
     "reviewsCount": "1,973",
@@ -3423,12 +3123,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 200,
     "mrp": 270,
     "description": "Measures storage fats circulating in bloodstream linked to metabolic syndrome.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 83,
     "rating": 4.5,
     "reviewsCount": "1,990",
@@ -3464,12 +3160,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 220,
     "mrp": 300,
     "description": "Quantifies cardio-protective high-density lipoprotein cholesterol.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 84,
     "rating": 4.6,
     "reviewsCount": "2,007",
@@ -3505,12 +3197,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 240,
     "mrp": 320,
     "description": "Direct measurement of primary atherogenic low-density lipoprotein cholesterol.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 85,
     "rating": 4.7,
     "reviewsCount": "2,024",
@@ -3546,12 +3234,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 190,
     "mrp": 260,
     "description": "Measures very low-density lipoprotein carrying triglycerides.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 86,
     "rating": 4.8,
     "reviewsCount": "2,041",
@@ -3587,12 +3271,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Logarithmic ratio predicting small dense LDL particle subfraction risk.",
-    "image": "/lab-tests/lipid.png",
-    "images": [
-      "/lab-tests/lipid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 87,
     "rating": 4.9,
     "reviewsCount": "2,058",
@@ -3628,12 +3308,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 280,
     "mrp": 380,
     "description": "Enzyme marker of broad cellular breakdown and myocardial necrosis.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 88,
     "rating": 4.5,
     "reviewsCount": "2,075",
@@ -3669,12 +3345,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Earliest detectable serum marker released within 2 hours of muscle injury.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 89,
     "rating": 4.6,
     "reviewsCount": "2,092",
@@ -3710,12 +3382,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Fibrin degradation marker ruling out deep vein thrombosis (DVT) and pulmonary embolism.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 90,
     "rating": 4.7,
     "reviewsCount": "2,109",
@@ -3788,12 +3456,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1900,
     "mrp": 2500,
     "description": "Diagnostic hormone released in ventricular wall stretch during heart failure.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 92,
     "rating": 4.9,
     "reviewsCount": "2,143",
@@ -3829,12 +3493,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Essential intracellular electrolyte regulating cardiac rhythm and muscle contractility.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 93,
     "rating": 4.5,
     "reviewsCount": "2,160",
@@ -3870,12 +3530,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2499,
     "mrp": 3500,
     "description": "Comprehensive panel: Lipid Profile, hs-CRP, Homocysteine, Apo A1/B, HbA1c.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 94,
     "rating": 4.6,
     "reviewsCount": "2,177",
@@ -3912,12 +3568,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Evaluates primary male androgen levels, libido, fatigue, and muscle vitality.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 95,
     "rating": 4.7,
     "reviewsCount": "2,194",
@@ -3953,12 +3605,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Measures bioavailable testosterone active at tissue receptor sites.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 96,
     "rating": 4.8,
     "reviewsCount": "2,211",
@@ -3995,12 +3643,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 420,
     "mrp": 580,
     "description": "Pituitary hormone regulating lactation, fertility, and diagnosing prolactinoma.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 97,
     "rating": 4.9,
     "reviewsCount": "2,228",
@@ -4036,12 +3680,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Primary female estrogen assessing ovarian reserve, puberty, and menopause.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 98,
     "rating": 4.5,
     "reviewsCount": "2,245",
@@ -4077,12 +3717,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Confirms ovulation and monitors luteal phase in reproductive health.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 99,
     "rating": 4.6,
     "reviewsCount": "2,262",
@@ -4118,12 +3754,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 420,
     "mrp": 580,
     "description": "Pituitary gonadotropin triggering ovulation and regulating testosterone.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 100,
     "rating": 4.7,
     "reviewsCount": "2,279",
@@ -4159,12 +3791,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 420,
     "mrp": 580,
     "description": "Assesses follicle development, ovarian egg reserve, and spermatogenesis.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 101,
     "rating": 4.8,
     "reviewsCount": "2,296",
@@ -4200,12 +3828,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2200,
     "description": "Premier blood marker measuring female ovarian fertility egg reserve.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 102,
     "rating": 4.9,
     "reviewsCount": "2,313",
@@ -4241,12 +3865,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 490,
     "mrp": 680,
     "description": "Peak adrenal stress hormone measuring Cushing’s or Addison’s disease.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 103,
     "rating": 4.5,
     "reviewsCount": "2,330",
@@ -4282,12 +3902,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 490,
     "mrp": 680,
     "description": "Evaluates diurnal adrenal rhythm suppression.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 104,
     "rating": 4.6,
     "reviewsCount": "2,347",
@@ -4323,12 +3939,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 790,
     "mrp": 1100,
     "description": "Adrenal androgen evaluating PCOS, hirsutism, and adrenal tumors.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 105,
     "rating": 4.7,
     "reviewsCount": "2,364",
@@ -4401,12 +4013,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2199,
     "mrp": 3000,
     "description": "Complete 8-hormone panel: LH, FSH, AMH, Prolactin, Total Testosterone, TSH, Fasting Insulin.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 107,
     "rating": 4.9,
     "reviewsCount": "2,398",
@@ -4442,12 +4050,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1800,
     "mrp": 2400,
     "description": "Evaluates essential fat-soluble vitamin for optical vision and skin epithelium.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 108,
     "rating": 4.5,
     "reviewsCount": "2,415",
@@ -4483,12 +4087,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1450,
     "mrp": 1950,
     "description": "Measures circulating antioxidant level supporting collagen and immunity.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 109,
     "rating": 4.6,
     "reviewsCount": "2,432",
@@ -4524,12 +4124,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2200,
     "description": "Lipid antioxidant guarding cell membranes against oxidative injury.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 110,
     "rating": 4.7,
     "reviewsCount": "2,449",
@@ -4565,12 +4161,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2200,
     "mrp": 2900,
     "description": "Assesses coagulation cofactor required for prothrombin bone synthesis.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 111,
     "rating": 4.8,
     "reviewsCount": "2,466",
@@ -4606,12 +4198,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2600,
     "description": "Screens for beriberi, Wernicke’s encephalopathy, and neuropathies.",
-    "image": "/lab-tests/vitamin-b12.png",
-    "images": [
-      "/lab-tests/vitamin-b12.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 112,
     "rating": 4.9,
     "reviewsCount": "2,483",
@@ -4647,12 +4235,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2600,
     "description": "Assesses cofactor for amino acid metabolism and neurotransmitter synthesis.",
-    "image": "/lab-tests/vitamin-b12.png",
-    "images": [
-      "/lab-tests/vitamin-b12.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 113,
     "rating": 4.5,
     "reviewsCount": "2,500",
@@ -4689,12 +4273,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Early sensitive marker of cellular bioavailable Vitamin B12.",
-    "image": "/lab-tests/vitamin-b12.png",
-    "images": [
-      "/lab-tests/vitamin-b12.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 114,
     "rating": 4.6,
     "reviewsCount": "2,517",
@@ -4731,12 +4311,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2799,
     "mrp": 3900,
     "description": "Comprehensive panel covering Vitamin D, B12, B-Complex, Zinc, Iron, Magnesium.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 115,
     "rating": 4.7,
     "reviewsCount": "2,534",
@@ -5071,12 +4647,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 120,
     "mrp": 160,
     "description": "Classic marker of generalized systemic inflammation, infection, and autoimmune disease.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 124,
     "rating": 4.6,
     "reviewsCount": "2,687",
@@ -5113,12 +4685,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 120,
     "mrp": 160,
     "description": "Single quantitative measurement of oxygen-carrying protein in red blood cells.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 125,
     "rating": 4.7,
     "reviewsCount": "2,704",
@@ -5155,12 +4723,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 150,
     "mrp": 200,
     "description": "Identifies ABO blood group and Rhesus factor (positive/negative).",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 126,
     "rating": 4.8,
     "reviewsCount": "2,721",
@@ -5196,12 +4760,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 220,
     "mrp": 300,
     "description": "Pathologist microscopic evaluation of RBC morphology, WBC differential, and platelets.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 127,
     "rating": 4.9,
     "reviewsCount": "2,738",
@@ -5238,12 +4798,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Most reliable test to evaluate cellular iron storage reserves in anemia.",
-    "image": "/lab-tests/iron.png",
-    "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 128,
     "rating": 4.5,
     "reviewsCount": "2,755",
@@ -5279,12 +4835,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Measures blood transferrin protein availability for transporting iron.",
-    "image": "/lab-tests/iron.png",
-    "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 129,
     "rating": 4.6,
     "reviewsCount": "2,772",
@@ -5320,12 +4872,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 750,
     "mrp": 1000,
     "description": "Evaluates essential vitamin required for DNA synthesis and RBC maturation.",
-    "image": "/lab-tests/vitamin-b12.png",
-    "images": [
-      "/lab-tests/vitamin-b12.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 130,
     "rating": 4.7,
     "reviewsCount": "2,789",
@@ -5361,12 +4909,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 150,
     "mrp": 200,
     "description": "Critical monitoring for dengue, thrombocytopenia, and bleeding disorders.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 131,
     "rating": 4.8,
     "reviewsCount": "2,806",
@@ -5402,12 +4946,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 240,
     "description": "Quantifies eosinophils elevated in allergies, asthma, and parasitic infections.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 132,
     "rating": 4.9,
     "reviewsCount": "2,823",
@@ -5443,12 +4983,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 290,
     "mrp": 400,
     "description": "Evaluates bone marrow bone production capacity of new immature red blood cells.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 133,
     "rating": 4.5,
     "reviewsCount": "2,840",
@@ -5484,12 +5020,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 900,
     "description": "Screens for inherited enzyme deficiency causing hemolytic anemia from antimalarials.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 134,
     "rating": 4.6,
     "reviewsCount": "2,857",
@@ -5525,12 +5057,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Gold standard test diagnosing Thalassemia minor/major and hemoglobinopathies.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 135,
     "rating": 4.7,
     "reviewsCount": "2,874",
@@ -6861,12 +6389,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1699,
     "mrp": 2400,
     "description": "Investigates fever of unknown origin: CBC, ESR, Malarial Antigen, Dengue, Widal, Urine.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 171,
     "rating": 4.8,
     "reviewsCount": "3,486",
@@ -6902,12 +6426,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 350,
     "description": "Screens for intestinal parasites, ova, cysts, and protozoan infections.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 172,
     "rating": 4.9,
     "reviewsCount": "3,503",
@@ -6943,12 +6463,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 290,
     "mrp": 400,
     "description": "Screens for microscopic gastrointestinal bleeding and early colon polyps.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 173,
     "rating": 4.5,
     "reviewsCount": "3,520",
@@ -6984,12 +6500,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 320,
     "mrp": 450,
     "description": "Detects Mycobacterium tuberculosis in suspected pulmonary tuberculosis.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 174,
     "rating": 4.6,
     "reviewsCount": "3,537",
@@ -7025,12 +6537,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Evaluates sperm count, motility, viability, and morphology for fertility.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 175,
     "rating": 4.7,
     "reviewsCount": "3,554",
@@ -7067,12 +6575,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1200,
     "description": "Cervical cancer screening detecting pre-cancerous dysplasia.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 176,
     "rating": 4.8,
     "reviewsCount": "3,571",
@@ -7108,12 +6612,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2600,
     "description": "Molecular genotyping for oncogenic HPV strains 16 & 18.",
-    "image": "/lab-tests/urine.png",
-    "images": [
-      "/lab-tests/urine.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 177,
     "rating": 4.9,
     "reviewsCount": "3,588",
@@ -7335,12 +6835,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1299,
     "mrp": 2000,
     "description": "Essential baseline panel: CBC, LFT, KFT, Blood Sugar, Lipid Profile, Urine.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 183,
     "rating": 4.5,
     "reviewsCount": "3,690",
@@ -7377,12 +6873,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2499,
     "mrp": 3800,
     "description": "Full profile: CBC, LFT, KFT, Lipid, Thyroid, HbA1c, Vitamin D & B12, Urine.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 184,
     "rating": 4.6,
     "reviewsCount": "3,707",
@@ -7418,12 +6910,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2999,
     "mrp": 4500,
     "description": "Specialized 75+ parameter geriatric screening including PSA and Cardiac markers.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 185,
     "rating": 4.7,
     "reviewsCount": "3,724",
@@ -7459,12 +6947,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2999,
     "mrp": 4500,
     "description": "Geriatric profile including Bone markers, Thyroid, Lipids, Vitamins and CA-125.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 186,
     "rating": 4.8,
     "reviewsCount": "3,741",
@@ -7500,12 +6984,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2299,
     "mrp": 3400,
     "description": "Dedicated panel: Thyroid, Prolactin, AMH, LH, FSH, Iron Profile, Vitamin D.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 187,
     "rating": 4.9,
     "reviewsCount": "3,758",
@@ -7578,12 +7058,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1450,
     "mrp": 2100,
     "description": "Mandatory pre-surgery safety screen: CBC, Blood Group, PT/INR, HIV, HBsAg, HCV, FBS.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 189,
     "rating": 4.6,
     "reviewsCount": "3,792",
@@ -7619,12 +7095,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2350,
     "mrp": 3300,
     "description": "Comprehensive panel: Thalassemia HPLC, Blood Group, HIV, Hepatitis, VDRL.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 190,
     "rating": 4.7,
     "reviewsCount": "3,809",
@@ -7697,12 +7169,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1750,
     "mrp": 2500,
     "description": "Includes LFT, GGT, Lipid Profile, Uric Acid, KFT, and Blood Sugar.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 192,
     "rating": 4.9,
     "reviewsCount": "3,843",
@@ -7738,12 +7206,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1899,
     "mrp": 2700,
     "description": "Evaluates root causes: Ferritin, Iron, Thyroid, Vitamin D, Vitamin B12, Zinc.",
-    "image": "/lab-tests/iron.png",
-    "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 193,
     "rating": 4.5,
     "reviewsCount": "3,860",
@@ -7779,12 +7243,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1999,
     "mrp": 2800,
     "description": "Screens anemia, thyroid, vitamin deficiency, electrolytes, and cortisol.",
-    "image": "/lab-tests/iron.png",
-    "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 194,
     "rating": 4.6,
     "reviewsCount": "3,877",
@@ -7820,12 +7280,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1699,
     "mrp": 2400,
     "description": "Includes Calcium, Phosphorus, Vitamin D, Alkaline Phosphatase, Uric Acid, RA Factor.",
-    "image": "/lab-tests/vitamin-d.png",
-    "images": [
-      "/lab-tests/vitamin-d.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 195,
     "rating": 4.7,
     "reviewsCount": "3,894",
@@ -7861,12 +7317,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1750,
     "mrp": 2500,
     "description": "CBC, PBS, Iron Profile, Ferritin, Vitamin B12, Folic Acid, Reticulocyte count.",
-    "image": "/lab-tests/iron.png",
-    "images": [
-      "/lab-tests/iron.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 196,
     "rating": 4.8,
     "reviewsCount": "3,911",
@@ -7902,12 +7354,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1450,
     "mrp": 2100,
     "description": "T3, T4, TSH, Fasting Blood Sugar, Fasting Insulin, and Lipid Profile.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 197,
     "rating": 4.9,
     "reviewsCount": "3,928",
@@ -7943,12 +7391,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2100,
     "mrp": 3000,
     "description": "Thyroid, Lipid Profile, HbA1c, Cortisol, Insulin, Leptin screen.",
-    "image": "/lab-tests/thyroid.png",
-    "images": [
-      "/lab-tests/thyroid.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 198,
     "rating": 4.5,
     "reviewsCount": "3,945",
@@ -7984,12 +7428,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1499,
     "mrp": 2200,
     "description": "CBC, Calcium, Vitamin D, Iron, Total Protein, Urine Routine.",
-    "image": "/lab-tests/cbc.png",
-    "images": [
-      "/lab-tests/cbc.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 199,
     "rating": 4.6,
     "reviewsCount": "3,962",
@@ -8062,12 +7502,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2800,
     "description": "D-Dimer, hs-CRP, Ferritin, CBC, KFT, LFT, and Troponin-I.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 201,
     "rating": 4.8,
     "reviewsCount": "3,996",
@@ -8103,12 +7539,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2800,
     "mrp": 4000,
     "description": "Lipid Profile, hs-CRP, Homocysteine, D-Dimer, HbA1c, KFT.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 202,
     "rating": 4.9,
     "reviewsCount": "4,013",
@@ -8144,12 +7576,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1250,
     "mrp": 1800,
     "description": "KFT, Electrolytes, Serum Uric Acid, Urine Routine and Microscopic Culture.",
-    "image": "/lab-tests/kidney.png",
-    "images": [
-      "/lab-tests/kidney.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 203,
     "rating": 4.5,
     "reviewsCount": "4,030",
@@ -8185,12 +7613,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2400,
     "description": "LFT, Amylase, Lipase, Stool Routine, Stool Occult Blood, H. Pylori Antigen.",
-    "image": "/lab-tests/liver.png",
-    "images": [
-      "/lab-tests/liver.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 204,
     "rating": 4.6,
     "reviewsCount": "4,047",
@@ -8449,12 +7873,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 3999,
     "mrp": 6000,
     "description": "85+ parameter flagship panel covering all vital organs, vitamins, hormones.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 211,
     "rating": 4.8,
     "reviewsCount": "4,166",
@@ -8490,12 +7910,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 4999,
     "mrp": 7500,
     "description": "Most exhaustive diagnostic panel with 98+ biomarkers including cancer screens.",
-    "image": "/lab-tests/cardiac.png",
-    "images": [
-      "/lab-tests/cardiac.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 212,
     "rating": 4.9,
     "reviewsCount": "4,183",

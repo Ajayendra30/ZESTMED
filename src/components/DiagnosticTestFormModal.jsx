@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, SquarePlus, FlaskConical, Upload, Trash2, 
   Eye, Clock, Check, ChevronDown, Layers, ShieldCheck, 
-  Droplet, Activity, Info, Tag, ShoppingCart
+  Droplet, Activity, Info, Tag, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { uploadLabTestImage } from '../services/labTestService';
 
 const CATEGORY_OPTIONS = [
   'Blood Tests',
@@ -62,6 +63,11 @@ export default function DiagnosticTestFormModal({
   });
 
   const [imageUrlInput, setImageUrlInput] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (test) {
@@ -104,6 +110,9 @@ export default function DiagnosticTestFormModal({
           : (test.image ? [test.image] : [])
       });
       setImageUrlInput(test.image || '');
+      setImageFile(null);
+      setUploadError(null);
+      setUploadSuccess(Boolean(test.image));
     } else {
       // Default Add Test form state
       setForm({
@@ -125,30 +134,65 @@ export default function DiagnosticTestFormModal({
         images: []
       });
       setImageUrlInput('');
+      setImageFile(null);
+      setUploadError(null);
+      setUploadSuccess(false);
     }
+    setIsUploading(false);
+    setIsSubmitting(false);
   }, [test, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 8 * 1024 * 1024) {
-        addToast('Image size should be under 8MB', 'error');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result;
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      addToast('Image size should be under 10MB', 'error');
+      return;
+    }
+
+    if (!file.type.startsWith('image/') && !['jpg', 'jpeg', 'png', 'webp'].some(ext => file.name.toLowerCase().endsWith(ext))) {
+      addToast('Please upload a valid image file (JPG, PNG, WebP)', 'error');
+      return;
+    }
+
+    // Immediate temporary preview so the user sees instant UI update
+    const localBlob = URL.createObjectURL(file);
+    setImageFile(file);
+    setUploadError(null);
+    setUploadSuccess(false);
+    setIsUploading(true);
+
+    setForm((prev) => ({
+      ...prev,
+      image: localBlob,
+      images: [localBlob]
+    }));
+
+    // Upload directly to Supabase Storage ('lab-tests' bucket)
+    try {
+      const uploadRes = await uploadLabTestImage(file, form.name || 'test');
+      setIsUploading(false);
+
+      if (uploadRes.success && uploadRes.publicUrl) {
+        setUploadSuccess(true);
         setForm((prev) => ({
           ...prev,
-          image: result,
-          images: prev.images?.length > 0 ? [result, ...prev.images.slice(1)] : [result]
+          image: uploadRes.publicUrl,
+          images: [uploadRes.publicUrl]
         }));
-        setImageUrlInput('');
-        addToast('Diagnostic test image uploaded successfully!', 'success');
-      };
-      reader.readAsDataURL(file);
+        setImageUrlInput(uploadRes.publicUrl);
+        addToast('Diagnostic test image uploaded to Supabase Storage!', 'success');
+      } else {
+        setUploadError(uploadRes.error || 'Failed to upload to Supabase Storage');
+        addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "lab-tests" bucket exists.`, 'error');
+      }
+    } catch (err) {
+      setIsUploading(false);
+      setUploadError(err.message || 'Upload exception');
+      addToast(`Image upload failed: ${err.message}`, 'error');
     }
   };
 
@@ -158,15 +202,22 @@ export default function DiagnosticTestFormModal({
       addToast('Please enter a valid image URL', 'error');
       return;
     }
+    setImageFile(null);
+    setUploadError(null);
+    setUploadSuccess(true);
     setForm((prev) => ({
       ...prev,
       image: trimmed,
-      images: prev.images?.length > 0 ? [trimmed, ...prev.images.slice(1)] : [trimmed]
+      images: [trimmed]
     }));
     addToast('Test image URL applied!', 'success');
   };
 
   const handleRemoveImage = () => {
+    setImageFile(null);
+    setUploadError(null);
+    setUploadSuccess(false);
+    setIsUploading(false);
     setForm((prev) => ({
       ...prev,
       image: '',
@@ -198,12 +249,25 @@ export default function DiagnosticTestFormModal({
     setForm((prev) => ({ ...prev, mrp: newMrp, discountPercent: disc }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
       addToast('Please enter diagnostic test name', 'error');
       return;
     }
+
+    if (isUploading) {
+      addToast('Please wait for the image upload to finish before saving', 'warning');
+      return;
+    }
+
+    // Requirement 8: Handle upload failures properly and do not save with broken/blob URL
+    if (uploadError && form.image && form.image.startsWith('blob:')) {
+      addToast('Image upload failed. Please re-upload or remove the image before saving.', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const parsedParams = form.parametersText
       .split(',')
@@ -219,6 +283,15 @@ export default function DiagnosticTestFormModal({
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
+
+    // Requirement 7: When editing, retain existing image unless a new image is uploaded
+    // Requirement 9: If a lab test has no uploaded image, leave blank (do not use dummy image)
+    let finalImage = form.image;
+    if (!imageFile && isEdit) {
+      finalImage = form.image || test?.image || '';
+    } else if (form.image && form.image.startsWith('blob:') && !uploadSuccess) {
+      finalImage = '';
+    }
 
     const payload = {
       ...(test || {}),
@@ -242,14 +315,20 @@ export default function DiagnosticTestFormModal({
       preparation: parsedPrep.length > 0 ? parsedPrep : ['No special preparation required'],
       sampleCollection: form.collectionMode,
       supportsLabVisit: Boolean(form.supportsLabVisit),
-      image: form.image || '',
-      images: form.images?.length > 0 ? form.images : (form.image ? [form.image] : [])
+      image: finalImage || '',
+      images: finalImage ? [finalImage] : []
     };
 
-    if (onSave) {
-      onSave(payload);
+    try {
+      if (onSave) {
+        await onSave(payload);
+      }
+      setIsSubmitting(false);
+      onClose();
+    } catch (saveErr) {
+      setIsSubmitting(false);
+      addToast(`Error saving test: ${saveErr.message}`, 'error');
     }
-    onClose();
   };
 
   return (
@@ -302,13 +381,24 @@ export default function DiagnosticTestFormModal({
               
               {/* Main Image Upload Box */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1.5">
-                  Lab Test Image
+                <label className="block text-xs font-bold text-slate-800 mb-1.5 flex items-center justify-between">
+                  <span>Lab Test Image</span>
+                  {uploadSuccess && (
+                    <span className="text-[10px] font-semibold text-emerald-600 flex items-center gap-1 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Cloud Saved
+                    </span>
+                  )}
                 </label>
                 <div className="relative border-2 border-dashed border-teal-300/80 rounded-2xl bg-teal-50/20 p-4 text-center hover:bg-teal-50/40 transition group">
                   {form.image ? (
                     <div className="space-y-3">
-                      <div className="w-full h-40 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] border border-slate-100 flex items-center justify-center p-3 overflow-hidden shadow-inner">
+                      <div className="w-full h-40 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] border border-slate-100 flex items-center justify-center p-3 overflow-hidden shadow-inner relative">
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-white/80 backdrop-blur-2xs flex flex-col items-center justify-center z-10 gap-2">
+                            <Loader2 className="w-6 h-6 text-[#14B8A6] animate-spin" />
+                            <span className="text-xs font-bold text-slate-700">Uploading to Storage...</span>
+                          </div>
+                        )}
                         <img 
                           src={form.image} 
                           alt="Test preview" 
@@ -319,7 +409,8 @@ export default function DiagnosticTestFormModal({
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          disabled={isUploading}
+                          className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50"
                         >
                           <Upload className="w-3.5 h-3.5" />
                           <span>Change Image</span>
@@ -327,7 +418,8 @@ export default function DiagnosticTestFormModal({
                         <button
                           type="button"
                           onClick={handleRemoveImage}
-                          className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                          disabled={isUploading}
+                          className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           <span>Remove</span>
@@ -346,10 +438,20 @@ export default function DiagnosticTestFormModal({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#007A64] hover:bg-[#00604e] text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                        disabled={isUploading}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#007A64] hover:bg-[#00604e] text-white text-xs font-bold transition shadow-sm cursor-pointer disabled:opacity-50"
                       >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Upload Image</span>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Image</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
@@ -364,6 +466,13 @@ export default function DiagnosticTestFormModal({
                   />
                 </div>
 
+                {uploadError && (
+                  <div className="mt-2 p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-[11px] flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
+                    <span>{uploadError}</span>
+                  </div>
+                )}
+
                 {/* Optional Image URL Input */}
                 <div className="mt-2.5">
                   <div className="flex items-center gap-1.5">
@@ -371,7 +480,7 @@ export default function DiagnosticTestFormModal({
                       type="text"
                       value={imageUrlInput}
                       onChange={(e) => setImageUrlInput(e.target.value)}
-                      placeholder="Or paste image URL (e.g. /lab-tests/cbc.png)"
+                      placeholder="Or paste permanent image URL"
                       className="flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] focus:outline-none focus:border-[#14B8A6]"
                     />
                     <button
@@ -448,38 +557,25 @@ export default function DiagnosticTestFormModal({
 
                   {/* Description */}
                   <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">
-                    {form.description || 'Clinical diagnostic investigation.'}
+                    {form.description || 'Clinical diagnostic assay evaluating blood parameters with precision.'}
                   </p>
 
-                  {/* Badges */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-md font-medium">
-                      {form.sampleType}
-                    </span>
-                    <span className="text-[9px] bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded-md font-medium flex items-center gap-0.5">
-                      <Clock className="w-2.5 h-2.5" />
-                      <span>{form.tat}</span>
-                    </span>
-                  </div>
-
                   {/* Price Row */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-black text-[#0B1E3F]">
-                        ₹{Number(form.price || 399).toLocaleString()}
-                      </span>
-                      <span className="text-[11px] text-slate-400 line-through">
-                        ₹{Number(form.mrp || 499).toLocaleString()}
-                      </span>
-                      <span className="px-1.5 py-0.2 rounded bg-[#E8F8EE] text-[#16A34A] text-[9px] font-bold">
-                        {form.discountPercent || 20}% OFF
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <span className="text-sm font-black text-[#0B1E3F]">
+                      ₹{parseFloat(form.price || 0).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-slate-400 line-through font-normal">
+                      ₹{parseFloat(form.mrp || 0).toLocaleString()}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[9px] font-bold ml-auto">
+                      {form.discountPercent}% OFF
+                    </span>
                   </div>
 
-                  {/* Button */}
-                  <div className="w-full py-1.5 border border-[#007A64] text-[#007A64] rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5">
-                    <ShoppingCart className="w-3 h-3" />
+                  {/* Add to Cart Button */}
+                  <div className="w-full py-1.5 border border-[#007A64] text-[#007A64] rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 bg-white">
+                    <ShoppingCart className="w-3.5 h-3.5" />
                     <span>Add to Cart</span>
                   </div>
                 </div>
@@ -487,13 +583,13 @@ export default function DiagnosticTestFormModal({
 
             </div>
 
-            {/* RIGHT COLUMN: Form Fields & Details (Span 8) */}
-            <div className="lg:col-span-8 space-y-4 text-xs">
+            {/* RIGHT COLUMN: Clinical Specifications & Configuration (Span 8) */}
+            <div className="lg:col-span-8 space-y-4">
               
               {/* Row 1: Test Name & Category */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
-                <div className="sm:col-span-8">
-                  <label className="block text-slate-700 font-bold mb-1">
+                <div className="sm:col-span-7 space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
                     Diagnostic Test Name <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -501,148 +597,155 @@ export default function DiagnosticTestFormModal({
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Complete Blood Count (CBC) or Lipid Profile"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] focus:ring-2 focus:ring-[#14B8A6]/10 text-xs"
+                    placeholder="e.g. Complete Blood Count (CBC)"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition"
                   />
                 </div>
-                <div className="sm:col-span-4">
-                  <label className="block text-slate-700 font-bold mb-1">
+                
+                <div className="sm:col-span-5 space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
                     Category <span className="text-rose-500">*</span>
                   </label>
-                  <select
-                    value={form.categoryName}
-                    onChange={(e) => setForm({ ...form, categoryName: e.target.value })}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs cursor-pointer"
-                  >
-                    {CATEGORY_OPTIONS.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={form.categoryName}
+                      onChange={(e) => setForm({ ...form, categoryName: e.target.value })}
+                      className="w-full appearance-none px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition pr-8 cursor-pointer"
+                    >
+                      {CATEGORY_OPTIONS.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
               </div>
 
-              {/* Row 2: Specimen / Sample Type & Turnaround Time */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
+              {/* Row 2: Sample Type & Turnaround Time */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
+                <div className="sm:col-span-6 space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
                     Specimen / Sample Type <span className="text-rose-500">*</span>
                   </label>
-                  <select
-                    value={form.sampleType}
-                    onChange={(e) => setForm({ ...form, sampleType: e.target.value })}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs cursor-pointer"
-                  >
-                    {SAMPLE_TYPE_OPTIONS.map((opt) => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={form.sampleType}
+                      onChange={(e) => setForm({ ...form, sampleType: e.target.value })}
+                      className="w-full appearance-none px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition pr-8 cursor-pointer"
+                    >
+                      {SAMPLE_TYPE_OPTIONS.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
-                    Turnaround Time (TAT) <span className="text-rose-500">*</span>
+
+                <div className="sm:col-span-6 space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
+                    Report Turnaround Time (TAT)
                   </label>
                   <input
                     type="text"
-                    required
                     value={form.tat}
                     onChange={(e) => setForm({ ...form, tat: e.target.value })}
                     placeholder="e.g. 6–12 Hours or 24 Hours"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition"
                   />
                 </div>
               </div>
 
-              {/* Row 3: Pricing & Discounts */}
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
+              {/* Row 3: Pricing (Price, MRP, Discount) */}
+              <div className="grid grid-cols-3 gap-3 p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-700">
                     Selling Price (₹) <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    required
+                    min="0"
+                    step="1"
                     value={form.price}
                     onChange={(e) => handlePriceChange(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-black focus:outline-none focus:border-[#14B8A6] text-xs"
                   />
                 </div>
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
-                    MRP (₹) <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    required
-                    value={form.mrp}
-                    onChange={(e) => handleMrpChange(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">
-                    Discount (%)
+
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-700">
+                    MRP / List Price (₹)
                   </label>
                   <input
                     type="number"
                     min="0"
-                    max="100"
-                    value={form.discountPercent}
-                    onChange={(e) => setForm({ ...form, discountPercent: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
+                    step="1"
+                    value={form.mrp}
+                    onChange={(e) => handleMrpChange(e.target.value)}
+                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-[#14B8A6] text-xs"
                   />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-700">
+                    Discount (%)
+                  </label>
+                  <div className="flex items-center h-[34px] px-3 bg-white border border-slate-200 rounded-xl font-bold text-xs text-emerald-600">
+                    {form.discountPercent}% OFF
+                  </div>
                 </div>
               </div>
 
               {/* Row 4: Clinical Description */}
-              <div>
-                <label className="block text-slate-700 font-bold mb-1">
-                  Clinical Description & Summary <span className="text-rose-500">*</span>
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-800">
+                  Clinical Overview & Description <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   rows={2}
                   required
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Provide clinical summary of what this diagnostic test measures..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:bg-white focus:border-[#14B8A6] resize-none text-xs"
+                  placeholder="Provide an overview of the test, its medical significance, and clinical evaluation utility."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs leading-relaxed transition"
                 />
               </div>
 
-              {/* Row 5: Parameters Tested */}
-              <div>
-                <label className="block text-slate-700 font-bold mb-1">
-                  Parameters Tested (Comma Separated)
-                </label>
+              {/* Row 5: Biomarker Parameters Included */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-800">
+                    Biomarker Parameters (Comma Separated)
+                  </label>
+                  <span className="text-[10px] text-slate-400">Separated by comma</span>
+                </div>
                 <input
                   type="text"
                   value={form.parametersText}
                   onChange={(e) => setForm({ ...form, parametersText: e.target.value })}
-                  placeholder="e.g. Hemoglobin, Total WBC, RBC Count, Platelets, Hematocrit"
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
+                  placeholder="e.g. Hemoglobin, Total WBC, RBC, Platelet Count, Hematocrit"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition"
                 />
               </div>
 
-              {/* Row 6: Clinical Purpose / Indications */}
-              <div>
-                <label className="block text-slate-700 font-bold mb-1">
-                  Clinical Purpose & Indications
+              {/* Row 6: Clinical Purpose / Diagnostic Reasons */}
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-800">
+                  Diagnostic Purpose & Reasons
                 </label>
                 <input
                   type="text"
                   value={form.purposeText}
                   onChange={(e) => setForm({ ...form, purposeText: e.target.value })}
-                  placeholder="e.g. Detects anemia, infections, evaluates overall cellular health"
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:bg-white focus:border-[#14B8A6] text-xs"
+                  placeholder="e.g. Detects anemia and infections, Evaluates overall health status"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#14B8A6] focus:bg-white text-xs transition"
                 />
               </div>
 
-              {/* Row 7: Fasting Requirement & Preparation */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                <div className="space-y-1.5">
-                  <span className="block text-slate-700 font-bold">Fasting Requirement</span>
-                  <label className="flex items-center gap-2 cursor-pointer pt-0.5">
+              {/* Row 7: Fasting & Patient Preparation */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80 text-xs">
+                <div className="space-y-1.5 flex flex-col justify-center">
+                  <span className="font-bold text-slate-700">Fasting Requirement</span>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={form.fastingRequired}
@@ -702,16 +805,27 @@ export default function DiagnosticTestFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer"
+              disabled={isSubmitting}
+              className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#00604e] text-white font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer"
+              disabled={isSubmitting || isUploading}
+              className="px-6 py-2.5 rounded-xl bg-[#007A64] hover:bg-[#00604e] text-white font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              <Check className="w-4 h-4 stroke-[2.5]" />
-              <span>{isEdit ? 'Save Changes' : 'Publish Test to Catalog'}</span>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4 stroke-[2.5]" />
+                  <span>{isEdit ? 'Save Changes' : 'Publish Test to Catalog'}</span>
+                </>
+              )}
             </button>
           </div>
         </form>

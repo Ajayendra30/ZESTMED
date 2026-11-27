@@ -2,7 +2,7 @@
 /**
  * ZESTMED CENTRALIZED DIAGNOSTIC LAB TEST SERVICE
  * Synchronizes lab tests between Admin Dashboard (Lab Test Management),
- * User-facing Diagnostic Portal (/lab-tests), and Supabase PostgreSQL.
+ * User-facing Diagnostic Portal (/lab-tests), and Supabase Storage / PostgreSQL.
  * Provides real-time cross-tab & in-page updates on Add, Edit, and Delete.
  */
 
@@ -75,7 +75,8 @@ export function resolveLabTestCategory(categoryInput) {
 }
 
 /**
- * Normalizes a lab test object to guarantee all frontend properties are present and consistent
+ * Normalizes a lab test object to guarantee all frontend properties are present and consistent.
+ * Strictly prevents data: URLs or cross-test image contamination.
  */
 export function normalizeLabTestItem(raw) {
   if (!raw) return null;
@@ -98,9 +99,13 @@ export function normalizeLabTestItem(raw) {
     ? Boolean(raw.fastingRequired) 
     : (String(raw.preparation || '').toLowerCase().includes('fasting'));
 
-  const imageMain = raw.image || raw.imageUrl || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : '');
+  const rawImage = raw.image !== undefined 
+    ? (raw.image || '') 
+    : (raw.imageUrl || raw.image_url || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : ''));
+  // Discard transient blob or giant base64 URLs during normalization to protect state
+  const imageMain = (rawImage && !rawImage.startsWith('data:') && !rawImage.startsWith('blob:')) ? rawImage : '';
   const imagesArray = Array.isArray(raw.images) && raw.images.length > 0 
-    ? raw.images 
+    ? raw.images.filter(img => img && !img.startsWith('data:') && !img.startsWith('blob:'))
     : (imageMain ? [imageMain] : []);
 
   let parameters = [];
@@ -166,7 +171,7 @@ export function normalizeLabTestItem(raw) {
     reviewsCount: String(raw.reviewsCount || '1,250'),
     description: raw.description || `${name} evaluates key clinical biomarkers with NABL certified accuracy.`,
     image: imageMain,
-    images: imagesArray,
+    images: imagesArray.length > 0 ? imagesArray : (imageMain ? [imageMain] : []),
     popularRank: raw.popularRank || 50,
     createdAt: raw.createdAt || new Date().toISOString(),
     updatedAt: raw.updatedAt || new Date().toISOString()
@@ -174,8 +179,101 @@ export function normalizeLabTestItem(raw) {
 }
 
 /**
- * Returns the unified, deduplicated list of all lab tests.
- * Integrates base catalog (212 tests from allLabTestsData.js) with dynamic local storage additions and edits.
+ * Uploads a lab test image to Supabase Storage.
+ * Stores in 'lab-tests' bucket (or fallback 'medicines' bucket under lab-tests/).
+ * Returns the permanent public URL and storage path.
+ */
+export async function uploadLabTestImage(file, testIdentifier = 'lab-test') {
+  if (!file) {
+    return { success: false, error: 'No image file provided for upload.' };
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    return { success: false, error: 'Image file size exceeds the 10MB limit.' };
+  }
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+  const cleanId = String(testIdentifier || 'lab-test')
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 30);
+  const fileName = `${cleanId}-${Date.now()}.${ext}`;
+
+  if (isSupabaseConfigured()) {
+    // 1. Try 'lab-tests' bucket first
+    try {
+      const { data, error } = await supabase.storage
+        .from('lab-tests')
+        .upload(fileName, file, {
+          cacheControl: '31536000',
+          upsert: true,
+          contentType: file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`
+        });
+
+      if (!error && data?.path) {
+        const { data: urlData } = supabase.storage
+          .from('lab-tests')
+          .getPublicUrl(data.path);
+
+        if (urlData?.publicUrl) {
+          return {
+            success: true,
+            publicUrl: urlData.publicUrl,
+            storagePath: data.path
+          };
+        }
+      }
+    } catch (_) {}
+
+    // 2. Try 'medicines' bucket under 'lab-tests/' path as secondary fallback
+    try {
+      const fallbackPath = `lab-tests/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from('medicines')
+        .upload(fallbackPath, file, {
+          cacheControl: '31536000',
+          upsert: true,
+          contentType: file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`
+        });
+
+      if (!error && data?.path) {
+        const { data: urlData } = supabase.storage
+          .from('medicines')
+          .getPublicUrl(data.path);
+
+        if (urlData?.publicUrl) {
+          return {
+            success: true,
+            publicUrl: urlData.publicUrl,
+            storagePath: data.path
+          };
+        }
+      } else if (error) {
+        console.warn('[LabTestService] Supabase Storage upload error:', error);
+        return {
+          success: false,
+          error: error.message || 'Supabase Storage upload failed. Please ensure bucket exists.'
+        };
+      }
+    } catch (storageException) {
+      console.warn('[LabTestService] Supabase Storage exception:', storageException);
+      return {
+        success: false,
+        error: storageException.message || 'Supabase Storage exception occurred.'
+      };
+    }
+  }
+
+  return {
+    success: false,
+    error: 'Supabase storage is not configured or unavailable.'
+  };
+}
+
+/**
+ * Returns the unified, deduplicated list of all lab tests synchronously from memory/localStorage.
+ * Base catalog contains 212 tests with independent image mapping (no two tests share an image).
  */
 export function getSynchronizedLabTests() {
   let deletedSet = new Set();
@@ -216,7 +314,7 @@ export function getSynchronizedLabTests() {
     }
   });
 
-  // 2. Overlay / prepend dynamic stored items (allows additions, edits, and image updates)
+  // 2. Overlay dynamic stored items (additions, edits, custom tests)
   storedItems.forEach((norm) => {
     if (!norm) return;
     const nameKey = norm.name.toLowerCase().trim();
@@ -226,23 +324,106 @@ export function getSynchronizedLabTests() {
     }
   });
 
-  const merged = Array.from(testMap.values());
+  return Array.from(testMap.values());
+}
 
-  // Save back normalized snapshot so all views read the identical verified list
+/**
+ * Asynchronously fetches all diagnostic tests from Supabase PostgreSQL,
+ * merges them with the local catalog, persists clean permanent URLs,
+ * and broadcasts update events so all pages re-render with the saved images.
+ */
+export async function fetchSynchronizedLabTests() {
+  const currentList = getSynchronizedLabTests();
+  let dbTests = [];
+
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('diagnostic_tests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        dbTests = data.map((row) => normalizeLabTestItem({
+          id: row.id || row.test_code,
+          name: row.name,
+          category: row.category,
+          categoryName: resolveLabTestCategory(row.category).name,
+          description: row.description,
+          preparation: row.preparation,
+          sampleType: row.sample_type || 'Blood (2–3 ml)',
+          turnaroundTime: row.turnaround_time || '6–12 Hours',
+          reportTime: row.turnaround_time || '6–12 Hours',
+          price: parseFloat(row.price) || 0,
+          discountPercent: parseFloat(row.discount_percentage) || 20,
+          mrp: parseFloat(row.mrp || (row.discounted_price ? (row.price * (1 + (row.discount_percentage || 0) / 100)) : row.price * 1.25)) || 0,
+          fastingRequired: Boolean(row.preparation?.toLowerCase().includes('fasting')),
+          parameters: row.parameters 
+            ? (typeof row.parameters === 'string' ? row.parameters.split(',').map(s => s.trim()).filter(Boolean) : row.parameters)
+            : [],
+          image: row.image_url || '',
+          images: row.image_url ? [row.image_url] : [],
+          createdAt: row.created_at || new Date().toISOString(),
+          updatedAt: row.updated_at || new Date().toISOString()
+        })).filter(Boolean);
+      }
+    } catch (err) {
+      console.warn('[LabTestService] Failed to query diagnostic_tests from Supabase:', err);
+    }
+  }
+
+  // Merge DB records on top of existing list
+  const mergedMap = new Map();
+  currentList.forEach((test) => {
+    mergedMap.set(test.name.toLowerCase().trim(), test);
+  });
+
+  dbTests.forEach((dbTest) => {
+    const key = dbTest.name.toLowerCase().trim();
+    const existing = mergedMap.get(key);
+    if (!existing) {
+      mergedMap.set(key, dbTest);
+    } else {
+      mergedMap.set(key, {
+        ...existing,
+        ...dbTest,
+        // Retain verified image URL if provided
+        image: dbTest.image || existing.image || '',
+        images: dbTest.images?.length > 0 ? dbTest.images : (existing.images || [])
+      });
+    }
+  });
+
+  const finalMerged = Array.from(mergedMap.values());
+
+  // Save sanitized snapshot back to localStorage (never storing data: or blob: URLs)
   try {
-    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(merged));
-    // Also keep legacy key synced for compatibility
-    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(merged));
-  } catch (_) {}
+    const sanitizedToStore = finalMerged.map((item) => ({
+      ...item,
+      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+    }));
+    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
+    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
+  } catch (storageErr) {
+    console.warn('[LabTestService] LocalStorage quota limit reached:', storageErr);
+  }
 
-  return merged;
+  // Broadcast real-time update
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('zestmed_lab_tests_updated', {
+      detail: { action: 'fetch', count: finalMerged.length }
+    }));
+  }
+
+  return finalMerged;
 }
 
 /**
  * Save (create or update) a diagnostic lab test record.
  * Broadcasts real-time events to all active views (Admin Dashboard & Lab Test portal).
  */
-export function saveLabTest(testData) {
+export async function saveLabTest(testData) {
   if (!testData || !testData.name) {
     throw new Error('Test name is required');
   }
@@ -275,6 +456,11 @@ export function saveLabTest(testData) {
   let updatedList = [];
   if (existingIndex >= 0) {
     updatedList = [...currentList];
+    // Requirement 7: When editing, retain existing image unless a new image is uploaded
+    if (!normalized.image && updatedList[existingIndex].image) {
+      normalized.image = updatedList[existingIndex].image;
+      normalized.images = updatedList[existingIndex].images;
+    }
     updatedList[existingIndex] = { ...updatedList[existingIndex], ...normalized };
   } else {
     updatedList = [normalized, ...currentList];
@@ -291,9 +477,15 @@ export function saveLabTest(testData) {
     }
   });
 
+  // Save sanitized snapshot (no data: or blob: URLs) to localStorage
   try {
-    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(dedupedList));
-    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(dedupedList));
+    const sanitizedToStore = dedupedList.map((item) => ({
+      ...item,
+      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+    }));
+    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
+    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
   } catch (_) {}
 
   // Broadcast real-time update events
@@ -304,26 +496,49 @@ export function saveLabTest(testData) {
     window.dispatchEvent(new Event('storage'));
   }
 
-  // Background Supabase sync if configured
+  // Background Supabase PostgreSQL sync
   if (isSupabaseConfigured()) {
     try {
-      supabase
-        .from('test_catalog')
-        .upsert({
-          name: normalized.name,
-          category: normalized.category,
-          sample_type: normalized.sampleType,
-          tat: normalized.turnaroundTime,
-          price: normalized.price,
-          mrp: normalized.mrp,
-          fasting_required: normalized.fastingRequired,
-          description: normalized.description,
-          image_url: normalized.image && !normalized.image.startsWith('data:') ? normalized.image : null,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'name' })
-        .then(() => {})
-        .catch(() => {});
-    } catch (_) {}
+      const permanentImageUrl = normalized.image && !normalized.image.startsWith('data:') && !normalized.image.startsWith('blob:')
+        ? normalized.image
+        : null;
+
+      const dbPayload = {
+        test_code: normalized.id.startsWith('test-') ? normalized.id : `test-${normalized.id}`,
+        name: normalized.name,
+        category: normalized.category,
+        description: normalized.description,
+        preparation: Array.isArray(normalized.preparation) ? normalized.preparation.join(', ') : normalized.preparation,
+        sample_type: normalized.sampleType,
+        turnaround_time: normalized.turnaroundTime,
+        price: normalized.price,
+        discount_percentage: normalized.discountPercent,
+        discounted_price: normalized.price,
+        parameters: Array.isArray(normalized.parameters) ? normalized.parameters.join(', ') : normalized.parameters,
+        image_url: permanentImageUrl,
+        updated_at: new Date().toISOString()
+      };
+
+      // Check if test exists by name
+      const { data: existingRows } = await supabase
+        .from('diagnostic_tests')
+        .select('id')
+        .ilike('name', normalized.name)
+        .limit(1);
+
+      if (existingRows && existingRows.length > 0) {
+        await supabase
+          .from('diagnostic_tests')
+          .update(dbPayload)
+          .eq('id', existingRows[0].id);
+      } else {
+        await supabase
+          .from('diagnostic_tests')
+          .insert([{ ...dbPayload, created_at: new Date().toISOString() }]);
+      }
+    } catch (dbErr) {
+      console.warn('[LabTestService] Supabase sync notice:', dbErr);
+    }
   }
 
   return normalized;
@@ -333,7 +548,7 @@ export function saveLabTest(testData) {
  * Delete a diagnostic lab test by ID or Name.
  * Broadcasts real-time events to all active views.
  */
-export function deleteLabTest(idOrName) {
+export async function deleteLabTest(idOrName) {
   if (!idOrName) return false;
 
   const targetStr = String(idOrName).toLowerCase().trim();
@@ -348,8 +563,13 @@ export function deleteLabTest(idOrName) {
   );
 
   try {
-    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(updatedList));
-    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(updatedList));
+    const sanitizedToStore = updatedList.map((item) => ({
+      ...item,
+      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+    }));
+    localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
+    localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
 
     // Record into deleted blacklist so base mock catalogue doesn't recreate it on refresh
     const rawDel = localStorage.getItem(DELETED_LAB_TESTS_KEY);
@@ -372,12 +592,10 @@ export function deleteLabTest(idOrName) {
   // Background Supabase deletion attempt
   if (isSupabaseConfigured() && toDelete) {
     try {
-      supabase
-        .from('test_catalog')
+      await supabase
+        .from('diagnostic_tests')
         .delete()
-        .ilike('name', toDelete.name)
-        .then(() => {})
-        .catch(() => {});
+        .ilike('name', toDelete.name);
     } catch (_) {}
   }
 

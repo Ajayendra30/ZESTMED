@@ -34,17 +34,13 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
   if (!test) return null;
 
   // Setup gallery images tailored for the test
-  const isCbc = test.id === 'test-cbc' || (test.name && test.name.includes('CBC'));
+  const isCbc = test.id === 'test-cbc';
   const cbcDefaultImages = [
-    '/lab-tests/cbc-modal-main.png',
-    '/lab-tests/cbc-modal-thumb2.png',
-    '/lab-tests/cbc-modal-thumb3.png'
+    '/lab-tests/cbc.png'
   ];
 
   const cbcThumbnails = [
-    '/lab-tests/cbc-modal-thumb1.png',
-    '/lab-tests/cbc-modal-thumb2.png',
-    '/lab-tests/cbc-modal-thumb3.png'
+    '/lab-tests/cbc.png'
   ];
 
   const imagesList = test.images && test.images.length > 0 

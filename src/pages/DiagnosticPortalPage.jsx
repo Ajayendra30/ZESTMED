@@ -12,7 +12,7 @@ import {
   Calendar, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { ALL_LAB_TESTS_DATA } from '../mock-data/allLabTestsData';
-import { getSynchronizedLabTests } from '../services/labTestService';
+import { getSynchronizedLabTests, fetchSynchronizedLabTests } from '../services/labTestService';
 
 const SIDEBAR_CATEGORIES = [
   { id: 'all', name: 'All Tests' },
@@ -51,8 +51,15 @@ export default function DiagnosticPortalPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [testsList, setTestsList] = useState(() => getSynchronizedLabTests());
 
-  // Real-time synchronization across Admin Dashboard actions
+  // Real-time synchronization across Admin Dashboard actions and Supabase
   useEffect(() => {
+    // Initial fetch to sync with Supabase PostgreSQL
+    fetchSynchronizedLabTests().then((synced) => {
+      if (Array.isArray(synced) && synced.length > 0) {
+        setTestsList(synced);
+      }
+    });
+
     const handleSync = () => {
       setTestsList(getSynchronizedLabTests());
     };
