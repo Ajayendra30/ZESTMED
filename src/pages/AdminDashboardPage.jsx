@@ -117,8 +117,10 @@ import OrderInvoiceModal from '../components/OrderInvoiceModal';
 import EditDiagnosticTestModal from '../components/EditDiagnosticTestModal';
 import AddAdminModal from '../components/AddAdminModal';
 import EditAdminModal from '../components/EditAdminModal';
+import AddMedicineModal from '../components/AddMedicineModal';
 import EditMedicineModal from '../components/EditMedicineModal';
 import AddCategoryModal from '../components/AddCategoryModal';
+import { getSynchronizedMedicines, saveMedicine, deleteMedicine } from '../services/medicineService';
 import AuditPrescriptionModal from '../components/AuditPrescriptionModal';
 import NotificationPopover from '../components/NotificationPopover';
 import { playNotificationSound } from '../utils/notificationSound';
@@ -384,21 +386,21 @@ export default function AdminDashboardPage() {
   const [viewingDetailItem, setViewingDetailItem] = useState(null);
   const [viewingOrderModal, setViewingOrderModal] = useState(null);
   const [viewingReportBooking, setViewingReportBooking] = useState(null);
+  const [isAddMedicineModalOpen, setIsAddMedicineModalOpen] = useState(false);
 
-  const [adminMedicines, setAdminMedicines] = useState(() => {
-    try {
-      const saved = localStorage.getItem('zestmed_inventory_medicines');
-      return saved ? JSON.parse(saved) : initialInventoryMedicines;
-    } catch {
-      return initialInventoryMedicines;
-    }
-  });
+  const [adminMedicines, setAdminMedicines] = useState(() => getSynchronizedMedicines());
 
   useEffect(() => {
-    try {
-      localStorage.setItem('zestmed_inventory_medicines', JSON.stringify(adminMedicines));
-    } catch (_) {}
-  }, [adminMedicines]);
+    const handleSync = () => {
+      setAdminMedicines(getSynchronizedMedicines());
+    };
+    window.addEventListener('zestmed_medicines_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('zestmed_medicines_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   // Clean zero baseline version key to purge existing test/mock data
   const ADMIN_CLEAN_VERSION_KEY = 'zestmed_admin_clean_baseline_v6';
@@ -2704,7 +2706,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setIsUploadInventoryOpen(true); setIsHeaderQuickActionsOpen(false); }}
+                    onClick={() => { setIsAddMedicineModalOpen(true); setIsHeaderQuickActionsOpen(false); }}
                     className="w-full text-left px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                   >
                     <Pill className="w-4 h-4 text-emerald-600" />
@@ -3439,7 +3441,7 @@ export default function AdminDashboardPage() {
 
                   <button
                     type="button"
-                    onClick={() => setIsUploadInventoryOpen(true)}
+                    onClick={() => setIsAddMedicineModalOpen(true)}
                     className="bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-100/80 rounded-2xl p-3 flex flex-col items-center justify-center text-center transition cursor-pointer group shadow-2xs"
                   >
                     <div className="w-10 h-10 rounded-xl bg-white text-emerald-600 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform mb-1.5">
@@ -4588,7 +4590,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveMenu('medicines-add')}
+                    onClick={() => setIsAddMedicineModalOpen(true)}
                     className="bg-[#14B8A6] hover:bg-[#0d9488] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-2 shrink-0 self-start sm:self-auto cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
@@ -4618,11 +4620,14 @@ export default function AdminDashboardPage() {
                   >
                     <option value="all">All Categories ({adminMedicines.length})</option>
                     <option value="General Medicines">General Medicines</option>
+                    <option value="Pain Relief & Fever">Pain Relief & Fever</option>
                     <option value="Diabetes Care">Diabetes Care</option>
                     <option value="Cardiac & BP">Cardiac & BP</option>
                     <option value="Vitamins & Supplements">Vitamins & Supplements</option>
                     <option value="Antibiotics">Antibiotics</option>
                     <option value="Digestive Health">Digestive Health</option>
+                    <option value="Skin Care">Skin Care</option>
+                    <option value="Respiratory Care">Respiratory Care</option>
                   </select>
                 </div>
               </div>
@@ -4644,37 +4649,67 @@ export default function AdminDashboardPage() {
                     <tbody className="divide-y divide-slate-100">
                       {adminMedicines
                         .filter((m) => {
-                          if (medicineFilterCategory !== 'all' && m.categoryName !== medicineFilterCategory) return false;
+                          if (medicineFilterCategory !== 'all') {
+                            const catName = (m.categoryName || m.categoryLong || '').toLowerCase();
+                            const catSlug = (m.category || '').toLowerCase();
+                            const filterLower = medicineFilterCategory.toLowerCase();
+                            if (!catName.includes(filterLower) && !catSlug.includes(filterLower) && m.categoryName !== medicineFilterCategory) {
+                              return false;
+                            }
+                          }
                           const q = (medicineSearchQuery || searchQuery).trim().toLowerCase();
                           if (!q) return true;
                           return (
                             (m.name || '').toLowerCase().includes(q) ||
                             (m.genericName || '').toLowerCase().includes(q) ||
+                            (m.composition || '').toLowerCase().includes(q) ||
                             (m.categoryName || '').toLowerCase().includes(q) ||
                             (m.batchNo || '').toLowerCase().includes(q)
                           );
                         })
                         .map((m) => (
                         <tr key={m.id} className="hover:bg-slate-50/50 transition">
-                          <td className="py-3 px-4 font-bold text-slate-900">{m.name}</td>
-                          <td className="py-3 px-4 text-slate-600">{m.genericName}</td>
+                          <td className="py-3 px-4 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              {m.image ? (
+                                <img
+                                  src={m.image}
+                                  alt={m.name}
+                                  className="w-10 h-10 object-contain rounded-lg border border-slate-100 bg-white p-0.5 shrink-0"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    const nextEl = e.currentTarget.nextElementSibling;
+                                    if (nextEl) nextEl.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 text-[#14B8A6] ${m.image ? 'hidden' : ''}`}>
+                                <Pill className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-bold text-slate-900 leading-tight truncate">{m.name}</div>
+                                <div className="text-[11px] text-slate-400 font-normal truncate">{m.packSize || m.pack || 'Standard Pack'}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-slate-600 max-w-[200px] truncate">{m.genericName || m.composition || '—'}</td>
                           <td className="py-3 px-4 text-slate-700">
-                            <span className="bg-slate-100 px-2 py-0.5 rounded-md font-medium">{m.categoryName}</span>
+                            <span className="bg-slate-100 px-2 py-0.5 rounded-md font-medium">{m.categoryName || m.category || 'General'}</span>
                           </td>
                           <td className="py-3 px-4 text-center font-mono">
                             <span className={`px-2 py-0.5 rounded-full font-bold ${
-                              m.stock <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
+                              (m.stock || 0) <= (m.threshold || 50) ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'
                             }`}>
-                              {m.stock} units
+                              {m.stock || 0} units
                             </span>
                           </td>
                           <td className="py-3 px-4 font-black text-slate-900">₹{m.price}</td>
-                          <td className="py-3 px-4 text-slate-500 font-mono">{m.batchNo || 'B-902'} • {m.expiry}</td>
-                          <td className="py-3 px-4 text-right">
+                          <td className="py-3 px-4 text-slate-500 font-mono">{m.batchNo || 'B-902'} • {m.expiry || 'Dec 2027'}</td>
+                          <td className="py-3 px-4 text-right whitespace-nowrap">
                             <button
                               type="button"
                               onClick={() => setEditingMedicine(m)}
-                              className="px-2 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded-lg text-xs font-bold transition mr-1.5 cursor-pointer"
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 rounded-lg text-xs font-bold transition mr-1.5 cursor-pointer"
                               title="Edit Medicine Details"
                             >
                               Edit
@@ -4682,8 +4717,10 @@ export default function AdminDashboardPage() {
                             <button
                               type="button"
                               onClick={() => {
+                                const updated = { ...m, stock: (Number(m.stock) || 0) + 100 };
+                                saveMedicine(updated);
                                 setAdminMedicines((prev) =>
-                                  prev.map((it) => (it.id === m.id ? { ...it, stock: it.stock + 100 } : it))
+                                  prev.map((it) => (it.id === m.id ? updated : it))
                                 );
                                 addToast(`Restocked +100 units for ${m.name}`, 'success');
                               }}
@@ -4694,10 +4731,13 @@ export default function AdminDashboardPage() {
                             <button
                               type="button"
                               onClick={() => {
-                                setAdminMedicines((prev) => prev.filter((it) => it.id !== m.id));
-                                addToast(`Removed ${m.name} from active inventory`, 'info');
+                                if (window.confirm(`Are you sure you want to remove "${m.name}" from active inventory? It will also be removed from the Medicine Store.`)) {
+                                  deleteMedicine(m.id || m.name);
+                                  setAdminMedicines((prev) => prev.filter((it) => it.id !== m.id && it.name !== m.name));
+                                  addToast(`Removed ${m.name} from active inventory`, 'info');
+                                }
                               }}
-                              className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                              className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer inline-flex items-center justify-center align-middle"
                               title="Delete Item"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -4813,8 +4853,9 @@ export default function AdminDashboardPage() {
                     expiry: newMedForm.expiry || 'Dec 2027',
                     batchNo: `B-${Math.floor(100 + Math.random() * 900)}`
                   };
-                  setAdminMedicines((prev) => [newMed, ...prev]);
-                  addToast(`Medicine ${newMed.name} added to central inventory!`, 'success');
+                  const saved = saveMedicine(newMed);
+                  setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
+                  addToast(`Medicine ${saved.name} added to central inventory!`, 'success');
                   setActiveMenu('medicines');
                 }}
                 className="space-y-6"
@@ -6608,6 +6649,18 @@ export default function AdminDashboardPage() {
         />
       )}
 
+      {/* Add Pharmacy Medicine Modal */}
+      <AddMedicineModal
+        isOpen={isAddMedicineModalOpen}
+        onClose={() => setIsAddMedicineModalOpen(false)}
+        onAddMedicine={(newMed) => {
+          const saved = saveMedicine(newMed);
+          setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
+          setIsAddMedicineModalOpen(false);
+          addToast(`Medicine ${saved.name} added to inventory!`, 'success');
+        }}
+      />
+
       {/* Edit Pharmacy Medicine Modal */}
       {editingMedicine && (
         <EditMedicineModal
@@ -6615,8 +6668,10 @@ export default function AdminDashboardPage() {
           onClose={() => setEditingMedicine(null)}
           medicine={editingMedicine}
           onSaveMedicine={(updated) => {
-            setAdminMedicines((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
+            const saved = saveMedicine(updated);
+            setAdminMedicines((prev) => prev.map((m) => (m.id === saved.id ? saved : m)));
             setEditingMedicine(null);
+            addToast(`Medicine ${saved.name} updated successfully!`, 'success');
           }}
         />
       )}

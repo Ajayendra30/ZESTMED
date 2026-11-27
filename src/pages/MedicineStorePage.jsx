@@ -6,12 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { enforceAuth } from '../utils/authGuard';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { ALL_MEDICINES_DATA } from '../mock-data/allMedicinesData';
+import { getSynchronizedMedicines } from '../services/medicineService';
 import { 
   Search, ShieldCheck, Truck, RotateCcw, Tag,
   ShoppingCart, SlidersHorizontal, ArrowLeft, ArrowRight, Check
 } from 'lucide-react';
-
-const STORE_MEDICINES = ALL_MEDICINES_DATA;
 
 const SIDEBAR_CATEGORIES = [
   { id: 'pain', name: 'Pain Relief' },
@@ -31,12 +30,27 @@ export default function MedicineStorePage() {
   const { addItem } = useCart();
   const { addToast } = useToast();
 
+  const [medicinesList, setMedicinesList] = useState(() => getSynchronizedMedicines());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceMax, setPriceMax] = useState(2000);
   const [stockFilter, setStockFilter] = useState('in_stock');
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Real-time synchronization across Admin Dashboard actions
+  useEffect(() => {
+    const handleSync = () => {
+      setMedicinesList(getSynchronizedMedicines());
+    };
+
+    window.addEventListener('zestmed_medicines_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('zestmed_medicines_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   const toggleCategory = (catId) => {
     setSelectedCategories((prev) =>
@@ -72,16 +86,16 @@ export default function MedicineStorePage() {
     addItem(itemData, 'medicine');
   };
 
-  // Deduplicate STORE_MEDICINES so each medicine name appears strictly once
+  // Deduplicate medicinesList so each medicine name appears strictly once
   const uniqueMedicines = useMemo(() => {
     const seen = new Set();
-    return STORE_MEDICINES.filter((item) => {
-      const key = item.name.toLowerCase().trim();
-      if (seen.has(key)) return false;
+    return medicinesList.filter((item) => {
+      const key = (item.name || '').toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
       seen.add(key);
       return true;
     });
-  }, []);
+  }, [medicinesList]);
 
   // Filter products based on search, categories, price range, and availability
   const filteredProducts = useMemo(() => {
@@ -89,17 +103,26 @@ export default function MedicineStorePage() {
       // Search input filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchesName = item.name.toLowerCase().includes(q) || item.genericName.toLowerCase().includes(q);
+        const matchesName = (item.name || '').toLowerCase().includes(q) || (item.genericName || '').toLowerCase().includes(q);
         const matchesBrand = item.brand && item.brand.toLowerCase().includes(q);
-        const matchesDesc = item.description && item.description.toLowerCase().includes(q);
+        const matchesDesc = (item.description || item.shortDescription || '').toLowerCase().includes(q);
         if (!matchesName && !matchesBrand && !matchesDesc) return false;
       }
 
       // Categories filter
       if (selectedCategories.length > 0) {
-        const matchesCategory = selectedCategories.some((cat) =>
-          item.categories ? item.categories.includes(cat) : item.category === cat
-        );
+        const matchesCategory = selectedCategories.some((cat) => {
+          const itemCat = String(item.category || '').toLowerCase();
+          const itemCats = Array.isArray(item.categories) ? item.categories.map(c => String(c).toLowerCase()) : [];
+          const itemCatName = String(item.categoryName || item.categoryLong || '').toLowerCase();
+          const target = String(cat).toLowerCase();
+
+          return (
+            itemCat === target ||
+            itemCats.includes(target) ||
+            itemCatName.includes(target)
+          );
+        });
         if (!matchesCategory) return false;
       }
 
@@ -111,7 +134,7 @@ export default function MedicineStorePage() {
       if (stockFilter === 'out_of_stock' && item.inStock) return false;
 
       return true;
-    }).sort((a, b) => a.popularityRank - b.popularityRank);
+    }).sort((a, b) => (a.popularityRank || 999) - (b.popularityRank || 999));
   }, [uniqueMedicines, searchQuery, selectedCategories, priceMax, stockFilter]);
 
   // Overall stock count for the sidebar
