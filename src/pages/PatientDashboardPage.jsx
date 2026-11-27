@@ -10,7 +10,8 @@ import {
   updateLabBookingStatus, 
   updateOrderStatus,
   updateBookingPaymentStatus,
-  getUserBookings 
+  getUserBookings,
+  isDemoBooking
 } from '../services/supabaseService';
 import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
 import { 
@@ -157,6 +158,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Strict matching helper to ensure patient data isolation
   const isMatchingCurrentUser = useCallback((item) => {
     if (!item || !user) return false;
+    if (isDemoBooking(item)) return false;
     const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
     const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
     if (cleanUserPhone && itemPhone) {
@@ -391,6 +393,22 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
   }, [user, updateUser]);
 
+  // Automatically purge legacy demo records from local storage
+  useEffect(() => {
+    try {
+      ['zestmed_patient_orders', 'zestmed_patient_lab_bookings', 'patient_appointments'].forEach((key) => {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            const cleaned = parsed.filter((item) => !isDemoBooking(item));
+            localStorage.setItem(key, JSON.stringify(cleaned));
+          }
+        }
+      });
+    } catch (_) {}
+  }, []);
+
   // Check URL query to open prescription vault or switch tabs if requested
   useEffect(() => {
     try {
@@ -530,10 +548,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   // Handles both purely package/lab orders AND mixed orders (containing medicines + lab tests)
   useEffect(() => {
     try {
-      const rawOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]');
+      const rawOrders = JSON.parse(localStorage.getItem('zestmed_patient_orders') || '[]').filter(o => !isDemoBooking(o));
       if (Array.isArray(rawOrders) && rawOrders.length > 0) {
         let hasChanges = false;
-        const existingLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]');
+        const existingLabs = JSON.parse(localStorage.getItem('zestmed_patient_lab_bookings') || '[]').filter(b => !isDemoBooking(b));
         const updatedLabs = [...existingLabs];
         const sanitizedOrders = [];
 

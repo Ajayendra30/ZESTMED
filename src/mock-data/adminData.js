@@ -297,6 +297,6 @@ export const initialPlatformAuditLogs = [
   { id: 'LOG-8812', timestamp: '12 Nov, 01:25 PM', event: 'Prescription Approved', actor: 'Chief Pharmacist (Guwahati)', details: 'ZM-RX-2026-302 approved for patient Ajayendra Shekhar.' },
   { id: 'LOG-8811', timestamp: '12 Nov, 12:40 PM', event: 'Cold-Chain Delivery Ingestion', actor: 'LIMS Central Ingestion', details: 'BOX-GUW-01 arrived at Dispur Central Lab with 6 EDTA specimens at 4.2°C.' },
   { id: 'LOG-8810', timestamp: '12 Nov, 11:15 AM', event: 'Inventory Stock Alert', actor: 'Automated ERP', details: 'Accu-Chek 50 Strips dipped below reorder threshold (6 units remaining).' },
-  { id: 'LOG-8809', timestamp: '12 Nov, 09:30 AM', event: 'Diagnostic Report Published', actor: 'Dr. Pranabesh Sarma (MD)', details: 'CBC hemogram report published for booking ZM-LAB-781001-4402.' },
+  { id: 'LOG-8809', timestamp: '12 Nov, 09:30 AM', event: 'Diagnostic Report Published', actor: 'Dr. Pranabesh Sarma (MD)', details: 'CBC hemogram report published for booking ZM-LAB-63426.' },
   { id: 'LOG-8808', timestamp: '12 Nov, 08:00 AM', event: 'Phlebotomist Shift Rollout', actor: 'Dispur Dispatch Lead', details: 'Morning shift deployed across Kamrup Metro, Jorhat, Dibrugarh & Silchar.' }
 ];

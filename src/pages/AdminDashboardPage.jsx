@@ -20,7 +20,8 @@ import {
   updateSurgeryStatus,
   updateWellnessStatus,
   updateLabBookingStatus,
-  updateOrderStatus
+  updateOrderStatus,
+  isDemoBooking
 } from '../services/supabaseService';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { 
@@ -316,9 +317,9 @@ export default function AdminDashboardPage() {
   const [appointmentsList, setAppointmentsList] = useState(() => {
     try {
       const saved = localStorage.getItem('patient_appointments');
-      return saved ? JSON.parse(saved) : initialPatientAppointments;
+      return saved ? JSON.parse(saved).filter(a => !isDemoBooking(a)) : [];
     } catch {
-      return initialPatientAppointments;
+      return [];
     }
   });
 
@@ -326,9 +327,9 @@ export default function AdminDashboardPage() {
   const [labBookingsList, setLabBookingsList] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_patient_lab_bookings');
-      return saved ? JSON.parse(saved) : initialPatientLabBookings;
+      return saved ? JSON.parse(saved).filter(b => !isDemoBooking(b)) : [];
     } catch {
-      return initialPatientLabBookings;
+      return [];
     }
   });
 
@@ -336,9 +337,9 @@ export default function AdminDashboardPage() {
   const [ordersList, setOrdersList] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_patient_orders');
-      return saved ? JSON.parse(saved) : initialPatientOrders;
+      return saved ? JSON.parse(saved).filter(o => !isDemoBooking(o)) : [];
     } catch {
-      return initialPatientOrders;
+      return [];
     }
   });
 
@@ -580,16 +581,14 @@ export default function AdminDashboardPage() {
 
         if (freshAppointments.length > 0) {
           setAppointmentsList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id || p.bookingId));
-            const newOnes = freshAppointments.filter((f) => !existingIds.has(f.id));
-            if (newOnes.length > 0) {
-              const merged = [...newOnes, ...prev];
-              try {
-                localStorage.setItem('patient_appointments', JSON.stringify(merged));
-              } catch (_) {}
-              return merged;
-            }
-            return prev;
+            const cleanFresh = freshAppointments.filter((f) => !isDemoBooking(f));
+            const existingIds = new Set(cleanFresh.map((p) => p.id || p.bookingId));
+            const cleanPrev = prev.filter((p) => !isDemoBooking(p) && !existingIds.has(p.id || p.bookingId));
+            const merged = [...cleanFresh, ...cleanPrev];
+            try {
+              localStorage.setItem('patient_appointments', JSON.stringify(merged));
+            } catch (_) {}
+            return merged;
           });
         }
 
@@ -640,46 +639,43 @@ export default function AdminDashboardPage() {
 
         if (freshLabs.length > 0) {
           setLabBookingsList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id || p.bookingId));
-            const newOnes = freshLabs.filter((f) => !existingIds.has(f.id));
-            if (newOnes.length > 0) {
-              const merged = [...newOnes, ...prev];
-              try {
-                localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(merged));
-              } catch (_) {}
-              return merged;
-            }
-            return prev;
+            const cleanFresh = freshLabs.filter((f) => !isDemoBooking(f));
+            const existingIds = new Set(cleanFresh.map((p) => p.id || p.bookingId));
+            const cleanPrev = prev.filter((p) => !isDemoBooking(p) && !existingIds.has(p.id || p.bookingId));
+            const merged = [...cleanFresh, ...cleanPrev];
+            try {
+              localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(merged));
+            } catch (_) {}
+            return merged;
           });
         }
 
         // 3. Merge Orders
-        if (medOrders.status === 'fulfilled' && Array.isArray(medOrders.value) && medOrders.value.length > 0) {
-          const freshOrders = medOrders.value.map((o) => ({
-            id: o.order_number || o.id || `#ORD${Date.now()}`,
-            orderId: o.order_number || o.id,
-            customer: o.customer_name || o.customer || o.patientName || 'Customer',
-            phone: o.customer_phone || o.phone || '',
-            deliveryAddress: o.delivery_address || o.address || 'Dispur, Guwahati',
-            items: o.items || 'Prescription Medicines',
-            paymentMethod: o.payment_method || o.payment || 'UPI Paid',
-            total: o.total_amount || o.total || 0,
-            status: o.status || 'Processing',
-            date: o.order_date || o.date || 'Today',
-            time: o.order_time || o.time || '10:00 AM'
-          }));
+        if (medOrders.status === 'fulfilled' && Array.isArray(medOrders.value)) {
+          const freshOrders = medOrders.value
+            .filter((o) => !isDemoBooking(o))
+            .map((o) => ({
+              id: o.order_number || o.id || `#ORD${Date.now()}`,
+              orderId: o.order_number || o.id,
+              customer: o.customer_name || o.customer || o.patientName || 'Customer',
+              phone: o.customer_phone || o.phone || '',
+              deliveryAddress: o.delivery_address || o.address || 'Dispur, Guwahati',
+              items: o.items || 'Prescription Medicines',
+              paymentMethod: o.payment_method || o.payment || 'UPI Paid',
+              total: o.total_amount || o.total || 0,
+              status: o.status || 'Processing',
+              date: o.order_date || o.date || 'Today',
+              time: o.order_time || o.time || '10:00 AM'
+            }));
 
           setOrdersList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id || p.orderId));
-            const newOnes = freshOrders.filter((f) => !existingIds.has(f.id));
-            if (newOnes.length > 0) {
-              const merged = [...newOnes, ...prev];
-              try {
-                localStorage.setItem('zestmed_patient_orders', JSON.stringify(merged));
-              } catch (_) {}
-              return merged;
-            }
-            return prev;
+            const existingIds = new Set(freshOrders.map((p) => p.id || p.orderId));
+            const cleanPrev = prev.filter((p) => !isDemoBooking(p) && !existingIds.has(p.id || p.orderId));
+            const merged = [...freshOrders, ...cleanPrev];
+            try {
+              localStorage.setItem('zestmed_patient_orders', JSON.stringify(merged));
+            } catch (_) {}
+            return merged;
           });
         }
 
@@ -774,20 +770,34 @@ export default function AdminDashboardPage() {
       }
     };
 
+    // Purge any legacy demo bookings from local storage
+    try {
+      ['patient_appointments', 'zestmed_patient_lab_bookings', 'zestmed_patient_orders'].forEach((key) => {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            const cleaned = parsed.filter((item) => !isDemoBooking(item));
+            localStorage.setItem(key, JSON.stringify(cleaned));
+          }
+        }
+      });
+    } catch (_) {}
+
     fetchAllLiveAdminData();
 
     const handleSync = () => {
       try {
         const sAppts = localStorage.getItem('patient_appointments');
-        const nextAppts = sAppts ? JSON.parse(sAppts) : appointmentsList;
+        const nextAppts = sAppts ? JSON.parse(sAppts).filter(a => !isDemoBooking(a)) : appointmentsList;
         if (sAppts) setAppointmentsList(nextAppts);
 
         const sLabs = localStorage.getItem('zestmed_patient_lab_bookings');
-        const nextLabs = sLabs ? JSON.parse(sLabs) : labBookingsList;
+        const nextLabs = sLabs ? JSON.parse(sLabs).filter(b => !isDemoBooking(b)) : labBookingsList;
         if (sLabs) setLabBookingsList(nextLabs);
 
         const sOrds = localStorage.getItem('zestmed_patient_orders');
-        const nextOrds = sOrds ? JSON.parse(sOrds) : ordersList;
+        const nextOrds = sOrds ? JSON.parse(sOrds).filter(o => !isDemoBooking(o)) : ordersList;
         if (sOrds) setOrdersList(nextOrds);
 
         setPatientsList(computeMergedPatients(nextAppts, nextLabs, nextOrds));

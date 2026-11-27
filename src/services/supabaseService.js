@@ -20,6 +20,42 @@ export const normalizePhone = (phone) => {
   return digits.length > 10 ? digits.slice(-10) : digits;
 };
 
+/**
+ * Detects whether a booking, appointment, or order record is a mock/demo/sample record
+ * that must be purged and excluded from genuine user and admin views.
+ */
+export const isDemoBooking = (item) => {
+  if (!item) return false;
+  const name = String(item.patientName || item.patient_name || item.customer || item.customer_name || item.name || '').trim().toLowerCase();
+  const id = String(item.id || item.bookingId || item.booking_number || item.orderId || item.order_number || item.appointment_number || '').trim();
+  const status = String(item.status || item.bookingStatus || item.order_status || '').trim().toLowerCase();
+
+  if (
+    name.includes('[demo') ||
+    name.includes('demo') ||
+    name.includes('dummy') ||
+    name.includes('sample') ||
+    name === 'rahul verma'
+  ) {
+    return true;
+  }
+  if (status.includes('[demo') || (status === 'cancelled' && name.includes('[demo'))) {
+    return true;
+  }
+  if (
+    id === 'ASM-DX-781005-8961' ||
+    id === 'ZM-PHY-20261124-169' ||
+    id === 'ZM-DOC-50124' ||
+    id === 'ZM-PHY-78901'
+  ) {
+    return true;
+  }
+  if (/^ZM-(ORD|LAB|JOB)-781001-/.test(id) || /^ZM-ORD-2026-(9045|8812)/.test(id)) {
+    return true;
+  }
+  return false;
+};
+
 // Helper to safely read from localStorage
 const getLocalData = (key, fallback = []) => {
   try {
@@ -262,7 +298,7 @@ export const getDoctorAppointments = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data.map((d) => ({
+        return data.filter(d => !isDemoBooking(d)).map((d) => ({
           id: d.appointment_number || d.id,
           bookingId: d.appointment_number || d.id,
           appointment_number: d.appointment_number || d.id,
@@ -295,7 +331,7 @@ export const getDoctorAppointments = async (phone = null) => {
     }
   }
 
-  const all = getLocalData('patient_appointments', []);
+  const all = getLocalData('patient_appointments', []).filter(a => !isDemoBooking(a));
   const doctorOnly = all.filter((a) => a.type === 'Doctor Appointment' || a.category === 'doctor' || a.doctor);
   if (clean) {
     return doctorOnly.filter((a) => normalizePhone(a.phone || a.patientPhone) === clean);
@@ -509,14 +545,14 @@ export const getPhysioBookings = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter(d => !isDemoBooking(d));
       }
     } catch (err) {
       console.warn('[SupabaseService] getPhysioBookings error:', err);
     }
   }
 
-  const all = getLocalData('patient_appointments', []);
+  const all = getLocalData('patient_appointments', []).filter(a => !isDemoBooking(a));
   const physioOnly = all.filter((a) => a.isPhysio);
   if (phone) {
     return physioOnly.filter((a) => a.phone === phone);
@@ -622,14 +658,14 @@ export const getSurgeryBookings = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter(d => !isDemoBooking(d));
       }
     } catch (err) {
       console.warn('[SupabaseService] getSurgeryBookings error:', err);
     }
   }
 
-  const all = getLocalData('patient_appointments', []);
+  const all = getLocalData('patient_appointments', []).filter(a => !isDemoBooking(a));
   const surgeryOnly = all.filter((a) => a.isSurgery);
   if (phone) {
     return surgeryOnly.filter((a) => a.phone === phone);
@@ -829,14 +865,14 @@ export const getWellnessBookings = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter(d => !isDemoBooking(d));
       }
     } catch (err) {
       console.warn('[SupabaseService] getWellnessBookings error:', err);
     }
   }
 
-  const all = getLocalData('patient_appointments', []);
+  const all = getLocalData('patient_appointments', []).filter(a => !isDemoBooking(a));
   const wellnessOnly = all.filter((a) => a.isWellness);
   if (phone) {
     return wellnessOnly.filter((a) => a.phone === phone);
@@ -940,14 +976,14 @@ export const getLabBookings = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter(d => !isDemoBooking(d));
       }
     } catch (err) {
       console.warn('[SupabaseService] getLabBookings error:', err);
     }
   }
 
-  const all = getLocalData('zestmed_patient_lab_bookings', []);
+  const all = getLocalData('zestmed_patient_lab_bookings', []).filter(b => !isDemoBooking(b));
   if (phone) {
     return all.filter((b) => b.phone === phone);
   }
@@ -1056,14 +1092,14 @@ export const getMedicineOrders = async (phone = null) => {
       }
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter(d => !isDemoBooking(d));
       }
     } catch (err) {
       console.warn('[SupabaseService] getMedicineOrders error:', err);
     }
   }
 
-  const all = getLocalData('zestmed_patient_orders', []);
+  const all = getLocalData('zestmed_patient_orders', []).filter(o => !isDemoBooking(o));
   if (phone) {
     return all.filter((o) => o.phone === phone);
   }
@@ -1826,12 +1862,14 @@ export const getUserBookings = async (user) => {
     }
   });
 
-  // Sort by booking date time descending (most recent first)
-  return allResults.sort((a, b) => {
-    const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
-    const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
-    return timeB - timeA;
-  });
+  // Filter out any mock/demo bookings and sort by booking date time descending (most recent first)
+  return allResults
+    .filter((item) => !isDemoBooking(item))
+    .sort((a, b) => {
+      const timeA = new Date(a.bookingDateTime || a.createdAt || 0).getTime();
+      const timeB = new Date(b.bookingDateTime || b.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
 };
 
 // ------------------------------------------------------------------------------

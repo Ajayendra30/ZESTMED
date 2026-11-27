@@ -1,6 +1,6 @@
 // src/utils/patientRegistry.js
 // Central Registered Patients Directory for ZESTMED with Supabase PostgreSQL Sync
-import { savePatientProfile } from '../services/supabaseService';
+import { savePatientProfile, isDemoBooking } from '../services/supabaseService';
 
 export const DEFAULT_REGISTERED_PATIENTS = [];
 
@@ -95,34 +95,34 @@ export function purgeRahulVermaFromStorage() {
       try {
         let apptList = JSON.parse(storedAppts);
         if (Array.isArray(apptList)) {
-          apptList = apptList.filter(a => a.id !== 'ZM-DOC-50124' && a.bookingId !== 'ZM-DOC-50124' && a.id !== 'ZM-PHY-78901');
+          apptList = apptList.filter(a => !isDemoBooking(a));
           localStorage.setItem('patient_appointments', JSON.stringify(apptList));
         }
       } catch (_) {}
     }
 
-    // 7. Clean zestmed_patient_orders
+    // 7. Clean zestmed_patient_orders and remove demo mock entries
     const storedOrders = localStorage.getItem('zestmed_patient_orders');
-    if (storedOrders && storedOrders.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_orders', storedOrders.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
+    if (storedOrders) {
+      try {
+        let ordList = JSON.parse(storedOrders);
+        if (Array.isArray(ordList)) {
+          ordList = ordList.filter(o => !isDemoBooking(o));
+          localStorage.setItem('zestmed_patient_orders', JSON.stringify(ordList));
+        }
+      } catch (_) {}
     }
 
     // 8. Clean zestmed_patient_lab_bookings & ensure wellness packages are correctly classified
     const storedLabs = localStorage.getItem('zestmed_patient_lab_bookings');
     if (storedLabs) {
-      let labsStr = storedLabs;
-      if (labsStr.includes('Rahul Verma')) {
-        labsStr = labsStr.replace(/Rahul Verma/gi, 'Ajayendra Shekhar');
-      }
       try {
-        const parsed = JSON.parse(labsStr);
+        const parsed = JSON.parse(storedLabs);
         if (Array.isArray(parsed)) {
-          let modified = false;
-          const cleaned = parsed.map(b => {
+          const cleaned = parsed.filter(b => !isDemoBooking(b)).map(b => {
             const name = (b.testName || b.name || '').toLowerCase();
             if (name.includes('wellness') || name.includes('health package')) {
               if (b.type !== 'Wellness Package' || b.itemType !== 'wellness') {
-                modified = true;
                 return {
                   ...b,
                   type: 'Wellness Package',
@@ -135,11 +135,7 @@ export function purgeRahulVermaFromStorage() {
             }
             return b;
           });
-          if (modified) {
-            localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(cleaned));
-          } else if (labsStr !== storedLabs) {
-            localStorage.setItem('zestmed_patient_lab_bookings', labsStr);
-          }
+          localStorage.setItem('zestmed_patient_lab_bookings', JSON.stringify(cleaned));
         }
       } catch (_) {}
     }

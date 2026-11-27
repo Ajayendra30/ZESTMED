@@ -47,7 +47,8 @@ import { initialPatientLabBookings } from '../mock-data/patientData';
 import {
   getLabBookings,
   updateLabBookingStatus,
-  bookLabTest
+  bookLabTest,
+  isDemoBooking
 } from '../services/supabaseService';
 import SampleCollectionModal from '../components/SampleCollectionModal';
 import PublishReportModal from '../components/PublishReportModal';
@@ -92,119 +93,18 @@ export default function LabDashboardPage() {
   const [selectedJobForReportView, setSelectedJobForReportView] = useState(null);
   const [isNewJobModalOpen, setIsNewJobModalOpen] = useState(false);
 
-  // Persistent mock data
+  // Persistent lab jobs from database
   const [jobs, setJobs] = useState(() => {
     try {
       const saved = localStorage.getItem('zestmed_lab_jobs');
-      return saved ? JSON.parse(saved) : initialPhlebotomyJobs;
+      return saved ? JSON.parse(saved).filter(j => !isDemoBooking(j)) : [];
     } catch {
-      return initialPhlebotomyJobs;
+      return [];
     }
   });
 
-  // Today's Schedule Data
-  const [todaySchedule, setTodaySchedule] = useState([
-    {
-      id: '#LB10241',
-      bookingId: 'ZM-LAB-781001-4402',
-      time: '09:00 AM',
-      patient: 'Amit Verma',
-      patientName: 'Amit Verma',
-      age: 34,
-      gender: 'Male',
-      test: 'Full Blood Count',
-      testName: 'Full Blood Count',
-      type: 'Home Collection',
-      action: 'Collect Sample',
-      status: 'Pending Collection',
-      phone: '+91 92791 25091',
-      address: 'House 14, Basistha Chariali, Dispur, Guwahati',
-      district: 'Kamrup Metro',
-      pincode: '781005',
-      landmark: 'Near Dispur Secretariat',
-      barcode: 'AS-BC-781005-091'
-    },
-    {
-      id: '#LB10242',
-      bookingId: 'ZM-LAB-781001-5198',
-      time: '10:30 AM',
-      patient: 'Priya Sharma',
-      patientName: 'Priya Sharma',
-      age: 29,
-      gender: 'Female',
-      test: 'Thyroid Profile',
-      testName: 'Thyroid Profile',
-      type: 'Home Collection',
-      action: 'Collect Sample',
-      status: 'Pending Collection',
-      phone: '+91 92791 25091',
-      address: 'Flat 2B, Kanaklata Path, Ulubari, Guwahati',
-      district: 'Kamrup Metro',
-      pincode: '781007',
-      landmark: 'Behind Ulubari Flyover',
-      barcode: 'AS-BC-781005-092'
-    },
-    {
-      id: '#LB10243',
-      bookingId: 'ZM-LAB-781001-6380',
-      time: '12:00 PM',
-      patient: 'Rajesh Kumar',
-      patientName: 'Rajesh Kumar',
-      age: 46,
-      gender: 'Male',
-      test: 'Diabetes Package',
-      testName: 'Diabetes Package',
-      type: 'Lab Visit',
-      action: 'Check In',
-      status: 'Awaiting Arrival',
-      phone: '+91 92791 25091',
-      address: 'Central Polyclinic Desk, Dispur Hub',
-      district: 'Kamrup Metro',
-      pincode: '781005',
-      landmark: 'GS Road Hub',
-      barcode: 'AS-BC-781005-093'
-    },
-    {
-      id: '#LB10244',
-      bookingId: 'ZM-LAB-781001-7124',
-      time: '02:00 PM',
-      patient: 'Sneha Singh',
-      patientName: 'Sneha Singh',
-      age: 38,
-      gender: 'Female',
-      test: 'Lipid Profile',
-      testName: 'Lipid Profile',
-      type: 'Home Collection',
-      action: 'Collect Sample',
-      status: 'Pending Collection',
-      phone: '+91 92791 25091',
-      address: 'Flat 201, Green View Apartment, Beltola Tiniali',
-      district: 'Kamrup Metro',
-      pincode: '781028',
-      landmark: 'Opposite Beltola College',
-      barcode: 'AS-BC-781005-094'
-    },
-    {
-      id: '#LB10245',
-      bookingId: 'ZM-LAB-781001-8091',
-      time: '04:00 PM',
-      patient: 'Vikram Das',
-      patientName: 'Vikram Das',
-      age: 52,
-      gender: 'Male',
-      test: 'Liver Function Test',
-      testName: 'Liver Function Test',
-      type: 'Lab Visit',
-      action: 'Check In',
-      status: 'Awaiting Arrival',
-      phone: '+91 92791 25091',
-      address: 'Central Polyclinic Desk, Dispur Hub',
-      district: 'Kamrup Metro',
-      pincode: '781005',
-      landmark: 'GS Road Hub',
-      barcode: 'AS-BC-781005-095'
-    }
-  ]);
+  // Today's Schedule Data from live database bookings
+  const [todaySchedule, setTodaySchedule] = useState([]);
 
   // Lab Notifications List matching NotificationPopover schema
   const DEFAULT_LAB_NOTIFICATIONS = [
@@ -346,32 +246,24 @@ export default function LabDashboardPage() {
   const [assignedFilter, setAssignedFilter] = useState('all');
   const [barcodeInput, setBarcodeInput] = useState('AS-BC-781005-092');
 
-  const [processingList, setProcessingList] = useState([
-    { id: 'SPEC-9041', bookingId: '#LB10236', patient: 'Amit Verma', test: 'Complete Blood Count (CBC)', analyzer: 'Mindray BC-5150 Hematology', status: 'Running Assay', progress: 78, eta: '12m' },
-    { id: 'SPEC-9042', bookingId: '#LB10237', patient: 'Priya Sharma', test: 'Thyroid Profile (T3, T4, TSH)', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Centrifugation', progress: 45, eta: '25m' },
-    { id: 'SPEC-9043', bookingId: '#LB10238', patient: 'Rajesh Kumar', test: 'Diabetes HbA1c Glycation', analyzer: 'Bio-Rad D-10 Analyzer', status: 'Verification', progress: 95, eta: '3m' },
-    { id: 'SPEC-9044', bookingId: '#LB10239', patient: 'Sneha Singh', test: 'Lipid Profile Screen', analyzer: 'Roche Cobas c311 Biochemistry', status: 'Incubation', progress: 60, eta: '18m' }
-  ]);
+  const [processingList, setProcessingList] = useState([]);
+  const [pendingUploadList, setPendingUploadList] = useState([]);
+  const [completedList, setCompletedList] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
 
-  const [pendingUploadList, setPendingUploadList] = useState([
-    { id: '#LB10238', bookingId: '#LB10238', patient: 'Sneha Singh', patientName: 'Sneha Singh', test: 'Complete Blood Count (CBC)', testName: 'Complete Blood Count (CBC)', time: '10:15 AM', box: 'CCB-01' },
-    { id: '#LB10237', bookingId: '#LB10237', patient: 'Amit Verma', patientName: 'Amit Verma', test: 'Lipid Profile Screen', testName: 'Lipid Profile Screen', time: '11:45 AM', box: 'CCB-02' },
-    { id: '#LB10236', bookingId: '#LB10236', patient: 'Priya Sharma', patientName: 'Priya Sharma', test: 'Thyroid Profile', testName: 'Thyroid Profile', time: '12:30 PM', box: 'CCB-01' }
-  ]);
-
-  const [completedList, setCompletedList] = useState([
-    { id: 'REP-9021', bookingId: 'ZM-LAB-781001-4402', patient: 'Ajayendra Shekhar', patientName: 'Ajayendra Shekhar', test: 'Complete Blood Count', testName: 'Complete Blood Count', time: '08:30 AM', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
-    { id: 'REP-9020', bookingId: 'ZM-LAB-781001-5198', patient: 'Ananya Baruah', patientName: 'Ananya Baruah', test: 'Vitamin D3 & B12 Vital Screen', testName: 'Vitamin D3 & B12 Vital Screen', time: 'Yesterday', pathologist: 'Dr. Arindam Sharma, MD', status: 'Signed & Published' },
-    { id: 'REP-9019', bookingId: 'ZM-LAB-781001-6380', patient: 'Minati Shekhar', patientName: 'Minati Shekhar', test: 'Thyroid Profile Screen', testName: 'Thyroid Profile Screen', time: 'Yesterday', pathologist: 'Dr. N. Bora, MD (Pathology)', status: 'Signed & Published' },
-    { id: 'REP-9018', bookingId: 'ZM-LAB-781001-7124', patient: 'Vikram Das', patientName: 'Vikram Das', test: 'Liver Function Test (LFT)', testName: 'Liver Function Test (LFT)', time: '11 Nov 2026', pathologist: 'Dr. S. Das, MD', status: 'Signed & Published' }
-  ]);
-
-  const [recentActivities, setRecentActivities] = useState([
-    { id: 1, text: 'Report uploaded for LB10238', time: '10:24 AM', icon: 'check' },
-    { id: 2, text: 'Sample collected from Amit Verma (LB10237)', time: '09:50 AM', icon: 'check' },
-    { id: 3, text: 'Test processing started for LB10236', time: '09:20 AM', icon: 'flask' },
-    { id: 4, text: 'New booking assigned – LB10245', time: '08:45 AM', icon: 'calendar' }
-  ]);
+  // Purge legacy demo bookings from local storage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('zestmed_lab_jobs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter((j) => !isDemoBooking(j));
+          localStorage.setItem('zestmed_lab_jobs', JSON.stringify(cleaned));
+        }
+      }
+    } catch (_) {}
+  }, []);
 
   // Synchronize local storage when jobs change
   useEffect(() => {
@@ -421,17 +313,15 @@ export default function LabDashboardPage() {
           };
         });
 
-        setTodaySchedule(prev => {
-          const ids = new Set(prev.map(p => p.id));
-          const newEntries = liveItems.filter(l => !ids.has(l.id));
-          return [...newEntries, ...prev];
-        });
+        setTodaySchedule(liveItems);
+        setJobs(liveItems);
 
-        setJobs(prev => {
-          const ids = new Set(prev.map(p => p.id || p.bookingId));
-          const newEntries = liveItems.filter(l => !ids.has(l.id) && !ids.has(l.bookingId));
-          return [...newEntries, ...prev];
-        });
+        const completed = liveItems.filter(b => ['Signed & Published', 'Report Published', 'Report Ready'].includes(b.status));
+        const pendingUpload = liveItems.filter(b => ['Sample Collected', 'Cold-Chain Transit'].includes(b.status));
+        const processing = liveItems.filter(b => ['Testing in Central Lab', 'Processing', 'Centrifugation'].includes(b.status));
+        if (completed.length > 0) setCompletedList(completed);
+        if (pendingUpload.length > 0) setPendingUploadList(pendingUpload);
+        if (processing.length > 0) setProcessingList(processing);
       } catch (err) {
         console.warn('[LabDashboard] Error loading live bookings:', err);
       }
@@ -846,34 +736,34 @@ export default function LabDashboardPage() {
   const pendingReportsCount = pendingUploadList.length;
   const completedCount = completedList.length;
 
-  // Real-time donut chart math
-  const displayCollected = Math.max(collectedCount, 8);
+  // Real-time dynamic KPI metrics from genuine bookings
+  const displayCollected = collectedCount;
   const totalTasks = Math.max(1, displayCollected + processingCount + pendingReportsCount + Math.max(0, todayCount - collectedCount));
   const cCircumference = 377; // 2 * PI * 60
   const samplesDash = ((displayCollected / totalTasks) * cCircumference).toFixed(1);
   const procDash = ((processingCount / totalTasks) * cCircumference).toFixed(1);
   const reportsDash = ((pendingReportsCount / totalTasks) * cCircumference).toFixed(1);
 
-  // Category breakdown for Assigned Tests Overview
+  // Category breakdown for Assigned Tests Overview (strictly reflecting live jobs)
   const bloodCount =
     jobs.filter((j) => {
       const t = (j.testName || j.test || '').toLowerCase();
       return t.includes('blood') || t.includes('cbc') || t.includes('esr') || t.includes('hemoglobin');
-    }).length || 10;
+    }).length;
 
   const hormoneCount =
     jobs.filter((j) => {
       const t = (j.testName || j.test || '').toLowerCase();
       return t.includes('thyroid') || t.includes('tsh') || t.includes('hormone') || t.includes('vitamin');
-    }).length || 6;
+    }).length;
 
   const organCount =
     jobs.filter((j) => {
       const t = (j.testName || j.test || '').toLowerCase();
       return t.includes('liver') || t.includes('lft') || t.includes('kidney') || t.includes('kft') || t.includes('creatinine');
-    }).length || 4;
+    }).length;
 
-  const otherCount = Math.max(1, jobs.length - (bloodCount + hormoneCount + organCount)) || 8;
+  const otherCount = Math.max(0, jobs.length - (bloodCount + hormoneCount + organCount));
   const maxCategory = Math.max(bloodCount, hormoneCount, organCount, otherCount, 1);
 
   // Filtered lists based on search query
