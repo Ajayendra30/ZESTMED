@@ -1823,6 +1823,12 @@ export const getUserBookings = async (user) => {
             patientName: w.patient_name || userName || 'Self',
             phone: w.phone || rawPhone,
             notes: w.notes,
+            reportUrl: w.report_url || '',
+            report_url: w.report_url || '',
+            reportData: w.report_data || w.findings || null,
+            findings: w.report_data || w.findings || null,
+            isPublished: Boolean(w.is_published || w.isPublished || (w.status && (w.status.toLowerCase().includes('publish') || w.status.toLowerCase().includes('report ready')))),
+            publishedAt: w.updated_at || w.created_at,
             source: 'database',
           });
         });
@@ -1867,6 +1873,12 @@ export const getUserBookings = async (user) => {
             price: parseFloat(l.price || (isPkg ? 1299 : 499)),
             patientName: l.patient_name || userName || 'Self',
             phone: l.phone || rawPhone,
+            reportUrl: l.report_url || '',
+            report_url: l.report_url || '',
+            reportData: l.report_data || l.findings || null,
+            findings: l.report_data || l.findings || null,
+            isPublished: Boolean(l.is_published || l.isPublished || (l.status && (l.status.toLowerCase().includes('publish') || l.status.toLowerCase().includes('report ready')))),
+            publishedAt: l.updated_at || l.created_at,
             source: 'database',
           });
         });
@@ -2025,7 +2037,49 @@ export const getUserBookings = async (user) => {
       price: parseFloat(l.price || (isWellness ? 1299 : 499)),
       patientName: l.patientName || userName || 'Self',
       phone: l.phone || l.patientPhone || rawPhone,
-      reportData: l.reportData,
+      reportData: l.reportData || l.findings || null,
+      findings: l.reportData || l.findings || null,
+      reportUrl: l.reportUrl || l.report_url || '',
+      report_url: l.reportUrl || l.report_url || '',
+      isPublished: Boolean(l.isPublished || l.is_published || (l.status && (l.status.toLowerCase().includes('publish') || l.status.toLowerCase().includes('report ready')))),
+      publishedAt: l.publishedAt || l.updated_at || l.createdAt,
+      source: 'local',
+    });
+  });
+
+  const localWellness = getLocalData('zestmed_wellness_bookings', []).filter(isMatchingUser);
+  localWellness.forEach((w) => {
+    const bId = w.bookingId || w.id || w.booking_number;
+    addBookingRecord({
+      id: bId,
+      bookingId: bId,
+      booking_number: w.booking_number || bId,
+      serviceType: 'Wellness Package',
+      itemType: 'wellness',
+      displayType: 'Wellness Health Package',
+      serviceName: w.package_name || w.name || 'Wellness Health Package',
+      title: w.package_name || w.name || 'Wellness Package',
+      provider: 'Preventive Health Diagnostics Team',
+      bookingDateTime: w.createdAt || w.created_at || new Date().toISOString(),
+      createdAt: w.createdAt || w.created_at || new Date().toISOString(),
+      appointmentDate: w.date || w.booking_date || 'Scheduled Date',
+      appointmentTime: w.slot || w.preferred_slot || 'Morning Slot',
+      date: w.date || w.booking_date || 'Scheduled Date',
+      time: w.slot || w.preferred_slot || 'Morning Slot',
+      mode: 'Home Health Checkup',
+      paymentStatus: w.paymentStatus || w.payment_status || 'Paid (Verified)',
+      bookingStatus: w.status || 'Confirmed',
+      status: w.status || 'Confirmed',
+      totalAmount: parseFloat(w.price || 1299),
+      price: parseFloat(w.price || 1299),
+      patientName: w.patientName || w.patient_name || userName || 'Self',
+      phone: w.phone || w.patientPhone || rawPhone,
+      reportData: w.reportData || w.findings || null,
+      findings: w.reportData || w.findings || null,
+      reportUrl: w.reportUrl || w.report_url || '',
+      report_url: w.reportUrl || w.report_url || '',
+      isPublished: Boolean(w.isPublished || w.is_published || (w.status && (w.status.toLowerCase().includes('publish') || w.status.toLowerCase().includes('report ready')))),
+      publishedAt: w.publishedAt || w.updated_at || w.createdAt,
       source: 'local',
     });
   });

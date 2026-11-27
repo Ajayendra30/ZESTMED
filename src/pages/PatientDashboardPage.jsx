@@ -1184,8 +1184,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         l?.isPublished ||
         st.includes('publish') ||
         st.includes('report ready') ||
-        st.includes('signed & published') ||
-        (st.includes('complete') && (l?.reportData || l?.reportUrl))
+        st.includes('signed & published')
       );
     });
 
@@ -1212,12 +1211,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         testName,
         subtitle,
         date: l?.appointmentDate || l?.date || 'Recent',
+        publishedAt: l?.publishedAt || l?.published_at || l?.updated_at || l?.created_at,
         id: l?.bookingId || l?.id || `ZM-LAB-${Date.now().toString().slice(-5)}`,
         bookingId: l?.bookingId || l?.id,
         status: hasAbnormal ? 'Action Required' : 'Ready',
         pathologist: l?.reportingDoctor || l?.pathologist || 'Dr. Pranabesh Sarma, MD Pathology (AMC-29182-AS)',
         reportData: l?.reportData || l?.findings,
-        reportUrl: l?.reportUrl,
+        reportUrl: l?.reportUrl || l?.report_url,
+        reportFileName: l?.reportFileName,
         raw: l,
         hasAbnormal,
         isPublished: true
@@ -1230,7 +1231,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
       const userStored = Array.isArray(stored)
         ? stored.filter(Boolean).filter(isMatchingCurrentUser).filter((r) => {
             const st = String(r?.status || r?.bookingStatus || '').toLowerCase();
-            return r?.isPublished || st.includes('publish') || st.includes('ready') || st.includes('complete');
+            return r?.isPublished || st.includes('publish') || st.includes('ready') || st.includes('signed');
           })
         : [];
       const map = new Map();
@@ -5950,12 +5951,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 records.push({
                   id: `rx-${rx.id}`,
                   documentName: rx.fileName || `${rx.doctorName ? `Prescription_${rx.doctorName.replace(/[\s.]+/g, '_')}` : 'Doctor_Prescription'}.pdf`,
+                  testName: rx.condition || rx.diagnosis || (rx.doctorName ? `Prescription by ${rx.doctorName}` : 'Doctor Prescription'),
                   size: rx.fileSize || '1.2 MB',
                   type: 'Prescription',
                   category: 'prescription',
-                  date: rx.uploadedAt ? rx.uploadedAt.split(',')[0] : (rx.dateOfIssue || '20 Nov 2026'),
-                  source: rx.doctorName || 'Dr. R. Sharma',
-                  subSource: rx.specialty || rx.hospital || rx.clinicName || 'General Physician',
+                  date: rx.uploadedAt ? rx.uploadedAt.split(',')[0] : (rx.dateOfIssue || 'Recent'),
+                  publishedDate: rx.uploadedAt ? rx.uploadedAt.split(',')[0] : (rx.dateOfIssue || 'Recent'),
+                  status: 'Active',
+                  source: rx.doctorName || 'General Physician',
+                  subSource: rx.specialty || rx.hospital || rx.clinicName || 'Verified Medical Prescription',
                   fileType: rx.fileType || (rx.fileName?.endsWith('.pdf') ? 'pdf' : 'jpg'),
                   fileUrl: rx.fileUrl,
                   imagePreview: rx.imagePreview,
@@ -5964,72 +5968,65 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 });
               });
 
-              // 2. Genuine Pathology Lab Reports from userReports
+              // 2. Genuine Pathology Lab Reports from userReports (Strictly only published by Lab Executive)
               (userReports || []).forEach((rep) => {
+                const isPub = Boolean(
+                  rep.isPublished ||
+                  String(rep.status || '').toLowerCase().includes('publish') ||
+                  String(rep.status || '').toLowerCase().includes('ready')
+                );
+                if (!isPub) return;
+
+                const testName = rep.test || rep.testName || 'Diagnostic Investigation';
+                const safeName = String(testName).replace(/[^a-zA-Z0-9]/g, '_');
+                const docName = rep.reportFileName || `Diagnostic_Report_${safeName}.pdf`;
+                const publishedDate = rep.publishedAt 
+                  ? new Date(rep.publishedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                  : (rep.date || 'Recent');
+
                 records.push({
-                  id: `rep-${rep.id}`,
-                  documentName: `Lab_Report_${(rep.test || 'CBC').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
-                  size: '854 KB',
+                  id: `rep-${rep.id || rep.bookingId}`,
+                  documentName: docName,
+                  testName: testName,
+                  size: rep.fileSize || '854 KB',
                   type: 'Lab Report',
                   category: 'report',
-                  date: rep.date || '18 Nov 2026',
-                  source: rep.labName || 'Zestmed Diagnostics',
-                  subSource: 'NABL Accredited Lab',
-                  fileType: 'pdf',
+                  date: publishedDate,
+                  publishedDate: publishedDate,
+                  status: rep.hasAbnormal ? 'Action Required' : (rep.status || 'Published'),
+                  source: rep.pathologist || 'Dr. Pranabesh Sarma, MD Pathology',
+                  subSource: rep.labName || 'Zestmed Diagnostics • NABL Accredited Lab',
+                  fileType: rep.fileType || 'pdf',
+                  fileUrl: rep.reportUrl || '',
                   rawItem: rep,
                   kind: 'report'
                 });
               });
 
-              // 3. Doctor Consultation Bookings from allUserBookings
-              const doctorBookings = (allUserBookings || []).filter(b => 
-                b.category === 'doctor' || 
-                b.doctorName || 
-                (b.serviceType && b.serviceType.toLowerCase().includes('doctor'))
+              // 3. Completed Doctor Consultations with clinical summary
+              const completedConsultations = (allUserBookings || []).filter(b => 
+                (b.category === 'doctor' || b.itemType === 'doctor' || b.doctorName) &&
+                (String(b.bookingStatus || b.status || '').toLowerCase().includes('complete') || b.consultationSummary || b.doctorNotes)
               );
 
-              doctorBookings.forEach((b) => {
+              completedConsultations.forEach((b) => {
+                const docName = (b.doctorName || b.doctor || 'Doctor').replace(/[^a-zA-Z0-9]/g, '_');
                 records.push({
                   id: `doc-${b.id || b.bookingId}`,
-                  documentName: `Consultation_Summary_${(b.doctorName || b.doctor || 'Doctor').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`,
-                  size: '2.1 MB',
+                  documentName: `Consultation_Summary_${docName}.pdf`,
+                  testName: `Consultation with ${b.doctorName || b.doctor || 'Physician'}`,
+                  size: '1.2 MB',
                   type: 'Consultation',
                   category: 'consultation',
-                  date: b.date || b.bookingDate || '12 Nov 2026',
+                  date: b.appointmentDate || b.date || 'Recent',
+                  publishedDate: b.appointmentDate || b.date || 'Recent',
+                  status: 'Completed',
                   source: b.doctorName || b.doctor || 'Dr. P. Das',
-                  subSource: b.specialty || b.department || 'Cardiologist',
-                  fileType: 'jpg',
+                  subSource: b.specialty || b.department || 'Clinical Consultation',
+                  fileType: 'pdf',
                   rawItem: b,
                   kind: 'consultation'
                 });
-              });
-
-              // If there are additional real reports or bookings, include blood test report
-              records.push({
-                id: 'rec-blood-test',
-                documentName: 'Blood_Test_Report.pdf',
-                size: '1.4 MB',
-                type: 'Lab Report',
-                category: 'report',
-                date: '05 Nov 2026',
-                source: 'Zestmed Diagnostics',
-                subSource: 'Clinical Biochemistry Unit',
-                fileType: 'pdf',
-                kind: 'report'
-              });
-
-              // 4. Vitals & Health Metrics Record
-              records.push({
-                id: 'vitals-active',
-                documentName: 'Vitals_Record.pdf',
-                size: '672 KB',
-                type: 'Vitals',
-                category: 'vitals',
-                date: '01 Nov 2026',
-                source: 'Self Recorded',
-                subSource: `BP: ${patientVitals?.bp || '118/76'} • HR: ${patientVitals?.hr || '72'} bpm`,
-                fileType: 'pdf',
-                kind: 'vitals'
               });
 
               return records;
@@ -6048,10 +6045,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               if (recordsSearchQuery.trim()) {
                 const q = recordsSearchQuery.trim().toLowerCase();
                 const matchDoc = rec.documentName.toLowerCase().includes(q);
+                const matchTest = rec.testName ? rec.testName.toLowerCase().includes(q) : false;
                 const matchSource = rec.source.toLowerCase().includes(q);
                 const matchSub = rec.subSource.toLowerCase().includes(q);
                 const matchType = rec.type.toLowerCase().includes(q);
-                if (!matchDoc && !matchSource && !matchSub && !matchType) return false;
+                if (!matchDoc && !matchTest && !matchSource && !matchSub && !matchType) return false;
               }
               return true;
             });
@@ -6092,7 +6090,11 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               if (rec.kind === 'prescription' && rec.rawItem) {
                 setSelectedPrescription(rec.rawItem);
               } else if (rec.kind === 'report' && rec.rawItem) {
-                openClinicalReportPdf(rec.rawItem);
+                if (rec.rawItem.reportUrl) {
+                  window.open(rec.rawItem.reportUrl, '_blank');
+                } else {
+                  handleOpenReportModal(rec.testName || rec.rawItem.test, rec.date, rec.rawItem.id || rec.rawItem.bookingId, rec.rawItem.pathologist, rec.rawItem);
+                }
               } else if (rec.kind === 'consultation') {
                 setActiveMenu('bookings');
                 setServiceCategoryFilter('doctor');
@@ -6108,7 +6110,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               if (rec.kind === 'prescription' && rec.rawItem) {
                 downloadPrescriptionFile(rec.rawItem);
               } else if (rec.kind === 'report' && rec.rawItem) {
-                downloadClinicalReport(rec.rawItem);
+                if (rec.rawItem.reportUrl) {
+                  const link = document.createElement('a');
+                  link.href = rec.rawItem.reportUrl;
+                  link.download = rec.documentName || 'ZESTMED_Diagnostic_Report.pdf';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  addToast(`Downloaded ${rec.documentName}`, 'success');
+                } else {
+                  downloadClinicalReport(rec.rawItem);
+                  addToast(`Downloaded official report for ${rec.testName || rec.documentName}`, 'success');
+                }
               } else {
                 addToast(`Downloading ${rec.documentName}...`, 'info');
               }
@@ -6216,7 +6229,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           {prescriptionsCount}
                         </span>
                         <span className="text-[11px] font-bold text-[#00A68A] flex items-center gap-0.5 mt-0.5">
-                          <span>↑ +2 this month</span>
+                          <span>{prescriptionsCount === 1 ? '1 active prescription' : `${prescriptionsCount} prescriptions`}</span>
                         </span>
                       </div>
                     </div>
@@ -6238,7 +6251,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           {labReportsCount}
                         </span>
                         <span className="text-[11px] font-bold text-[#00A68A] flex items-center gap-0.5 mt-0.5">
-                          <span>↑ +3 this month</span>
+                          <span>{labReportsCount === 1 ? '1 published report' : `${labReportsCount} published reports`}</span>
                         </span>
                       </div>
                     </div>
@@ -6260,7 +6273,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           {consultationsCount}
                         </span>
                         <span className="text-[11px] font-bold text-[#00A68A] flex items-center gap-0.5 mt-0.5">
-                          <span>↑ +1 this month</span>
+                          <span>{consultationsCount === 1 ? '1 completed consult' : `${consultationsCount} consultations`}</span>
                         </span>
                       </div>
                     </div>
@@ -6481,7 +6494,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                                 return (
                                   <tr key={rec.id} className="hover:bg-slate-50/70 transition-colors">
-                                    {/* Document Name + Size */}
+                                    {/* Document Name + Test Name + Size */}
                                     <td className="py-2.5 sm:py-3 px-3 sm:px-4">
                                       <div className="flex items-center gap-2 sm:gap-2.5">
                                         {/* Colored Document Icon */}
@@ -6501,9 +6514,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                         </div>
 
                                         <div className="min-w-0">
-                                          <p className="font-bold text-slate-900 truncate max-w-[120px] sm:max-w-[150px] lg:max-w-[180px] text-[11px] sm:text-xs" title={rec.documentName}>
+                                          <p className="font-bold text-slate-900 truncate max-w-[130px] sm:max-w-[170px] lg:max-w-[210px] text-[11px] sm:text-xs" title={rec.documentName}>
                                             {rec.documentName}
                                           </p>
+                                          {rec.testName && (
+                                            <p className="text-[10px] text-[#008F83] font-bold truncate max-w-[130px] sm:max-w-[170px] lg:max-w-[210px]" title={rec.testName}>
+                                              {rec.testName}
+                                            </p>
+                                          )}
                                           <p className="text-[10px] text-slate-400 mt-0.5 font-medium truncate">
                                             {rec.size}
                                           </p>
@@ -6511,25 +6529,36 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                       </div>
                                     </td>
 
-                                    {/* Type Badge */}
+                                    {/* Type & Status Badge */}
                                     <td className="py-2.5 sm:py-3 px-2 sm:px-3 whitespace-nowrap">
-                                      {rec.category === 'prescription' ? (
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
-                                          Prescription
-                                        </span>
-                                      ) : rec.category === 'report' ? (
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5FB] text-[#0284C7] border border-blue-200">
-                                          Lab Report
-                                        </span>
-                                      ) : rec.category === 'consultation' ? (
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8FF] text-[#7E22CE] border border-purple-200">
-                                          Consultation
-                                        </span>
-                                      ) : (
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#CCFBF1] text-[#0D9488] border border-teal-200">
-                                          Vitals
-                                        </span>
-                                      )}
+                                      <div className="flex flex-col gap-1 items-start">
+                                        {rec.category === 'prescription' ? (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
+                                            Prescription
+                                          </span>
+                                        ) : rec.category === 'report' ? (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5FB] text-[#0284C7] border border-blue-200">
+                                            Lab Report
+                                          </span>
+                                        ) : rec.category === 'consultation' ? (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F3E8FF] text-[#7E22CE] border border-purple-200">
+                                            Consultation
+                                          </span>
+                                        ) : (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#CCFBF1] text-[#0D9488] border border-teal-200">
+                                            Vitals
+                                          </span>
+                                        )}
+                                        {rec.status && (
+                                          <span className={`inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold border ${
+                                            rec.status === 'Action Required'
+                                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                          }`}>
+                                            {rec.status}
+                                          </span>
+                                        )}
+                                      </div>
                                     </td>
 
                                     {/* Date */}
@@ -6662,13 +6691,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                       <p className="font-bold text-slate-900 text-xs truncate">
                                         {rec.documentName}
                                       </p>
+                                      {rec.testName && (
+                                        <p className="text-[10px] text-[#008F83] font-bold truncate">
+                                          {rec.testName}
+                                        </p>
+                                      )}
                                       <p className="text-[10px] text-slate-400 mt-0.5">
                                         {rec.size}
                                       </p>
                                     </div>
                                   </div>
 
-                                  <div>
+                                  <div className="flex flex-col gap-1 items-end">
                                     {rec.category === 'prescription' ? (
                                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8FAF5] text-[#00A68A] border border-teal-200">
                                         Prescription
@@ -6684,6 +6718,15 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                                     ) : (
                                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#CCFBF1] text-[#0D9488] border border-teal-200">
                                         Vitals
+                                      </span>
+                                    )}
+                                    {rec.status && (
+                                      <span className={`inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold border ${
+                                        rec.status === 'Action Required'
+                                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                          : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                      }`}>
+                                        {rec.status}
                                       </span>
                                     )}
                                   </div>
@@ -6799,56 +6842,44 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
                       {/* Timeline Events */}
                       <div className="space-y-4 relative pl-1">
-                        {/* Event 1 */}
-                        <div className="flex items-start gap-3 relative">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] mt-1 shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <span className="text-[11px] font-bold text-slate-600 block">20 Nov 2026</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="w-7 h-7 rounded-full bg-[#E8FAF5] text-[#00A68A] flex items-center justify-center font-serif italic font-bold text-xs shrink-0 border border-teal-200">
-                                ℞
-                              </span>
-                              <div>
-                                <p className="text-xs font-bold text-slate-900">Prescription Uploaded</p>
-                                <p className="text-[10.5px] text-slate-500">By Dr. R. Sharma</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        {unifiedRecords.length > 0 ? (
+                          unifiedRecords.slice(0, 3).map((rec) => {
+                            const isRx = rec.category === 'prescription';
+                            const isRep = rec.category === 'report';
+                            const dotColor = isRx ? 'bg-[#10B981]' : isRep ? 'bg-[#0284C7]' : 'bg-[#7E22CE]';
+                            const badgeBg = isRx 
+                              ? 'bg-[#E8FAF5] text-[#00A68A] border-teal-200' 
+                              : isRep 
+                                ? 'bg-[#EAF5FB] text-[#0284C7] border-blue-200' 
+                                : 'bg-[#F3E8FF] text-[#7E22CE] border-purple-200';
 
-                        {/* Event 2 */}
-                        <div className="flex items-start gap-3 relative">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#0284C7] mt-1 shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <span className="text-[11px] font-bold text-slate-600 block">18 Nov 2026</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="w-7 h-7 rounded-full bg-[#EAF5FB] text-[#0284C7] flex items-center justify-center text-xs shrink-0 border border-blue-200">
-                                <FlaskConical className="w-3.5 h-3.5" />
-                              </span>
-                              <div>
-                                <p className="text-xs font-bold text-slate-900">Lab Report Added</p>
-                                <p className="text-[10.5px] text-slate-500">CBC, Lipid Profile</p>
+                            return (
+                              <div key={rec.id} className="flex items-start gap-3 relative">
+                                <span className={`w-2.5 h-2.5 rounded-full ${dotColor} mt-1 shrink-0`} />
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-[11px] font-bold text-slate-600 block">{rec.date}</span>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className={`w-7 h-7 rounded-full ${badgeBg} flex items-center justify-center font-serif italic font-bold text-xs shrink-0 border`}>
+                                      {isRx ? '℞' : isRep ? <FlaskConical className="w-3.5 h-3.5" /> : <Stethoscope className="w-3.5 h-3.5" />}
+                                    </span>
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-bold text-slate-900 truncate">
+                                        {isRep ? (rec.testName || 'Lab Report Published') : isRx ? (rec.documentName || 'Prescription Uploaded') : 'Doctor Consultation'}
+                                      </p>
+                                      <p className="text-[10.5px] text-slate-500 truncate">{rec.source}</p>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
+                            );
+                          })
+                        ) : (
+                          <div className="py-6 px-3 text-center rounded-2xl bg-slate-50/60 border border-dashed border-slate-200">
+                            <Clock className="w-6 h-6 text-slate-300 mx-auto mb-1.5" />
+                            <p className="text-xs font-bold text-slate-600">No events yet</p>
+                            <p className="text-[10.5px] text-slate-400 mt-0.5">Published reports and medical documents will create your personal timeline</p>
                           </div>
-                        </div>
-
-                        {/* Event 3 */}
-                        <div className="flex items-start gap-3 relative">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#7E22CE] mt-1 shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <span className="text-[11px] font-bold text-slate-600 block">12 Nov 2026</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="w-7 h-7 rounded-full bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center text-xs shrink-0 border border-purple-200">
-                                <Stethoscope className="w-3.5 h-3.5" />
-                              </span>
-                              <div>
-                                <p className="text-xs font-bold text-slate-900">Doctor Consultation</p>
-                                <p className="text-[10.5px] text-slate-500">Cardiology Follow-up</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        )}
                       </div>
 
                       {/* View Full Timeline Button */}
@@ -6867,23 +6898,29 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     {/* Bottom Split Row: Storage Usage & Health Insights */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                       {/* Storage Usage */}
-                      <div className="bg-white rounded-3xl p-4 sm:p-4.5 border border-blue-100/80 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Layers className="w-4 h-4 text-[#00A68A]" />
-                            <h4 className="text-xs font-black text-slate-900">Storage Usage</h4>
+                      {(() => {
+                        const usedMb = ((prescriptionsCount * 1.2) + (labReportsCount * 0.85) + (consultationsCount * 1.8)).toFixed(1);
+                        const usedPct = Math.min(100, Math.max(1, Math.round((parseFloat(usedMb) / 1024) * 100)));
+                        return (
+                          <div className="bg-white rounded-3xl p-4 sm:p-4.5 border border-blue-100/80 shadow-xs flex flex-col justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Layers className="w-4 h-4 text-[#00A68A]" />
+                                <h4 className="text-xs font-black text-slate-900">Storage Usage</h4>
+                              </div>
+                              <p className="text-[10.5px] text-slate-500 mt-1">
+                                {usedMb} MB of 1 GB used
+                              </p>
+                            </div>
+                            <div className="mt-3">
+                              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div className="bg-[#00BFA5] h-full rounded-full transition-all" style={{ width: `${usedPct}%` }} />
+                              </div>
+                              <span className="text-[10px] font-bold text-slate-400 block text-right mt-1">{usedPct}%</span>
+                            </div>
                           </div>
-                          <p className="text-[10.5px] text-slate-500 mt-1">
-                            145 MB of 1 GB used
-                          </p>
-                        </div>
-                        <div className="mt-3">
-                          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                            <div className="bg-[#00BFA5] h-full rounded-full w-[14%]" />
-                          </div>
-                          <span className="text-[10px] font-bold text-slate-400 block text-right mt-1">14%</span>
-                        </div>
-                      </div>
+                        );
+                      })()}
 
                       {/* Health Insights */}
                       <div
