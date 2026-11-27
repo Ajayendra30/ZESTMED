@@ -72,9 +72,20 @@ export default function MedicineStorePage() {
     addItem(itemData, 'medicine');
   };
 
+  // Deduplicate STORE_MEDICINES so each medicine name appears strictly once
+  const uniqueMedicines = useMemo(() => {
+    const seen = new Set();
+    return STORE_MEDICINES.filter((item) => {
+      const key = item.name.toLowerCase().trim();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, []);
+
   // Filter products based on search, categories, price range, and availability
   const filteredProducts = useMemo(() => {
-    return STORE_MEDICINES.filter((item) => {
+    return uniqueMedicines.filter((item) => {
       // Search input filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
@@ -101,14 +112,14 @@ export default function MedicineStorePage() {
 
       return true;
     }).sort((a, b) => a.popularityRank - b.popularityRank);
-  }, [searchQuery, selectedCategories, priceMax, stockFilter]);
+  }, [uniqueMedicines, searchQuery, selectedCategories, priceMax, stockFilter]);
 
   // Overall stock count for the sidebar
   const stockCounts = useMemo(() => {
-    const inStock = STORE_MEDICINES.filter((m) => m.inStock).length;
-    const outOfStock = STORE_MEDICINES.filter((m) => !m.inStock).length;
+    const inStock = uniqueMedicines.filter((m) => m.inStock).length;
+    const outOfStock = uniqueMedicines.filter((m) => !m.inStock).length;
     return { inStock, outOfStock };
-  }, []);
+  }, [uniqueMedicines]);
 
   // Pagination states & calculations
   const [currentPage, setCurrentPage] = useState(1);
@@ -495,14 +506,16 @@ export default function MedicineStorePage() {
                       <div>
                         {/* Image Container with Light Grey Background */}
                         <div className="w-full h-28 sm:h-32 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 mb-2.5 overflow-hidden">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          ) : null}
                         </div>
 
                         {/* Title & Subtitle */}

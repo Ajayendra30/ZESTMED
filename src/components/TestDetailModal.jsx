@@ -34,23 +34,24 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
   if (!test) return null;
 
   // Setup gallery images tailored for the test
-  const defaultImages = [
-    test.id === 'test-cbc' || (test.name && test.name.includes('CBC')) 
-      ? '/lab-tests/cbc-modal-main.png' 
-      : (test.image || '/lab-tests/cbc.png'),
+  const isCbc = test.id === 'test-cbc' || (test.name && test.name.includes('CBC'));
+  const cbcDefaultImages = [
+    '/lab-tests/cbc-modal-main.png',
     '/lab-tests/cbc-modal-thumb2.png',
     '/lab-tests/cbc-modal-thumb3.png'
   ];
 
-  const thumbnailsList = [
-    test.id === 'test-cbc' || (test.name && test.name.includes('CBC'))
-      ? '/lab-tests/cbc-modal-thumb1.png'
-      : (test.image || '/lab-tests/cbc.png'),
+  const cbcThumbnails = [
+    '/lab-tests/cbc-modal-thumb1.png',
     '/lab-tests/cbc-modal-thumb2.png',
     '/lab-tests/cbc-modal-thumb3.png'
   ];
 
-  const imagesList = test.images && test.images.length > 0 ? test.images : defaultImages;
+  const imagesList = test.images && test.images.length > 0 
+    ? test.images 
+    : (isCbc ? cbcDefaultImages : (test.image ? [test.image] : []));
+
+  const thumbnailsList = isCbc ? cbcThumbnails : (imagesList.length > 1 ? imagesList : []);
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
@@ -180,11 +181,16 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
             
             {/* Main Image Container */}
             <div className="relative w-full h-[260px] sm:h-[300px] md:h-[320px] rounded-2xl overflow-hidden bg-[#F0F7FF] border border-slate-100 flex items-center justify-center group select-none">
-              <img
-                src={imagesList[selectedImageIndex] || imagesList[0]}
-                alt={test.name}
-                className="w-full h-full object-cover transition-all duration-300"
-              />
+              {imagesList.length > 0 && imagesList[selectedImageIndex] ? (
+                <img
+                  src={imagesList[selectedImageIndex] || imagesList[0]}
+                  alt={test.name}
+                  className="w-full h-full object-cover transition-all duration-300"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ) : null}
 
               {/* Prev Image Button */}
               {imagesList.length > 1 && (
@@ -212,29 +218,31 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
             </div>
 
             {/* Thumbnails Row */}
-            <div className="flex items-center gap-2.5 sm:gap-3 mt-3">
-              {thumbnailsList.map((thumbSrc, idx) => {
-                const isActive = selectedImageIndex === idx;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedImageIndex(idx)}
-                    className={`rounded-xl overflow-hidden w-20 h-20 sm:w-22 sm:h-22 p-0.5 cursor-pointer bg-slate-50 transition shrink-0 ${
-                      isActive 
-                        ? 'border-2 border-[#007A64] ring-2 ring-[#007A64]/20 shadow-xs' 
-                        : 'border border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100'
-                    }`}
-                  >
-                    <img
-                      src={thumbSrc}
-                      alt={`Thumbnail ${idx + 1}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </button>
-                );
-              })}
-            </div>
+            {thumbnailsList.length > 1 && (
+              <div className="flex items-center gap-2.5 sm:gap-3 mt-3">
+                {thumbnailsList.map((thumbSrc, idx) => {
+                  const isActive = selectedImageIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedImageIndex(idx)}
+                      className={`rounded-xl overflow-hidden w-20 h-20 sm:w-22 sm:h-22 p-0.5 cursor-pointer bg-slate-50 transition shrink-0 ${
+                        isActive 
+                          ? 'border-2 border-[#007A64] ring-2 ring-[#007A64]/20 shadow-xs' 
+                          : 'border border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={thumbSrc}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
           </div>
 

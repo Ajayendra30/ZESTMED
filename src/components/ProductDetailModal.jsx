@@ -33,15 +33,16 @@ export default function ProductDetailModal({ product, onClose }) {
 
   if (!product) return null;
 
-  // Prepare images array matching reference Crocin image and thumbnails
-  const defaultImages = [
+  // Prepare images array matching product images or blank
+  const isCrocin = product.name && product.name.toLowerCase().includes('crocin');
+  const crocinDefaultImages = [
     product.image || '/medicines/crocin-main.png',
     '/medicines/crocin-thumb2.png',
     '/medicines/crocin-thumb3.png'
   ];
   const imagesList = product.images && product.images.length > 0 
     ? product.images 
-    : (product.name && product.name.toLowerCase().includes('crocin') ? defaultImages : [product.image || '/medicines/crocin-main.png']);
+    : (isCrocin ? crocinDefaultImages : (product.image ? [product.image] : []));
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
@@ -186,11 +187,16 @@ export default function ProductDetailModal({ product, onClose }) {
 
               {/* Main Image */}
               <div className="w-full h-48 sm:h-56 flex items-center justify-center p-2">
-                <img
-                  src={imagesList[selectedImageIndex] || product.image || '/medicines/crocin-main.png'}
-                  alt={product.name}
-                  className="max-h-full max-w-full object-contain drop-shadow-xs select-none transition-all duration-200"
-                />
+                {imagesList.length > 0 && imagesList[selectedImageIndex] ? (
+                  <img
+                    src={imagesList[selectedImageIndex]}
+                    alt={product.name}
+                    className="max-h-full max-w-full object-contain drop-shadow-xs select-none transition-all duration-200"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : null}
               </div>
             </div>
 

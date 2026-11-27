@@ -141,8 +141,19 @@ export default function DiagnosticPortalPage() {
     setSelectedTestDetail(test);
   };
 
-  const filteredTests = useMemo(() => {
+  // Deduplicate ALL_LAB_TESTS_DATA so each lab test name appears strictly once
+  const uniqueLabTests = useMemo(() => {
+    const seen = new Set();
     return ALL_LAB_TESTS_DATA.filter((test) => {
+      const key = test.name.toLowerCase().trim();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, []);
+
+  const filteredTests = useMemo(() => {
+    return uniqueLabTests.filter((test) => {
       // Category filter
       if (!selectedCategories.includes('all')) {
         const hasMatchingCat = selectedCategories.some((cat) =>
@@ -542,12 +553,17 @@ export default function DiagnosticPortalPage() {
                           <div 
                             className="w-full h-28 sm:h-32 rounded-xl bg-gradient-to-b from-[#F0F7FF] to-[#EAF3FC] flex items-center justify-center p-2 overflow-hidden"
                           >
-                            <img
-                              src={test.image}
-                              alt={test.name}
-                              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-xs"
-                              loading="lazy"
-                            />
+                            {test.image ? (
+                              <img
+                                src={test.image}
+                                alt={test.name}
+                                className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-xs"
+                                loading="lazy"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            ) : null}
                           </div>
 
                           {/* Title */}

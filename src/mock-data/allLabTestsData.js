@@ -1,4 +1,4 @@
-// 212 Comprehensive Lab Tests Data
+// Comprehensive Unique Lab Tests Data (212 tests)
 export const ALL_LAB_TESTS_DATA = [
   {
     "id": "test-cbc",
@@ -2234,12 +2234,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 280,
     "mrp": 380,
     "description": "Measures liver synthesis of clotting factors and monitors blood thinners.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 54,
     "rating": 4.6,
     "reviewsCount": "1,497",
@@ -3755,12 +3751,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 900,
     "description": "Key clotting factor and acute phase reactant contributing to hypercoagulability.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 91,
     "rating": 4.8,
     "reviewsCount": "2,126",
@@ -4372,12 +4364,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Confirms pregnancy age and screens for ectopic pregnancy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 106,
     "rating": 4.8,
     "reviewsCount": "2,381",
@@ -4785,12 +4773,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Quantifies circulating allergic antibodies for atopy, asthma, and eczema.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 116,
     "rating": 4.8,
     "reviewsCount": "2,551",
@@ -4826,12 +4810,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1250,
     "mrp": 1700,
     "description": "Screens for sensitization to environmental pollens, dust mites, and pet dander.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 117,
     "rating": 4.9,
     "reviewsCount": "2,568",
@@ -4868,12 +4848,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2800,
     "mrp": 3800,
     "description": "Tests IgE antibodies to milk, eggs, peanuts, soy, wheat, fish, shellfish.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 118,
     "rating": 4.5,
     "reviewsCount": "2,585",
@@ -4909,12 +4885,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2900,
     "mrp": 3900,
     "description": "Identifies allergic triggers across grass, weed, tree pollens, and molds.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 119,
     "rating": 4.6,
     "reviewsCount": "2,602",
@@ -4950,12 +4922,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Specific IgE tests for casein, alpha-lactalbumin, and beta-lactoglobulin.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 120,
     "rating": 4.7,
     "reviewsCount": "2,619",
@@ -4991,12 +4959,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Primary serological screening test for Celiac disease and gluten enteropathy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 121,
     "rating": 4.8,
     "reviewsCount": "2,636",
@@ -5032,12 +4996,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1200,
     "mrp": 1650,
     "description": "Identifies perennial indoor allergic triggers for rhinitis and asthma.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 122,
     "rating": 4.9,
     "reviewsCount": "2,653",
@@ -5073,12 +5033,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 4500,
     "mrp": 6000,
     "description": "Comprehensive micro-array mapping food, inhalant, contact, and drug allergens.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 123,
     "rating": 4.5,
     "reviewsCount": "2,670",
@@ -5610,12 +5566,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "Screens for abnormal monoclonal M-protein spike in Multiple Myeloma.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 136,
     "rating": 4.8,
     "reviewsCount": "2,891",
@@ -5651,12 +5603,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2500,
     "mrp": 3400,
     "description": "Identifies exact heavy and light chain isotype of monoclonal proteins.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 137,
     "rating": 4.9,
     "reviewsCount": "2,908",
@@ -5692,12 +5640,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2800,
     "mrp": 3800,
     "description": "Quantitative assessment for plasma cell dyscrasias and amyloidosis.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 138,
     "rating": 4.5,
     "reviewsCount": "2,925",
@@ -5733,12 +5677,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 250,
     "description": "Basic surgical pre-operative primary and secondary hemostasis screen.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 139,
     "rating": 4.6,
     "reviewsCount": "2,942",
@@ -5774,12 +5714,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 380,
     "mrp": 520,
     "description": "Measures intrinsic clotting pathway and monitors heparin therapy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 140,
     "rating": 4.7,
     "reviewsCount": "2,959",
@@ -5815,12 +5751,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Evaluates fibrin formation from fibrinogen in bleeding investigations.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 141,
     "rating": 4.8,
     "reviewsCount": "2,976",
@@ -5856,12 +5788,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1800,
     "mrp": 2500,
     "description": "Diagnoses Antiphospholipid Syndrome (APS) and recurrent pregnancy loss.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 142,
     "rating": 4.9,
     "reviewsCount": "2,993",
@@ -5897,12 +5825,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1400,
     "mrp": 1900,
     "description": "Autoantibodies linked to arterial and venous blood clots.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 143,
     "rating": 4.5,
     "reviewsCount": "3,010",
@@ -5938,12 +5862,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1600,
     "mrp": 2200,
     "description": "Specific serological criterion for Antiphospholipid Syndrome.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 144,
     "rating": 4.6,
     "reviewsCount": "3,027",
@@ -5979,12 +5899,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Standard bacterial infection and inflammatory disease severity index.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 145,
     "rating": 4.7,
     "reviewsCount": "3,044",
@@ -6020,12 +5936,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Diagnoses Rheumatoid Arthritis and autoimmune joint inflammation.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 146,
     "rating": 4.8,
     "reviewsCount": "3,061",
@@ -6061,12 +5973,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1250,
     "mrp": 1700,
     "description": "High-specificity antibody confirming early destructive rheumatoid arthritis.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 147,
     "rating": 4.9,
     "reviewsCount": "3,078",
@@ -6102,12 +6010,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2600,
     "description": "Distinguishes bacterial sepsis from viral infection in critical care.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 148,
     "rating": 4.5,
     "reviewsCount": "3,095",
@@ -6143,12 +6047,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Early diagnostic marker for Dengue virus within first 1 to 5 days of fever.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 149,
     "rating": 4.6,
     "reviewsCount": "3,112",
@@ -6184,12 +6084,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 900,
     "description": "Detects active primary or secondary Dengue fever antibody response.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 150,
     "rating": 4.7,
     "reviewsCount": "3,129",
@@ -6225,12 +6121,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 350,
     "mrp": 480,
     "description": "Rapid chromatographic test identifying Plasmodium vivax and falciparum.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 151,
     "rating": 4.8,
     "reviewsCount": "3,146",
@@ -6266,12 +6158,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 250,
     "mrp": 350,
     "description": "Agglutination test identifying Salmonella typhi antibodies in enteric fever.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 152,
     "rating": 4.9,
     "reviewsCount": "3,163",
@@ -6307,12 +6195,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 450,
     "mrp": 600,
     "description": "Rapid serological test identifying early acute typhoid fever.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 153,
     "rating": 4.5,
     "reviewsCount": "3,180",
@@ -6348,12 +6232,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 750,
     "mrp": 1000,
     "description": "Confirms acute Chikungunya virus in sudden fever and crippling joint pain.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 154,
     "rating": 4.6,
     "reviewsCount": "3,197",
@@ -6389,12 +6269,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Automated continuous monitoring detecting bacteremia and bloodstream infections.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 155,
     "rating": 4.7,
     "reviewsCount": "3,214",
@@ -6430,12 +6306,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 180,
     "mrp": 250,
     "description": "Standard non-treponemal serological screening for Treponema pallidum.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 156,
     "rating": 4.8,
     "reviewsCount": "3,231",
@@ -6471,12 +6343,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 550,
     "mrp": 750,
     "description": "Specific confirmatory treponemal antibody test.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 157,
     "rating": 4.9,
     "reviewsCount": "3,248",
@@ -6512,12 +6380,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Combines p24 antigen and HIV-1/2 antibodies for ultra-early detection window.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 158,
     "rating": 4.5,
     "reviewsCount": "3,265",
@@ -6553,12 +6417,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 900,
     "description": "Screens for benign prostatic hyperplasia (BPH) and prostate cancer in men 50+.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 159,
     "rating": 4.6,
     "reviewsCount": "3,282",
@@ -6594,12 +6454,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 950,
     "mrp": 1300,
     "description": "Differentiates benign prostate enlargement from prostate malignancy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 160,
     "rating": 4.7,
     "reviewsCount": "3,299",
@@ -6635,12 +6491,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1100,
     "mrp": 1500,
     "description": "Ovarian tumor marker for monitoring epithelial ovarian carcinoma.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 161,
     "rating": 4.8,
     "reviewsCount": "3,316",
@@ -6676,12 +6528,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1250,
     "mrp": 1700,
     "description": "Tumor marker for pancreatic, colorectal, and biliary tract adenocarcinoma.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 162,
     "rating": 4.9,
     "reviewsCount": "3,333",
@@ -6717,12 +6565,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1150,
     "description": "General tumor marker monitoring colorectal and gastrointestinal cancers.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 163,
     "rating": 4.5,
     "reviewsCount": "3,350",
@@ -6758,12 +6602,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1200,
     "mrp": 1650,
     "description": "Monitors clinical course and recurrence of metastatic breast cancer.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 164,
     "rating": 4.6,
     "reviewsCount": "3,367",
@@ -6799,12 +6639,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1200,
     "description": "Measures vital trace element for wound healing, skin integrity, and immunity.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 165,
     "rating": 4.7,
     "reviewsCount": "3,384",
@@ -6840,12 +6676,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1200,
     "description": "Evaluates essential trace metal in hematopoiesis and liver storage.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 166,
     "rating": 4.8,
     "reviewsCount": "3,401",
@@ -6881,12 +6713,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1500,
     "mrp": 2000,
     "description": "Occupational toxicology screening for toxic heavy metal lead poisoning.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 167,
     "rating": 4.9,
     "reviewsCount": "3,418",
@@ -6922,12 +6750,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 650,
     "mrp": 900,
     "description": "Evaluates arterial pH, pO2, pCO2, HCO3, and base excess in respiratory failure.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 168,
     "rating": 4.5,
     "reviewsCount": "3,435",
@@ -6963,12 +6787,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 499,
     "mrp": 700,
     "description": "Gold standard molecular diagnostic test for SARS-CoV-2 viral RNA.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 169,
     "rating": 4.6,
     "reviewsCount": "3,452",
@@ -7004,12 +6824,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2200,
     "description": "Detects Seasonal Flu A/B and H1N1 Swine Flu viruses in acute respiratory illness.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 170,
     "rating": 4.7,
     "reviewsCount": "3,469",
@@ -7333,12 +7149,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2200,
     "mrp": 2900,
     "description": "Screens for fetal Down syndrome and neural tube defects between weeks 15-20.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 178,
     "rating": 4.5,
     "reviewsCount": "3,605",
@@ -7374,12 +7186,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2700,
     "mrp": 3600,
     "description": "High-accuracy second-trimester genetic screening panel.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 179,
     "rating": 4.6,
     "reviewsCount": "3,622",
@@ -7415,12 +7223,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1950,
     "mrp": 2600,
     "description": "Free Beta-hCG and PAPP-A screening in first trimester of pregnancy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 180,
     "rating": 4.7,
     "reviewsCount": "3,639",
@@ -7456,12 +7260,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 14500,
     "mrp": 18000,
     "description": "Advanced cell-free fetal DNA screening for chromosomal aneuploidies.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 181,
     "rating": 4.8,
     "reviewsCount": "3,656",
@@ -7497,12 +7297,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2400,
     "mrp": 3200,
     "description": "Screens for Toxoplasma, Rubella, CMV, and Herpes infections in pregnancy.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 182,
     "rating": 4.9,
     "reviewsCount": "3,673",
@@ -7745,12 +7541,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2199,
     "mrp": 3200,
     "description": "Comprehensive screen: Testosterone, PSA, Lipid, Liver, Kidney, Blood Sugar.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 188,
     "rating": 4.5,
     "reviewsCount": "3,775",
@@ -7868,12 +7660,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1850,
     "mrp": 2600,
     "description": "Includes CBC, hs-CRP, Lipid Profile, CEA tumor marker, and ABG analysis.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 191,
     "rating": 4.8,
     "reviewsCount": "3,826",
@@ -8237,12 +8025,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1650,
     "mrp": 2350,
     "description": "Immunoglobulins IgG, IgA, IgM, CBC with Differential, Zinc, Vitamin C.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 200,
     "rating": 4.7,
     "reviewsCount": "3,979",
@@ -8442,12 +8226,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 850,
     "mrp": 1200,
     "description": "Evaluates acute pancreatitis and pancreatic inflammation.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 205,
     "rating": 4.7,
     "reviewsCount": "4,064",
@@ -8483,12 +8263,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 890,
     "mrp": 1250,
     "description": "Diagnoses Helicobacter pylori peptic ulcers and chronic gastritis.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 206,
     "rating": 4.8,
     "reviewsCount": "4,081",
@@ -8524,12 +8300,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 2400,
     "mrp": 3500,
     "description": "ANA, Anti-CCP, RA Factor, HLA-B27, ESR, Uric Acid, hs-CRP.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 207,
     "rating": 4.9,
     "reviewsCount": "4,098",
@@ -8565,12 +8337,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 1850,
     "mrp": 2600,
     "description": "Molecular marker for seronegative spondyloarthropathies and spine arthritis.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 208,
     "rating": 4.5,
     "reviewsCount": "4,115",
@@ -8606,12 +8374,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 3400,
     "mrp": 4800,
     "description": "Includes PSA, CEA, AFP, CA 19-9, and LDH.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 209,
     "rating": 4.6,
     "reviewsCount": "4,132",
@@ -8647,12 +8411,8 @@ export const ALL_LAB_TESTS_DATA = [
     "price": 3400,
     "mrp": 4800,
     "description": "Includes CA-125, CA 15-3, CEA, AFP, and CA 19-9.",
-    "image": "/lab-tests/blood.png",
-    "images": [
-      "/lab-tests/blood.png",
-      "/lab-tests/cbc-modal-thumb2.png",
-      "/lab-tests/cbc-modal-thumb3.png"
-    ],
+    "image": "",
+    "images": [],
     "popularRank": 210,
     "rating": 4.7,
     "reviewsCount": "4,149",
