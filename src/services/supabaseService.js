@@ -1377,12 +1377,15 @@ export const getUserBookings = async (user) => {
 
   const isMatchingUser = (item) => {
     if (!item) return false;
-    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
-    if (cleanPhone && itemPhone && cleanPhone === itemPhone) return true;
-    if (userId && (item.userId || item.user_id) && String(userId) === String(item.userId || item.user_id)) return true;
-    if (userEmail && (item.userEmail || item.user_email || item.email)) {
-      const itemEmail = (item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
-      if (itemEmail && itemEmail === userEmail) return true;
+    if (isDemoBooking(item)) return false;
+
+    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || item.customer_phone || '');
+    if (cleanPhone && itemPhone) {
+      return cleanPhone === itemPhone;
+    }
+    if (cleanPhone && !itemPhone && userName && (item.patient_name || item.patientName)) {
+      const itemName = String(item.patient_name || item.patientName || '').trim().toLowerCase();
+      if (itemName === userName.toLowerCase()) return true;
     }
     return false;
   };
@@ -1391,26 +1394,18 @@ export const getUserBookings = async (user) => {
   const seenIds = new Set();
 
   // 1. Fetch from Supabase PostgreSQL tables if configured
-  if (isSupabaseConfigured()) {
+  if (isSupabaseConfigured() && cleanPhone) {
     try {
-      const filters = [];
-      if (cleanPhone) filters.push(`phone.ilike.%${cleanPhone}%`);
-      if (userId) filters.push(`user_id.eq.${userId}`);
-      if (userEmail) filters.push(`user_email.eq.${userEmail}`);
+      const [docsRes, physioRes, surgRes, wellRes, labsRes, ordersRes] = await Promise.allSettled([
+        supabase.from('doctor_appointments').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+        supabase.from('physiotherapy_bookings').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+        supabase.from('surgery_bookings').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+        supabase.from('wellness_bookings').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+        supabase.from('test_bookings').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+        supabase.from('orders').select('*').ilike('phone', `%${cleanPhone}%`).order('created_at', { ascending: false }),
+      ]);
 
-      const filterClause = filters.length > 0 ? filters.join(',') : null;
-
-      if (filterClause) {
-        const [docsRes, physioRes, surgRes, wellRes, labsRes, ordersRes] = await Promise.allSettled([
-          supabase.from('doctor_appointments').select('*').or(filterClause).order('created_at', { ascending: false }),
-          supabase.from('physiotherapy_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
-          supabase.from('surgery_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
-          supabase.from('wellness_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
-          supabase.from('test_bookings').select('*').or(filterClause).order('created_at', { ascending: false }),
-          supabase.from('orders').select('*').or(filterClause).order('created_at', { ascending: false }),
-        ]);
-
-        if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) {
+      if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) {
           docsRes.value.data.filter(isMatchingUser).forEach((d) => {
             const bId = d.appointment_number || d.id;
             if (!seenIds.has(String(bId))) {
@@ -1683,7 +1678,6 @@ export const getUserBookings = async (user) => {
             }
           });
         }
-      }
     } catch (err) {
       console.warn('[SupabaseService] getUserBookings Supabase query error:', err);
     }

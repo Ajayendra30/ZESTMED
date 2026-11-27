@@ -160,16 +160,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     if (!item || !user) return false;
     if (isDemoBooking(item)) return false;
     const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
-    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || '');
+    const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || item.customer_phone || '');
     if (cleanUserPhone && itemPhone) {
       return cleanUserPhone === itemPhone;
     }
-    if (user.id && (item.userId || item.user_id)) {
-      return String(user.id) === String(item.userId || item.user_id);
-    }
-    if (user.email && (item.userEmail || item.user_email || item.email)) {
-      const itemEmail = String(item.userEmail || item.user_email || item.email || '').trim().toLowerCase();
-      if (itemEmail && itemEmail === String(user.email || '').trim().toLowerCase()) return true;
+    if (cleanUserPhone && !itemPhone && user.name && (item.patient_name || item.patientName)) {
+      const itemName = String(item.patient_name || item.patientName || '').trim().toLowerCase();
+      const userName = String(user.name || '').trim().toLowerCase();
+      if (itemName && userName && itemName === userName) return true;
     }
     return false;
   }, [user]);
@@ -368,26 +366,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
           const parsed = JSON.parse(storedUser);
           if (parsed && updateUser) {
             updateUser(parsed);
-            return;
           }
-        }
-        // Initialize default verified patient profile if none exists so dashboard stays open on reload
-        const defaultPatient = {
-          id: 'usr_patient_default',
-          name: 'Ajayendra Shekhar',
-          contact: '+91 92791 25091',
-          phone: '+91 92791 25091',
-          email: 'ajayendra.shekhar@zestmed.com',
-          role: 'patient',
-          uhid: 'ZM-PAT-501284',
-          bloodGroup: 'B+',
-          age: 34,
-          gender: 'Male'
-        };
-        sessionStorage.setItem('zestmed_user', JSON.stringify(defaultPatient));
-        localStorage.removeItem('zestmed_user');
-        if (updateUser) {
-          updateUser(defaultPatient);
         }
       } catch (_) {}
     }
@@ -716,21 +695,25 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     } catch (e) {
       console.error(e);
     }
+    const cleanUserPhone = normalizePhone(user?.phone || user?.contact || '');
+    const cleanSavedPhone = normalizePhone(saved?.phone || saved?.contact || '');
+    const isSavedPhoneMatch = cleanUserPhone && cleanSavedPhone && cleanUserPhone === cleanSavedPhone;
+
     const currentName = (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') 
       ? user.name 
-      : (saved?.name && saved.name !== 'Verified Patient' && saved.name !== 'Rahul Verma') 
+      : (isSavedPhoneMatch && saved?.name && saved.name !== 'Verified Patient' && saved.name !== 'Rahul Verma') 
       ? saved.name 
-      : 'Ajayendra Shekhar';
+      : (user?.name || 'Patient');
     return {
       name: currentName,
-      uhid: user?.uhid || saved?.uhid || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284'),
-      email: (user?.email && !user.email.includes('rahul.verma')) ? user.email : (saved?.email && !saved.email.includes('rahul.verma')) ? saved.email : 'ajayendra.shekhar@zestmed.com',
-      phone: user?.contact || user?.phone || saved?.phone || '+91 92791 25091',
-      age: user?.age || saved?.age || '34',
-      gender: user?.gender || saved?.gender || 'Male',
-      bloodGroup: user?.bloodGroup || saved?.bloodGroup || 'B+',
-      emergencyContact: user?.emergencyContact || saved?.emergencyContact || 'Emergency Contact (+91 92791 25091)',
-      city: user?.city || saved?.city || 'Guwahati, Assam'
+      uhid: user?.uhid || (isSavedPhoneMatch ? saved?.uhid : null) || (user?.id ? `ZM-PAT-${user.id.replace(/\D/g, '').slice(-6) || '501284'}` : 'ZM-PAT-501284'),
+      email: (user?.email && !user.email.includes('rahul.verma')) ? user.email : (isSavedPhoneMatch && saved?.email && !saved.email.includes('rahul.verma')) ? saved.email : '',
+      phone: user?.contact || user?.phone || (isSavedPhoneMatch ? saved?.phone : '') || '',
+      age: user?.age || (isSavedPhoneMatch ? saved?.age : null) || '30',
+      gender: user?.gender || (isSavedPhoneMatch ? saved?.gender : null) || 'Not Specified',
+      bloodGroup: user?.bloodGroup || (isSavedPhoneMatch ? saved?.bloodGroup : null) || 'B+',
+      emergencyContact: user?.emergencyContact || (isSavedPhoneMatch ? saved?.emergencyContact : '') || '',
+      city: user?.city || (isSavedPhoneMatch ? saved?.city : null) || 'Guwahati, Assam'
     };
   });
 
@@ -898,7 +881,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
 
       if (hasChanges) {
         localStorage.setItem('patient_appointments', JSON.stringify(reconciled));
-        setAppointments(reconciled);
+        setAppointments(reconciled.filter(isMatchingCurrentUser));
       }
     } catch (_) {}
   }, []);
@@ -3245,7 +3228,7 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                       : 'Today • 10:00 AM - Morning Slot';
 
                     const patientDisplayName = (!b.patientName || b.patientName === 'Rahul Verma')
-                      ? (user?.name || 'Ajayendra Shekhar')
+                      ? (user?.name || 'Patient')
                       : (typeof b.patientName === 'object' ? b.patientName?.name : b.patientName);
 
                     const serviceTitle = typeof (b.serviceName || b.title) === 'object'

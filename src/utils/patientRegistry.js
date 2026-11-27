@@ -20,8 +20,8 @@ export function purgeRahulVermaFromStorage() {
     if (storedUser) {
       const u = JSON.parse(storedUser);
       if (u?.name === 'Rahul Verma' || (u?.email && u.email.includes('rahul.verma'))) {
-        u.name = 'Ajayendra Shekhar';
-        u.email = u.email ? u.email.replace(/rahul\.verma/gi, 'ajayendra.shekhar') : 'ajayendra.shekhar@zestmed.com';
+        u.name = 'Patient';
+        u.email = u.email ? u.email.replace(/rahul\.verma/gi, 'patient') : 'patient@zestmed.com';
         sessionStorage.setItem('zestmed_user', JSON.stringify(u));
       }
     }
@@ -31,8 +31,8 @@ export function purgeRahulVermaFromStorage() {
     if (storedProfile) {
       const p = JSON.parse(storedProfile);
       if (p?.name === 'Rahul Verma' || (p?.email && p.email.includes('rahul.verma'))) {
-        p.name = 'Ajayendra Shekhar';
-        p.email = p.email ? p.email.replace(/rahul\.verma/gi, 'ajayendra.shekhar') : 'ajayendra.shekhar@zestmed.com';
+        p.name = 'Patient';
+        p.email = p.email ? p.email.replace(/rahul\.verma/gi, 'patient') : 'patient@zestmed.com';
         localStorage.setItem('zestmed_patient_profile', JSON.stringify(p));
       }
     }
@@ -44,8 +44,7 @@ export function purgeRahulVermaFromStorage() {
       let changed = false;
       Object.keys(reg).forEach((k) => {
         if (reg[k]?.name === 'Rahul Verma' || (reg[k]?.email && reg[k].email.includes('rahul.verma'))) {
-          reg[k].name = 'Ajayendra Shekhar';
-          reg[k].email = 'ajayendra.shekhar@zestmed.com';
+          delete reg[k];
           changed = true;
         }
       });
@@ -62,8 +61,8 @@ export function purgeRahulVermaFromStorage() {
         let changed = false;
         list.forEach((pat) => {
           if (pat?.name === 'Rahul Verma' || (pat?.email && pat.email.includes('rahul.verma'))) {
-            pat.name = 'Ajayendra Shekhar';
-            pat.email = 'ajayendra.shekhar@zestmed.com';
+            pat.name = 'Patient';
+            pat.email = '';
             changed = true;
           }
         });
@@ -86,7 +85,7 @@ export function purgeRahulVermaFromStorage() {
     // 5. Clean zestmed_patient_notifications
     const storedNotifs = localStorage.getItem('zestmed_patient_notifications');
     if (storedNotifs && storedNotifs.includes('Rahul Verma')) {
-      localStorage.setItem('zestmed_patient_notifications', storedNotifs.replace(/Rahul Verma/gi, 'Ajayendra Shekhar'));
+      localStorage.setItem('zestmed_patient_notifications', storedNotifs.replace(/Rahul Verma/gi, 'Patient'));
     }
 
     // 6. Clean patient_appointments and remove demo mock entries
