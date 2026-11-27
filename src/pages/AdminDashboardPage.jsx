@@ -1,6 +1,6 @@
 // src/pages/AdminDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Admin Dashboard specification pixel-for-pixel
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
@@ -86,7 +86,14 @@ import {
   Star,
   Tag,
   LifeBuoy,
-  Sparkles
+  Sparkles,
+  Image,
+  Target,
+  Thermometer,
+  Building2,
+  Droplet,
+  Syringe,
+  SquarePlus
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -1732,7 +1739,43 @@ export default function AdminDashboardPage() {
       window.removeEventListener('storage', fetchPlatformPayments);
     };
   }, []);
-  const [newMedForm, setNewMedForm] = useState({ name: '', genericName: '', categoryName: 'General', stock: 100, price: 50, expiry: 'Dec 2027' });
+  const [newMedForm, setNewMedForm] = useState({
+    name: 'Disprin Tablet',
+    categoryName: 'Pain Relief & Fever',
+    type: 'Tablet',
+    price: 28.00,
+    mrp: 32.00,
+    discount: 20,
+    stock: 100,
+    shortDescription: 'Fast relief from headache, toothache, and muscular pain.',
+    uses: 'Used for headache, toothache and inflammation.',
+    dosage: '1 to 2 tablets every 4–6 hours as needed.',
+    inStock: true,
+    composition: 'Acetylsalicylic Acid 350 mg',
+    expiry: 'Dec 2027',
+    packSize: 'Strip of 10 Tablets',
+    storage: 'Store below 25°C, away from moisture',
+    manufacturer: 'Reckitt Benckiser',
+    image: '',
+    images: []
+  });
+  const medImageInputRef = useRef(null);
+
+  const handleMedImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setNewMedForm((prev) => ({
+          ...prev,
+          image: reader.result,
+          images: [reader.result]
+        }));
+        addToast('Medicine product image uploaded successfully!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Recent Bookings Table Data
   const recentBookings = [
@@ -4490,130 +4533,569 @@ export default function AdminDashboardPage() {
           {/* MEDICINES: ADD MEDICINE                                  */}
           {/* ======================================================== */}
           {activeMenu === 'medicines-add' && (
-            <div className="space-y-4 sm:space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  <Plus className="w-6 h-6 text-[#14B8A6]" />
-                  <span>Add New Medicine to Pharmacy</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Register a new pharmaceutical product with NABL drug approval codes.
-                </p>
-              </div>
+            <div className="bg-white rounded-3xl p-5 sm:p-7 lg:p-8 border border-slate-100 shadow-sm max-w-7xl mx-auto">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!newMedForm.name || !newMedForm.name.trim()) {
+                    addToast('Please enter a medicine name', 'error');
+                    return;
+                  }
+                  const newMed = {
+                    id: `med-${Date.now()}`,
+                    name: newMedForm.name,
+                    genericName: newMedForm.composition || newMedForm.genericName || 'Active Pharmaceutical Ingredient',
+                    composition: newMedForm.composition,
+                    category: newMedForm.categoryName || 'General Medicines',
+                    categoryName: newMedForm.categoryName || 'General Medicines',
+                    type: newMedForm.type || 'Tablet',
+                    price: Number(newMedForm.price) || 28,
+                    mrp: Number(newMedForm.mrp) || 32,
+                    discount: Number(newMedForm.discount) || 20,
+                    stock: Number(newMedForm.stock) || 100,
+                    threshold: 40,
+                    shortDescription: newMedForm.shortDescription,
+                    uses: newMedForm.uses,
+                    dosage: newMedForm.dosage,
+                    inStock: newMedForm.inStock !== false,
+                    pack: newMedForm.packSize || 'Strip of 10 Tablets',
+                    packSize: newMedForm.packSize || 'Strip of 10 Tablets',
+                    storage: newMedForm.storage,
+                    manufacturer: newMedForm.manufacturer || 'Reckitt Benckiser',
+                    image: newMedForm.image || '',
+                    images: newMedForm.images?.length ? newMedForm.images : (newMedForm.image ? [newMedForm.image] : []),
+                    expiry: newMedForm.expiry || 'Dec 2027',
+                    batchNo: `B-${Math.floor(100 + Math.random() * 900)}`
+                  };
+                  setAdminMedicines((prev) => [newMed, ...prev]);
+                  addToast(`Medicine ${newMed.name} added to central inventory!`, 'success');
+                  setActiveMenu('medicines');
+                }}
+                className="space-y-6"
+              >
+                {/* 2-Column Responsive Layout matching reference */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                  
+                  {/* LEFT COLUMN: Image Upload & Preview (Span 4 of 12) */}
+                  <div className="lg:col-span-4 space-y-4">
+                    {/* Main Image Box */}
+                    <div className="rounded-2xl border-2 border-dashed border-[#86EFAC] bg-[#F0FDF4]/30 hover:bg-[#F0FDF4]/60 transition p-6 text-center flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden group">
+                      {newMedForm.image ? (
+                        <div className="relative w-full flex flex-col items-center">
+                          <img
+                            src={newMedForm.image}
+                            alt="Medicine Preview"
+                            className="max-h-48 max-w-full object-contain rounded-xl drop-shadow-sm mb-3"
+                          />
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => medImageInputRef.current?.click()}
+                              className="px-3 py-1.5 bg-white border border-emerald-600 text-emerald-700 text-xs font-bold rounded-lg shadow-2xs hover:bg-emerald-50 transition cursor-pointer"
+                            >
+                              Change Image
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setNewMedForm((prev) => ({ ...prev, image: '', images: [] }))}
+                              className="px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold rounded-lg hover:bg-rose-100 transition cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Green Placeholder Icon with Plus Badge */}
+                          <div className="w-16 h-16 rounded-2xl bg-emerald-100/70 border border-emerald-200 flex items-center justify-center relative mb-3">
+                            <Image className="w-9 h-9 text-[#059669]" />
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#059669] text-white rounded-full flex items-center justify-center shadow-xs">
+                              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            </div>
+                          </div>
 
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-2xl space-y-4">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!newMedForm.name) {
-                      addToast('Please provide a medicine brand name', 'error');
-                      return;
-                    }
-                    const newMed = {
-                      id: `med-custom-${Date.now()}`,
-                      name: newMedForm.name,
-                      genericName: newMedForm.genericName || 'Active Salt IP',
-                      categoryName: newMedForm.categoryName,
-                      stock: Number(newMedForm.stock) || 100,
-                      threshold: 40,
-                      price: Number(newMedForm.price) || 50,
-                      expiry: newMedForm.expiry || 'Dec 2027',
-                      batchNo: `B-${Math.floor(100 + Math.random() * 900)}`
-                    };
-                    setAdminMedicines((prev) => [newMed, ...prev]);
-                    addToast(`Medicine ${newMed.name} registered into central inventory!`, 'success');
-                    setActiveMenu('medicines-all');
-                  }}
-                  className="space-y-4 text-xs"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <h3 className="text-sm font-bold text-slate-800">Add Medicine Image</h3>
+                          <p className="text-[11px] text-slate-400 mt-0.5 mb-3">
+                            Upload product image (JPG, PNG, WebP)
+                          </p>
+
+                          <button
+                            type="button"
+                            onClick={() => medImageInputRef.current?.click()}
+                            className="px-4 py-2 bg-white border border-[#059669] text-[#059669] hover:bg-emerald-50 text-xs font-bold rounded-xl flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Image</span>
+                          </button>
+                        </>
+                      )}
+
+                      <input
+                        ref={medImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleMedImageUpload}
+                        className="hidden"
+                      />
+                    </div>
+
+                    {/* Medicine Images (0/4) Thumbnail Bar */}
                     <div>
-                      <label className="block text-slate-500 font-bold mb-1">Brand Name</label>
+                      <h4 className="text-xs font-bold text-slate-800 mb-2">
+                        Medicine Images ({newMedForm.image ? 1 : 0}/4)
+                      </h4>
+                      <div className="grid grid-cols-4 gap-2.5">
+                        {/* Slot 1 */}
+                        {newMedForm.image ? (
+                          <div className="relative aspect-square rounded-xl border border-emerald-300 bg-white p-1 overflow-hidden shadow-2xs">
+                            <img src={newMedForm.image} alt="Thumb 1" className="w-full h-full object-contain rounded-lg" />
+                            <button
+                              type="button"
+                              onClick={() => setNewMedForm((prev) => ({ ...prev, image: '', images: [] }))}
+                              className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px]"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => medImageInputRef.current?.click()}
+                            className="aspect-square rounded-xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50/50 hover:bg-emerald-50/30 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition cursor-pointer p-1"
+                          >
+                            <Plus className="w-4 h-4 mb-0.5" />
+                            <span className="text-[9.5px] font-bold leading-tight">Add Image</span>
+                          </button>
+                        )}
+
+                        {/* Slot 2, 3, 4 */}
+                        {[2, 3, 4].map((slot) => (
+                          <div
+                            key={slot}
+                            className="aspect-square rounded-xl border border-dashed border-slate-200 bg-slate-50/40"
+                          />
+                        ))}
+                      </div>
+                      <p className="text-[10.5px] text-slate-400 mt-2">
+                        Recommended size: 800 × 800 px (JPG, PNG)
+                      </p>
+                    </div>
+
+                    {/* LIVE MEDICINE PREVIEW SECTION */}
+                    <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Eye className="w-4 h-4 text-[#007A64]" />
+                          <span className="font-bold text-xs text-slate-800">Medicine Preview</span>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                          Live Store View
+                        </span>
+                      </div>
+
+                      {/* Store Card Preview */}
+                      <div className="bg-white rounded-xl border border-slate-200/90 p-3 shadow-2xs space-y-2.5">
+                        <div className="w-full h-28 bg-[#F1F3F5] rounded-lg flex items-center justify-center p-2 relative overflow-hidden">
+                          {newMedForm.image ? (
+                            <img
+                              src={newMedForm.image}
+                              alt={newMedForm.name || 'Preview'}
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          ) : (
+                            <Pill className="w-10 h-10 text-teal-400/50" />
+                          )}
+                          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-[#E8F8EE] text-[#16A34A] text-[9px] font-bold">
+                            {newMedForm.discount || 20}% OFF
+                          </span>
+                          <span className={`absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                            newMedForm.inStock ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                          }`}>
+                            {newMedForm.inStock ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded">
+                              {newMedForm.type || 'Tablet'}
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              {newMedForm.packSize || 'Strip of 10 Tablets'}
+                            </span>
+                          </div>
+                          <h4 className="text-xs font-bold text-[#0B1E3F] line-clamp-1 mt-1">
+                            {newMedForm.name || 'Disprin Tablet'}
+                          </h4>
+                          <p className="text-[10.5px] text-slate-500 font-medium line-clamp-1">
+                            {newMedForm.composition || newMedForm.genericName || 'Acetylsalicylic Acid 350 mg'}
+                          </p>
+
+                          <div className="flex items-center gap-1.5 pt-1.5">
+                            <span className="text-sm font-bold text-[#0B1E3F]">
+                              ₹{Number(newMedForm.price || 28).toFixed(2)}
+                            </span>
+                            <span className="text-[11px] text-slate-400 line-through">
+                              ₹{Number(newMedForm.mrp || 32).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="w-full py-1 px-2 rounded-lg border border-[#007A64] text-[#007A64] font-semibold text-[11px] flex items-center justify-center gap-1.5 bg-white">
+                          <ShoppingCart className="w-3 h-3" />
+                          <span>Add to Cart</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* RIGHT COLUMN: Form Fields (Span 8 of 12) */}
+                  <div className="lg:col-span-8 space-y-4">
+                    {/* Header: Green Plus Icon + Add New Medicine + Subtitle */}
+                    <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                        <SquarePlus className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                          Add New Medicine
+                        </h2>
+                        <p className="text-xs text-slate-500">
+                          Register a new pharmaceutical product with NABL drug approval codes.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Row 1: Medicine Name + Category */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          Medicine Name <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newMedForm.name}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, name: e.target.value })}
+                          placeholder="e.g. Disprin Tablet"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          Category <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <select
+                            value={newMedForm.categoryName}
+                            onChange={(e) => setNewMedForm({ ...newMedForm, categoryName: e.target.value })}
+                            className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white appearance-none pr-8 cursor-pointer"
+                          >
+                            <option value="">Select Category</option>
+                            <option value="General Medicines">General Medicines</option>
+                            <option value="Pain Relief & Fever">Pain Relief & Fever</option>
+                            <option value="Diabetes Care">Diabetes Care</option>
+                            <option value="Cardiac & BP">Cardiac & BP</option>
+                            <option value="Vitamins & Supplements">Vitamins & Supplements</option>
+                            <option value="Antibiotics">Antibiotics</option>
+                            <option value="Digestive Health">Digestive Health</option>
+                            <option value="Skin Care">Skin Care</option>
+                            <option value="Respiratory Care">Respiratory Care</option>
+                          </select>
+                          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Type (Tablet, Capsule, Syrup, Injection, Other) */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                        Type <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[
+                          { id: 'Tablet', label: 'Tablet', icon: Pill },
+                          { id: 'Capsule', label: 'Capsule', icon: Pill, rotate: true },
+                          { id: 'Syrup', label: 'Syrup', icon: Droplet },
+                          { id: 'Injection', label: 'Injection', icon: Syringe },
+                          { id: 'Other', label: '... Other', icon: null }
+                        ].map((t) => {
+                          const IconComp = t.icon;
+                          const isSelected = (newMedForm.type || 'Tablet') === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => setNewMedForm({ ...newMedForm, type: t.id })}
+                              className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#059669] text-white shadow-xs'
+                                  : 'bg-white border border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-700'
+                              }`}
+                            >
+                              {IconComp && <IconComp className={`w-3.5 h-3.5 ${t.rotate ? 'rotate-45' : ''}`} />}
+                              <span>{t.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Row 3: Price, MRP, Discount, Stock Quantity */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          Price (₹) <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          step="any"
+                          value={newMedForm.price}
+                          onChange={(e) => {
+                            const p = e.target.value;
+                            const m = newMedForm.mrp;
+                            let disc = newMedForm.discount;
+                            if (p && m && Number(m) > 0) {
+                              disc = Math.max(0, Math.round(((Number(m) - Number(p)) / Number(m)) * 100));
+                            }
+                            setNewMedForm({ ...newMedForm, price: p, discount: disc });
+                          }}
+                          placeholder="e.g. 28.00"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          MRP (₹) <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          step="any"
+                          value={newMedForm.mrp}
+                          onChange={(e) => {
+                            const m = e.target.value;
+                            const p = newMedForm.price;
+                            let disc = newMedForm.discount;
+                            if (p && m && Number(m) > 0) {
+                              disc = Math.max(0, Math.round(((Number(m) - Number(p)) / Number(m)) * 100));
+                            }
+                            setNewMedForm({ ...newMedForm, mrp: m, discount: disc });
+                          }}
+                          placeholder="e.g. 32.00"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          Discount (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={newMedForm.discount}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, discount: e.target.value })}
+                          placeholder="e.g. 20"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          <Package className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                          Stock Quantity <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={newMedForm.stock}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, stock: e.target.value })}
+                          placeholder="e.g. 100"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 4: Short Description */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                        Short Description <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="text"
-                        placeholder="e.g. Dolo 650 Tablets"
-                        value={newMedForm.name}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
+                        value={newMedForm.shortDescription}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, shortDescription: e.target.value })}
+                        placeholder="e.g. Fast relief from headache, toothache, and muscular pain."
+                        className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">Generic Name / Composition</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Paracetamol IP 650mg"
-                        value={newMedForm.genericName}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, genericName: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">Category</label>
-                      <select
-                        value={newMedForm.categoryName}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, categoryName: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6] bg-white"
-                      >
-                        <option>General Medicines</option>
-                        <option>Diabetes Care</option>
-                        <option>Cardiac & BP</option>
-                        <option>Vitamins & Supplements</option>
-                        <option>Antibiotics</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">Stock Quantity (Units)</label>
-                      <input
-                        type="number"
-                        value={newMedForm.stock}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, stock: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">Selling Price (₹)</label>
-                      <input
-                        type="number"
-                        value={newMedForm.price}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, price: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">Expiry Date</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Dec 2027"
-                        value={newMedForm.expiry}
-                        onChange={(e) => setNewMedForm({ ...newMedForm, expiry: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-[#14B8A6]"
-                      />
-                    </div>
-                  </div>
 
-                  <div className="pt-2 flex items-center gap-3">
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 bg-[#14B8A6] hover:bg-[#0d9488] text-white font-bold rounded-xl shadow-xs transition"
-                    >
-                      Save to Inventory
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveMenu('medicines-all')}
-                      className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition"
-                    >
-                      Cancel
-                    </button>
+                    {/* Row 5: 3 distinct cards (Uses, Dosage, Availability) */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                      {/* Uses */}
+                      <div className="bg-slate-50/60 p-3.5 rounded-2xl border border-slate-200/80">
+                        <div className="flex items-center gap-1.5 mb-1.5 text-slate-800 font-bold text-xs">
+                          <Target className="w-4 h-4 text-emerald-600" />
+                          <span>Uses</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={newMedForm.uses}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, uses: e.target.value })}
+                          placeholder="e.g. Used for headache, toothache and inflammation."
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] transition"
+                        />
+                      </div>
+
+                      {/* Dosage */}
+                      <div className="bg-slate-50/60 p-3.5 rounded-2xl border border-slate-200/80">
+                        <div className="flex items-center gap-1.5 mb-1.5 text-slate-800 font-bold text-xs">
+                          <Pill className="w-4 h-4 text-emerald-600" />
+                          <span>Dosage</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={newMedForm.dosage}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, dosage: e.target.value })}
+                          placeholder="e.g. 1 to 2 tablets every 4–6 hours as needed."
+                          className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] transition"
+                        />
+                      </div>
+
+                      {/* Availability */}
+                      <div className="bg-slate-50/60 p-3.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between">
+                        <div className="flex items-center gap-1.5 text-slate-800 font-bold text-xs">
+                          <Package className="w-4 h-4 text-emerald-600" />
+                          <span>Availability</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 pt-2">
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={newMedForm.inStock}
+                            onClick={() => setNewMedForm({ ...newMedForm, inStock: !newMedForm.inStock })}
+                            className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
+                              newMedForm.inStock ? 'bg-[#059669]' : 'bg-slate-300'
+                            }`}
+                          >
+                            <span
+                              className={`inline-block w-5 h-5 rounded-full bg-white shadow-xs transform transition-transform ${
+                                newMedForm.inStock ? 'translate-x-5.5' : 'translate-x-0.5'
+                              }`}
+                            />
+                          </button>
+                          <span className="text-xs font-bold text-slate-800">
+                            {newMedForm.inStock ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 6: Composition + Expiry Date */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          <FlaskConical className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                          Composition <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newMedForm.composition}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, composition: e.target.value })}
+                          placeholder="e.g. Acetylsalicylic Acid 350 mg"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                          Expiry Date <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newMedForm.expiry}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, expiry: e.target.value })}
+                          placeholder="e.g. Dec 2027"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 7: Pack Size + Storage */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          <Package className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                          Pack Size <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newMedForm.packSize}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, packSize: e.target.value })}
+                          placeholder="e.g. Strip of 10 Tablets"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                          <Thermometer className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                          Storage <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={newMedForm.storage}
+                          onChange={(e) => setNewMedForm({ ...newMedForm, storage: e.target.value })}
+                          placeholder="e.g. Store below 25°C, away from moisture"
+                          className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 8: Manufacturer */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-emerald-600 inline mr-1" />
+                        Manufacturer <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={newMedForm.manufacturer}
+                        onChange={(e) => setNewMedForm({ ...newMedForm, manufacturer: e.target.value })}
+                        placeholder="e.g. Reckitt Benckiser"
+                        className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669] transition bg-white"
+                        required
+                      />
+                    </div>
+
+                    {/* Bottom Action Buttons: Cancel and Save to Inventory */}
+                    <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => setActiveMenu('medicines')}
+                        className="px-6 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                        <span>Cancel</span>
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white font-bold text-xs flex items-center gap-2 shadow-xs transition cursor-pointer"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>Save to Inventory</span>
+                      </button>
+                    </div>
+
                   </div>
-                </form>
-              </div>
+                </div>
+              </form>
             </div>
           )}
-
-          {/* ======================================================== */}
-          {/* DIAGNOSTIC TESTS CATALOG                                 */}
           {/* ======================================================== */}
           {(activeMenu === 'lab-tests' || activeMenu === 'diagnostic-tests') && (
             <div className="space-y-4 sm:space-y-6">
