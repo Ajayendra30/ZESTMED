@@ -223,6 +223,16 @@ export function getRegisteredPatient(phone) {
   if (!cleanPhone) return null;
 
   try {
+    const deletedRaw = localStorage.getItem('zestmed_deleted_patients');
+    if (deletedRaw) {
+      const deletedList = JSON.parse(deletedRaw);
+      if (Array.isArray(deletedList) && deletedList.includes(cleanPhone)) {
+        return null;
+      }
+    }
+  } catch (_) {}
+
+  try {
     // 1. Check local patient registry map
     const storedRegistry = localStorage.getItem('zestmed_patient_registry');
     if (storedRegistry) {
@@ -356,5 +366,55 @@ export function saveRegisteredPatient(phone, name, extraData = {}) {
   } catch (e) {
     console.error('Error saving to patient registry:', e);
     return null;
+  }
+}
+
+/**
+ * Removes a patient from all local registry tables and records their identifier/phone
+ * in the persistent zestmed_deleted_patients blacklist.
+ */
+export function deleteRegisteredPatient(identifier, phone = null) {
+  const clean = normalizePhone(phone || identifier);
+  const idStr = identifier ? String(identifier).trim() : '';
+
+  try {
+    // 1. Clean zestmed_patient_registry
+    const stored = localStorage.getItem('zestmed_patient_registry');
+    if (stored) {
+      const reg = JSON.parse(stored);
+      if (clean && reg[clean]) delete reg[clean];
+      if (idStr && reg[idStr]) delete reg[idStr];
+      localStorage.setItem('zestmed_patient_registry', JSON.stringify(reg));
+    }
+
+    // 2. Clean zestmed_admin_patients
+    const adminSaved = localStorage.getItem('zestmed_admin_patients');
+    if (adminSaved) {
+      const adminPatients = JSON.parse(adminSaved);
+      if (Array.isArray(adminPatients)) {
+        const filtered = adminPatients.filter(
+          (p) => p.id !== idStr && normalizePhone(p.phone) !== clean
+        );
+        localStorage.setItem('zestmed_admin_patients', JSON.stringify(filtered));
+      }
+    }
+
+    // 3. Clean zestmed_patient_profile if it matches deleted patient
+    const profileSaved = localStorage.getItem('zestmed_patient_profile');
+    if (profileSaved) {
+      const prof = JSON.parse(profileSaved);
+      if (prof && (prof.id === idStr || normalizePhone(prof.phone) === clean)) {
+        localStorage.removeItem('zestmed_patient_profile');
+      }
+    }
+
+    // 4. Record into zestmed_deleted_patients blacklist
+    const deletedSaved = localStorage.getItem('zestmed_deleted_patients');
+    const deletedList = deletedSaved ? JSON.parse(deletedSaved) : [];
+    const toAdd = [idStr, clean].filter(Boolean);
+    const newDeleted = Array.from(new Set([...deletedList, ...toAdd]));
+    localStorage.setItem('zestmed_deleted_patients', JSON.stringify(newDeleted));
+  } catch (e) {
+    console.error('Error deleting from patient registry:', e);
   }
 }

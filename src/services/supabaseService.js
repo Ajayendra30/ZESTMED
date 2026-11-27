@@ -155,7 +155,85 @@ export const savePatientProfile = async (profileData) => {
   return registry[profileData.phone];
 };
 
+/**
+ * Permanently deletes a patient profile from Supabase PostgreSQL and local storage.
+ * Also registers the deleted identifier/phone in zestmed_deleted_patients blacklist
+ * so that computeMergedPatients and live sync never resurrect the record.
+ */
+export const deletePatientProfile = async (identifier, phone = null) => {
+  if (!identifier && !phone) return false;
+
+  const clean = normalizePhone(phone || identifier);
+  const idStr = identifier ? String(identifier).trim() : '';
+
+  // 1. Clean localStorage caches
+  try {
+    // zestmed_patient_registry
+    const reg = getLocalData('zestmed_patient_registry', {});
+    if (clean && reg[clean]) {
+      delete reg[clean];
+      setLocalData('zestmed_patient_registry', reg);
+    }
+    if (idStr && reg[idStr]) {
+      delete reg[idStr];
+      setLocalData('zestmed_patient_registry', reg);
+    }
+
+    // zestmed_admin_patients
+    const adminList = getLocalData('zestmed_admin_patients', []);
+    const filteredAdmin = adminList.filter(
+      (p) => p.id !== idStr && normalizePhone(p.phone) !== clean
+    );
+    setLocalData('zestmed_admin_patients', filteredAdmin);
+
+    // zestmed_deleted_patients blacklist
+    const deletedList = getLocalData('zestmed_deleted_patients', []);
+    const toAdd = [idStr, clean].filter(Boolean);
+    const newDeleted = Array.from(new Set([...deletedList, ...toAdd]));
+    setLocalData('zestmed_deleted_patients', newDeleted);
+  } catch (err) {
+    console.warn('[SupabaseService] delete patient local cache error:', err);
+  }
+
+  // 2. Delete from Supabase profiles table
+  if (isSupabaseConfigured()) {
+    try {
+      let query = supabase.from('profiles').delete();
+      if (idStr && clean && clean.length === 10) {
+        query = query.or(`id.eq.${idStr},phone.eq.${clean},phone.eq.+91 ${clean},phone.eq.+91${clean}`);
+      } else if (clean && clean.length === 10) {
+        query = query.or(`phone.eq.${clean},phone.eq.+91 ${clean},phone.eq.+91${clean}`);
+      } else if (idStr) {
+        query = query.eq('id', idStr);
+      }
+      const { error } = await query;
+      if (error) {
+        console.warn('[SupabaseService] delete patient from profiles table error:', error);
+      }
+    } catch (err) {
+      console.warn('[SupabaseService] delete patient from profiles exception:', err);
+    }
+  }
+
+  return true;
+};
+
 export const getAllPatients = async () => {
+  let deletedSet = new Set();
+  try {
+    const rawDel = getLocalData('zestmed_deleted_patients', []);
+    if (Array.isArray(rawDel)) {
+      deletedSet = new Set(rawDel.map((x) => String(x).toLowerCase().trim()));
+    }
+  } catch (_) {}
+
+  const isExcluded = (p) => {
+    const id = String(p.id || '').toLowerCase().trim();
+    const uhid = String(p.uhid || '').toLowerCase().trim();
+    const clean = normalizePhone(p.phone);
+    return deletedSet.has(id) || deletedSet.has(uhid) || (clean && deletedSet.has(clean));
+  };
+
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -164,14 +242,15 @@ export const getAllPatients = async () => {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter((p) => !isExcluded(p));
       }
     } catch (err) {
       console.warn('[SupabaseService] getAllPatients error:', err);
     }
   }
 
-  return getLocalData('zestmed_admin_patients', []);
+  const local = getLocalData('zestmed_admin_patients', []);
+  return local.filter((p) => !isExcluded(p));
 };
 
 // ------------------------------------------------------------------------------
@@ -1087,6 +1166,20 @@ export const updateOrderStatus = async (id, status) => {
 // ------------------------------------------------------------------------------
 
 export const getLabExecutives = async () => {
+  let deletedSet = new Set();
+  try {
+    const rawDel = getLocalData('zestmed_deleted_executives', []);
+    if (Array.isArray(rawDel)) {
+      deletedSet = new Set(rawDel.map((x) => String(x).toLowerCase().trim()));
+    }
+  } catch (_) {}
+
+  const isExcluded = (e) => {
+    const id = String(e.id || '').toLowerCase().trim();
+    const empId = String(e.employee_id || '').toLowerCase().trim();
+    return deletedSet.has(id) || deletedSet.has(empId);
+  };
+
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -1095,14 +1188,54 @@ export const getLabExecutives = async () => {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data;
+        return data.filter((e) => !isExcluded(e));
       }
     } catch (err) {
       console.warn('[SupabaseService] getLabExecutives error:', err);
     }
   }
 
-  return getLocalData('zestmed_executives', []);
+  const local = getLocalData('zestmed_executives', []);
+  return local.filter((e) => !isExcluded(e));
+};
+
+export const deleteLabExecutive = async (execId) => {
+  if (!execId) return false;
+
+  const idStr = String(execId).trim();
+
+  try {
+    const localList = getLocalData('zestmed_executives', []);
+    setLocalData(
+      'zestmed_executives',
+      localList.filter((e) => e.id !== idStr && e.employee_id !== idStr)
+    );
+
+    const adminList = getLocalData('zestmed_admin_executives', []);
+    setLocalData(
+      'zestmed_admin_executives',
+      adminList.filter((e) => e.id !== idStr && e.employee_id !== idStr)
+    );
+
+    const deletedList = getLocalData('zestmed_deleted_executives', []);
+    const newDeleted = Array.from(new Set([...deletedList, idStr]));
+    setLocalData('zestmed_deleted_executives', newDeleted);
+  } catch (err) {
+    console.warn('[SupabaseService] deleteLabExecutive local cache error:', err);
+  }
+
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase
+        .from('lab_executives')
+        .delete()
+        .or(`id.eq.${idStr},employee_id.eq.${idStr}`);
+    } catch (err) {
+      console.warn('[SupabaseService] deleteLabExecutive Supabase error:', err);
+    }
+  }
+
+  return true;
 };
 
 export const addLabExecutive = async (execData) => {

@@ -1,29 +1,41 @@
 // src/components/DeletePatientModal.jsx
-import React from 'react';
-import { X, Trash2, AlertTriangle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 export default function DeletePatientModal({ isOpen = true, onClose, patient, onConfirmDelete }) {
   const { addToast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!isOpen || !patient) return null;
 
-  const handleDelete = () => {
-    onConfirmDelete(patient.id);
-    addToast(`Patient ${patient.name} (${patient.id}) removed from directory.`, 'info');
-    onClose();
+  const handleDelete = async () => {
+    if (isDeleting) return;
+    try {
+      setIsDeleting(true);
+      if (onConfirmDelete) {
+        await onConfirmDelete(patient.id, patient);
+      }
+      addToast(`Patient ${patient.name} (${patient.id}) removed from directory.`, 'info');
+      onClose();
+    } catch (err) {
+      console.error('[DeletePatientModal] Error deleting patient:', err);
+      addToast('Failed to delete patient. Please try again.', 'error');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
+        onClick={isDeleting ? undefined : onClose}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-modal border border-slate-200 overflow-hidden z-10 my-8 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between px-6 py-4 bg-rose-600 text-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center">
@@ -37,7 +49,8 @@ export default function DeletePatientModal({ isOpen = true, onClose, patient, on
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition"
+            disabled={isDeleting}
+            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition disabled:opacity-50 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -49,7 +62,7 @@ export default function DeletePatientModal({ isOpen = true, onClose, patient, on
             <div className="space-y-1">
               <p className="font-bold">Are you sure you want to delete this patient?</p>
               <p className="text-slate-600 leading-relaxed text-[11.5px]">
-                You are about to remove <strong>{patient.name}</strong> (<span className="font-mono">{patient.id}</span>) from the registered Assam directory. This will clear their active directory indexing.
+                You are about to remove <strong>{patient.name}</strong> (<span className="font-mono">{patient.id}</span>) from the registered Assam directory. This will clear their active directory indexing across all hubs.
               </p>
             </div>
           </div>
@@ -65,17 +78,28 @@ export default function DeletePatientModal({ isOpen = true, onClose, patient, on
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition"
+              disabled={isDeleting}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition disabled:opacity-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleDelete}
-              className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5"
+              disabled={isDeleting}
+              className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
-              <Trash2 className="w-4 h-4" />
-              <span>Delete Patient</span>
+              {isDeleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete Patient</span>
+                </>
+              )}
             </button>
           </div>
         </div>

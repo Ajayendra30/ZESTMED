@@ -85,7 +85,7 @@ import { initialInventoryMedicines, initialAdminProfile } from '../mock-data/adm
 import { MOCK_DIAGNOSTIC_TESTS } from '../mock-data/diagnosticTests';
 import { initialPhlebotomyJobs } from '../mock-data/labExecutiveData';
 import { initialPatientOrders, initialPatientLabBookings, initialPatientAppointments } from '../mock-data/patientData';
-import { getRegisteredPatient, DEFAULT_REGISTERED_PATIENTS, normalizePhone } from '../utils/patientRegistry';
+import { getRegisteredPatient, DEFAULT_REGISTERED_PATIENTS, normalizePhone, deleteRegisteredPatient } from '../utils/patientRegistry';
 import AddDiagnosticTestModal from '../components/AddDiagnosticTestModal';
 import RegisterPatientModal from '../components/RegisterPatientModal';
 import EditPatientModal from '../components/EditPatientModal';
@@ -408,6 +408,20 @@ export default function AdminDashboardPage() {
 
   // Helper to compile and compute unified patients directory with live booking/order counts
   const computeMergedPatients = (appts, labs, ords) => {
+    let deletedSet = new Set();
+    try {
+      const rawDeleted = localStorage.getItem('zestmed_deleted_patients');
+      if (rawDeleted) {
+        deletedSet = new Set(JSON.parse(rawDeleted).map((x) => String(x).toLowerCase().trim()));
+      }
+    } catch (_) {}
+
+    const isExcluded = (id, phone) => {
+      const idStr = String(id || '').toLowerCase().trim();
+      const clean = normalizePhone(phone);
+      return (idStr && deletedSet.has(idStr)) || (clean && deletedSet.has(clean));
+    };
+
     const patientMap = new Map();
 
     const basePatients = [
@@ -421,12 +435,14 @@ export default function AdminDashboardPage() {
 
     basePatients.forEach((p) => {
       const clean = normalizePhone(p.phone);
-      patientMap.set(clean || p.id, { ...p, cleanPhone: clean });
+      if (!isExcluded(p.id, clean)) {
+        patientMap.set(clean || p.id, { ...p, cleanPhone: clean });
+      }
     });
 
     DEFAULT_REGISTERED_PATIENTS.forEach((p) => {
       const clean = normalizePhone(p.phone);
-      if (clean && !patientMap.has(clean)) {
+      if (clean && !patientMap.has(clean) && !isExcluded(p.id, clean)) {
         patientMap.set(clean, {
           id: p.id,
           name: p.name,
@@ -445,7 +461,7 @@ export default function AdminDashboardPage() {
         if (Array.isArray(parsed)) {
           parsed.forEach((p) => {
             const clean = normalizePhone(p.phone);
-            if (clean) {
+            if (clean && !isExcluded(p.id, clean)) {
               const prev = patientMap.get(clean) || {};
               patientMap.set(clean, { ...prev, ...p, cleanPhone: clean });
             }
@@ -460,7 +476,7 @@ export default function AdminDashboardPage() {
         const parsed = JSON.parse(savedReg);
         Object.entries(parsed).forEach(([ph, data]) => {
           const clean = normalizePhone(ph);
-          if (clean && data?.name && data.name !== 'Verified Patient' && !data.name.startsWith('Patient ')) {
+          if (clean && data?.name && data.name !== 'Verified Patient' && !data.name.startsWith('Patient ') && !isExcluded(data?.id, clean)) {
             const prev = patientMap.get(clean) || {};
             patientMap.set(clean, {
               ...prev,
@@ -476,11 +492,11 @@ export default function AdminDashboardPage() {
       }
     } catch (_) {}
 
-    // Extract patients from bookings and orders
+    // Extract patients from bookings and orders (excluding deleted records)
     appts.forEach((a) => {
       const clean = normalizePhone(a.patientPhone || a.phone);
       const name = a.patientName ? a.patientName.replace(/\s*\(Self\)/i, '').trim() : '';
-      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ') && !isExcluded(null, clean)) {
         if (!patientMap.has(clean)) {
           patientMap.set(clean, {
             id: `ZM-PAT-${clean.slice(-4)}`,
@@ -497,7 +513,7 @@ export default function AdminDashboardPage() {
     labs.forEach((b) => {
       const clean = normalizePhone(b.patientPhone || b.phone || b.phlebotomist?.phone);
       const name = b.patientName ? b.patientName.replace(/\s*\(Self\)/i, '').trim() : '';
-      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ') && !isExcluded(null, clean)) {
         if (!patientMap.has(clean)) {
           patientMap.set(clean, {
             id: `ZM-PAT-${clean.slice(-4)}`,
@@ -514,7 +530,7 @@ export default function AdminDashboardPage() {
     ords.forEach((o) => {
       const clean = normalizePhone(o.phone || o.customerPhone);
       const name = o.customer || o.patientName;
-      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ')) {
+      if (clean && name && name !== 'Verified Patient' && !name.startsWith('Patient ') && !isExcluded(null, clean)) {
         if (!patientMap.has(clean)) {
           patientMap.set(clean, {
             id: `ZM-PAT-${clean.slice(-4)}`,
@@ -763,48 +779,82 @@ export default function AdminDashboardPage() {
 
         // 4. Merge Executives
         if (liveExecutives.status === 'fulfilled' && Array.isArray(liveExecutives.value) && liveExecutives.value.length > 0) {
-          const mappedExecs = liveExecutives.value.map((e) => ({
-            id: e.employee_id || e.id || `ZM-EXEC-${Date.now()}`,
-            name: e.name || e.full_name || 'Phlebotomist',
-            phone: e.phone || '+91 92791 25091',
-            zone: e.zone || e.city || 'Dispur & GS Road Hub',
-            tasksToday: e.tasks_today || 3,
-            temp: e.temp || '3.8°C',
-            rating: e.rating || '4.9 ★',
-            status: e.status || 'Active'
-          }));
+          let delExecs = new Set();
+          try {
+            const rawExDel = localStorage.getItem('zestmed_deleted_executives');
+            if (rawExDel) delExecs = new Set(JSON.parse(rawExDel).map(x => String(x).toLowerCase().trim()));
+          } catch (_) {}
+
+          const mappedExecs = liveExecutives.value
+            .filter((e) => {
+              const id = String(e.id || '').toLowerCase().trim();
+              const empId = String(e.employee_id || '').toLowerCase().trim();
+              return !delExecs.has(id) && !delExecs.has(empId);
+            })
+            .map((e) => ({
+              id: e.employee_id || e.id || `ZM-EXEC-${Date.now()}`,
+              name: e.name || e.full_name || 'Phlebotomist',
+              phone: e.phone || '+91 92791 25091',
+              zone: e.zone || e.city || 'Dispur & GS Road Hub',
+              tasksToday: e.tasks_today || 3,
+              temp: e.temp || '3.8°C',
+              rating: e.rating || '4.9 ★',
+              status: e.status || 'Active'
+            }));
 
           setExecutivesList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id));
+            const filteredPrev = prev.filter(e => {
+              const id = String(e.id || '').toLowerCase().trim();
+              return !delExecs.has(id);
+            });
+            const existingIds = new Set(filteredPrev.map((p) => p.id));
             const newOnes = mappedExecs.filter((f) => !existingIds.has(f.id));
             if (newOnes.length > 0) {
-              const merged = [...newOnes, ...prev];
+              const merged = [...newOnes, ...filteredPrev];
               try {
                 localStorage.setItem('zestmed_admin_executives', JSON.stringify(merged));
               } catch (_) {}
               return merged;
             }
-            return prev;
+            return filteredPrev;
           });
         }
 
         // 5. Merge Patients
         if (livePatients.status === 'fulfilled' && Array.isArray(livePatients.value) && livePatients.value.length > 0) {
-          const mappedPatients = livePatients.value.map((p) => ({
-            id: p.uhid || p.id || `ZM-PAT-${(p.phone || '').slice(-4)}`,
-            name: p.full_name || p.name || 'Patient',
-            phone: p.phone ? (p.phone.startsWith('+91') ? p.phone : `+91 ${p.phone}`) : '+91 92791 25091',
-            city: p.city ? `${p.city}, Assam` : 'Guwahati, Assam',
-            status: p.status || 'Active'
-          }));
+          let delPats = new Set();
+          try {
+            const rawPatDel = localStorage.getItem('zestmed_deleted_patients');
+            if (rawPatDel) delPats = new Set(JSON.parse(rawPatDel).map(x => String(x).toLowerCase().trim()));
+          } catch (_) {}
+
+          const mappedPatients = livePatients.value
+            .filter((p) => {
+              const pId = String(p.id || '').toLowerCase().trim();
+              const pUhid = String(p.uhid || '').toLowerCase().trim();
+              const clean = normalizePhone(p.phone);
+              return !delPats.has(pId) && !delPats.has(pUhid) && (!clean || !delPats.has(clean));
+            })
+            .map((p) => ({
+              id: p.uhid || p.id || `ZM-PAT-${(p.phone || '').slice(-4)}`,
+              name: p.full_name || p.name || 'Patient',
+              phone: p.phone ? (p.phone.startsWith('+91') ? p.phone : `+91 ${p.phone}`) : '+91 92791 25091',
+              city: p.city ? `${p.city}, Assam` : 'Guwahati, Assam',
+              status: p.status || 'Active'
+            }));
 
           setPatientsList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id));
+            const filteredPrev = prev.filter(p => {
+              const pId = String(p.id || '').toLowerCase().trim();
+              const clean = normalizePhone(p.phone);
+              return !delPats.has(pId) && (!clean || !delPats.has(clean));
+            });
+            const existingIds = new Set(filteredPrev.map((p) => p.id));
             const newOnes = mappedPatients.filter((f) => !existingIds.has(f.id));
             if (newOnes.length > 0) {
-              return [...newOnes, ...prev];
+              return [...newOnes, ...filteredPrev];
             }
-            return prev;
+            return filteredPrev;
           });
         }
       } catch (err) {
@@ -3041,7 +3091,7 @@ export default function AdminDashboardPage() {
                               <button
                                 type="button"
                                 onClick={() => setDeletingPatient(p)}
-                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition"
+                                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition cursor-pointer"
                                 title="Delete Patient Record"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -5386,8 +5436,30 @@ export default function AdminDashboardPage() {
           isOpen={!!deletingPatient}
           patient={deletingPatient}
           onClose={() => setDeletingPatient(null)}
-          onConfirmDelete={(patientId) => {
-            setPatientsList((prev) => prev.filter((item) => item.id !== patientId));
+          onConfirmDelete={async (patientId, patient) => {
+            const cleanPhone = normalizePhone(patient?.phone || patient?.cleanPhone);
+
+            // 1. Immediately remove from React state
+            setPatientsList((prev) =>
+              prev.filter((item) => {
+                const itemClean = normalizePhone(item.phone || item.cleanPhone);
+                if (item.id === patientId) return false;
+                if (cleanPhone && itemClean === cleanPhone) return false;
+                return true;
+              })
+            );
+
+            // 2. Persist deleted IDs in blacklist
+            try {
+              const existingDeleted = JSON.parse(localStorage.getItem('zestmed_deleted_patients') || '[]');
+              const updatedDeleted = Array.from(new Set([...existingDeleted, patientId, cleanPhone].filter(Boolean)));
+              localStorage.setItem('zestmed_deleted_patients', JSON.stringify(updatedDeleted));
+            } catch (_) {}
+
+            // 3. Remove from patientRegistry and Supabase backend
+            deleteRegisteredPatient(patientId, cleanPhone);
+            await deletePatientProfile(patientId, cleanPhone);
+
             setDeletingPatient(null);
           }}
         />
@@ -5434,8 +5506,16 @@ export default function AdminDashboardPage() {
           isOpen={!!deletingExecutive}
           executive={deletingExecutive}
           onClose={() => setDeletingExecutive(null)}
-          onConfirmDelete={(execId) => {
-            setExecutivesList((prev) => prev.filter((item) => item.id !== execId));
+          onConfirmDelete={async (execId, executive) => {
+            setExecutivesList((prev) => prev.filter((item) => item.id !== execId && item.employee_id !== execId));
+            
+            try {
+              const existingDeleted = JSON.parse(localStorage.getItem('zestmed_deleted_executives') || '[]');
+              const updatedDeleted = Array.from(new Set([...existingDeleted, execId].filter(Boolean)));
+              localStorage.setItem('zestmed_deleted_executives', JSON.stringify(updatedDeleted));
+            } catch (_) {}
+
+            await deleteLabExecutive(execId);
             setDeletingExecutive(null);
           }}
         />
