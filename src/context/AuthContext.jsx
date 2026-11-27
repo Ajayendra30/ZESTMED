@@ -145,31 +145,47 @@ export const AuthProvider = ({ children }) => {
     // Resolve user role based on phone or explicitly supplied role
     const resolvedRole = resolveUserRole(cleanPhone, extraData.role || registered?.role);
 
-    // Save newly provided patient name to central registry if name provided
-    if (resolvedName && !resolvedName.startsWith('Patient') && resolvedName !== 'Rahul Verma') {
-      saveRegisteredPatient(cleanPhone, resolvedName, { ...registered, ...extraData, role: resolvedRole });
-    }
+    const stableId = registered?.id || extraData.id || `ZM-PAT-${cleanPhone.slice(-4)}`;
+    const stableUhid = registered?.uhid || extraData.uhid || stableId;
 
     const userObj = {
-      id: registered?.id || extraData.id || `ZM-PAT-${cleanPhone.slice(-4) || Date.now().toString(36)}`,
+      id: stableId,
+      uhid: stableUhid,
       name: resolvedName || 'Patient',
       contact: `+91 ${cleanPhone}`,
       phone: `+91 ${cleanPhone}`,
-      email: registered?.email && !registered.email.includes('rahul.verma') 
+      cleanPhone,
+      email: (registered?.email && !registered.email.includes('rahul.verma')) 
         ? registered.email 
         : (extraData.email || `${cleanPhone}@patient.zestmed.com`),
       role: resolvedRole,
       authMethod: 'phone_otp',
       memberSince: registered?.registeredAt || extraData.registeredAt || 'Nov 2026',
-      age: extraData.age || registered?.age || 30,
-      gender: extraData.gender || registered?.gender || 'Not Specified',
-      bloodGroup: extraData.bloodGroup || registered?.bloodGroup || 'B+',
-      city: extraData.city || registered?.city || 'Guwahati, Assam'
+      age: registered?.age || extraData.age || 30,
+      gender: registered?.gender || extraData.gender || 'Not Specified',
+      bloodGroup: registered?.bloodGroup || extraData.bloodGroup || 'B+',
+      emergencyContact: registered?.emergencyContact || extraData.emergencyContact || '',
+      city: registered?.city || extraData.city || 'Guwahati, Assam',
+      address: registered?.address || extraData.address || '',
+      allergies: registered?.allergies || extraData.allergies || '',
+      conditions: registered?.conditions || extraData.conditions || '',
+      medications: registered?.medications || extraData.medications || '',
+      vitals: registered?.vitals || extraData.vitals || null
     };
+
+    // Save newly provided patient details to central registry (enforcing 1 number -> 1 user)
+    if (resolvedName && !resolvedName.startsWith('Patient') && resolvedName !== 'Rahul Verma') {
+      saveRegisteredPatient(cleanPhone, resolvedName, userObj);
+    }
 
     try {
       sessionStorage.setItem('zestmed_user', JSON.stringify(userObj));
       createAuthSession(userObj);
+      localStorage.setItem('zestmed_patient_profile', JSON.stringify(userObj));
+      if (userObj.allergies) localStorage.setItem('zestmed_allergies', userObj.allergies);
+      if (userObj.conditions) localStorage.setItem('zestmed_conditions', userObj.conditions);
+      if (userObj.medications) localStorage.setItem('zestmed_medications', userObj.medications);
+      if (userObj.vitals) localStorage.setItem('zestmed_patient_vitals', JSON.stringify(userObj.vitals));
       localStorage.removeItem('zestmed_user');
       localStorage.removeItem('zestmed_auth_session');
     } catch (_) {}
@@ -198,19 +214,31 @@ export const AuthProvider = ({ children }) => {
     const clean = normalizePhone(cleanPhone);
     const resolvedRole = resolveUserRole(clean, profileData.role || 'Patient');
 
+    const existing = getRegisteredPatient(clean);
+    const stableId = existing?.id || `ZM-PAT-${clean.slice(-4)}`;
+    const stableUhid = existing?.uhid || stableId;
+
     const userObj = {
-      id: `ZM-PAT-${clean.slice(-4)}`,
-      name: (profileData.name || 'New Patient').trim(),
+      id: stableId,
+      uhid: stableUhid,
+      name: (profileData.name || existing?.name || 'New Patient').trim(),
       contact: `+91 ${clean}`,
       phone: `+91 ${clean}`,
-      email: profileData.email || `${clean}@patient.zestmed.com`,
+      cleanPhone: clean,
+      email: profileData.email || existing?.email || `${clean}@patient.zestmed.com`,
       role: resolvedRole,
       authMethod: 'phone_otp',
-      memberSince: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      age: profileData.age ? parseInt(profileData.age, 10) : 28,
-      gender: profileData.gender || 'Not Specified',
-      bloodGroup: profileData.bloodGroup || 'B+',
-      city: profileData.city || 'Guwahati, Assam'
+      memberSince: existing?.registeredAt || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      age: profileData.age ? parseInt(profileData.age, 10) : (existing?.age || 28),
+      gender: profileData.gender || existing?.gender || 'Not Specified',
+      bloodGroup: profileData.bloodGroup || existing?.bloodGroup || 'B+',
+      emergencyContact: profileData.emergencyContact || existing?.emergencyContact || '',
+      city: profileData.city || existing?.city || 'Guwahati, Assam',
+      address: profileData.address || existing?.address || '',
+      allergies: existing?.allergies || '',
+      conditions: existing?.conditions || '',
+      medications: existing?.medications || '',
+      vitals: existing?.vitals || null
     };
 
     // Save strictly to registry (enforcing 1 number -> 1 user)
@@ -218,6 +246,11 @@ export const AuthProvider = ({ children }) => {
     try {
       sessionStorage.setItem('zestmed_user', JSON.stringify(userObj));
       createAuthSession(userObj);
+      localStorage.setItem('zestmed_patient_profile', JSON.stringify(userObj));
+      if (userObj.allergies) localStorage.setItem('zestmed_allergies', userObj.allergies);
+      if (userObj.conditions) localStorage.setItem('zestmed_conditions', userObj.conditions);
+      if (userObj.medications) localStorage.setItem('zestmed_medications', userObj.medications);
+      if (userObj.vitals) localStorage.setItem('zestmed_patient_vitals', JSON.stringify(userObj.vitals));
       localStorage.removeItem('zestmed_user');
       localStorage.removeItem('zestmed_auth_session');
     } catch (_) {}

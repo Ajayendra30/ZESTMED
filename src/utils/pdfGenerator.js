@@ -111,12 +111,12 @@ export function createClinicalReportPdfBlob(report) {
   const doc = new SimplePdfDocument();
   const testName = report.test || report.testName || 'Diagnostic Test Report';
   const reportId = report.id || report.bookingId || 'ZM-REP-427464';
-  const patientName = report.patientName || report.patient || 'Ajayendra Shekhar';
+  const patientName = report.patientName || report.patient || 'Patient';
   const patientAgeGender = report.patientAge 
-    ? `${report.patientAge} Years / ${report.patientGender || 'Male'}` 
-    : (report.ageGender || '32 Years / Male');
-  const patientPhone = report.phone || report.patientPhone || '+91 9279125091';
-  const patientId = report.patientId || report.uhid || 'ZM-PAT-427464';
+    ? `${report.patientAge} Years / ${report.patientGender || 'Adult'}` 
+    : (report.ageGender || 'Adult');
+  const patientPhone = report.phone || report.patientPhone || '';
+  const patientId = report.patientId || report.uhid || 'ZM-PAT-REG';
   const sampleCollected = report.sampleCollected || report.collectionDate || '23 Nov 2026, 10:00 AM';
   const reportGenerated = report.reportGenerated || report.generatedDate || '23 Nov 2026, 03:45 PM';
   const refDoctor = report.doctor || report.reportingDoctor || 'Dr. Amit Sharma';
@@ -316,9 +316,9 @@ export function createOrderInvoicePdfBlob(order) {
   const doc = new SimplePdfDocument();
   const invoiceId = order.id || 'ZM-ORD-9821';
   const orderDate = order.date || 'Nov 14, 2026';
-  const patientName = order.patientName || order.patient || 'Ajayendra Shekhar';
-  const address = order.address || order.deliveryAddress || 'Flat 4B, Brahmaputra Enclave, Dispur, Guwahati - 781005';
-  const phone = order.phone || '+91 92791 25091';
+  const patientName = order.patientName || order.patient || order.customer_name || 'Customer';
+  const address = order.address || order.deliveryAddress || order.delivery_address || 'Guwahati, Assam';
+  const phone = order.phone || order.customer_phone || '';
   const total = order.total || order.amount || 1199;
   const items = (order.items && order.items.length > 0)
     ? order.items

@@ -236,24 +236,32 @@ export function saveRegisteredPatient(phone, name, extraData = {}) {
       try { registryMap = JSON.parse(stored) || {}; } catch {}
     }
 
+    const existingRecord = registryMap[cleanPhone] || {};
+    const stableId = extraData.id || existingRecord.id || `ZM-PAT-${cleanPhone.slice(-4)}`;
+    const stableUhid = extraData.uhid || existingRecord.uhid || stableId;
+
     const patientRecord = {
-      id: extraData.id || registryMap[cleanPhone]?.id || `ZM-PAT-${Math.floor(1000 + Math.random() * 9000)}`,
+      ...existingRecord,
+      ...extraData,
+      id: stableId,
+      uhid: stableUhid,
       name: name.trim(),
       phone: `+91 ${cleanPhone}`,
       cleanPhone,
-      email: extraData.email || `${name.toLowerCase().replace(/\s+/g, '.')}@patient.zestmed.com`,
-      city: extraData.city || 'Guwahati, Assam',
-      age: extraData.age || 32,
-      gender: extraData.gender || 'Male',
-      bloodGroup: extraData.bloodGroup || 'B+',
-      registeredAt: extraData.registeredAt || 'Nov 2026',
-      ...extraData
+      email: extraData.email || existingRecord.email || `${name.toLowerCase().replace(/\s+/g, '.')}@patient.zestmed.com`,
+      city: extraData.city || existingRecord.city || 'Guwahati, Assam',
+      age: extraData.age || existingRecord.age || 32,
+      gender: extraData.gender || existingRecord.gender || 'Male',
+      bloodGroup: extraData.bloodGroup || existingRecord.bloodGroup || 'B+',
+      emergencyContact: extraData.emergencyContact || existingRecord.emergencyContact || '',
+      registeredAt: existingRecord.registeredAt || extraData.registeredAt || 'Nov 2026',
+      updatedAt: new Date().toISOString()
     };
 
     registryMap[cleanPhone] = patientRecord;
     localStorage.setItem('zestmed_patient_registry', JSON.stringify(registryMap));
 
-    // 2. Also keep admin patients list synchronized
+    // 2. Also keep admin patients list synchronized without creating duplicates
     const adminSaved = localStorage.getItem('zestmed_admin_patients');
     let adminPatients = [];
     if (adminSaved) {
@@ -261,7 +269,13 @@ export function saveRegisteredPatient(phone, name, extraData = {}) {
     }
     const existingIndex = adminPatients.findIndex(p => normalizePhone(p.phone) === cleanPhone);
     if (existingIndex >= 0) {
-      adminPatients[existingIndex] = { ...adminPatients[existingIndex], name: patientRecord.name };
+      adminPatients[existingIndex] = {
+        ...adminPatients[existingIndex],
+        id: patientRecord.id,
+        name: patientRecord.name,
+        phone: patientRecord.phone,
+        city: patientRecord.city
+      };
     } else {
       adminPatients.push({
         id: patientRecord.id,

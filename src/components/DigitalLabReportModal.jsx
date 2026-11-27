@@ -28,12 +28,12 @@ export default function DigitalLabReportModal({ isOpen = true, onClose, booking 
 
   const reportId = booking.id || booking.bookingId || 'ZM-REP-427464';
   const testName = booking.testName || booking.test || 'Diagnostic Test Report';
-  const patientName = booking.patientName || booking.patient || 'Ajayendra Shekhar';
+  const patientName = booking.patientName || booking.patient || 'Patient';
   const patientAgeGender = booking.patientAge 
-    ? `${booking.patientAge} Years / ${booking.patientGender || 'Male'}` 
-    : (booking.ageGender || '32 Years / Male');
-  const patientPhone = booking.phone || booking.patientPhone || '+91 9279125091';
-  const patientId = booking.patientId || booking.uhid || 'ZM-PAT-427464';
+    ? `${booking.patientAge} Years / ${booking.patientGender || 'Adult'}` 
+    : (booking.ageGender || 'Adult');
+  const patientPhone = booking.phone || booking.patientPhone || '';
+  const patientId = booking.patientId || booking.uhid || (booking.userId ? `ZM-PAT-${booking.userId}` : 'ZM-PAT-REG');
   const sampleCollected = booking.sampleCollected || booking.collectionDate || '23 Nov 2026, 10:00 AM';
   const reportGenerated = booking.reportGenerated || booking.generatedDate || '23 Nov 2026, 03:45 PM';
   const refDoctor = booking.doctor || booking.reportingDoctor || 'Dr. Amit Sharma';

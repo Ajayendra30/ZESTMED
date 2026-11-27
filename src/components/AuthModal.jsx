@@ -16,6 +16,7 @@ import {
   normalizePhoneNumber,
   checkUserRegistrationByPhone
 } from '../services/otpAuthService';
+import { getRegisteredPatient } from '../utils/patientRegistry';
 
 function ZestmedLogo() {
   return (
@@ -81,12 +82,20 @@ export default function AuthModal() {
       const lockout = getPhoneLockoutStatus(clean);
       setLockoutStatus(lockout);
 
+      // Check synchronous local registry first for instant recognition
+      const localRegistered = getRegisteredPatient(clean);
+      if (localRegistered && localRegistered.name && localRegistered.name !== 'Verified Patient' && localRegistered.name !== 'Rahul Verma') {
+        setDetectedUser(localRegistered);
+        setIsNewUser(false);
+        setProfileName(localRegistered.name || '');
+      }
+
       checkUserRegistrationByPhone(clean).then((res) => {
         if (res.exists && res.user) {
           setDetectedUser(res.user);
           setIsNewUser(false);
           setProfileName(res.user.name || '');
-        } else {
+        } else if (!localRegistered) {
           setDetectedUser(null);
           setIsNewUser(true);
         }
@@ -273,15 +282,24 @@ export default function AuthModal() {
         return;
       }
 
-      // Check if this is a new user who needs profile setup (Step 3)
-      if (res.isNewUser && (!detectedUser || !detectedUser.name || detectedUser.name === 'Patient')) {
+      // Check if user is already registered (One mobile number, one user account)
+      const clean = normalizePhoneNumber(phoneNumber);
+      const existingRecord = detectedUser || getRegisteredPatient(clean) || (res.existingUser ? res.existingUser : null);
+
+      if (existingRecord && existingRecord.name && existingRecord.name !== 'Patient' && existingRecord.name !== 'Verified Patient' && existingRecord.name !== 'Rahul Verma') {
+        // Existing User: direct login, bypass profile setup
+        const loggedInUser = loginWithPhoneOtp(clean, existingRecord.name, existingRecord);
+        handlePostLoginFlow(loggedInUser);
+        return;
+      }
+
+      // If truly new user without saved name
+      if (res.isNewUser || !existingRecord || !existingRecord.name || existingRecord.name === 'Patient') {
         setStep(3); // Go to Profile Setup
         return;
       }
 
-      // Existing User: direct login
-      const clean = normalizePhoneNumber(phoneNumber);
-      const loggedInUser = loginWithPhoneOtp(clean, detectedUser?.name || profileName || '');
+      const loggedInUser = loginWithPhoneOtp(clean, detectedUser?.name || profileName || '', existingRecord || {});
       handlePostLoginFlow(loggedInUser);
     } catch (err) {
       setIsSubmitting(false);
@@ -300,9 +318,11 @@ export default function AuthModal() {
     }
 
     const clean = normalizePhoneNumber(phoneNumber);
+    const existing = getRegisteredPatient(clean) || {};
     const newUser = setupUserProfile(clean, {
+      ...existing,
       name: profileName.trim(),
-      city: 'Guwahati'
+      city: existing.city || 'Guwahati, Assam'
     });
 
     handlePostLoginFlow(newUser);

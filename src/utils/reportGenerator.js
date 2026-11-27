@@ -65,17 +65,17 @@ export const getDiagnosticParameters = (testName = '') => {
   ];
 };
 
-export const getMockReportDetails = (testName, dateStr, reportId, pathologist) => {
+export const getMockReportDetails = (testName, dateStr, reportId, pathologist, patientInfo = {}) => {
   const parameters = getDiagnosticParameters(testName);
   return {
     id: reportId || 'ZM-REP-9041',
     bookingId: reportId || 'ZM-REP-9041',
     testName: testName,
-    patientName: 'Ajayendra Shekhar',
-    uhid: 'ZM-PAT-1082',
+    patientName: patientInfo.name || patientInfo.patientName || 'Patient',
+    uhid: patientInfo.uhid || patientInfo.id || 'ZM-PAT-REG',
     collectionDate: dateStr || 'Nov 07, 2026',
     date: dateStr || 'Nov 07, 2026',
-    specimen: testName.toLowerCase().includes('urine') ? 'Sterile Midstream Urine' : 'EDTA Whole Blood / Serum',
+    specimen: String(testName || '').toLowerCase().includes('urine') ? 'Sterile Midstream Urine' : 'EDTA Whole Blood / Serum',
     reportingDoctor: pathologist || 'Dr. N. Bora, MD (Pathology)',
     pathologistRemark: 'All clinical parameters reviewed and confirmed within normal biological baseline. No acute abnormalities observed under automated instrumentation.',
     reportData: parameters,

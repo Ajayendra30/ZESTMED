@@ -11,6 +11,7 @@ import {
   FileCheck2, Baby, Stethoscope, Droplet, Apple, ShieldPlus,
   FlaskConical
 } from 'lucide-react';
+import { getRegisteredPatient, normalizePhone } from '../utils/patientRegistry';
 
 export default function Navbar({ 
   onOpenPrescriptionModal, 
@@ -31,6 +32,13 @@ export default function Navbar({
       return user.name;
     }
     try {
+      const cleanPhone = (user?.phone || user?.contact) ? normalizePhone(user.phone || user.contact) : '';
+      if (cleanPhone) {
+        const reg = getRegisteredPatient(cleanPhone);
+        if (reg?.name && reg.name !== 'Verified Patient' && !reg.name.startsWith('Patient ') && reg.name !== 'Patient' && reg.name !== 'Rahul Verma') {
+          return reg.name;
+        }
+      }
       const saved = localStorage.getItem('zestmed_patient_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -39,7 +47,7 @@ export default function Navbar({
         }
       }
     } catch (_) {}
-    return 'Ajayendra Shekhar';
+    return user?.name || 'Patient';
   };
   const displayName = getDisplayName();
   const displayInitial = (displayName.charAt(0) || 'A').toUpperCase();

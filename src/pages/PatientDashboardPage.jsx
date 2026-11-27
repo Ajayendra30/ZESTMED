@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
-import { saveRegisteredPatient, normalizePhone, checkPhoneUniqueness } from '../utils/patientRegistry';
+import { saveRegisteredPatient, getRegisteredPatient, normalizePhone, checkPhoneUniqueness } from '../utils/patientRegistry';
 import { getLoginHistory } from '../services/otpAuthService';
 import { 
   updateDoctorAppointmentStatus, 
@@ -159,15 +159,20 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const isMatchingCurrentUser = useCallback((item) => {
     if (!item || !user) return false;
     if (isDemoBooking(item)) return false;
-    const cleanUserPhone = normalizePhone(user.phone || user.contact || '');
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || user.cleanPhone || '');
     const itemPhone = normalizePhone(item.phone || item.patientPhone || item.patient_phone || item.contact || item.contactNumber || item.customer_phone || '');
     if (cleanUserPhone && itemPhone) {
       return cleanUserPhone === itemPhone;
     }
+    // Match by user ID if item has user ID reference
+    if (user.id && (item.userId === user.id || item.user_id === user.id)) {
+      return true;
+    }
+    // Strict fallback by name only if item has no phone recorded
     if (cleanUserPhone && !itemPhone && user.name && (item.patient_name || item.patientName)) {
       const itemName = String(item.patient_name || item.patientName || '').trim().toLowerCase();
       const userName = String(user.name || '').trim().toLowerCase();
-      if (itemName && userName && itemName === userName) return true;
+      if (itemName && userName && itemName === userName && userName !== 'patient' && userName !== 'verified patient') return true;
     }
     return false;
   }, [user]);
@@ -718,14 +723,36 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   });
 
   useEffect(() => {
-    if (user?.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma') {
-      setProfileForm((prev) => ({
+    if (!user) return;
+    const cleanUserPhone = normalizePhone(user.phone || user.contact || user.cleanPhone || '');
+    const reg = cleanUserPhone ? getRegisteredPatient(cleanUserPhone) : null;
+
+    setProfileForm((prev) => {
+      const resolvedName = (user.name && user.name !== 'Verified Patient' && user.name !== 'Rahul Verma' && user.name !== 'Patient') 
+        ? user.name 
+        : (reg?.name || prev.name);
+
+      return {
         ...prev,
-        name: user.name,
-        phone: user.contact || user.phone || prev.phone,
-        email: (user.email && !user.email.includes('rahul.verma')) ? user.email : prev.email,
-        uhid: user.uhid || prev.uhid
-      }));
+        name: resolvedName,
+        phone: user.contact || user.phone || reg?.phone || prev.phone,
+        email: (user.email && !user.email.includes('rahul.verma')) ? user.email : (reg?.email || prev.email),
+        uhid: user.uhid || reg?.uhid || prev.uhid,
+        age: user.age || reg?.age || prev.age || '30',
+        gender: user.gender || reg?.gender || prev.gender || 'Not Specified',
+        bloodGroup: user.bloodGroup || reg?.bloodGroup || prev.bloodGroup || 'B+',
+        emergencyContact: user.emergencyContact || reg?.emergencyContact || prev.emergencyContact || '',
+        city: user.city || reg?.city || prev.city || 'Guwahati, Assam'
+      };
+    });
+
+    // Restore health details if available in registry or user record
+    if (reg || user) {
+      const rec = reg || user;
+      if (rec.allergies) setHealthAllergies(rec.allergies);
+      if (rec.conditions) setHealthConditions(rec.conditions);
+      if (rec.medications) setHealthMedications(rec.medications);
+      if (rec.vitals) setPatientVitals(rec.vitals);
     }
   }, [user]);
 
@@ -1485,7 +1512,13 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
     }
 
     try {
-      saveRegisteredPatient(updatedProfile.phone, updatedProfile.name, updatedProfile);
+      saveRegisteredPatient(updatedProfile.phone, updatedProfile.name, {
+        ...updatedProfile,
+        allergies: healthAllergies,
+        conditions: healthConditions,
+        medications: healthMedications,
+        vitals: patientVitals
+      });
       localStorage.setItem('zestmed_patient_profile', JSON.stringify(updatedProfile));
     } catch (err) {
       console.error(err);
@@ -1506,13 +1539,18 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const handleOpenReportModal = (testName, dateStr, reportId, pathologist) => {
     // Find matching booking or create demo mock object with full diagnostic parameters
     const existing = (labBookings || []).find((b) => b && String(b.testName || b.name || '').toLowerCase().includes(String(testName || '').toLowerCase().slice(0, 5)));
-    const detailed = getMockReportDetails(testName, dateStr, reportId || existing?.id, pathologist);
+    const detailed = getMockReportDetails(testName, dateStr, reportId || existing?.id, pathologist, {
+      name: patientFullName,
+      uhid: patientUHID,
+      ...(existing || {})
+    });
     setSelectedReportBooking({
       ...detailed,
       ...(existing || {}),
       reportData: detailed.reportData,
       testName: testName || existing?.testName,
       patientName: patientFullName,
+      uhid: patientUHID,
       collectionDate: dateStr || existing?.date || 'Nov 07, 2026',
       date: dateStr || existing?.date || 'Nov 07, 2026',
       id: reportId || existing?.id || 'ZM-REP-9041',
@@ -5047,9 +5085,14 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               const current = healthAllergies;
               const input = window.prompt('Enter your known allergies (comma separated):', current);
               if (input !== null) {
-                setHealthAllergies(input.trim() || 'None');
+                const val = input.trim() || 'None';
+                setHealthAllergies(val);
                 try {
-                  localStorage.setItem('zestmed_allergies', input.trim() || 'None');
+                  localStorage.setItem('zestmed_allergies', val);
+                  const cleanPhone = normalizePhone(user?.phone || user?.contact || '');
+                  if (cleanPhone) {
+                    saveRegisteredPatient(cleanPhone, user?.name || profileForm.name, { allergies: val });
+                  }
                 } catch (_) {}
                 addToast('Allergies updated successfully.', 'success');
               }
@@ -5063,6 +5106,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 setHealthConditions(val);
                 try {
                   localStorage.setItem('zestmed_conditions', val);
+                  const cleanPhone = normalizePhone(user?.phone || user?.contact || '');
+                  if (cleanPhone) {
+                    saveRegisteredPatient(cleanPhone, user?.name || profileForm.name, { conditions: val });
+                  }
                 } catch (_) {}
                 addToast('Medical conditions updated.', 'success');
               }
@@ -5076,6 +5123,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                 setHealthMedications(val);
                 try {
                   localStorage.setItem('zestmed_medications', val);
+                  const cleanPhone = normalizePhone(user?.phone || user?.contact || '');
+                  if (cleanPhone) {
+                    saveRegisteredPatient(cleanPhone, user?.name || profileForm.name, { medications: val });
+                  }
                 } catch (_) {}
                 addToast('Current medications updated.', 'success');
               }
@@ -6827,6 +6878,10 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                           };
                           setPatientVitals(newVitals);
                           localStorage.setItem('zestmed_patient_vitals', JSON.stringify(newVitals));
+                          const cleanPhone = normalizePhone(user?.phone || user?.contact || '');
+                          if (cleanPhone) {
+                            saveRegisteredPatient(cleanPhone, user?.name || profileForm.name, { vitals: newVitals });
+                          }
                           setIsRecordVitalsModalOpen(false);
                           addToast('Vitals recorded successfully!', 'success');
                         }}

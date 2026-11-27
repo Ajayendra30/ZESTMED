@@ -20,6 +20,7 @@
  */
 
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { getRegisteredPatient } from '../utils/patientRegistry';
 
 // Configuration Constants
 export const OTP_CONFIG = {
@@ -164,13 +165,25 @@ export const checkUserRegistrationByPhone = async (cleanPhone) => {
 
   // 1. Check local registry first
   const registry = getJson('zestmed_patient_registry', {});
-  if (registry[cleanPhone] && registry[cleanPhone].name && registry[cleanPhone].name !== 'Verified Patient') {
+  if (registry[cleanPhone] && registry[cleanPhone].name && registry[cleanPhone].name !== 'Verified Patient' && registry[cleanPhone].name !== 'Rahul Verma') {
     return {
       exists: true,
       user: registry[cleanPhone],
       source: 'local_registry',
     };
   }
+
+  // 1.b Check centralized patient registry directory
+  try {
+    const regPat = getRegisteredPatient(cleanPhone);
+    if (regPat && regPat.name && regPat.name !== 'Verified Patient' && regPat.name !== 'Rahul Verma') {
+      return {
+        exists: true,
+        user: regPat,
+        source: 'patient_registry',
+      };
+    }
+  } catch (_) {}
 
   // 2. Check Supabase profiles table
   if (isSupabaseConfigured()) {
