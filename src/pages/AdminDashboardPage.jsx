@@ -2774,8 +2774,10 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* LEFT COLUMN: ~68% WIDTH (lg:col-span-8) */}
             <div className="lg:col-span-8 flex flex-col gap-6">
-              {/* UPPER ROW: REVENUE OVERVIEW (Full Width) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
+              {/* UPPER ROW: REVENUE OVERVIEW & ORDERS BY CATEGORY */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                {/* Revenue Overview Card (~60% of left column = md:col-span-7) */}
+                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <BarChart2 className="w-5 h-5 text-[#00A68A]" />
@@ -2788,8 +2790,8 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  {/* SVG Chart Canvas - expanded */}
-                  <div className="relative w-full h-64 sm:h-80 pt-2">
+                  {/* SVG Chart Canvas */}
+                  <div className="relative w-full h-48 sm:h-56 pt-2">
                     <svg viewBox="0 0 680 230" className="w-full h-full overflow-visible">
                       <defs>
                         <linearGradient id="revenueTealGradient" x1="0" y1="0" x2="0" y2="1">
@@ -2859,109 +2861,7 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-{/* LOWER ROW: QUICK ACCESS + ORDERS BY CATEGORY */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {/* Quick Access: Left column */}
-                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[#00A68A]" />
-                    <h3 className="text-sm font-bold text-slate-900">
-                      Quick Access
-                    </h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveMenu('medicines')}
-                    className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-2xs transition flex items-center gap-1 cursor-pointer"
-                  >
-                    <span>View All</span>
-                    <span>→</span>
-                  </button>
-                </div>
-
-                {/* 6 Quick Access Tiles with exact icons, styling, colors */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                  {/* Tile 1: Manage Medicines */}
-                  <div
-                    onClick={() => setActiveMenu('medicines')}
-                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Pill className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Medicines
-                    </span>
-                  </div>
-
-                  {/* Tile 2: Manage Lab Tests */}
-                  <div
-                    onClick={() => setActiveMenu('lab-tests')}
-                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <FlaskConical className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Lab Tests
-                    </span>
-                  </div>
-
-                  {/* Tile 3: Manage Health Packages */}
-                  <div
-                    onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <HeartPulse className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Health Packages
-                    </span>
-                  </div>
-
-                  {/* Tile 4: Manage Wellness Packages */}
-                  <div
-                    onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Gift className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Wellness Packages
-                    </span>
-                  </div>
-
-                  {/* Tile 5: Manage Physiotherapy */}
-                  <div
-                    onClick={() => setActiveMenu('physiotherapy')}
-                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Physiotherapy
-                    </span>
-                  </div>
-
-                  {/* Tile 6: Manage Doctor Appointments */}
-                  <div
-                    onClick={() => handleNavigateMenu('doctor-management')}
-                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
-                      Manage Doctor Appointments
-                    </span>
-                  </div>
-                </div>
-                </div>
-                {/* Orders by Category: Right column */}
+                {/* Orders by Category Card (~40% of left column = md:col-span-5) */}
                 <div className="md:col-span-5 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col justify-between space-y-3">
                   <div className="flex items-center gap-2">
                     <PieChart className="w-5 h-5 text-[#00A68A]" />
@@ -3069,8 +2969,109 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* LOWER ROW: QUICK ACCESS SECTION (Matching Reference Image) */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#00A68A]" />
+                    <h3 className="text-sm font-bold text-slate-900">
+                      Quick Access
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveMenu('medicines')}
+                    className="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-2xs transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>View All</span>
+                    <span>→</span>
+                  </button>
+                </div>
+
+                {/* 6 Quick Access Tiles with exact icons, styling, colors */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
+                  {/* Tile 1: Manage Medicines */}
+                  <div
+                    onClick={() => setActiveMenu('medicines')}
+                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Pill className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Medicines
+                    </span>
+                  </div>
+
+                  {/* Tile 2: Manage Lab Tests */}
+                  <div
+                    onClick={() => setActiveMenu('lab-tests')}
+                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <FlaskConical className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Lab Tests
+                    </span>
+                  </div>
+
+                  {/* Tile 3: Manage Health Packages */}
+                  <div
+                    onClick={() => setActiveMenu('wellness-packages')}
+                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <HeartPulse className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Health Packages
+                    </span>
+                  </div>
+
+                  {/* Tile 4: Manage Wellness Packages */}
+                  <div
+                    onClick={() => setActiveMenu('wellness-packages')}
+                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Gift className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Wellness Packages
+                    </span>
+                  </div>
+
+                  {/* Tile 5: Manage Physiotherapy */}
+                  <div
+                    onClick={() => setActiveMenu('physiotherapy')}
+                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Physiotherapy
+                    </span>
+                  </div>
+
+                  {/* Tile 6: Manage Doctor Appointments */}
+                  <div
+                    onClick={() => handleNavigateMenu('doctor-management')}
+                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                      Manage Doctor Appointments
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
 
             {/* RIGHT COLUMN: ~32% WIDTH (lg:col-span-4) */}
             <div className="lg:col-span-4 flex flex-col gap-5">
