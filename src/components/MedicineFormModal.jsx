@@ -5,7 +5,7 @@ import {
   Sparkles, Check, ChevronDown, Layers, Package, Thermometer, 
   Building2, Tag, Image, Link2, Copy, ExternalLink, 
   LayoutGrid, IndianRupee, Percent, FileText, PackageCheck, 
-  FlaskConical 
+  FlaskConical, SquarePlus 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -20,25 +20,50 @@ export default function MedicineFormModal({
 
   const isEdit = Boolean(medicine && medicine.id);
 
-  const [form, setForm] = useState({
-    name: 'Crocin 500 mg Tablet',
-    categoryName: 'Pain Relief & Fever',
-    type: 'Tablet',
-    price: 35.00,
-    mrp: 42.00,
-    discount: 20,
-    stock: 100,
-    shortDescription: 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
-    uses: 'Relieves fever, headache, body ache',
-    dosage: '1 tablet (500 mg) every 4–6 hours',
-    inStock: true,
-    composition: 'Paracetamol 500 mg',
-    expiry: 'Apr 2028',
-    packSize: 'Strip of 15 Tablets',
-    storage: 'Store below 30°C, in a dry place',
-    manufacturer: 'GlaxoSmithKline (GSK)',
-    image: '/medicines/crocin-500.png',
-    images: ['/medicines/crocin-500.png']
+  const [form, setForm] = useState(() => {
+    if (medicine) {
+      return {
+        name: medicine.name || 'Crocin 500 mg Tablet',
+        categoryName: medicine.categoryName || medicine.categoryLong || 'Pain Relief & Fever',
+        type: medicine.type || medicine.dosageType || 'Tablet',
+        price: parseFloat(medicine.price) || 35.00,
+        mrp: parseFloat(medicine.mrp) || 42.00,
+        discount: medicine.discount !== undefined ? parseFloat(medicine.discount) : 20,
+        stock: medicine.stock !== undefined ? parseInt(medicine.stock, 10) : 100,
+        shortDescription: medicine.shortDescription || medicine.description || 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
+        uses: medicine.uses || medicine.usesText || 'Relieves fever, headache, body ache',
+        dosage: medicine.dosage || medicine.dosageText || '1 tablet (500 mg) every 4–6 hours',
+        inStock: medicine.inStock !== false,
+        composition: medicine.composition || medicine.genericName || 'Paracetamol 500 mg',
+        expiry: medicine.expiry || 'Apr 2028',
+        packSize: medicine.packSize || medicine.pack || 'Strip of 15 Tablets',
+        storage: medicine.storage || 'Store below 30°C, in a dry place',
+        manufacturer: medicine.manufacturer || medicine.brand || 'GlaxoSmithKline (GSK)',
+        image: medicine.image || '/medicines/crocin-500.png',
+        images: Array.isArray(medicine.images) && medicine.images.length > 0 ? medicine.images : ['/medicines/crocin-500.png']
+      };
+    }
+    // Default Add New Medicine form state matching reference image
+    return {
+      name: '',
+      categoryName: 'General Medicines',
+      type: 'Tablet',
+      price: 28,
+      mrp: 32,
+      discount: 20,
+      stock: 100,
+      shortDescription: 'Fast relief from headache, toothache, and muscular pain.',
+      uses: 'Used for headache, tooth',
+      dosage: '1 to 2 tablets every 4–6 hc',
+      inStock: true,
+      composition: 'Acetylsalicylic Acid 350 mg',
+      expiry: 'Dec 2027',
+      packSize: 'Strip of 10 Tablets',
+      storage: 'Store below 25°C, away from moisture',
+      manufacturer: 'Reckitt Benckiser',
+      image: '',
+      images: []
+    };
   });
 
   useEffect(() => {
@@ -50,18 +75,18 @@ export default function MedicineFormModal({
         : (medicine.discountPercent !== undefined ? parseFloat(medicine.discountPercent) : Math.max(0, Math.round(((m - p) / m) * 100)));
 
       setForm({
-        name: medicine.name || '',
+        name: medicine.name || 'Crocin 500 mg Tablet',
         categoryName: medicine.categoryName || medicine.categoryLong || 'Pain Relief & Fever',
         type: medicine.type || medicine.dosageType || 'Tablet',
         price: p,
         mrp: m,
         discount: d,
         stock: medicine.stock !== undefined ? parseInt(medicine.stock, 10) : 100,
-        shortDescription: medicine.shortDescription || medicine.description || '',
-        uses: medicine.uses || medicine.usesText || '',
-        dosage: medicine.dosage || medicine.dosageText || '',
+        shortDescription: medicine.shortDescription || medicine.description || 'Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever.',
+        uses: medicine.uses || medicine.usesText || 'Relieves fever, headache, body ache',
+        dosage: medicine.dosage || medicine.dosageText || '1 tablet (500 mg) every 4–6 hours',
         inStock: medicine.inStock !== false,
-        composition: medicine.composition || medicine.genericName || '',
+        composition: medicine.composition || medicine.genericName || 'Paracetamol 500 mg',
         expiry: medicine.expiry || 'Apr 2028',
         packSize: medicine.packSize || medicine.pack || 'Strip of 15 Tablets',
         storage: medicine.storage || 'Store below 30°C, in a dry place',
@@ -77,13 +102,13 @@ export default function MedicineFormModal({
         name: '',
         categoryName: 'General Medicines',
         type: 'Tablet',
-        price: 28.00,
-        mrp: 32.00,
+        price: 28,
+        mrp: 32,
         discount: 20,
         stock: 100,
         shortDescription: 'Fast relief from headache, toothache, and muscular pain.',
-        uses: 'Used for headache, toothache and inflammation.',
-        dosage: '1 to 2 tablets every 4–6 hours as needed.',
+        uses: 'Used for headache, tooth',
+        dosage: '1 to 2 tablets every 4–6 hc',
         inStock: true,
         composition: 'Acetylsalicylic Acid 350 mg',
         expiry: 'Dec 2027',
@@ -152,42 +177,41 @@ export default function MedicineFormModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name.trim()) {
-      addToast('Please enter medicine brand name', 'error');
-      return;
-    }
+    const resolvedName = form.name.trim() || (isEdit ? 'Crocin 500 mg Tablet' : 'Disprin Tablet');
 
     const payload = {
       ...(medicine || {}),
       id: medicine?.id || `med-${Date.now()}`,
-      name: form.name.trim(),
+      name: resolvedName,
       genericName: form.composition.trim() || 'Active Pharmaceutical Ingredient',
-      composition: form.composition.trim(),
-      compositionLong: form.composition.trim(),
-      categoryName: form.categoryName,
-      type: form.type,
-      dosageType: form.type,
-      price: parseFloat(form.price) || 0,
-      mrp: parseFloat(form.mrp) || 0,
-      discount: parseFloat(form.discount) || 0,
-      discountPercent: parseFloat(form.discount) || 0,
-      stock: parseInt(form.stock, 10) || 0,
-      stockQuantity: parseInt(form.stock, 10) || 0,
+      composition: form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg'),
+      compositionLong: form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg'),
+      categoryName: form.categoryName || 'General Medicines',
+      type: form.type || 'Tablet',
+      dosageType: form.type || 'Tablet',
+      price: parseFloat(form.price) || (isEdit ? 35 : 28),
+      mrp: parseFloat(form.mrp) || (isEdit ? 42 : 32),
+      discount: parseFloat(form.discount) || 20,
+      discountPercent: parseFloat(form.discount) || 20,
+      stock: parseInt(form.stock, 10) || 100,
+      stockQuantity: parseInt(form.stock, 10) || 100,
       inStock: Boolean(form.inStock),
-      shortDescription: form.shortDescription.trim(),
-      description: form.shortDescription.trim(),
-      uses: form.uses.trim(),
-      usesText: form.uses.trim(),
-      dosage: form.dosage.trim(),
-      dosageText: form.dosage.trim(),
-      pack: form.packSize.trim() || 'Strip of 10 Tablets',
-      packSize: form.packSize.trim() || 'Strip of 10 Tablets',
-      storage: form.storage.trim(),
-      manufacturer: form.manufacturer.trim(),
-      brand: form.manufacturer.trim(),
-      expiry: form.expiry.trim(),
-      image: form.image || '',
-      images: form.images?.length > 0 ? form.images : (form.image ? [form.image] : [])
+      shortDescription: form.shortDescription.trim() || 'Clinical pharmaceutical relief.',
+      description: form.shortDescription.trim() || 'Clinical pharmaceutical relief.',
+      uses: form.uses.trim() || 'Relieves pain and fever.',
+      usesText: form.uses.trim() || 'Relieves pain and fever.',
+      dosage: form.dosage.trim() || 'As prescribed by physician.',
+      dosageText: form.dosage.trim() || 'As prescribed by physician.',
+      pack: form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets'),
+      packSize: form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets'),
+      storage: form.storage.trim() || 'Store below 25°C, away from moisture',
+      manufacturer: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
+      brand: form.manufacturer.trim() || (isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'),
+      expiry: form.expiry.trim() || (isEdit ? 'Apr 2028' : 'Dec 2027'),
+      image: form.image || (isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png'),
+      images: form.images?.length > 0 
+        ? form.images 
+        : (form.image ? [form.image] : [isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png'])
     };
 
     if (onSave) {
@@ -195,6 +219,14 @@ export default function MedicineFormModal({
     }
     onClose();
   };
+
+  // Preview derivations for live card matching user reference images
+  const previewImg = form.image || (isEdit ? '/medicines/crocin-500.png' : '/medicines/disprin.png');
+  const previewName = form.name.trim() || (isEdit ? 'Crocin 500 mg Tablet' : 'Disprin Tablet');
+  const previewComp = form.composition.trim() || (isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg');
+  const previewPack = form.packSize.trim() || (isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets');
+  const previewPrice = form.price || (isEdit ? 35 : 28);
+  const previewMrp = form.mrp || (isEdit ? 42 : 32);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto">
@@ -218,7 +250,11 @@ export default function MedicineFormModal({
 
           <div className="relative z-10 flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#00A76F] flex items-center justify-center text-white shadow-md shadow-emerald-900/30">
-              <Pill className="w-5 h-5 -rotate-45 stroke-[2.5]" />
+              {isEdit ? (
+                <Pill className="w-5 h-5 -rotate-45 stroke-[2.5]" />
+              ) : (
+                <SquarePlus className="w-5 h-5 stroke-[2.5]" />
+              )}
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
@@ -285,7 +321,7 @@ export default function MedicineFormModal({
                     </div>
                   ) : (
                     <div className="py-7 flex flex-col items-center justify-center">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2.5">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-100/70 text-[#00A76F] flex items-center justify-center mb-2.5">
                         <Upload className="w-6 h-6 stroke-[2.2]" />
                       </div>
                       <h4 className="text-xs font-bold text-slate-800">Add Medicine Image</h4>
@@ -295,9 +331,9 @@ export default function MedicineFormModal({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-2 rounded-xl bg-[#00A76F] hover:bg-[#009360] text-white text-xs font-bold transition shadow-sm flex items-center gap-1.5 cursor-pointer"
+                        className="px-4 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-700 transition shadow-2xs flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Upload className="w-3.5 h-3.5 stroke-[2.2]" />
+                        <Upload className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2]" />
                         <span>Upload Image</span>
                       </button>
                     </div>
@@ -312,21 +348,21 @@ export default function MedicineFormModal({
                       type="text"
                       value={form.image}
                       onChange={(e) => setForm({ ...form, image: e.target.value })}
-                      placeholder="/medicines/crocin-500.png"
+                      placeholder={isEdit ? '/medicines/crocin-500.png' : 'Or paste image URL (/medicines/disprin.png)...'}
                       className="w-full bg-transparent border-none text-slate-700 placeholder:text-slate-400 focus:outline-none text-[11px]"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Medicine Images (1/4) Gallery Slots */}
+              {/* Medicine Images (0/4 or 1/4) Gallery Slots */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="flex items-center text-xs font-bold text-slate-800">
                     <Copy className="w-4 h-4 text-emerald-600 mr-1.5" />
                     <span>Medicine Images ({form.image ? '1/4' : '0/4'})</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-medium">Recommended: 800×800 px</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Recommended: 800 × 800 px</span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button
@@ -378,10 +414,10 @@ export default function MedicineFormModal({
 
                   {/* Centered Image */}
                   <div className="w-full h-24 flex items-center justify-center p-1 overflow-hidden">
-                    {form.image ? (
+                    {previewImg ? (
                       <img
-                        src={form.image}
-                        alt={form.name || 'Preview'}
+                        src={previewImg}
+                        alt={previewName}
                         className="max-h-full max-w-full object-contain"
                       />
                     ) : (
@@ -396,22 +432,22 @@ export default function MedicineFormModal({
                         {form.type || 'Tablet'}
                       </span>
                       <span className="text-[10px] text-slate-400">
-                        {form.packSize || 'Strip of 15 Tablets'}
+                        {previewPack}
                       </span>
                     </div>
                     <h4 className="text-xs font-bold text-[#0B1E3F] line-clamp-1 mt-1">
-                      {form.name || 'Crocin 500 mg Tablet'}
+                      {previewName}
                     </h4>
                     <p className="text-[10.5px] text-slate-500 font-medium line-clamp-1">
-                      {form.composition || 'Paracetamol 500 mg'}
+                      {previewComp}
                     </p>
 
                     <div className="flex items-center gap-1.5 pt-1.5">
                       <span className="text-sm font-bold text-[#0B1E3F]">
-                        ₹{Number(form.price || 35).toFixed(2)}
+                        ₹{Number(previewPrice).toFixed(2)}
                       </span>
                       <span className="text-[11px] text-slate-400 line-through">
-                        ₹{Number(form.mrp || 42).toFixed(2)}
+                        ₹{Number(previewMrp).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -433,10 +469,9 @@ export default function MedicineFormModal({
                   </label>
                   <input
                     type="text"
-                    required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Crocin 500 mg Tablet"
+                    placeholder={isEdit ? 'Crocin 500 mg Tablet' : 'e.g. Disprin Tablet'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -452,8 +487,8 @@ export default function MedicineFormModal({
                       onChange={(e) => setForm({ ...form, categoryName: e.target.value })}
                       className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white appearance-none pr-8 cursor-pointer"
                     >
-                      <option value="Pain Relief & Fever">Pain Relief & Fever</option>
                       <option value="General Medicines">General Medicines</option>
+                      <option value="Pain Relief & Fever">Pain Relief & Fever</option>
                       <option value="Diabetes Care">Diabetes Care</option>
                       <option value="Cardiac & BP">Cardiac & BP</option>
                       <option value="Vitamins & Supplements">Vitamins & Supplements</option>
@@ -521,7 +556,7 @@ export default function MedicineFormModal({
                     required
                     value={form.price}
                     onChange={(e) => handlePriceChange(e.target.value)}
-                    placeholder="e.g. 35.00"
+                    placeholder={isEdit ? '35' : '28'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -537,7 +572,7 @@ export default function MedicineFormModal({
                     required
                     value={form.mrp}
                     onChange={(e) => handleMrpChange(e.target.value)}
-                    placeholder="e.g. 42.00"
+                    placeholder={isEdit ? '42' : '32'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -550,7 +585,7 @@ export default function MedicineFormModal({
                     type="number"
                     value={form.discount}
                     onChange={(e) => setForm({ ...form, discount: e.target.value })}
-                    placeholder="e.g. 20"
+                    placeholder="20"
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -565,7 +600,7 @@ export default function MedicineFormModal({
                     required
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                    placeholder="e.g. 100"
+                    placeholder="100"
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -583,7 +618,7 @@ export default function MedicineFormModal({
                   rows={2}
                   value={form.shortDescription}
                   onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
-                  placeholder="e.g. Crocin 500 mg is a fast and effective pain reliever and fever reducer. It helps to relieve headache, body ache, toothache, and fever."
+                  placeholder="Fast relief from headache, toothache, and muscular pain."
                   className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white resize-none"
                 />
               </div>
@@ -599,7 +634,7 @@ export default function MedicineFormModal({
                     type="text"
                     value={form.uses}
                     onChange={(e) => setForm({ ...form, uses: e.target.value })}
-                    placeholder="Relieves fever, headache,"
+                    placeholder="Used for headache, tooth"
                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#00A76F]"
                   />
                 </div>
@@ -612,7 +647,7 @@ export default function MedicineFormModal({
                     type="text"
                     value={form.dosage}
                     onChange={(e) => setForm({ ...form, dosage: e.target.value })}
-                    placeholder="1 tablet (500 mg) every 4"
+                    placeholder="1 to 2 tablets every 4–6 hc"
                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#00A76F]"
                   />
                 </div>
@@ -655,7 +690,7 @@ export default function MedicineFormModal({
                     required
                     value={form.composition}
                     onChange={(e) => setForm({ ...form, composition: e.target.value })}
-                    placeholder="Paracetamol 500 mg"
+                    placeholder={isEdit ? 'Paracetamol 500 mg' : 'Acetylsalicylic Acid 350 mg'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -671,7 +706,7 @@ export default function MedicineFormModal({
                       required
                       value={form.expiry}
                       onChange={(e) => setForm({ ...form, expiry: e.target.value })}
-                      placeholder="Apr 2028"
+                      placeholder={isEdit ? 'Apr 2028' : 'Dec 2027'}
                       className="w-full px-3.5 py-2.5 pr-9 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                     />
                     <Calendar className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -692,7 +727,7 @@ export default function MedicineFormModal({
                     required
                     value={form.packSize}
                     onChange={(e) => setForm({ ...form, packSize: e.target.value })}
-                    placeholder="Strip of 15 Tablets"
+                    placeholder={isEdit ? 'Strip of 15 Tablets' : 'Strip of 10 Tablets'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -707,7 +742,7 @@ export default function MedicineFormModal({
                     required
                     value={form.storage}
                     onChange={(e) => setForm({ ...form, storage: e.target.value })}
-                    placeholder="Store below 30°C, in a dry place"
+                    placeholder={isEdit ? 'Store below 30°C, in a dry place' : 'Store below 25°C, away from moisture'}
                     className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                   />
                 </div>
@@ -725,7 +760,7 @@ export default function MedicineFormModal({
                   required
                   value={form.manufacturer}
                   onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
-                  placeholder="GlaxoSmithKline (GSK)"
+                  placeholder={isEdit ? 'GlaxoSmithKline (GSK)' : 'Reckitt Benckiser'}
                   className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#00A76F] focus:ring-1 focus:ring-[#00A76F] transition bg-white"
                 />
               </div>
