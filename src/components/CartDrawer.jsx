@@ -202,7 +202,6 @@ export default function CartDrawer({ onOpenPrescriptionModal }) {
     }
 
     clearCart();
-    addToast(`Order Confirmed via Razorpay! Payment ID: ${paymentData.paymentId}`, 'success');
   };
 
   const resetCheckout = () => {

@@ -195,7 +195,7 @@ export const CartProvider = ({ children }) => {
     persistAndSyncCart(updated);
   };
 
-  const clearCart = () => {
+  const clearCart = (notify = false) => {
     setCartItems([]);
     const activeUser = user || getAuthenticatedUser();
     if (activeUser) {
@@ -215,7 +215,9 @@ export const CartProvider = ({ children }) => {
         }).catch(() => {});
       }
     }
-    addToast('Cart cleared', 'info');
+    if (notify) {
+      addToast('Cart cleared', 'info');
+    }
   };
 
   const totalItemsCount = cartItems.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0);
