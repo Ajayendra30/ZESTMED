@@ -23,6 +23,7 @@ import PatientSupportModal from '../components/PatientSupportModal';
 import PatientReviewModal from '../components/PatientReviewModal';
 import {
   Home,
+  Star,
   FlaskConical,
   Calendar,
   ShoppingCart,
