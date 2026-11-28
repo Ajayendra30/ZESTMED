@@ -888,7 +888,8 @@ export const handleApiRequest = async (req, res) => {
 
   // RX1. Get Prescriptions (Admin gets all, Patient gets their own)
   if (pathname === '/api/prescriptions' && method === 'GET') {
-    const filterPhone = query.phone ? String(query.phone).replace(/\D/g, '').slice(-10) : '';
+    const rawPhone = url.searchParams.get('phone') || (req.query ? req.query.phone : '');
+    const filterPhone = rawPhone ? String(rawPhone).replace(/\D/g, '').slice(-10) : '';
     let filtered = persistentPrescriptions;
     if (filterPhone) {
       filtered = persistentPrescriptions.filter(p => {
