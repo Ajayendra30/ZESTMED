@@ -1007,6 +1007,7 @@ export default function AdminDashboardPage() {
     }, []);
 
     useEffect(() => {
+    let isMounted = true;
 
     // Purge any legacy demo bookings from local storage
     try {
