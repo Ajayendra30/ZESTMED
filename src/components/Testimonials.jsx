@@ -135,14 +135,6 @@ export default function Testimonials() {
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium italic">
                   "{t.comment}"
                 </p>
-
-                {/* Official Response if present */}
-                {t.officialReply && (
-                  <div className="mt-4 p-3 rounded-2xl bg-teal-50 border border-teal-100 text-xs text-teal-900">
-                    <span className="font-bold text-[10px] uppercase text-teal-800 block mb-0.5">Official Response:</span>
-                    <p className="font-medium text-slate-700">{t.officialReply}</p>
-                  </div>
-                )}
               </div>
             </div>
           ))}
