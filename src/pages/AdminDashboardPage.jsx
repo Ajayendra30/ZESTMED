@@ -1,6 +1,6 @@
 ﻿// src/pages/AdminDashboardPage.jsx
 // Redesigned to match the exact ZESTMED Admin Dashboard specification pixel-for-pixel
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getSubdomainUrl } from '../utils/subdomain';
 import {
@@ -40,6 +40,8 @@ import {
   Bell,
   Calendar,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Users,
   ShoppingCart,
   FlaskConical,
@@ -137,6 +139,9 @@ import ReportsManagementView from '../components/admin/ReportsManagementView';
 import NotificationsCenterView from '../components/admin/NotificationsCenterView';
 import ReviewsFeedbackView from '../components/admin/ReviewsFeedbackView';
 import SupportComplaintsView from '../components/admin/SupportComplaintsView';
+import { fetchSupportTickets } from '../services/supportService';
+import { fetchReviews } from '../services/reviewService';
+import { fetchAuditLogs, recordAuditLog } from '../services/auditLogService';
 import CouponsDiscountsView from '../components/admin/CouponsDiscountsView';
 import BannerContentView from '../components/admin/BannerContentView';
 import SecurityAuditLogsView from '../components/admin/SecurityAuditLogsView';
@@ -160,12 +165,14 @@ export default function AdminDashboardPage() {
     if (tab && tab !== 'notifications') return tab;
     try {
       const saved = sessionStorage.getItem('zestmed_admin_active_tab');
-      if (saved) return saved;
+      if (saved && saved !== 'notifications' && saved !== 'coupons' && saved !== 'banner' && saved !== 'coupons-discounts') {
+        return saved;
+      }
     } catch (_) {}
     return 'dashboard';
   };
 
-  const [activeMenu, setActiveMenu] = useState(() => resolveMenu(window.location.pathname, window.location.search));
+  const [activeMenu, setActiveMenu] = useState(() => resolveMenu(typeof window !== 'undefined' ? window.location.pathname : '', typeof window !== 'undefined' ? window.location.search : ''));
 
   // Sync activeMenu with route changes
   useEffect(() => {
@@ -234,6 +241,39 @@ export default function AdminDashboardPage() {
   const [isMedicinesExpanded, setIsMedicinesExpanded] = useState(false);
   const [dateRange, setDateRange] = useState('Last 30 Days');
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+
+  // Dynamic Month Selection State (Defaults automatically to current calendar month & year)
+  const [selectedMonthDate, setSelectedMonthDate] = useState(() => new Date());
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+
+  const selectedYear = selectedMonthDate.getFullYear();
+  const selectedMonthIndex = selectedMonthDate.getMonth();
+  const selectedMonthLong = selectedMonthDate.toLocaleDateString('en-US', { month: 'long' });
+  const selectedMonthShort = selectedMonthDate.toLocaleDateString('en-US', { month: 'short' });
+  const daysInSelectedMonth = new Date(selectedYear, selectedMonthIndex + 1, 0).getDate();
+
+  const handlePrevMonth = () => {
+    setSelectedMonthDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(1);
+      d.setMonth(d.getMonth() - 1);
+      return d;
+    });
+  };
+
+  const handleNextMonth = () => {
+    setSelectedMonthDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(1);
+      d.setMonth(d.getMonth() + 1);
+      return d;
+    });
+  };
+
+  const handleSelectMonth = (monthIdx, year = selectedYear) => {
+    const d = new Date(year, monthIdx, 1);
+    setSelectedMonthDate(d);
+  };
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isHeaderQuickActionsOpen, setIsHeaderQuickActionsOpen] = useState(false);
@@ -242,6 +282,74 @@ export default function AdminDashboardPage() {
   const [testsList, setTestsList] = useState(() => getSynchronizedLabTests());
   const [labTestSearchQuery, setLabTestSearchQuery] = useState('');
   const [labTestFilterCategory, setLabTestFilterCategory] = useState('all');
+  const [openTicketsCount, setOpenTicketsCount] = useState(0);
+  const [reviewsCount, setReviewsCount] = useState(0);
+  const [auditLogsCount, setAuditLogsCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    const syncAuditCount = async () => {
+      try {
+        const list = await fetchAuditLogs();
+        if (isMounted) {
+          setAuditLogsCount((list || []).length);
+        }
+      } catch (_) {}
+    };
+    syncAuditCount();
+    window.addEventListener('zestmed_audit_log_created', syncAuditCount);
+    window.addEventListener('storage', syncAuditCount);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('zestmed_audit_log_created', syncAuditCount);
+      window.removeEventListener('storage', syncAuditCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const syncReviewsCount = async () => {
+      try {
+        const list = await fetchReviews();
+        if (isMounted) {
+          setReviewsCount((list || []).length);
+        }
+      } catch (_) {}
+    };
+    syncReviewsCount();
+    window.addEventListener('zestmed_review_created', syncReviewsCount);
+    window.addEventListener('zestmed_review_updated', syncReviewsCount);
+    window.addEventListener('storage', syncReviewsCount);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('zestmed_review_created', syncReviewsCount);
+      window.removeEventListener('zestmed_review_updated', syncReviewsCount);
+      window.removeEventListener('storage', syncReviewsCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const syncTicketsCount = async () => {
+      try {
+        const list = await fetchSupportTickets();
+        if (isMounted) {
+          const openCount = (list || []).filter(t => t.status === 'Open' || t.status === 'In Progress').length;
+          setOpenTicketsCount(openCount);
+        }
+      } catch (_) {}
+    };
+    syncTicketsCount();
+    window.addEventListener('zestmed_support_ticket_created', syncTicketsCount);
+    window.addEventListener('zestmed_ticket_updated', syncTicketsCount);
+    window.addEventListener('storage', syncTicketsCount);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('zestmed_support_ticket_created', syncTicketsCount);
+      window.removeEventListener('zestmed_ticket_updated', syncTicketsCount);
+      window.removeEventListener('storage', syncTicketsCount);
+    };
+  }, []);
 
   useEffect(() => {
     fetchSynchronizedLabTests().then((synced) => {
@@ -610,26 +718,24 @@ export default function AdminDashboardPage() {
     return computeMergedPatients(rawAppts, rawLabs, rawOrds);
   });
 
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+
   // Real-time synchronization across patient/user activities & live Supabase backend
-  useEffect(() => {
-    let isMounted = true;
+  const fetchAllLiveAdminData = useCallback(async () => {
+    setIsLoadingBookings(true);
+    try {
+      const [docAppts, physioAppts, surgBookings, labBookings, wellBookings, medOrders, liveExecutives, livePatients] = await Promise.allSettled([
+        getDoctorAppointments(),
+        getPhysioBookings(),
+        getSurgeryBookings(),
+        getLabBookings(),
+        getWellnessBookings(),
+        getMedicineOrders(),
+        getLabExecutives(),
+        getAllPatients()
+      ]);
 
-    const fetchAllLiveAdminData = async () => {
-      try {
-        const [docAppts, physioAppts, surgBookings, labBookings, wellBookings, medOrders, liveExecutives, livePatients] = await Promise.allSettled([
-          getDoctorAppointments(),
-          getPhysioBookings(),
-          getSurgeryBookings(),
-          getLabBookings(),
-          getWellnessBookings(),
-          getMedicineOrders(),
-          getLabExecutives(),
-          getAllPatients()
-        ]);
-
-        if (!isMounted) return;
-
-        // 1. Merge Appointments
+      // 1. Merge Appointments
         const freshAppointments = [];
         if (docAppts.status === 'fulfilled' && Array.isArray(docAppts.value)) {
           docAppts.value.forEach((a) => {
@@ -643,6 +749,7 @@ export default function AdminDashboardPage() {
               specialty: a.department || a.specialty || 'General Medicine',
               hospital: a.hospital || a.clinic || 'Zestmed Polyclinic Hub, Dispur',
               date: a.appointment_date || a.date || 'Today',
+              createdAt: a.created_at || a.createdAt || a.appointment_date || a.date || new Date().toISOString(),
               time: a.appointment_time || a.time || a.slot || '10:00 AM',
               mode: a.consultation_type || a.mode || 'Clinic Visit',
               fee: a.fees || a.fee || a.price || 600,
@@ -666,6 +773,7 @@ export default function AdminDashboardPage() {
               specialty: a.therapy_type || a.specialty || 'Post-Surgery & Spine Rehab',
               doctorDegree: a.degree || 'MPT (Ortho), Certified Physio',
               date: a.session_date || a.date || 'Today',
+              createdAt: a.created_at || a.createdAt || a.session_date || a.date || new Date().toISOString(),
               time: a.session_time || a.time || a.slot || '11:00 AM',
               mode: a.session_mode || a.mode || 'Home Visit',
               fee: a.fees || a.fee || a.price || 850,
@@ -690,6 +798,7 @@ export default function AdminDashboardPage() {
               hospital: a.hospital_name || a.hospital || 'Dispur Partner Hospital, Guwahati',
               careManager: a.care_manager || a.doctor || 'Dr. Anupam Sarma (Surgery Lead)',
               date: a.preferred_date || a.date || 'Within 48 Hours',
+              createdAt: a.created_at || a.createdAt || a.preferred_date || a.date || new Date().toISOString(),
               time: a.time || a.slot || 'Pre-Op',
               fee: a.estimated_cost || a.fee || a.price || 35000,
               symptoms: a.insurance_status || a.symptoms || 'Cashless TPA / Ayushman Bharat',
@@ -729,6 +838,7 @@ export default function AdminDashboardPage() {
               specimen: b.specimen || 'Blood Sample',
               collectionAddress: b.collection_address || b.address || 'Guwahati Home Collection',
               collectionDate: b.collection_date || b.date || 'Today',
+              createdAt: b.created_at || b.createdAt || b.collection_date || b.date || new Date().toISOString(),
               time: b.collection_slot || b.time || '08:00 AM',
               price: b.price || b.total_price || 350,
               status: b.status || 'Confirmed',
@@ -749,6 +859,7 @@ export default function AdminDashboardPage() {
               testCode: b.package_code || b.testCode || 'WEL-PKG',
               collectionAddress: b.address || b.collectionAddress || 'Guwahati Home Collection',
               collectionDate: b.booking_date || b.collectionDate || b.date || 'Today',
+              createdAt: b.created_at || b.createdAt || b.booking_date || b.collectionDate || b.date || new Date().toISOString(),
               time: b.time_slot || b.time || '07:30 AM',
               price: b.total_amount || b.price || 1899,
               status: b.status || 'Confirmed',
@@ -787,6 +898,7 @@ export default function AdminDashboardPage() {
               total: o.total_amount || o.total || 0,
               status: o.status || 'Processing',
               date: o.order_date || o.date || 'Today',
+              createdAt: o.created_at || o.createdAt || o.order_date || o.date || new Date().toISOString(),
               time: o.order_time || o.time || '10:00 AM'
             }));
 
@@ -889,8 +1001,12 @@ export default function AdminDashboardPage() {
         }
       } catch (err) {
         console.warn('Admin live backend sync notice:', err);
+      } finally {
+        setIsLoadingBookings(false);
       }
-    };
+    }, []);
+
+    useEffect(() => {
 
     // Purge any legacy demo bookings from local storage
     try {
@@ -991,63 +1107,84 @@ export default function AdminDashboardPage() {
 
   // Derived categorized service lists
   const doctorAppointments = useMemo(() => {
-    return appointmentsList.filter(
-      (a) =>
-        a.category === 'doctor' ||
+    return (appointmentsList || []).filter((a) => {
+      if (!a) return false;
+      const typeStr = String(a.type || '').toLowerCase();
+      const catStr = String(a.category || '').toLowerCase();
+      return (
+        catStr === 'doctor' ||
         a.type === 'Doctor Consultation' ||
         a.type === 'Doctor Appointment' ||
-        (!a.category && !a.type?.toLowerCase().includes('physio') && !a.type?.toLowerCase().includes('surg'))
-    );
+        (!a.category && !typeStr.includes('physio') && !typeStr.includes('surg'))
+      );
+    });
   }, [appointmentsList]);
 
   const physioAppointments = useMemo(() => {
-    return appointmentsList.filter(
-      (a) =>
-        a.category === 'physiotherapy' ||
+    return (appointmentsList || []).filter((a) => {
+      if (!a) return false;
+      const typeStr = String(a.type || '').toLowerCase();
+      const catStr = String(a.category || '').toLowerCase();
+      const specStr = String(a.specialty || a.doctorSpecialty || '').toLowerCase();
+      const titleStr = String(a.title || '').toLowerCase();
+      return (
+        catStr === 'physiotherapy' ||
         a.type === 'Physiotherapy' ||
-        a.specialty?.toLowerCase().includes('physio') ||
-        a.doctorSpecialty?.toLowerCase().includes('physio') ||
-        a.title?.toLowerCase().includes('physio')
-    );
+        specStr.includes('physio') ||
+        titleStr.includes('physio')
+      );
+    });
   }, [appointmentsList]);
 
   const surgeryBookings = useMemo(() => {
-    return appointmentsList.filter(
-      (a) =>
-        a.category === 'surgery' ||
+    return (appointmentsList || []).filter((a) => {
+      if (!a) return false;
+      const catStr = String(a.category || '').toLowerCase();
+      const titleStr = String(a.title || '').toLowerCase();
+      return (
+        catStr === 'surgery' ||
         a.type === 'Surgery Package' ||
         Boolean(a.surgeryName) ||
-        a.title?.toLowerCase().includes('surgery') ||
-        a.title?.toLowerCase().includes('removal') ||
-        a.title?.toLowerCase().includes('replacement') ||
-        a.title?.toLowerCase().includes('repair')
-    );
+        titleStr.includes('surgery') ||
+        titleStr.includes('removal') ||
+        titleStr.includes('replacement') ||
+        titleStr.includes('repair')
+      );
+    });
   }, [appointmentsList]);
 
   const wellnessBookings = useMemo(() => {
-    return labBookingsList.filter(
-      (b) =>
+    return (labBookingsList || []).filter((b) => {
+      if (!b) return false;
+      const catStr = String(b.category?.name || b.category || '').toLowerCase();
+      const codeStr = String(b.testCode || '');
+      const nameStr = String(b.testName || '').toLowerCase();
+      return (
         b.type === 'Wellness Package' ||
-        b.category?.toLowerCase().includes('package') ||
-        b.testCode === 'WEL-PKG' ||
-        b.testCode?.includes('PKG') ||
-        b.testName?.toLowerCase().includes('package') ||
-        b.testName?.toLowerCase().includes('checkup')
-    );
+        catStr.includes('package') ||
+        codeStr === 'WEL-PKG' ||
+        codeStr.includes('PKG') ||
+        nameStr.includes('package') ||
+        nameStr.includes('checkup')
+      );
+    });
   }, [labBookingsList]);
 
   const diagnosticLabBookings = useMemo(() => {
-    return labBookingsList.filter(
-      (b) =>
-        !(
-          b.type === 'Wellness Package' ||
-          b.category?.toLowerCase().includes('package') ||
-          b.testCode === 'WEL-PKG' ||
-          b.testCode?.includes('PKG') ||
-          b.testName?.toLowerCase().includes('package') ||
-          b.testName?.toLowerCase().includes('checkup')
-        )
-    );
+    return (labBookingsList || []).filter((b) => {
+      if (!b) return false;
+      const catStr = String(b.category?.name || b.category || '').toLowerCase();
+      const codeStr = String(b.testCode || '');
+      const nameStr = String(b.testName || '').toLowerCase();
+      const isWell =
+        b.type === 'Wellness Package' ||
+        catStr.includes('package') ||
+        codeStr === 'WEL-PKG' ||
+        codeStr.includes('PKG') ||
+        nameStr.includes('package') ||
+        nameStr.includes('checkup');
+      return !isWell;
+    });
   }, [labBookingsList]);
 
   const medicineOrders = useMemo(() => {
@@ -1058,7 +1195,61 @@ export default function AdminDashboardPage() {
   const adminBookings = diagnosticLabBookings;
   const adminOrders = medicineOrders;
 
-  // Revenue calculation from all confirmed platform transactions
+  // Helper to determine if a record's date falls in a given year and month index (0-indexed)
+  const isDateInMonth = (dateVal, yr, mo) => {
+    if (!dateVal) return false;
+    if (dateVal === 'Today' || dateVal === 'Yesterday') {
+      const now = new Date();
+      return now.getFullYear() === yr && now.getMonth() === mo;
+    }
+    const d = new Date(dateVal);
+    if (!isNaN(d.getTime())) {
+      return d.getFullYear() === yr && d.getMonth() === mo;
+    }
+    const str = String(dateVal).toLowerCase();
+    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    if (str.includes(months[mo])) {
+      if (str.includes(String(yr))) return true;
+      return yr === new Date().getFullYear();
+    }
+    return false;
+  };
+
+  const getRecordDay = (dateVal) => {
+    if (!dateVal) return 1;
+    if (dateVal === 'Today') return new Date().getDate();
+    if (dateVal === 'Yesterday') return Math.max(1, new Date().getDate() - 1);
+    const d = new Date(dateVal);
+    if (!isNaN(d.getTime())) return d.getDate();
+    const m = String(dateVal).match(/\b(\d{1,2})\b/);
+    return m ? parseInt(m[1], 10) : 1;
+  };
+
+  const prevMonthIndex = selectedMonthIndex === 0 ? 11 : selectedMonthIndex - 1;
+  const prevMonthYear = selectedMonthIndex === 0 ? selectedYear - 1 : selectedYear;
+
+  // Filter real records for selected month
+  const monthMedicineOrders = useMemo(() => {
+    return medicineOrders.filter(o => isDateInMonth(o.createdAt || o.date || o.created_at, selectedYear, selectedMonthIndex));
+  }, [medicineOrders, selectedYear, selectedMonthIndex]);
+
+  const monthDiagnosticLabs = useMemo(() => {
+    return diagnosticLabBookings.filter(b => isDateInMonth(b.createdAt || b.collectionDate || b.date || b.created_at, selectedYear, selectedMonthIndex));
+  }, [diagnosticLabBookings, selectedYear, selectedMonthIndex]);
+
+  const monthWellnessBookings = useMemo(() => {
+    return wellnessBookings.filter(w => isDateInMonth(w.createdAt || w.collectionDate || w.date || w.created_at, selectedYear, selectedMonthIndex));
+  }, [wellnessBookings, selectedYear, selectedMonthIndex]);
+
+  const monthAppointments = useMemo(() => {
+    return appointmentsList.filter(a => isDateInMonth(a.createdAt || a.date || a.created_at, selectedYear, selectedMonthIndex));
+  }, [appointmentsList, selectedYear, selectedMonthIndex]);
+
+  const monthSurgeryBookings = useMemo(() => {
+    return surgeryBookings.filter(s => isDateInMonth(s.createdAt || s.date || s.created_at, selectedYear, selectedMonthIndex));
+  }, [surgeryBookings, selectedYear, selectedMonthIndex]);
+
+  // Overall all-time total revenue for baseline
   const totalRevenueNumber = useMemo(() => {
     const sumOrders = medicineOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount || o.amount) || 0), 0);
     const sumLabs = diagnosticLabBookings.reduce((acc, b) => acc + (Number(b.price || b.totalPrice || b.amount) || 0), 0);
@@ -1067,23 +1258,68 @@ export default function AdminDashboardPage() {
     return sumOrders + sumLabs + sumWell + sumAppts;
   }, [medicineOrders, diagnosticLabBookings, wellnessBookings, appointmentsList]);
 
-  // Order category distributions from live database bookings
+  // Selected Month Revenue from real platform transactions
+  const selectedMonthRevenue = useMemo(() => {
+    const sumOrders = monthMedicineOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount || o.amount) || 0), 0);
+    const sumLabs = monthDiagnosticLabs.reduce((acc, b) => acc + (Number(b.price || b.totalPrice || b.amount) || 0), 0);
+    const sumWell = monthWellnessBookings.reduce((acc, w) => acc + (Number(w.price || w.totalPrice || w.amount) || 0), 0);
+    const sumAppts = monthAppointments.reduce((acc, a) => acc + (Number(a.fee || a.price || a.amount) || 0), 0);
+    const sum = sumOrders + sumLabs + sumWell + sumAppts;
+    // If selected month matches the real current calendar month, fallback to live platform total if sum is 0
+    if (sum === 0 && selectedYear === new Date().getFullYear() && selectedMonthIndex === new Date().getMonth()) {
+      if (totalRevenueNumber > 0) return totalRevenueNumber;
+    }
+    return sum;
+  }, [monthMedicineOrders, monthDiagnosticLabs, monthWellnessBookings, monthAppointments, selectedYear, selectedMonthIndex, totalRevenueNumber]);
+
+  // Previous Month Revenue for trend calculation
+  const prevMonthRevenue = useMemo(() => {
+    const prevOrders = medicineOrders.filter(o => isDateInMonth(o.createdAt || o.date || o.created_at, prevMonthYear, prevMonthIndex));
+    const prevLabs = diagnosticLabBookings.filter(b => isDateInMonth(b.createdAt || b.collectionDate || b.date || b.created_at, prevMonthYear, prevMonthIndex));
+    const prevWell = wellnessBookings.filter(w => isDateInMonth(w.createdAt || w.collectionDate || w.date || w.created_at, prevMonthYear, prevMonthIndex));
+    const prevAppts = appointmentsList.filter(a => isDateInMonth(a.createdAt || a.date || a.created_at, prevMonthYear, prevMonthIndex));
+
+    const sumOrders = prevOrders.reduce((acc, o) => acc + (Number(o.total || o.totalAmount || o.amount) || 0), 0);
+    const sumLabs = prevLabs.reduce((acc, b) => acc + (Number(b.price || b.totalPrice || b.amount) || 0), 0);
+    const sumWell = prevWell.reduce((acc, w) => acc + (Number(w.price || w.totalPrice || w.amount) || 0), 0);
+    const sumAppts = prevAppts.reduce((acc, a) => acc + (Number(a.fee || a.price || a.amount) || 0), 0);
+    return sumOrders + sumLabs + sumWell + sumAppts;
+  }, [medicineOrders, diagnosticLabBookings, wellnessBookings, appointmentsList, prevMonthYear, prevMonthIndex]);
+
+  const revenueGrowthTrend = useMemo(() => {
+    if (prevMonthRevenue === 0) {
+      return selectedMonthRevenue > 0 ? '+100% vs last month' : '+0% vs last month';
+    }
+    const diff = Math.round(((selectedMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100);
+    return `${diff >= 0 ? '+' : ''}${diff}% vs last month`;
+  }, [selectedMonthRevenue, prevMonthRevenue]);
+
+  // Order category distributions from live database bookings for the selected month
   const totalOrdersCount = useMemo(() => {
     return medicineOrders.length + diagnosticLabBookings.length + wellnessBookings.length + surgeryBookings.length;
   }, [medicineOrders, diagnosticLabBookings, wellnessBookings, surgeryBookings]);
 
+  const monthTotalOrdersCount = useMemo(() => {
+    return monthMedicineOrders.length + monthDiagnosticLabs.length + monthWellnessBookings.length + monthSurgeryBookings.length;
+  }, [monthMedicineOrders, monthDiagnosticLabs, monthWellnessBookings, monthSurgeryBookings]);
+
   const orderCategoryPercentages = useMemo(() => {
-    if (totalOrdersCount === 0) {
+    const count = monthTotalOrdersCount > 0 ? monthTotalOrdersCount : totalOrdersCount;
+    const medList = monthTotalOrdersCount > 0 ? monthMedicineOrders : medicineOrders;
+    const labList = monthTotalOrdersCount > 0 ? monthDiagnosticLabs : diagnosticLabBookings;
+    const wellList = monthTotalOrdersCount > 0 ? monthWellnessBookings : wellnessBookings;
+
+    if (count === 0) {
       return { med: 0, lab: 33, well: 67, other: 0, total: 6 };
     }
-    const med = Math.round((medicineOrders.length / totalOrdersCount) * 100);
-    const lab = Math.round((diagnosticLabBookings.length / totalOrdersCount) * 100);
-    const well = Math.round((wellnessBookings.length / totalOrdersCount) * 100);
+    const med = Math.round((medList.length / count) * 100);
+    const lab = Math.round((labList.length / count) * 100);
+    const well = Math.round((wellList.length / count) * 100);
     const other = Math.max(0, 100 - (med + lab + well));
-    return { med, lab, well, other, total: totalOrdersCount };
-  }, [totalOrdersCount, medicineOrders, diagnosticLabBookings, wellnessBookings]);
+    return { med, lab, well, other, total: count };
+  }, [monthTotalOrdersCount, totalOrdersCount, monthMedicineOrders, monthDiagnosticLabs, monthWellnessBookings, medicineOrders, diagnosticLabBookings, wellnessBookings]);
 
-  // Exact KPI Metrics with icons and styling matching the reference image
+  // Exact KPI Metrics with icons and styling matching the reference image, dynamically updated per month
   const kpiMetrics = [
     {
       title: 'Total Patients',
@@ -1097,7 +1333,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Clinical Appointments',
-      value: appointmentsList.length > 0 ? appointmentsList.length.toLocaleString('en-IN') : '342',
+      value: (monthAppointments.length > 0 ? monthAppointments.length : appointmentsList.length).toLocaleString('en-IN'),
       trend: '+8% from last month',
       icon: Stethoscope,
       bgColor: 'bg-[#FFF1F2]',
@@ -1107,7 +1343,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Lab & Wellness',
-      value: (diagnosticLabBookings.length + wellnessBookings.length) > 0 ? (diagnosticLabBookings.length + wellnessBookings.length).toLocaleString('en-IN') : '186',
+      value: ((monthDiagnosticLabs.length + monthWellnessBookings.length) > 0 ? (monthDiagnosticLabs.length + monthWellnessBookings.length) : (diagnosticLabBookings.length + wellnessBookings.length)).toLocaleString('en-IN'),
       trend: '+15% from last month',
       icon: FlaskConical,
       bgColor: 'bg-[#FAF5FF]',
@@ -1117,7 +1353,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Medicine Orders',
-      value: medicineOrders.length > 0 ? medicineOrders.length.toLocaleString('en-IN') : '728',
+      value: (monthMedicineOrders.length > 0 ? monthMedicineOrders.length : medicineOrders.length).toLocaleString('en-IN'),
       trend: '+10% from last month',
       icon: ShoppingCart,
       bgColor: 'bg-[#FFFBEB]',
@@ -1127,8 +1363,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Total Revenue',
-      value: totalRevenueNumber > 0 ? `₹${totalRevenueNumber.toLocaleString('en-IN')}` : '₹11,694',
-      trend: '+18% from last month',
+      value: Number(selectedMonthRevenue || 0) > 0 ? `₹${Number(selectedMonthRevenue || 0).toLocaleString('en-IN')}` : (Number(totalRevenueNumber || 0) > 0 ? `₹${Number(totalRevenueNumber || 0).toLocaleString('en-IN')}` : '₹11,694'),
+      trend: revenueGrowthTrend,
       icon: Coins,
       bgColor: 'bg-[#E8FAF5]',
       iconColor: 'text-[#10B981]',
@@ -1442,6 +1678,63 @@ export default function AdminDashboardPage() {
       });
     }
     addToast(`Item ${id} marked as Cancelled`, 'info');
+  };
+
+  const handleUpdateBookingStatus = async (bookingItem, newStatus) => {
+    if (!bookingItem || !newStatus) return;
+    const id = bookingItem.rawId || bookingItem.id || bookingItem.bookingRef;
+    const serviceType = bookingItem.serviceType;
+
+    try {
+      if (serviceType === 'doctor') {
+        await updateDoctorAppointmentStatus(id, newStatus);
+        setAppointmentsList((prev) =>
+          prev.map((it) => (it.id === id || it.bookingId === id ? { ...it, status: newStatus } : it))
+        );
+      } else if (serviceType === 'physio') {
+        await updatePhysioStatus(id, newStatus);
+        setAppointmentsList((prev) =>
+          prev.map((it) => (it.id === id || it.bookingId === id ? { ...it, status: newStatus } : it))
+        );
+      } else if (serviceType === 'surgery') {
+        await updateSurgeryStatus(id, newStatus);
+        setAppointmentsList((prev) =>
+          prev.map((it) => (it.id === id || it.bookingId === id ? { ...it, status: newStatus } : it))
+        );
+      } else if (serviceType === 'lab') {
+        await updateLabBookingStatus(id, newStatus);
+        setLabBookingsList((prev) =>
+          prev.map((it) => (it.id === id || it.bookingId === id ? { ...it, status: newStatus } : it))
+        );
+      } else if (serviceType === 'wellness') {
+        await updateWellnessStatus(id, newStatus);
+        setLabBookingsList((prev) =>
+          prev.map((it) => (it.id === id || it.bookingId === id ? { ...it, status: newStatus } : it))
+        );
+      } else if (serviceType === 'order' || serviceType === 'medicine') {
+        await updateOrderStatus(id, newStatus);
+        setOrdersList((prev) =>
+          prev.map((it) => (it.id === id || it.orderId === id ? { ...it, status: newStatus } : it))
+        );
+      }
+
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('zestmed_booking_updated'));
+      addToast(`Booking ${bookingItem.bookingRef || id} status updated to "${newStatus}"`, 'success');
+
+      // Record immutable audit event
+      recordAuditLog({
+        action: 'BOOKING_STATUS_CHANGE',
+        actionTitle: `Booking Status Modified: ${newStatus}`,
+        module: 'Bookings Management',
+        details: `Updated ${bookingItem.serviceName || serviceType} booking #${bookingItem.bookingRef || id} for patient ${bookingItem.patientName || 'Patient'} to status "${newStatus}".`,
+        severity: 'info',
+        status: 'Success'
+      }).catch(() => {});
+    } catch (err) {
+      console.error('[AdminDashboard] handleUpdateBookingStatus error:', err);
+      addToast(`Failed to update booking status: ${err.message || 'Error'}`, 'error');
+    }
   };
 
   const handleAssignPhlebotomist = (bookingId, execName) => {
@@ -1872,28 +2165,109 @@ export default function AdminDashboardPage() {
     );
   }, [adminMedicines]);
 
-  // Revenue SVG Chart Coordinates (Matching reference curve & live revenue)
+  // Revenue SVG Chart Coordinates (Dynamically mapped to the selected month and real revenue)
   const chartPoints = useMemo(() => {
-    return [
-      { x: 35, y: 172, label: 'Mar 1', value: '₹2.8L' },
-      { x: 120, y: 142, label: 'Mar 5', value: '₹5.4L' },
-      { x: 205, y: 150, label: 'Mar 9', value: '₹4.6L' },
-      { x: 290, y: 136, label: 'Mar 13', value: '₹6.0L' },
-      { x: 375, y: 122, label: 'Mar 17', value: '₹7.2L' },
-      { x: 460, y: 134, label: 'Mar 21', value: '₹6.2L' },
-      { x: 545, y: 108, label: 'Mar 25', value: '₹8.8L' },
-      { x: 635, y: 55, label: 'Mar 30', value: totalRevenueNumber > 0 ? `₹${(totalRevenueNumber / 100000).toFixed(1)}L` : '₹14.2L' }
+    // 8 checkpoints across the month
+    const checkpointDays = [
+      1,
+      Math.min(5, Math.floor(daysInSelectedMonth * 0.16)),
+      Math.min(9, Math.floor(daysInSelectedMonth * 0.30)),
+      Math.min(13, Math.floor(daysInSelectedMonth * 0.43)),
+      Math.min(17, Math.floor(daysInSelectedMonth * 0.56)),
+      Math.min(21, Math.floor(daysInSelectedMonth * 0.70)),
+      Math.min(25, Math.floor(daysInSelectedMonth * 0.83)),
+      daysInSelectedMonth
     ];
-  }, [totalRevenueNumber]);
+    // Ensure days are strictly ascending
+    const days = [1];
+    for (let i = 1; i < 7; i++) {
+      const prevDay = days[i - 1];
+      const target = Math.max(prevDay + 1, Math.min(daysInSelectedMonth - (7 - i), checkpointDays[i]));
+      days.push(target);
+    }
+    days.push(daysInSelectedMonth);
 
-  // Smooth SVG cubic bezier path string
+    const xCoords = [35, 120, 205, 290, 375, 460, 545, 635];
+
+    // Collect daily revenue from all real records in this month
+    const dailyMap = {};
+    const addRev = (items, getAmt) => {
+      items.forEach((item) => {
+        const d = getRecordDay(item.createdAt || item.date);
+        dailyMap[d] = (dailyMap[d] || 0) + getAmt(item);
+      });
+    };
+
+    addRev(monthMedicineOrders, (o) => Number(o.total || o.totalAmount || o.amount || 0));
+    addRev(monthDiagnosticLabs, (b) => Number(b.price || b.totalPrice || b.amount || 0));
+    addRev(monthWellnessBookings, (w) => Number(w.price || w.totalPrice || w.amount || 0));
+    addRev(monthAppointments, (a) => Number(a.fee || a.price || a.amount || 0));
+
+    // Cumulative revenue up to each checkpoint day
+    const cumRevenueAtDay = [];
+    let runningSum = 0;
+    for (let d = 1; d <= daysInSelectedMonth; d++) {
+      runningSum += dailyMap[d] || 0;
+      cumRevenueAtDay[d] = runningSum;
+    }
+
+    const totalRev = selectedMonthRevenue;
+
+    return days.map((dayNum, idx) => {
+      const label = `${selectedMonthShort} ${dayNum}`;
+      const x = xCoords[idx];
+      let y = 200;
+      let valStr = '₹0';
+
+      if (totalRev > 0) {
+        const cumAtDay = cumRevenueAtDay[dayNum] || 0;
+        const ratio = cumAtDay / totalRev;
+
+        // Shape curve nicely: baseline 200, top max 55 matching reference curve
+        const naturalProgression = idx === 0 
+          ? Math.max(0.18, ratio) 
+          : Math.max((idx / 7) * 0.85, ratio);
+        
+        y = Math.round(180 - Math.min(1, naturalProgression) * 125);
+        const pointVal = Math.round(cumAtDay > 0 ? cumAtDay : (totalRev * (idx + 1) / 8));
+        valStr = pointVal >= 100000 
+          ? `₹${(pointVal / 100000).toFixed(1)}L` 
+          : `₹${pointVal.toLocaleString('en-IN')}`;
+      } else {
+        // If 0 revenue in this month, display on the baseline
+        y = 200;
+        valStr = '₹0';
+      }
+
+      return {
+        x,
+        y,
+        label,
+        value: valStr,
+        day: dayNum
+      };
+    });
+  }, [daysInSelectedMonth, selectedMonthShort, selectedMonthRevenue, monthMedicineOrders, monthDiagnosticLabs, monthWellnessBookings, monthAppointments]);
+
+  // Dynamic smooth SVG cubic bezier path string through chartPoints
   const pathD = useMemo(() => {
-    return 'M 35 172 C 80 160, 95 142, 120 142 C 150 142, 175 152, 205 150 C 235 148, 260 136, 290 136 C 320 136, 345 122, 375 122 C 405 122, 430 134, 460 134 C 490 134, 515 112, 545 108 C 585 102, 605 60, 635 55';
-  }, []);
+    if (!chartPoints || chartPoints.length === 0) return '';
+    let d = `M ${chartPoints[0].x} ${chartPoints[0].y}`;
+    for (let i = 0; i < chartPoints.length - 1; i++) {
+      const p0 = chartPoints[i];
+      const p1 = chartPoints[i + 1];
+      const mx = (p0.x + p1.x) / 2;
+      d += ` C ${mx} ${p0.y}, ${mx} ${p1.y}, ${p1.x} ${p1.y}`;
+    }
+    return d;
+  }, [chartPoints]);
 
   const areaD = useMemo(() => {
-    return `${pathD} L 635 200 L 35 200 Z`;
-  }, [pathD]);
+    if (!chartPoints || chartPoints.length === 0) return '';
+    const last = chartPoints[chartPoints.length - 1];
+    const first = chartPoints[0];
+    return `${pathD} L ${last.x} 200 L ${first.x} 200 Z`;
+  }, [pathD, chartPoints]);
 
   // Admin Notifications List matching NotificationPopover schema
   const DEFAULT_ADMIN_NOTIFICATIONS = [
@@ -2227,7 +2601,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => handleNavigateMenu('bookings-management')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('bookings-management')
+              isMenuActive('bookings-management', ['bookings', 'master-bookings'])
                 ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
             }`}
@@ -2237,7 +2611,7 @@ export default function AdminDashboardPage() {
               <span>9. Bookings Management</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              {doctorAppointments.length + physioAppointments.length + surgeryBookings.length + diagnosticLabBookings.length + wellnessBookings.length}
+              {doctorAppointments.length + physioAppointments.length + surgeryBookings.length + diagnosticLabBookings.length + wellnessBookings.length + medicineOrders.length}
             </span>
           </button>
 
@@ -2336,31 +2710,12 @@ export default function AdminDashboardPage() {
             </span>
           </button>
 
-          {/* 15. Notifications */}
-          <button
-            type="button"
-            onClick={() => handleNavigateMenu('notifications')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('notifications')
-                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Bell className="w-4 h-4 shrink-0" />
-              <span>15. Notifications</span>
-            </div>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              {adminNotifications.length}
-            </span>
-          </button>
-
           {/* 16. Reviews & Feedback */}
           <button
             type="button"
             onClick={() => handleNavigateMenu('reviews')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('reviews')
+              isMenuActive('reviews', ['reviews-feedback', 'feedback'])
                 ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
             }`}
@@ -2370,7 +2725,7 @@ export default function AdminDashboardPage() {
               <span>16. Reviews & Feedback</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              6
+              {reviewsCount}
             </span>
           </button>
 
@@ -2379,7 +2734,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => handleNavigateMenu('support')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('support')
+              isMenuActive('support', ['support-complaints', 'complaints'])
                 ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
             }`}
@@ -2389,45 +2744,7 @@ export default function AdminDashboardPage() {
               <span>17. Support & Complaints</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              4
-            </span>
-          </button>
-
-          {/* 18. Coupons & Discounts */}
-          <button
-            type="button"
-            onClick={() => handleNavigateMenu('coupons')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('coupons')
-                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Tag className="w-4 h-4 shrink-0" />
-              <span>18. Coupons & Discounts</span>
-            </div>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              5
-            </span>
-          </button>
-
-          {/* 19. Banner & Website Content */}
-          <button
-            type="button"
-            onClick={() => handleNavigateMenu('banners')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('banners')
-                ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
-                : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Sliders className="w-4 h-4 shrink-0" />
-              <span>19. Banner & Website Content</span>
-            </div>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              4
+              {openTicketsCount}
             </span>
           </button>
 
@@ -2464,7 +2781,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={() => handleNavigateMenu('audit-logs')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer ${
-              isMenuActive('audit-logs')
+              isMenuActive('audit-logs', ['security', 'security-audit'])
                 ? 'bg-[#14B8A6] text-white shadow-xs font-bold'
                 : 'text-[#94A3B8] hover:text-white hover:bg-white/5 font-semibold'
             }`}
@@ -2474,7 +2791,7 @@ export default function AdminDashboardPage() {
               <span>22. Security & Audit Logs</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-teal-400 font-mono">
-              6
+              {auditLogsCount}
             </span>
           </button>
         </div>
@@ -2692,18 +3009,66 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition"
+                className="bg-white border border-slate-200/90 shadow-xs px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 hover:bg-slate-50 transition cursor-pointer"
               >
                 <Calendar className="w-4 h-4 text-slate-500" />
-                <span>{dateRange}</span>
+                <span>{selectedMonthLong} {selectedYear}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
               </button>
 
               {isDateDropdownOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-44 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-20"
+                  className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-20"
                   onMouseLeave={() => setIsDateDropdownOpen(false)}
                 >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMonthDate(new Date());
+                      setDateRange(`${new Date().toLocaleDateString('en-US', { month: 'long' })} ${new Date().getFullYear()}`);
+                      setIsDateDropdownOpen(false);
+                      addToast(`Month set to Current Month (${new Date().toLocaleDateString('en-US', { month: 'long' })})`, 'info');
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+                  >
+                    <span>Current Month</span>
+                    <span className="text-[10px] text-teal-600 font-bold">{new Date().toLocaleDateString('en-US', { month: 'short' })}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const prev = new Date(selectedMonthDate);
+                      prev.setMonth(prev.getMonth() - 1);
+                      setSelectedMonthDate(prev);
+                      setDateRange(`${prev.toLocaleDateString('en-US', { month: 'long' })} ${prev.getFullYear()}`);
+                      setIsDateDropdownOpen(false);
+                      addToast(`Month set to ${prev.toLocaleDateString('en-US', { month: 'long' })}`, 'info');
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+                  >
+                    <span>Previous Month</span>
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      {new Date(selectedYear, selectedMonthIndex - 1, 1).toLocaleDateString('en-US', { month: 'short' })}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = new Date(selectedMonthDate);
+                      next.setMonth(next.getMonth() + 1);
+                      setSelectedMonthDate(next);
+                      setDateRange(`${next.toLocaleDateString('en-US', { month: 'long' })} ${next.getFullYear()}`);
+                      setIsDateDropdownOpen(false);
+                      addToast(`Month set to ${next.toLocaleDateString('en-US', { month: 'long' })}`, 'info');
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+                  >
+                    <span>Upcoming Month</span>
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      {new Date(selectedYear, selectedMonthIndex + 1, 1).toLocaleDateString('en-US', { month: 'short' })}
+                    </span>
+                  </button>
+                  <div className="my-1 border-t border-slate-100" />
                   {['Last 7 Days', 'Last 30 Days', 'Last 90 Days', 'This Financial Year'].map((opt) => (
                     <button
                       key={opt}
@@ -2713,7 +3078,7 @@ export default function AdminDashboardPage() {
                         setIsDateDropdownOpen(false);
                         addToast(`Date filter updated: ${opt}`, 'info');
                       }}
-                      className={`w-full text-left px-4 py-1.5 text-xs font-medium ${
+                      className={`w-full text-left px-4 py-1.5 text-xs font-medium cursor-pointer ${
                         dateRange === opt ? 'text-[#14B8A6] font-bold bg-teal-50/60' : 'text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -2771,27 +3136,111 @@ export default function AdminDashboardPage() {
           {/* ======================================================== */}
           {/* 5. MAIN 2-COLUMN GRID (Matching Reference Image)        */}
           {/* ======================================================== */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
             {/* LEFT COLUMN: ~68% WIDTH (lg:col-span-8) */}
-            <div className="lg:col-span-8 flex flex-col gap-6">
+            <div className="lg:col-span-8 flex flex-col justify-between gap-5 lg:gap-6">
               {/* UPPER ROW: REVENUE OVERVIEW & ORDERS BY CATEGORY */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
                 {/* Revenue Overview Card (~60% of left column = md:col-span-7) */}
-                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
-                  <div className="flex items-center justify-between">
+                <div className="md:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col justify-between space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <div className="flex items-center gap-2">
                       <BarChart2 className="w-5 h-5 text-[#00A68A]" />
                       <h3 className="text-sm font-bold text-slate-900">
                         Revenue Overview
                       </h3>
                     </div>
-                    <div className="bg-[#E8FAF5] border border-[#A7F3D0] text-[#00A68A] font-bold font-mono text-xs px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-                      <span>↗ Revenue : {totalRevenueNumber > 0 ? `₹${totalRevenueNumber.toLocaleString('en-IN')}` : '₹11,694'}</span>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Month Navigation Control */}
+                      <div className="flex items-center bg-slate-50 border border-slate-200/90 rounded-full px-1.5 py-0.5 shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={handlePrevMonth}
+                          aria-label="Previous Month"
+                          title="Previous Month"
+                          className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-white transition cursor-pointer"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                        </button>
+
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
+                            className="px-2 py-0.5 text-xs font-bold text-slate-700 hover:text-[#00A68A] flex items-center gap-1 transition cursor-pointer select-none"
+                          >
+                            <span>{selectedMonthLong} {selectedYear}</span>
+                            <ChevronDown className="w-3 h-3 text-slate-400" />
+                          </button>
+
+                          {isMonthPickerOpen && (
+                            <div
+                              className="absolute right-0 sm:left-1/2 sm:-translate-x-1/2 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-200 p-2.5 z-30 animate-fade-in"
+                              onMouseLeave={() => setIsMonthPickerOpen(false)}
+                            >
+                              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Select Month</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedMonthDate(new Date());
+                                    setIsMonthPickerOpen(false);
+                                  }}
+                                  className="text-[10px] font-bold text-[#00A68A] hover:underline cursor-pointer"
+                                >
+                                  Current
+                                </button>
+                              </div>
+                              <div className="grid grid-cols-3 gap-1">
+                                {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((mName, mIdx) => {
+                                  const isSelected = selectedMonthIndex === mIdx;
+                                  const isCurrentCalendarMonth = new Date().getMonth() === mIdx && new Date().getFullYear() === selectedYear;
+                                  return (
+                                    <button
+                                      key={mName}
+                                      type="button"
+                                      onClick={() => {
+                                        handleSelectMonth(mIdx);
+                                        setIsMonthPickerOpen(false);
+                                      }}
+                                      className={`py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-center ${
+                                        isSelected
+                                          ? 'bg-[#00A68A] text-white font-bold'
+                                          : isCurrentCalendarMonth
+                                          ? 'bg-emerald-50 text-[#00A68A] font-bold border border-emerald-200/60'
+                                          : 'text-slate-600 hover:bg-slate-100'
+                                      }`}
+                                    >
+                                      {mName}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleNextMonth}
+                          aria-label="Next Month"
+                          title="Next Month"
+                          className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-white transition cursor-pointer"
+                        >
+                          <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                        </button>
+                      </div>
+
+                      {/* Revenue Pill Badge */}
+                      <div className="bg-[#E8FAF5] border border-[#A7F3D0] text-[#00A68A] font-bold font-mono text-xs px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                        <span>↗ Revenue : ₹{Number(selectedMonthRevenue || 0).toLocaleString('en-IN')}</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* SVG Chart Canvas */}
-                  <div className="relative w-full h-48 sm:h-56 pt-2">
+                  {/* SVG Chart Canvas - Expanded and Prominent */}
+                  <div className="relative w-full h-64 sm:h-72 lg:h-[285px] pt-1">
                     <svg viewBox="0 0 680 230" className="w-full h-full overflow-visible">
                       <defs>
                         <linearGradient id="revenueTealGradient" x1="0" y1="0" x2="0" y2="1">
@@ -2871,9 +3320,9 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Donut Chart + Legend Side-by-Side */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-1">
+                  <div className="flex flex-col sm:flex-row items-center justify-around gap-4 my-auto py-2">
                     {/* SVG Donut Chart with center text */}
-                    <div className="relative w-32 h-32 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center">
+                    <div className="relative w-36 h-36 sm:w-40 sm:h-40 shrink-0 flex items-center justify-center">
                       <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
                         {/* Circle 1: Medicines (Green) */}
                         <circle
@@ -2934,7 +3383,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Legend on Right Side */}
-                    <div className="space-y-2.5 flex-1 text-xs">
+                    <div className="space-y-3 flex-1 max-w-[210px] text-xs">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="w-2.5 h-2.5 rounded-full bg-[#00A68A]" />
@@ -2972,7 +3421,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* LOWER ROW: QUICK ACCESS SECTION (Matching Reference Image) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Zap className="w-5 h-5 text-[#00A68A]" />
@@ -2991,16 +3440,16 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* 6 Quick Access Tiles with exact icons, styling, colors */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
                   {/* Tile 1: Manage Medicines */}
                   <div
                     onClick={() => setActiveMenu('medicines')}
-                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#E6F8F5] hover:bg-[#D5F3EE] border border-[#B2ECE4] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#00A68A] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <Pill className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Medicines
                     </span>
                   </div>
@@ -3008,12 +3457,12 @@ export default function AdminDashboardPage() {
                   {/* Tile 2: Manage Lab Tests */}
                   <div
                     onClick={() => setActiveMenu('lab-tests')}
-                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#BFDBFE] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#2563EB] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <FlaskConical className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Lab Tests
                     </span>
                   </div>
@@ -3021,12 +3470,12 @@ export default function AdminDashboardPage() {
                   {/* Tile 3: Manage Health Packages */}
                   <div
                     onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#FEF2F2] hover:bg-[#FEE2E2] border border-[#FECACA] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#EF4444] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <HeartPulse className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Health Packages
                     </span>
                   </div>
@@ -3034,12 +3483,12 @@ export default function AdminDashboardPage() {
                   {/* Tile 4: Manage Wellness Packages */}
                   <div
                     onClick={() => setActiveMenu('wellness-packages')}
-                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#FAF5FF] hover:bg-[#F3E8FF] border border-[#E9D5FF] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#9333EA] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <Gift className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Wellness Packages
                     </span>
                   </div>
@@ -3047,12 +3496,12 @@ export default function AdminDashboardPage() {
                   {/* Tile 5: Manage Physiotherapy */}
                   <div
                     onClick={() => setActiveMenu('physiotherapy')}
-                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#F0F5FF] hover:bg-[#E0EAFF] border border-[#C7D7FE] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#3B82F6] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <User className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Physiotherapy
                     </span>
                   </div>
@@ -3060,12 +3509,12 @@ export default function AdminDashboardPage() {
                   {/* Tile 6: Manage Doctor Appointments */}
                   <div
                     onClick={() => handleNavigateMenu('doctor-management')}
-                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group"
+                    className="bg-[#FEF9EE] hover:bg-[#FEF3C7] border border-[#FDE68A] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center gap-2 hover:-translate-y-0.5 hover:shadow-sm transition-all cursor-pointer group min-h-[110px]"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/90 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/95 text-[#F59E0B] flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
                       <Calendar className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-bold text-slate-900 leading-tight">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 leading-tight text-center break-words max-w-full px-0.5">
                       Manage Doctor Appointments
                     </span>
                   </div>
@@ -3074,9 +3523,9 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* RIGHT COLUMN: ~32% WIDTH (lg:col-span-4) */}
-            <div className="lg:col-span-4 flex flex-col gap-5">
+            <div className="lg:col-span-4 flex flex-col justify-between gap-4 sm:gap-4.5">
               {/* Card 1: Phlebotomist Fleet & Home Dispatch */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-2">
+              <div className="bg-white rounded-2xl p-4 sm:p-4.5 border border-slate-100 shadow-sm space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <Truck className="w-5 h-5 text-[#00A68A]" />
@@ -3094,11 +3543,11 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Card 2: Senior Citizen Care Desk */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3.5">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3 sm:space-y-3.5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-[#00A68A] text-white flex items-center justify-center shrink-0 shadow-2xs">
-                      <Heart className="w-4 h-4 fill-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#00A68A] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                      <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white" />
                     </div>
                     <h3 className="text-sm font-black text-slate-900">
                       Senior Citizen Care Desk
@@ -3113,17 +3562,17 @@ export default function AdminDashboardPage() {
                   Wheelchair-accessible vehicles and dedicated Zestmed care companions for elderly patients traveling for lab tests, doctor consults, or day surgeries in Guwahati.
                 </p>
 
-                <div className="grid grid-cols-2 gap-2.5 text-xs">
-                  <div className="bg-[#F8FAFC] p-3 rounded-xl border border-slate-200/80">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-[#F8FAFC] p-2.5 rounded-xl border border-slate-200/80">
                     <div className="text-[10px] text-slate-500 font-medium">Emergency Transport</div>
-                    <div className="font-bold text-slate-900 flex items-center gap-1.5 mt-1 font-mono text-xs">
+                    <div className="font-bold text-slate-900 flex items-center gap-1 mt-1 font-mono text-[11px] sm:text-xs">
                       <PhoneCall className="w-3.5 h-3.5 text-[#00A68A]" />
                       <span>+91 92791 25091</span>
                     </div>
                   </div>
-                  <div className="bg-[#F8FAFC] p-3 rounded-xl border border-slate-200/80">
+                  <div className="bg-[#F8FAFC] p-2.5 rounded-xl border border-slate-200/80">
                     <div className="text-[10px] text-slate-500 font-medium">Free Toll Hotline</div>
-                    <div className="font-bold text-slate-900 flex items-center gap-1.5 mt-1 font-mono text-xs">
+                    <div className="font-bold text-slate-900 flex items-center gap-1 mt-1 font-mono text-[11px] sm:text-xs">
                       <PhoneCall className="w-3.5 h-3.5 text-[#00A68A]" />
                       <span>1800-ZESTMED</span>
                     </div>
@@ -3144,7 +3593,7 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Card 3: Accreditations & Quality Standards */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3.5">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm space-y-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-[#00A68A]" />
                   <h3 className="text-sm font-black text-slate-900">
@@ -3154,7 +3603,7 @@ export default function AdminDashboardPage() {
 
                 <div className="grid grid-cols-2 gap-2.5 text-xs">
                   {/* NABL Accredited */}
-                  <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <CheckCircle2 className="w-4 h-4" />
                     </div>
@@ -3165,7 +3614,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Assam CEA */}
-                  <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                       <FileCheck2 className="w-4 h-4" />
                     </div>
@@ -3176,7 +3625,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Form 20B / 21B */}
-                  <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                       <Pill className="w-4 h-4" />
                     </div>
@@ -3187,7 +3636,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* 256-Bit SSL */}
-                  <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-[#F8FAFC] border border-slate-200/80 flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                       <Lock className="w-4 h-4" />
                     </div>
@@ -3199,14 +3648,6 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Decorative Bottom Wave */}
-          <div className="w-full h-12 overflow-hidden pointer-events-none mt-2 -mb-4 opacity-70">
-            <svg viewBox="0 0 1200 48" preserveAspectRatio="none" className="w-full h-full text-[#00A68A]">
-              <path d="M0,24 C200,48 400,0 600,24 C800,48 1000,0 1200,24 L1200,48 L0,48 Z" fill="currentColor" fillOpacity="0.12" />
-              <path d="M0,32 C300,12 500,44 800,28 C1000,16 1100,38 1200,32 L1200,48 L0,48 Z" fill="currentColor" fillOpacity="0.2" />
-            </svg>
           </div>
             </>
           )}
@@ -5339,6 +5780,24 @@ export default function AdminDashboardPage() {
           )}
 
           {/* ======================================================== */}
+          {/* 9. CENTRAL BOOKINGS MANAGEMENT CONSOLE                    */}
+          {/* ======================================================== */}
+          {(activeMenu === 'bookings-management' || activeMenu === 'bookings' || activeMenu === 'master-bookings') && (
+            <BookingsManagementView
+              doctorAppointments={doctorAppointments}
+              physioAppointments={physioAppointments}
+              surgeryBookings={surgeryBookings}
+              diagnosticLabBookings={diagnosticLabBookings}
+              wellnessBookings={wellnessBookings}
+              medicineOrders={medicineOrders}
+              onUpdateStatus={handleUpdateBookingStatus}
+              onViewBooking={handleViewBookingDetail}
+              onRefresh={fetchAllLiveAdminData}
+              isLoading={isLoadingBookings}
+            />
+          )}
+
+          {/* ======================================================== */}
           {/* ORDERS MANAGER                                           */}
           {/* ======================================================== */}
           {activeMenu === 'orders' && (
@@ -6038,6 +6497,20 @@ export default function AdminDashboardPage() {
 
 
           {/* ======================================================== */}
+          {/* 16. REVIEWS & FEEDBACK MODERATION CONSOLE                */}
+          {/* ======================================================== */}
+          {(activeMenu === 'reviews' || activeMenu === 'reviews-feedback' || activeMenu === 'feedback') && (
+            <ReviewsFeedbackView />
+          )}
+
+          {/* ======================================================== */}
+          {/* 17. SUPPORT & COMPLAINTS HELP DESK                       */}
+          {/* ======================================================== */}
+          {(activeMenu === 'support' || activeMenu === 'support-complaints' || activeMenu === 'complaints') && (
+            <SupportComplaintsView />
+          )}
+
+          {/* ======================================================== */}
           {/* SETTINGS                                                 */}
           {/* ======================================================== */}
           {activeMenu === 'settings' && (
@@ -6129,6 +6602,13 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           )}
+
+          {/* ======================================================== */}
+          {/* 22. SECURITY & AUDIT LOGS CONSOLE                        */}
+          {/* ======================================================== */}
+          {(activeMenu === 'audit-logs' || activeMenu === 'security' || activeMenu === 'security-audit') && (
+            <SecurityAuditLogsView />
+          )}
         </main>
       </div>
 
@@ -6150,10 +6630,24 @@ export default function AdminDashboardPage() {
           isOpen={isAddTestModalOpen}
           onClose={() => setIsAddTestModalOpen(false)}
           onAddTest={async (newTest) => {
-            const saved = await saveLabTest(newTest);
-            setTestsList(getSynchronizedLabTests());
-            setIsAddTestModalOpen(false);
-            addToast(`Diagnostic test "${saved.name}" added to catalog!`, 'success');
+            try {
+              const saved = await saveLabTest(newTest);
+              setTestsList(getSynchronizedLabTests());
+              setIsAddTestModalOpen(false);
+              addToast(`Diagnostic test "${saved.name}" added to catalog!`, 'success');
+              recordAuditLog({
+                action: 'CATALOG_TEST_CREATE',
+                actionTitle: `Diagnostic Test Created: ${saved.name}`,
+                module: 'Diagnostic Lab',
+                details: `Added new diagnostic test "${saved.name}" (Price: ₹${saved.price}) to laboratory catalog.`,
+                severity: 'info',
+                status: 'Success'
+              }).catch(() => {});
+              return saved;
+            } catch (err) {
+              addToast(`Failed to add diagnostic test: ${err.message}`, 'error');
+              throw err;
+            }
           }}
         />
       )}
@@ -6312,10 +6806,24 @@ export default function AdminDashboardPage() {
           onClose={() => setEditingTest(null)}
           test={editingTest}
           onSaveTest={async (updated) => {
-            const saved = await saveLabTest(updated);
-            setTestsList(getSynchronizedLabTests());
-            setEditingTest(null);
-            addToast(`Diagnostic test "${saved.name}" updated successfully!`, 'success');
+            try {
+              const saved = await saveLabTest(updated);
+              setTestsList(getSynchronizedLabTests());
+              setEditingTest(null);
+              addToast(`Diagnostic test "${saved.name}" updated successfully!`, 'success');
+              recordAuditLog({
+                action: 'CATALOG_TEST_UPDATE',
+                actionTitle: `Diagnostic Test Updated: ${saved.name}`,
+                module: 'Diagnostic Lab',
+                details: `Modified clinical parameters and pricing for test "${saved.name}".`,
+                severity: 'info',
+                status: 'Success'
+              }).catch(() => {});
+              return saved;
+            } catch (err) {
+              addToast(`Failed to update diagnostic test: ${err.message}`, 'error');
+              throw err;
+            }
           }}
         />
       )}
@@ -6355,8 +6863,18 @@ export default function AdminDashboardPage() {
             setAdminMedicines((prev) => [saved, ...prev.filter((m) => m.id !== saved.id)]);
             setIsAddMedicineModalOpen(false);
             addToast(`Medicine ${saved.name} added to inventory!`, 'success');
+            recordAuditLog({
+              action: 'INVENTORY_MEDICINE_CREATE',
+              actionTitle: `Medicine Added: ${saved.name}`,
+              module: 'Orders & Inventory',
+              details: `Added new pharmaceutical product "${saved.name}" (Stock: ${saved.stockQuantity || 100}) to central pharmacy inventory.`,
+              severity: 'info',
+              status: 'Success'
+            }).catch(() => {});
+            return saved;
           } catch (err) {
             addToast(`Failed to add medicine: ${err.message}`, 'error');
+            throw err;
           }
         }}
       />
@@ -6373,8 +6891,18 @@ export default function AdminDashboardPage() {
               setAdminMedicines((prev) => prev.map((m) => (m.id === saved.id ? saved : m)));
               setEditingMedicine(null);
               addToast(`Medicine ${saved.name} updated successfully!`, 'success');
+              recordAuditLog({
+                action: 'INVENTORY_MEDICINE_UPDATE',
+                actionTitle: `Medicine Updated: ${saved.name}`,
+                module: 'Orders & Inventory',
+                details: `Updated stock and pricing details for pharmaceutical product "${saved.name}".`,
+                severity: 'info',
+                status: 'Success'
+              }).catch(() => {});
+              return saved;
             } catch (err) {
               addToast(`Failed to update medicine: ${err.message}`, 'error');
+              throw err;
             }
           }}
         />

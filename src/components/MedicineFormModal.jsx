@@ -224,6 +224,11 @@ export default function MedicineFormModal({
       return;
     }
 
+    if (imageFile && uploadError) {
+      addToast(`Cannot save medicine: Image upload to Supabase Storage failed (${uploadError}). Please retry uploading the image.`, 'error');
+      return;
+    }
+
     if (imageFile && !uploadSuccess && form.image && form.image.startsWith('blob:')) {
       addToast('Please wait for the image upload to complete.', 'info');
       return;

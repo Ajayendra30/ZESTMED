@@ -6,7 +6,7 @@ import {
   Droplet, Activity, Info, Tag, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { uploadLabTestImage } from '../services/labTestService';
+import { uploadLabTestImage, resolveLabTestCategory } from '../services/labTestService';
 
 const CATEGORY_OPTIONS = [
   'Blood Tests',
@@ -91,7 +91,7 @@ export default function DiagnosticTestFormModal({
 
       setForm({
         name: test.name || '',
-        categoryName: test.categoryName || test.category || 'Blood Tests',
+        categoryName: resolveLabTestCategory(test.categoryName || test.category || 'Blood Tests').name,
         sampleType: test.sampleType || 'Blood (2–3 ml)',
         price: p,
         mrp: m,
@@ -184,7 +184,9 @@ export default function DiagnosticTestFormModal({
           images: [uploadRes.publicUrl]
         }));
         setImageUrlInput(uploadRes.publicUrl);
-        addToast('Diagnostic test image uploaded to Supabase Storage!', 'success');
+        addToast(uploadRes.isLocalPersistent 
+          ? 'Diagnostic test image saved and mapped successfully!' 
+          : 'Diagnostic test image uploaded to Supabase Storage!', 'success');
       } else {
         setUploadError(uploadRes.error || 'Failed to upload to Supabase Storage');
         addToast(`Image upload notice: ${uploadRes.error || 'Storage error'}. Ensure the "lab-tests" bucket exists.`, 'error');

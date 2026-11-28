@@ -10,9 +10,9 @@ export default function EditDiagnosticTestModal({ isOpen = true, onClose, test, 
       isOpen={isOpen}
       onClose={onClose}
       test={test}
-      onSave={(updated) => {
+      onSave={async (updated) => {
         if (onSaveTest) {
-          onSaveTest(updated);
+          return await onSaveTest(updated);
         }
       }}
     />

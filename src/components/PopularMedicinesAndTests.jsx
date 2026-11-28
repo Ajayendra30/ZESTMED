@@ -319,12 +319,17 @@ export default function PopularMedicinesAndTests({ onSelectProduct, onSelectTest
 
                     {/* Diagnostic Test Image */}
                     <div className="w-full h-24 rounded-xl overflow-hidden bg-[#F1F5F9] flex items-center justify-center mb-2.5">
-                      <img
-                        src={test.image}
-                        alt={test.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
+                      {test.image ? (
+                        <img
+                          src={test.image}
+                          alt={test.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : null}
                     </div>
 
                     {/* Content */}

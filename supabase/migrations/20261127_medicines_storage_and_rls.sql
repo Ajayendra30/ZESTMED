@@ -76,3 +76,11 @@ USING (true);
 CREATE POLICY "Allow medicine delete"
 ON public.medicines FOR DELETE
 USING (true);
+
+-- 4. Extend medicines table schema for full fields support and unrestricted image URLs
+ALTER TABLE public.medicines ALTER COLUMN image_url TYPE TEXT;
+ALTER TABLE public.medicines ADD COLUMN IF NOT EXISTS dosage TEXT;
+ALTER TABLE public.medicines ADD COLUMN IF NOT EXISTS expiry TEXT;
+ALTER TABLE public.medicines ADD COLUMN IF NOT EXISTS storage TEXT;
+ALTER TABLE public.medicines ADD COLUMN IF NOT EXISTS mrp NUMERIC(10, 2);
+ALTER TABLE public.medicines ADD COLUMN IF NOT EXISTS category_name TEXT;

@@ -1,9 +1,17 @@
 // src/components/Testimonials.jsx
-import React, { useState } from 'react';
-import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { fetchReviews } from '../services/reviewService';
+
+const DEFAULT_AVATARS = [
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+];
 
 export default function Testimonials() {
-  const testimonials = [
+  const [testimonials, setTestimonials] = useState([
     {
       name: 'Priya Sharma',
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
@@ -25,7 +33,26 @@ export default function Testimonials() {
       comment:
         'The health package was affordable and covered all important tests. Highly recommend ZESTMED.'
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchReviews().then((list) => {
+      if (!isMounted) return;
+      const approved = (list || []).filter(r => r.status === 'Approved' || r.isPublished);
+      if (approved.length >= 3) {
+        setTestimonials(approved.slice(0, 6).map((r, idx) => ({
+          name: r.author || r.patientName || 'Patient',
+          avatar: DEFAULT_AVATARS[idx % DEFAULT_AVATARS.length],
+          rating: Math.round(r.rating || 5),
+          service: r.service,
+          comment: r.comment,
+          officialReply: r.officialReply
+        })));
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -90,6 +117,11 @@ export default function Testimonials() {
                     <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-none">
                       {t.name}
                     </h3>
+                    {t.service && (
+                      <span className="text-xs text-teal-700 font-bold block mt-1">
+                        {t.service}
+                      </span>
+                    )}
                     {/* 5 Gold Stars */}
                     <div className="flex items-center gap-1 mt-1.5">
                       {[...Array(t.rating)].map((_, i) => (
@@ -103,6 +135,14 @@ export default function Testimonials() {
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium italic">
                   "{t.comment}"
                 </p>
+
+                {/* Official Response if present */}
+                {t.officialReply && (
+                  <div className="mt-4 p-3 rounded-2xl bg-teal-50 border border-teal-100 text-xs text-teal-900">
+                    <span className="font-bold text-[10px] uppercase text-teal-800 block mb-0.5">Official Response:</span>
+                    <p className="font-medium text-slate-700">{t.officialReply}</p>
+                  </div>
+                )}
               </div>
             </div>
           ))}

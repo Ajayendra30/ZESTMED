@@ -10,9 +10,9 @@ export default function EditMedicineModal({ isOpen = true, onClose, medicine, on
       isOpen={isOpen}
       onClose={onClose}
       medicine={medicine}
-      onSave={(updated) => {
+      onSave={async (updated) => {
         if (onSaveMedicine) {
-          onSaveMedicine(updated);
+          return await onSaveMedicine(updated);
         }
       }}
     />

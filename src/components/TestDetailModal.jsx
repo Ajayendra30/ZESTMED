@@ -33,21 +33,14 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
 
   if (!test) return null;
 
-  // Setup gallery images tailored for the test
-  const isCbc = test.id === 'test-cbc';
-  const cbcDefaultImages = [
-    '/lab-tests/cbc.png'
-  ];
-
-  const cbcThumbnails = [
-    '/lab-tests/cbc.png'
-  ];
-
-  const imagesList = test.images && test.images.length > 0 
+  // Setup gallery images tailored for the test:
+  // Requirement 5: Do not reuse one image across multiple lab tests or use a common hardcoded image URL.
+  // Requirement 9: If a lab test has no uploaded image, leave its image area blank instead of displaying another test's image or a default placeholder.
+  const rawList = Array.isArray(test.images) && test.images.length > 0 
     ? test.images 
-    : (isCbc ? cbcDefaultImages : (test.image ? [test.image] : []));
-
-  const thumbnailsList = isCbc ? cbcThumbnails : (imagesList.length > 1 ? imagesList : []);
+    : (test.image ? [test.image] : []);
+  const imagesList = rawList.filter((img) => img && !img.startsWith('blob:'));
+  const thumbnailsList = imagesList.length > 1 ? imagesList : [];
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
@@ -120,27 +113,18 @@ export default function TestDetailModal({ test, onClose, onBookNow }) {
     }
   };
 
-  // Test parameters & medical details fallback based on test data
-  const parameters = test.parameters || [
-    'Hemoglobin (Hb)',
-    'Total WBC Count',
-    'RBC Count',
-    'Platelet Count',
-    'Hematocrit (PCV)',
-    '& 15+ other parameters'
-  ];
+  // Test parameters & medical details based on test data
+  const parameters = Array.isArray(test.parameters) && test.parameters.length > 0
+    ? test.parameters
+    : (test.parametersCount ? [`${test.parametersCount} Clinical Parameters included`] : ['Clinical biomarker assay']);
 
-  const purpose = test.purpose || [
-    'Detects anemia and infections',
-    'Checks overall blood health',
-    'Helps in early diagnosis of many conditions',
-    'Monitors treatment progress'
-  ];
+  const purpose = Array.isArray(test.purpose) && test.purpose.length > 0
+    ? test.purpose
+    : ['Assesses health status and aids early diagnosis', 'Monitors clinical parameters and treatment progress'];
 
-  const preparation = test.preparation || [
-    'No fasting required',
-    'Maintain normal diet and hydration'
-  ];
+  const preparation = Array.isArray(test.preparation) && test.preparation.length > 0
+    ? test.preparation
+    : (test.preparation ? [test.preparation] : (test.fastingRequired ? ['Overnight 8-10 hrs fasting required', 'Stay hydrated with water'] : ['No special fasting required', 'Maintain normal diet and hydration']));
 
   const sampleType = test.sampleType || 'Blood (2–3 ml)';
   const reportTime = test.reportTime || '6–12 Hours';

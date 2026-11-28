@@ -1093,9 +1093,22 @@ export const bookWellness = async (wellnessData) => {
 };
 
 export const updateWellnessStatus = async (id, status) => {
-  const all = getLocalData('patient_appointments', []);
-  const updated = all.map((a) => (a.id === id || a.booking_number === id ? { ...a, status } : a));
-  setLocalData('patient_appointments', updated);
+  const registries = ['zestmed_patient_lab_bookings', 'zestmed_wellness_bookings', 'patient_appointments', 'zestmed_lab_jobs'];
+  registries.forEach((reg) => {
+    const list = getLocalData(reg, []);
+    let modified = false;
+    const updated = list.map((b) => {
+      const bId = b.id || b.bookingId || b.booking_number;
+      if (bId === id || b.id === id || b.booking_number === id) {
+        modified = true;
+        return { ...b, status, bookingStatus: status, updated_at: new Date().toISOString() };
+      }
+      return b;
+    });
+    if (modified) {
+      setLocalData(reg, updated);
+    }
+  });
 
   if (isSupabaseConfigured()) {
     try {
@@ -1612,23 +1625,17 @@ export const addLabExecutive = async (execData) => {
 // ------------------------------------------------------------------------------
 // 9. INQUIRIES & CONTACT
 // ------------------------------------------------------------------------------
+export { 
+  createSupportTicket, 
+  fetchSupportTickets, 
+  updateSupportTicketStatus, 
+  respondToSupportTicket, 
+  getPatientSupportTickets 
+} from './supportService.js';
 
 export const submitInquiry = async (inquiryData) => {
-  if (isSupabaseConfigured()) {
-    try {
-      const { data, error } = await supabase.from('inquiries').insert([inquiryData]).select().single();
-      if (!error && data) {
-        return data;
-      }
-    } catch (err) {
-      console.warn('[SupabaseService] submitInquiry error:', err);
-    }
-  }
-
-  const list = getLocalData('zestmed_inquiries', []);
-  const newInq = { ...inquiryData, id: `INQ-${Date.now()}`, created_at: new Date().toISOString() };
-  setLocalData('zestmed_inquiries', [newInq, ...list]);
-  return newInq;
+  const { createSupportTicket } = await import('./supportService.js');
+  return await createSupportTicket(inquiryData);
 };
 
 // ------------------------------------------------------------------------------
@@ -2280,3 +2287,25 @@ export const getPaymentTransactions = async () => {
 
   return getLocalData('zestmed_payment_transactions', []);
 };
+
+// ==============================================================================
+// REVIEWS & FEEDBACK SERVICES
+// ==============================================================================
+export {
+  fetchReviews,
+  createReview,
+  updateReviewStatus,
+  replyToReview,
+  getPatientReviews,
+  calculateRatingMetrics
+} from './reviewService.js';
+
+// ==============================================================================
+// SECURITY & AUDIT LOG SERVICES
+// ==============================================================================
+export {
+  fetchAuditLogs,
+  recordAuditLog,
+  calculateSecurityMetrics
+} from './auditLogService.js';
+

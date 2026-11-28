@@ -23,7 +23,11 @@ export default class ErrorBoundary extends React.Component {
       sessionStorage.removeItem('zestmed_patient_active_tab');
       sessionStorage.removeItem('zestmed_is_reloading');
     } catch (_) {}
-    window.location.href = '/patient-dashboard?tab=dashboard';
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+      window.location.href = '/admin';
+    } else {
+      window.location.href = '/patient-dashboard?tab=dashboard';
+    }
   };
 
   handleHome = () => {
@@ -32,9 +36,10 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      const isAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
       return (
         <div className="min-h-screen bg-[#F4F7FB] flex items-center justify-center p-4 select-none">
-          <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xl text-center space-y-5">
+          <div className="max-w-lg w-full bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xl text-center space-y-5">
             <div className="flex justify-center">
               <img
                 src="/logo.png"
@@ -54,11 +59,19 @@ export default class ErrorBoundary extends React.Component {
 
             <div className="space-y-1.5">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                Patient Dashboard Recovered
+                {isAdmin ? 'Admin Dashboard Recovery' : 'Patient Dashboard Recovered'}
               </h2>
               <p className="text-xs text-slate-500 leading-relaxed">
                 We detected an issue while rendering your dashboard. You can reload or reset your view below.
               </p>
+              {this.state.error && (
+                <div className="text-left mt-3 p-3 bg-red-50 border border-red-200 rounded-xl max-h-56 overflow-auto text-xs font-mono text-red-700">
+                  <div className="font-bold mb-1">{this.state.error.toString()}</div>
+                  {this.state.error.stack && (
+                    <pre className="text-[10px] text-red-600 whitespace-pre-wrap">{this.state.error.stack}</pre>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-2.5 pt-2">
@@ -67,7 +80,7 @@ export default class ErrorBoundary extends React.Component {
                 onClick={this.handleReset}
                 className="w-full py-2.5 px-4 rounded-xl bg-[#008F83] hover:bg-[#007A64] text-white text-xs font-bold shadow-md transition cursor-pointer"
               >
-                Reset & Open Dashboard
+                {isAdmin ? 'Reset & Open Admin Dashboard' : 'Reset & Open Dashboard'}
               </button>
               <button
                 type="button"

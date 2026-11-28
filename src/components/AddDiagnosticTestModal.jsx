@@ -10,9 +10,9 @@ export default function AddDiagnosticTestModal({ isOpen = true, onClose, onAddTe
       isOpen={isOpen}
       onClose={onClose}
       test={null}
-      onSave={(newTest) => {
+      onSave={async (newTest) => {
         if (onAddTest) {
-          onAddTest(newTest);
+          return await onAddTest(newTest);
         }
       }}
     />

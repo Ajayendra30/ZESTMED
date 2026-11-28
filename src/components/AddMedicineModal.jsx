@@ -10,9 +10,9 @@ export default function AddMedicineModal({ isOpen, onClose, onAddMedicine }) {
       isOpen={isOpen}
       onClose={onClose}
       medicine={null}
-      onSave={(newMed) => {
+      onSave={async (newMed) => {
         if (onAddMedicine) {
-          onAddMedicine(newMed);
+          return await onAddMedicine(newMed);
         }
       }}
     />

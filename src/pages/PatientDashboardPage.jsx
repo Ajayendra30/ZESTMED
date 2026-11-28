@@ -14,11 +14,13 @@ import {
   isDemoBooking
 } from '../services/supabaseService';
 import { isLabTestOrPackage, isWellnessPackage } from '../utils/itemClassification';
-import { 
+import {
   getUserPrescriptions, 
   deletePrescription, 
   downloadPrescriptionFile 
 } from '../services/prescriptionService';
+import PatientSupportModal from '../components/PatientSupportModal';
+import PatientReviewModal from '../components/PatientReviewModal';
 import {
   Home,
   FlaskConical,
@@ -120,6 +122,8 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
   const { user, isLoggedIn, logout, openAuth, loginWithGoogle, updateUser } = useAuth();
   const { totalItemsCount, cartCount, openCart } = useCart();
   const { addToast } = useToast();
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   // Navigation State (persisted across reloads and tab navigation)
   const validMenus = ['dashboard', 'bookings', 'prescription', 'reports', 'profile', 'records', 'settings'];
@@ -1844,13 +1848,23 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
               <p className="text-slate-300 text-[10.5px] sm:text-xs leading-tight mt-1 font-medium">
                 Talk to our Health Assistant
               </p>
-              <button
-                type="button"
-                onClick={() => addToast('Connecting to 24/7 ZESTMED Health Assistant...', 'info')}
-                className="mt-3.5 inline-flex items-center gap-1.5 bg-[#00BFA5] hover:bg-[#00A887] text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition cursor-pointer active:scale-95"
-              >
-                <span>Chat Now</span>
-              </button>
+              <div className="mt-3.5 flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 bg-[#00BFA5] hover:bg-[#00A887] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition cursor-pointer active:scale-95"
+                >
+                  <span>Chat Now</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="inline-flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition cursor-pointer active:scale-95"
+                >
+                  <Star className="w-3.5 h-3.5 fill-amber-600 text-amber-600" />
+                  <span>Rate Us</span>
+                </button>
+              </div>
             </div>
             <img
               src="/dashboard/doctor-assistant.png"
@@ -2009,6 +2023,17 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
                     <ExternalLink className="w-4 h-4 text-slate-400" />
                     <span>Exit to Public Store</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      setIsReviewModalOpen(true);
+                    }}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 text-left font-bold"
+                  >
+                    <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    <span>Write a Review / Feedback</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
@@ -7836,6 +7861,19 @@ export default function PatientDashboardPage({ onOpenPrescriptionModal }) {
         onClose={() => setSelectedBookingForDetail(null)}
         onCancelBooking={handleCancelBooking}
         onMarkUpiPaid={handleMarkUpiPaid}
+      />
+
+      {/* Patient Support & Complaints Modal */}
+      <PatientSupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        user={user}
+      />
+
+      {/* Patient Reviews & Feedback Modal */}
+      <PatientReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
       />
     </div>
   );

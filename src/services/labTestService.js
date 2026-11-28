@@ -11,6 +11,94 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient.js';
 
 export const LAB_TESTS_STORAGE_KEY = 'zestmed_catalog_lab_tests';
 export const DELETED_LAB_TESTS_KEY = 'zestmed_deleted_lab_tests';
+export const CUSTOM_LAB_TEST_IMAGES_KEY = 'zestmed_custom_lab_test_images';
+
+/**
+ * Persistent image cache for custom uploaded lab test images.
+ * Keeps each test's individually uploaded image permanently mapped across
+ * page refresh, logout, and login without mixing images between tests.
+ */
+export function saveCustomLabTestImage(identifier, imageUrl) {
+  if (!identifier || !imageUrl) return;
+  try {
+    const raw = localStorage.getItem(CUSTOM_LAB_TEST_IMAGES_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    const key = String(identifier).toLowerCase().trim();
+    map[key] = imageUrl;
+    localStorage.setItem(CUSTOM_LAB_TEST_IMAGES_KEY, JSON.stringify(map));
+  } catch (e) {
+    console.warn('[LabTestService] Failed to cache custom lab test image:', e);
+  }
+}
+
+export function getCustomLabTestImage(identifier) {
+  if (!identifier) return null;
+  try {
+    const raw = localStorage.getItem(CUSTOM_LAB_TEST_IMAGES_KEY);
+    if (!raw) return null;
+    const map = JSON.parse(raw);
+    const key = String(identifier).toLowerCase().trim();
+    return map[key] || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Converts an image File object into an optimized, web-ready Data URL.
+ * Automatically scales large camera photos to thumbnail dimensions (max 800x800)
+ * keeping file size small (~30-50KB) and permanently embeddable.
+ */
+export function fileToOptimizedDataUrl(file, maxWidth = 800, maxHeight = 800, quality = 0.85) {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || !window.FileReader) {
+      resolve('');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const rawDataUrl = readerEvent.target?.result;
+      if (!rawDataUrl || typeof document === 'undefined') {
+        resolve(rawDataUrl || '');
+        return;
+      }
+      const img = new window.Image();
+      img.onload = () => {
+        try {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width / maxWidth > height / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(rawDataUrl);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          const optimized = canvas.toDataURL(mimeType, quality);
+          resolve(optimized || rawDataUrl);
+        } catch (_) {
+          resolve(rawDataUrl);
+        }
+      };
+      img.onerror = () => resolve(rawDataUrl);
+      img.src = rawDataUrl;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
 
 export const LAB_TEST_CATEGORIES_MAP = {
   'Blood Tests': { slug: 'blood', slugs: ['blood'], name: 'Blood Tests' },
@@ -99,14 +187,41 @@ export function normalizeLabTestItem(raw) {
     ? Boolean(raw.fastingRequired) 
     : (String(raw.preparation || '').toLowerCase().includes('fasting'));
 
-  const rawImage = raw.image !== undefined 
+  let cleanDescription = raw.description || `${name} evaluates key clinical biomarkers with NABL certified accuracy.`;
+  let meta = {};
+  if (cleanDescription.includes('<!--ZM_TEST_META:')) {
+    try {
+      const parts = cleanDescription.split('<!--ZM_TEST_META:');
+      const jsonStr = parts[1].split('-->')[0];
+      meta = JSON.parse(jsonStr);
+      cleanDescription = (parts[0] + (parts[1].split('-->')[1] || '')).trim();
+    } catch (_) {}
+  } else if (cleanDescription.includes('<!--img:')) {
+    const descImgMatch = cleanDescription.match(/<!--img:(.*?)-->/);
+    if (descImgMatch) {
+      meta.image = descImgMatch[1];
+      cleanDescription = cleanDescription.replace(/<!--img:.*?-->/g, '').trim();
+    }
+  }
+
+  let rawImage = raw.image !== undefined 
     ? (raw.image || '') 
-    : (raw.imageUrl || raw.image_url || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : ''));
-  // Discard transient blob or giant base64 URLs during normalization to protect state
-  const imageMain = (rawImage && !rawImage.startsWith('data:') && !rawImage.startsWith('blob:')) ? rawImage : '';
+    : (raw.imageUrl || raw.image_url || meta.image || (Array.isArray(raw.images) && raw.images.length > 0 ? raw.images[0] : ''));
+
+  // Check custom individual image registry if empty
+  if (!rawImage || rawImage.startsWith('blob:')) {
+    const cachedImg = getCustomLabTestImage(id) || getCustomLabTestImage(name);
+    if (cachedImg) rawImage = cachedImg;
+  }
+  const imageMain = (rawImage && !rawImage.startsWith('blob:')) ? rawImage : '';
   const imagesArray = Array.isArray(raw.images) && raw.images.length > 0 
-    ? raw.images.filter(img => img && !img.startsWith('data:') && !img.startsWith('blob:'))
+    ? raw.images.filter(img => img && !img.startsWith('blob:'))
     : (imageMain ? [imageMain] : []);
+
+  if (imageMain) {
+    saveCustomLabTestImage(id, imageMain);
+    saveCustomLabTestImage(name, imageMain);
+  }
 
   let parameters = [];
   if (Array.isArray(raw.parameters)) {
@@ -169,7 +284,7 @@ export function normalizeLabTestItem(raw) {
     available: raw.available || 'Mon – Sun',
     rating: parseFloat(raw.rating) || 4.8,
     reviewsCount: String(raw.reviewsCount || '1,250'),
-    description: raw.description || `${name} evaluates key clinical biomarkers with NABL certified accuracy.`,
+    description: cleanDescription,
     image: imageMain,
     images: imagesArray.length > 0 ? imagesArray : (imageMain ? [imageMain] : []),
     popularRank: raw.popularRank || 50,
@@ -179,9 +294,9 @@ export function normalizeLabTestItem(raw) {
 }
 
 /**
- * Uploads a lab test image to Supabase Storage.
+ * Uploads a lab test image to Supabase Storage ('lab-tests' bucket).
  * Stores in 'lab-tests' bucket (or fallback 'medicines' bucket under lab-tests/).
- * Returns the permanent public URL and storage path.
+ * Returns the permanent public URL.
  */
 export async function uploadLabTestImage(file, testIdentifier = 'lab-test') {
   if (!file) {
@@ -192,7 +307,12 @@ export async function uploadLabTestImage(file, testIdentifier = 'lab-test') {
     return { success: false, error: 'Image file size exceeds the 10MB limit.' };
   }
 
+  const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
   const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+  if (!validExtensions.includes(ext) && file.type && !file.type.startsWith('image/')) {
+    return { success: false, error: 'Invalid file format. Please upload a JPG, PNG, or WebP image.' };
+  }
+
   const cleanId = String(testIdentifier || 'lab-test')
     .toLowerCase()
     .replace(/[^a-z0-9_-]/g, '-')
@@ -217,14 +337,20 @@ export async function uploadLabTestImage(file, testIdentifier = 'lab-test') {
           .getPublicUrl(data.path);
 
         if (urlData?.publicUrl) {
+          saveCustomLabTestImage(cleanId, urlData.publicUrl);
+          if (testIdentifier) saveCustomLabTestImage(testIdentifier, urlData.publicUrl);
           return {
             success: true,
             publicUrl: urlData.publicUrl,
             storagePath: data.path
           };
         }
+      } else if (error) {
+        console.warn('[LabTestService] Supabase Storage upload to "lab-tests" bucket notice:', error.message);
       }
-    } catch (_) {}
+    } catch (e) {
+      console.warn('[LabTestService] Storage exception:', e.message);
+    }
 
     // 2. Try 'medicines' bucket under 'lab-tests/' path as secondary fallback
     try {
@@ -243,26 +369,21 @@ export async function uploadLabTestImage(file, testIdentifier = 'lab-test') {
           .getPublicUrl(data.path);
 
         if (urlData?.publicUrl) {
+          saveCustomLabTestImage(cleanId, urlData.publicUrl);
+          if (testIdentifier) saveCustomLabTestImage(testIdentifier, urlData.publicUrl);
           return {
             success: true,
             publicUrl: urlData.publicUrl,
             storagePath: data.path
           };
         }
-      } else if (error) {
-        console.warn('[LabTestService] Supabase Storage upload error:', error);
-        return {
-          success: false,
-          error: error.message || 'Supabase Storage upload failed. Please ensure bucket exists.'
-        };
       }
-    } catch (storageException) {
-      console.warn('[LabTestService] Supabase Storage exception:', storageException);
-      return {
-        success: false,
-        error: storageException.message || 'Supabase Storage exception occurred.'
-      };
-    }
+    } catch (_) {}
+
+    return {
+      success: false,
+      error: 'Supabase Storage upload failed. Please ensure the "lab-tests" public bucket exists in Supabase Storage or run the SQL migration.'
+    };
   }
 
   return {
@@ -344,28 +465,86 @@ export async function fetchSynchronizedLabTests() {
         .order('created_at', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        dbTests = data.map((row) => normalizeLabTestItem({
-          id: row.id || row.test_code,
-          name: row.name,
-          category: row.category,
-          categoryName: resolveLabTestCategory(row.category).name,
-          description: row.description,
-          preparation: row.preparation,
-          sampleType: row.sample_type || 'Blood (2–3 ml)',
-          turnaroundTime: row.turnaround_time || '6–12 Hours',
-          reportTime: row.turnaround_time || '6–12 Hours',
-          price: parseFloat(row.price) || 0,
-          discountPercent: parseFloat(row.discount_percentage) || 20,
-          mrp: parseFloat(row.mrp || (row.discounted_price ? (row.price * (1 + (row.discount_percentage || 0) / 100)) : row.price * 1.25)) || 0,
-          fastingRequired: Boolean(row.preparation?.toLowerCase().includes('fasting')),
-          parameters: row.parameters 
-            ? (typeof row.parameters === 'string' ? row.parameters.split(',').map(s => s.trim()).filter(Boolean) : row.parameters)
-            : [],
-          image: row.image_url || '',
-          images: row.image_url ? [row.image_url] : [],
-          createdAt: row.created_at || new Date().toISOString(),
-          updatedAt: row.updated_at || new Date().toISOString()
-        })).filter(Boolean);
+        dbTests = data.map((row) => {
+          let rawDesc = row.description || '';
+          let meta = {};
+          if (rawDesc.includes('<!--ZM_TEST_META:')) {
+            try {
+              const parts = rawDesc.split('<!--ZM_TEST_META:');
+              const jsonStr = parts[1].split('-->')[0];
+              meta = JSON.parse(jsonStr);
+              rawDesc = (parts[0] + (parts[1].split('-->')[1] || '')).trim();
+            } catch (_) {}
+          } else if (rawDesc.includes('<!--img:')) {
+            const imgMatch = rawDesc.match(/<!--img:(.*?)-->/);
+            if (imgMatch) {
+              meta.image = imgMatch[1];
+              rawDesc = rawDesc.replace(/<!--img:.*?-->/g, '').trim();
+            }
+          }
+
+          let imageUrl = row.image_url || meta.image || '';
+          if (!imageUrl) {
+            imageUrl = getCustomLabTestImage(row.id) || getCustomLabTestImage(row.name) || '';
+          }
+          if (imageUrl && !imageUrl.startsWith('blob:') && !imageUrl.startsWith('data:')) {
+            saveCustomLabTestImage(row.id, imageUrl);
+            saveCustomLabTestImage(row.name, imageUrl);
+          }
+
+          const parsedPrice = parseFloat(row.price) || 0;
+          const parsedDiscount = parseFloat(row.discount_percentage) || 20;
+          const parsedMrp = meta.mrp !== undefined
+            ? parseFloat(meta.mrp)
+            : (parseFloat(row.mrp) || (parsedPrice > 0 ? (row.discounted_price ? (parsedPrice * (1 + parsedDiscount / 100)) : parsedPrice * 1.25) : 0));
+
+          let params = meta.parameters;
+          if (!params) {
+            params = row.parameters 
+              ? (typeof row.parameters === 'string' ? row.parameters.split(',').map(s => s.trim()).filter(Boolean) : row.parameters)
+              : ['Key biomarker measurements included'];
+          }
+
+          let prep = meta.preparation;
+          if (!prep) {
+            prep = row.preparation 
+              ? (typeof row.preparation === 'string' ? row.preparation.split(',').map(s => s.trim()).filter(Boolean) : row.preparation)
+              : [];
+          }
+
+          let purp = meta.purpose;
+          if (!purp) {
+            purp = ['Assesses health status and aids early diagnosis'];
+          }
+
+          const fastingReq = meta.fastingRequired !== undefined
+            ? Boolean(meta.fastingRequired)
+            : Boolean(String(row.preparation || '').toLowerCase().includes('fasting'));
+
+          return normalizeLabTestItem({
+            id: row.id || row.test_code,
+            name: row.name,
+            category: row.category,
+            categoryName: meta.categoryName || resolveLabTestCategory(row.category).name,
+            description: rawDesc,
+            preparation: prep,
+            sampleType: row.sample_type || 'Blood (2–3 ml)',
+            turnaroundTime: row.turnaround_time || '6–12 Hours',
+            reportTime: row.turnaround_time || '6–12 Hours',
+            price: parsedPrice,
+            discountPercent: parsedDiscount,
+            mrp: parsedMrp,
+            fastingRequired: fastingReq,
+            parameters: params,
+            purpose: purp,
+            sampleCollection: meta.sampleCollection || 'Home / Lab Visit',
+            supportsLabVisit: meta.supportsLabVisit !== undefined ? meta.supportsLabVisit : true,
+            image: imageUrl,
+            images: imageUrl ? [imageUrl] : [],
+            createdAt: row.created_at || new Date().toISOString(),
+            updatedAt: row.updated_at || new Date().toISOString()
+          });
+        }).filter(Boolean);
       }
     } catch (err) {
       console.warn('[LabTestService] Failed to query diagnostic_tests from Supabase:', err);
@@ -387,7 +566,6 @@ export async function fetchSynchronizedLabTests() {
       mergedMap.set(key, {
         ...existing,
         ...dbTest,
-        // Retain verified image URL if provided
         image: dbTest.image || existing.image || '',
         images: dbTest.images?.length > 0 ? dbTest.images : (existing.images || [])
       });
@@ -396,12 +574,12 @@ export async function fetchSynchronizedLabTests() {
 
   const finalMerged = Array.from(mergedMap.values());
 
-  // Save sanitized snapshot back to localStorage (never storing data: or blob: URLs)
+  // Save snapshot to localStorage
   try {
     const sanitizedToStore = finalMerged.map((item) => ({
       ...item,
-      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
-      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+      image: item.image && !item.image.startsWith('blob:') && !item.image.startsWith('data:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('blob:') && !img.startsWith('data:')) : []
     }));
     localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
     localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
@@ -431,6 +609,97 @@ export async function saveLabTest(testData) {
   const normalized = normalizeLabTestItem(testData);
   normalized.updatedAt = new Date().toISOString();
 
+  // 1. Save / Sync to Supabase PostgreSQL database FIRST
+  if (isSupabaseConfigured()) {
+    const permanentImageUrl = normalized.image && !normalized.image.startsWith('data:') && !normalized.image.startsWith('blob:')
+      ? normalized.image
+      : null;
+
+    const metaTag = `<!--ZM_TEST_META:${JSON.stringify({
+      mrp: normalized.mrp,
+      fastingRequired: normalized.fastingRequired,
+      parameters: normalized.parameters,
+      purpose: normalized.purpose,
+      preparation: normalized.preparation,
+      sampleCollection: normalized.sampleCollection,
+      supportsLabVisit: normalized.supportsLabVisit,
+      categoryName: normalized.categoryName,
+      image: permanentImageUrl || ''
+    })}-->`;
+
+    const cleanDesc = (normalized.description || '').replace(/<!--ZM_TEST_META:[\s\S]*?-->/g, '').replace(/<!--img:.*?-->/g, '').trim();
+
+    const dbPayload = {
+      test_code: normalized.id.startsWith('test-') ? normalized.id : `test-${normalized.id}`,
+      name: normalized.name.trim(),
+      category: normalized.category,
+      description: `${cleanDesc}\n${metaTag}`,
+      preparation: Array.isArray(normalized.preparation) ? normalized.preparation.join(', ') : (normalized.preparation || ''),
+      sample_type: normalized.sampleType || 'Blood (2–3 ml)',
+      turnaround_time: normalized.turnaroundTime || '6–12 Hours',
+      price: parseFloat(normalized.price) || 0,
+      discount_percentage: parseFloat(normalized.discountPercent) || 0,
+      discounted_price: parseFloat(normalized.price) || 0,
+      parameters: Array.isArray(normalized.parameters) ? normalized.parameters.join(', ') : (normalized.parameters || ''),
+      updated_at: new Date().toISOString()
+    };
+
+    // Check if test exists by name
+    const { data: existingRows, error: searchErr } = await supabase
+      .from('diagnostic_tests')
+      .select('id, name')
+      .ilike('name', normalized.name.trim())
+      .limit(1);
+
+    if (searchErr) {
+      console.error('[LabTestService] Search error:', searchErr);
+      if (searchErr.code === '42501') {
+        throw new Error('Supabase RLS Policy Error (42501): Permission denied on "diagnostic_tests". Please execute the migration in supabase/migrations/20261127_lab_tests_storage_and_rls.sql in Supabase SQL Editor.');
+      }
+      throw new Error(`Database query failed: ${searchErr.message}`);
+    }
+
+    if (existingRows && existingRows.length > 0) {
+      // Update existing record
+      const targetId = existingRows[0].id;
+      normalized.id = targetId;
+
+      const { error: updErr } = await supabase
+        .from('diagnostic_tests')
+        .update(dbPayload)
+        .eq('id', targetId);
+
+      if (updErr) {
+        console.error('[LabTestService] Supabase update error:', updErr);
+        if (updErr.code === '42501') {
+          throw new Error('Supabase RLS Policy Error (42501): Permission denied to update "diagnostic_tests". Please execute the migration in supabase/migrations/20261127_lab_tests_storage_and_rls.sql in Supabase SQL Editor.');
+        }
+        throw new Error(`Database update failed: ${updErr.message}`);
+      }
+      console.log(`[LabTestService] Successfully updated "${normalized.name}" in Supabase PostgreSQL`);
+    } else {
+      // Insert new record
+      const { data: insertedRows, error: insErr } = await supabase
+        .from('diagnostic_tests')
+        .insert([{ ...dbPayload, created_at: new Date().toISOString() }])
+        .select();
+
+      if (insErr) {
+        console.error('[LabTestService] Supabase insert error:', insErr);
+        if (insErr.code === '42501') {
+          throw new Error('Supabase RLS Policy Error (42501): Permission denied to insert into "diagnostic_tests". Please execute the migration in supabase/migrations/20261127_lab_tests_storage_and_rls.sql in Supabase SQL Editor.');
+        }
+        throw new Error(`Database insert failed: ${insErr.message}`);
+      }
+
+      if (insertedRows && insertedRows.length > 0 && insertedRows[0].id) {
+        normalized.id = insertedRows[0].id;
+      }
+      console.log(`[LabTestService] Successfully inserted "${normalized.name}" into Supabase PostgreSQL`);
+    }
+  }
+
+  // 2. After successful database save, update local memory / storage catalog
   const currentList = getSynchronizedLabTests();
   const nameKey = normalized.name.toLowerCase().trim();
   const idKey = normalized.id.toLowerCase().trim();
@@ -456,7 +725,7 @@ export async function saveLabTest(testData) {
   let updatedList = [];
   if (existingIndex >= 0) {
     updatedList = [...currentList];
-    // Requirement 7: When editing, retain existing image unless a new image is uploaded
+    // Requirement 8: When editing, retain existing image unless a new image is uploaded
     if (!normalized.image && updatedList[existingIndex].image) {
       normalized.image = updatedList[existingIndex].image;
       normalized.images = updatedList[existingIndex].images;
@@ -477,16 +746,23 @@ export async function saveLabTest(testData) {
     }
   });
 
-  // Save sanitized snapshot (no data: or blob: URLs) to localStorage
+  if (normalized.image && !normalized.image.startsWith('data:') && !normalized.image.startsWith('blob:')) {
+    saveCustomLabTestImage(normalized.id, normalized.image);
+    saveCustomLabTestImage(normalized.name, normalized.image);
+  }
+
+  // Save sanitized snapshot (never store data: or blob: URLs) to localStorage
   try {
     const sanitizedToStore = dedupedList.map((item) => ({
       ...item,
-      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
-      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+      image: item.image && !item.image.startsWith('blob:') && !item.image.startsWith('data:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('blob:') && !img.startsWith('data:')) : []
     }));
     localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
     localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
-  } catch (_) {}
+  } catch (storageErr) {
+    console.warn('[LabTestService] LocalStorage quota exception:', storageErr);
+  }
 
   // Broadcast real-time update events
   if (typeof window !== 'undefined') {
@@ -496,57 +772,12 @@ export async function saveLabTest(testData) {
     window.dispatchEvent(new Event('storage'));
   }
 
-  // Background Supabase PostgreSQL sync
-  if (isSupabaseConfigured()) {
-    try {
-      const permanentImageUrl = normalized.image && !normalized.image.startsWith('data:') && !normalized.image.startsWith('blob:')
-        ? normalized.image
-        : null;
-
-      const dbPayload = {
-        test_code: normalized.id.startsWith('test-') ? normalized.id : `test-${normalized.id}`,
-        name: normalized.name,
-        category: normalized.category,
-        description: normalized.description,
-        preparation: Array.isArray(normalized.preparation) ? normalized.preparation.join(', ') : normalized.preparation,
-        sample_type: normalized.sampleType,
-        turnaround_time: normalized.turnaroundTime,
-        price: normalized.price,
-        discount_percentage: normalized.discountPercent,
-        discounted_price: normalized.price,
-        parameters: Array.isArray(normalized.parameters) ? normalized.parameters.join(', ') : normalized.parameters,
-        image_url: permanentImageUrl,
-        updated_at: new Date().toISOString()
-      };
-
-      // Check if test exists by name
-      const { data: existingRows } = await supabase
-        .from('diagnostic_tests')
-        .select('id')
-        .ilike('name', normalized.name)
-        .limit(1);
-
-      if (existingRows && existingRows.length > 0) {
-        await supabase
-          .from('diagnostic_tests')
-          .update(dbPayload)
-          .eq('id', existingRows[0].id);
-      } else {
-        await supabase
-          .from('diagnostic_tests')
-          .insert([{ ...dbPayload, created_at: new Date().toISOString() }]);
-      }
-    } catch (dbErr) {
-      console.warn('[LabTestService] Supabase sync notice:', dbErr);
-    }
-  }
-
   return normalized;
 }
 
 /**
  * Delete a diagnostic lab test by ID or Name.
- * Broadcasts real-time events to all active views.
+ * Deletes from Supabase PostgreSQL, broadcasts real-time events, and updates catalog.
  */
 export async function deleteLabTest(idOrName) {
   if (!idOrName) return false;
@@ -558,6 +789,24 @@ export async function deleteLabTest(idOrName) {
     (t) => t.id === idOrName || t.id.toLowerCase() === targetStr || t.name.toLowerCase().trim() === targetStr
   );
 
+  // 1. Supabase PostgreSQL deletion FIRST
+  if (isSupabaseConfigured() && toDelete) {
+    const { error: delErr } = await supabase
+      .from('diagnostic_tests')
+      .delete()
+      .or(`id.eq.${toDelete.id},name.ilike.${toDelete.name}`);
+
+    if (delErr) {
+      console.error('[LabTestService] Supabase delete error:', delErr);
+      if (delErr.code === '42501') {
+        throw new Error('Supabase RLS Policy Error (42501): Permission denied to delete from "diagnostic_tests". Please execute the migration in supabase/migrations/20261127_lab_tests_storage_and_rls.sql in Supabase SQL Editor.');
+      }
+      throw new Error(`Database delete failed: ${delErr.message}`);
+    }
+    console.log(`[LabTestService] Successfully deleted "${toDelete.name}" from Supabase PostgreSQL`);
+  }
+
+  // 2. Update local storage
   const updatedList = currentList.filter(
     (t) => t.id !== idOrName && t.id.toLowerCase() !== targetStr && t.name.toLowerCase().trim() !== targetStr
   );
@@ -565,8 +814,8 @@ export async function deleteLabTest(idOrName) {
   try {
     const sanitizedToStore = updatedList.map((item) => ({
       ...item,
-      image: item.image && !item.image.startsWith('data:') && !item.image.startsWith('blob:') ? item.image : '',
-      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('data:') && !img.startsWith('blob:')) : []
+      image: item.image && !item.image.startsWith('blob:') && !item.image.startsWith('data:') ? item.image : '',
+      images: Array.isArray(item.images) ? item.images.filter((img) => img && !img.startsWith('blob:') && !img.startsWith('data:')) : []
     }));
     localStorage.setItem(LAB_TESTS_STORAGE_KEY, JSON.stringify(sanitizedToStore));
     localStorage.setItem('zestmed_diagnostic_tests', JSON.stringify(sanitizedToStore));
@@ -587,16 +836,6 @@ export async function deleteLabTest(idOrName) {
       detail: { action: 'delete', id: idOrName, name: toDelete?.name }
     }));
     window.dispatchEvent(new Event('storage'));
-  }
-
-  // Background Supabase deletion attempt
-  if (isSupabaseConfigured() && toDelete) {
-    try {
-      await supabase
-        .from('diagnostic_tests')
-        .delete()
-        .ilike('name', toDelete.name);
-    } catch (_) {}
   }
 
   return true;
